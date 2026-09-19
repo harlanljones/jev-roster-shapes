@@ -1,0 +1,7 @@
+# Toolchain pins for Roster Shapes (DECISIONS D-15).
+# Bun installs packages and runs repository scripts; Node runs Vite, Vitest,
+# svelte-check, and ESLint; uv is reserved for any Python tooling.
+[tools]
+node = "26.7.0"
+bun = "1.4.2"
+uv = "0.12.17"

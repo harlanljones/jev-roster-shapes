@@ -1,0 +1,16 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+bun.lockb
+
+# Prose and specifications keep their authored formatting
+*.md
+
+# The runtime golden fixture must stay byte-identical to docs/examples/comparison-v1.json
+docs/examples/
+src/lib/fixtures/golden/
+
+# Miscellaneous
+/static/
