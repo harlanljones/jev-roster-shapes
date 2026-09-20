@@ -1,10 +1,10 @@
 # Roster Shapes
 
-A proposed workspace for comparing position-player acquisitions through explicit workload, coverage, and projection assumptions. The current repository contains a development specification and synthetic examples; application implementation has not started.
+A local synthetic workspace for comparing position-player acquisitions through explicit workload, coverage, and projection assumptions. The SvelteKit scaffold and RS-02 data-contract layer are implemented; calculation, persistence, and comparison workflows remain in the next roadmap wave.
 
 ## Start here
 
-Development agents should read [AGENTS.md](AGENTS.md), then take the first dependency-ready work item in [ROADMAP.md](ROADMAP.md). Start with `RS-01` to scaffold the local synthetic prototype. This handoff does not assume a Red Sox partnership or approved team data.
+Development agents should read [AGENTS.md](AGENTS.md), then take the first dependency-ready work item in [ROADMAP.md](ROADMAP.md). RS-01 and RS-02 are complete; the next wave is RS-03/04/05 with exclusive ownership of engine, persistence, and UI components. This handoff does not assume a Red Sox partnership or approved team data.
 
 | Document | Use it for |
 | --- | --- |
@@ -22,12 +22,14 @@ The focused documents refine SPEC within its scope. Domain rules own arithmetic 
 
 ## Development status
 
-No install, build, test, or launch commands exist yet. The proposed local default is TypeScript/React/Vite; RS-01 records actual dependency versions and verified commands here after scaffolding. Team deployment and optional Jev integration have separate prerequisites and do not block synthetic work.
+The pinned local stack is Bun 1.4.2, Node 26.x (26.8.2 observed), Svelte 5.57, SvelteKit 2.70, Vite 8.3, TypeScript 6.0, Zod 4.6, and `@noble/hashes` 2.4. `bun run check`, `bun run lint`, the Node Vitest project, and `bun run build` pass for the current scaffold and contract layer. Team deployment and optional Jev integration have separate prerequisites and do not block synthetic work.
+
+The current RS-02 gate freezes `BundleSchema`, `validateBundle`, `parseBundle`, `computeInputDigest`, the typed fixture registry, and the golden digest. See the [roadmap implementation handoff](ROADMAP.md#implementation-handoff) for fixture IDs, observed commands, and limitations.
 
 The golden fixture is ten games and 360 PA per scenario, with synthetic offensive totals of **6.4 / 8.4 / 7.6** runs for baseline/A/B. It demonstrates arithmetic only. Detailed expectations and mutations are in the acceptance document.
 
-## Suggested first development assignment
+## Next development assignment
 
-> Implement RS-01, then RS-02. Read AGENTS.md and the linked contracts. Record and scaffold the local prototype stack, establish actual verification commands, implement the v1 bundle validator, and adopt the supplied synthetic fixture. Stop at the schema/fixture integration gate with runnable evidence and a clear component ownership map for RS-03/04/05. Do not turn unverified baseball or model assumptions into data.
+> Implement RS-03, RS-04, and RS-05 after the RS-02 review. Read AGENTS.md and the linked contracts. Keep calculations, persistence, and rendering separate; use the frozen contract and fixture IDs; and preserve the distinction between source evidence, assumptions, and calculated effects.
 
 To start a larger delegated implementation, use the roadmap's dependency waves and exclusive ownership after RS-02 freezes the interfaces. Documentation is ready for implementation; the human pilot remains conditional on its listed prerequisites.

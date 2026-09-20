@@ -1,0 +1,947 @@
+{
+	"schemaVersion": "1.0",
+	"bundleId": "synthetic-comparison-v1",
+	"createdAt": "2026-09-19T00:00:00Z",
+	"dataClass": "synthetic",
+	"sources": [
+		{
+			"id": "synthetic-source",
+			"title": "Invented prototype arithmetic fixture",
+			"kind": "synthetic",
+			"effectiveAt": "2026-09-19T00:00:00Z",
+			"note": "All identities, eligibility, rates, caps and exposure counts are invented. Nine batting slots each receive four projected PA per game, explicitly apportioned between pitcher hands. Defensive outs per game are fixed at 27. No team projections or partnership are represented."
+		}
+	],
+	"dataset": {
+		"id": "synthetic-dataset",
+		"revision": 1,
+		"sourceIds": ["synthetic-source"],
+		"players": [
+			{
+				"id": "p-c",
+				"name": "Demo Catcher",
+				"bats": "R",
+				"eligiblePositions": ["C"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-1b",
+				"name": "Demo First Base",
+				"bats": "R",
+				"eligiblePositions": ["1B"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-2b",
+				"name": "Demo Incumbent",
+				"bats": "R",
+				"eligiblePositions": ["2B"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-3b",
+				"name": "Demo Third Base",
+				"bats": "R",
+				"eligiblePositions": ["3B"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-ss",
+				"name": "Demo Shortstop",
+				"bats": "R",
+				"eligiblePositions": ["SS"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-lf",
+				"name": "Demo Left Field",
+				"bats": "R",
+				"eligiblePositions": ["LF"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-cf",
+				"name": "Demo Center Field",
+				"bats": "R",
+				"eligiblePositions": ["CF"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-rf",
+				"name": "Demo Right Field",
+				"bats": "R",
+				"eligiblePositions": ["RF"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-dh",
+				"name": "Demo Hitter",
+				"bats": "R",
+				"eligiblePositions": [],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-reserve",
+				"name": "Demo Reserve",
+				"bats": "L",
+				"eligiblePositions": ["2B"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-a",
+				"name": "Demo Candidate A",
+				"bats": "L",
+				"eligiblePositions": ["2B"],
+				"sourceIds": ["synthetic-source"]
+			},
+			{
+				"id": "p-b",
+				"name": "Demo Candidate B",
+				"bats": "L",
+				"eligiblePositions": ["2B"],
+				"sourceIds": ["synthetic-source"]
+			}
+		],
+		"metricDefinitions": [
+			{
+				"id": "synthetic-offense",
+				"unit": "runs_per_PA",
+				"referenceBaseline": "synthetic-zero-reference",
+				"sourceId": "synthetic-source",
+				"note": "Additive invented demonstration runs relative to an arbitrary zero reference; not WAR or team wins."
+			}
+		],
+		"projections": [
+			{
+				"playerId": "p-c",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.02",
+				"vsL": "0.02",
+				"vsR": "0.02",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-1b",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.02",
+				"vsL": "0.02",
+				"vsR": "0.02",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-2b",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0",
+				"vsL": "0",
+				"vsR": "0",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-3b",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.02",
+				"vsL": "0.02",
+				"vsR": "0.02",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-ss",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.02",
+				"vsL": "0.02",
+				"vsR": "0.02",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-lf",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.02",
+				"vsL": "0.02",
+				"vsR": "0.02",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-cf",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.02",
+				"vsL": "0.02",
+				"vsR": "0.02",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-rf",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.02",
+				"vsL": "0.02",
+				"vsR": "0.02",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-dh",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.02",
+				"vsL": "0.02",
+				"vsR": "0.02",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-a",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.05",
+				"vsL": "0.05",
+				"vsR": "0.05",
+				"sourceId": "synthetic-source"
+			},
+			{
+				"playerId": "p-b",
+				"metricDefinitionId": "synthetic-offense",
+				"overall": "0.03",
+				"vsL": "0.03",
+				"vsR": "0.03",
+				"sourceId": "synthetic-source"
+			}
+		]
+	},
+	"assumptions": {
+		"id": "synthetic-assumptions",
+		"revision": 1,
+		"authorId": "demo-analyst",
+		"horizonGames": 10,
+		"offenseMode": "overall",
+		"metricDefinitionId": "synthetic-offense",
+		"sourceId": "synthetic-source",
+		"templates": [
+			{
+				"id": "vs-left-starter",
+				"label": "Demo versus L starter",
+				"starterHand": "L",
+				"games": 4,
+				"defensiveOutsPerGame": 27,
+				"slots": [
+					{
+						"order": 1,
+						"role": "C",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 2,
+						"role": "1B",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 3,
+						"role": "2B",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 4,
+						"role": "3B",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 5,
+						"role": "SS",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 6,
+						"role": "LF",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 7,
+						"role": "CF",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 8,
+						"role": "RF",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 9,
+						"role": "DH",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					}
+				]
+			},
+			{
+				"id": "vs-right-starter",
+				"label": "Demo versus R starter",
+				"starterHand": "R",
+				"games": 6,
+				"defensiveOutsPerGame": 27,
+				"slots": [
+					{
+						"order": 1,
+						"role": "C",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 2,
+						"role": "1B",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 3,
+						"role": "2B",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 4,
+						"role": "3B",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 5,
+						"role": "SS",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 6,
+						"role": "LF",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 7,
+						"role": "CF",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 8,
+						"role": "RF",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 9,
+						"role": "DH",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					}
+				]
+			}
+		]
+	},
+	"comparison": {
+		"id": "synthetic-comparison",
+		"revision": 1,
+		"datasetRef": {
+			"id": "synthetic-dataset",
+			"revision": 1
+		},
+		"assumptionRef": {
+			"id": "synthetic-assumptions",
+			"revision": 1
+		},
+		"baseline": {
+			"id": "baseline",
+			"revision": 1,
+			"authorId": "demo-analyst",
+			"label": "Baseline",
+			"memberIds": [
+				"p-c",
+				"p-1b",
+				"p-2b",
+				"p-3b",
+				"p-ss",
+				"p-lf",
+				"p-cf",
+				"p-rf",
+				"p-dh",
+				"p-reserve"
+			],
+			"incomingIds": [],
+			"outgoingIds": [],
+			"allocations": [
+				{
+					"templateId": "vs-left-starter",
+					"assignments": [
+						{
+							"order": 1,
+							"playerId": "p-c"
+						},
+						{
+							"order": 2,
+							"playerId": "p-1b"
+						},
+						{
+							"order": 3,
+							"playerId": "p-2b"
+						},
+						{
+							"order": 4,
+							"playerId": "p-3b"
+						},
+						{
+							"order": 5,
+							"playerId": "p-ss"
+						},
+						{
+							"order": 6,
+							"playerId": "p-lf"
+						},
+						{
+							"order": 7,
+							"playerId": "p-cf"
+						},
+						{
+							"order": 8,
+							"playerId": "p-rf"
+						},
+						{
+							"order": 9,
+							"playerId": "p-dh"
+						}
+					]
+				},
+				{
+					"templateId": "vs-right-starter",
+					"assignments": [
+						{
+							"order": 1,
+							"playerId": "p-c"
+						},
+						{
+							"order": 2,
+							"playerId": "p-1b"
+						},
+						{
+							"order": 3,
+							"playerId": "p-2b"
+						},
+						{
+							"order": 4,
+							"playerId": "p-3b"
+						},
+						{
+							"order": 5,
+							"playerId": "p-ss"
+						},
+						{
+							"order": 6,
+							"playerId": "p-lf"
+						},
+						{
+							"order": 7,
+							"playerId": "p-cf"
+						},
+						{
+							"order": 8,
+							"playerId": "p-rf"
+						},
+						{
+							"order": 9,
+							"playerId": "p-dh"
+						}
+					]
+				}
+			],
+			"workloadCaps": [
+				{
+					"playerId": "p-c",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-1b",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-2b",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-3b",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-ss",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-lf",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-cf",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-rf",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-dh",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				},
+				{
+					"playerId": "p-reserve",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 270,
+					"maxPA": 40,
+					"sourceId": "synthetic-source"
+				}
+			],
+			"constraints": {
+				"rosterSizeMax": 10,
+				"costBudget": null,
+				"costs": []
+			},
+			"review": {
+				"scope": "coverage_and_offense",
+				"uncheckedTransactionRulesAcknowledgedAt": null,
+				"acknowledgedScenarioRevision": null
+			}
+		},
+		"candidates": [
+			{
+				"id": "candidate-a",
+				"revision": 1,
+				"authorId": "demo-analyst",
+				"label": "Candidate A",
+				"memberIds": ["p-c", "p-1b", "p-2b", "p-3b", "p-ss", "p-lf", "p-cf", "p-rf", "p-dh", "p-a"],
+				"incomingIds": ["p-a"],
+				"outgoingIds": ["p-reserve"],
+				"allocations": [
+					{
+						"templateId": "vs-left-starter",
+						"assignments": [
+							{
+								"order": 1,
+								"playerId": "p-c"
+							},
+							{
+								"order": 2,
+								"playerId": "p-1b"
+							},
+							{
+								"order": 3,
+								"playerId": "p-a"
+							},
+							{
+								"order": 4,
+								"playerId": "p-3b"
+							},
+							{
+								"order": 5,
+								"playerId": "p-ss"
+							},
+							{
+								"order": 6,
+								"playerId": "p-lf"
+							},
+							{
+								"order": 7,
+								"playerId": "p-cf"
+							},
+							{
+								"order": 8,
+								"playerId": "p-rf"
+							},
+							{
+								"order": 9,
+								"playerId": "p-dh"
+							}
+						]
+					},
+					{
+						"templateId": "vs-right-starter",
+						"assignments": [
+							{
+								"order": 1,
+								"playerId": "p-c"
+							},
+							{
+								"order": 2,
+								"playerId": "p-1b"
+							},
+							{
+								"order": 3,
+								"playerId": "p-a"
+							},
+							{
+								"order": 4,
+								"playerId": "p-3b"
+							},
+							{
+								"order": 5,
+								"playerId": "p-ss"
+							},
+							{
+								"order": 6,
+								"playerId": "p-lf"
+							},
+							{
+								"order": 7,
+								"playerId": "p-cf"
+							},
+							{
+								"order": 8,
+								"playerId": "p-rf"
+							},
+							{
+								"order": 9,
+								"playerId": "p-dh"
+							}
+						]
+					}
+				],
+				"workloadCaps": [
+					{
+						"playerId": "p-c",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-1b",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-2b",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-3b",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-ss",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-lf",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-cf",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-rf",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-dh",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-a",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					}
+				],
+				"constraints": {
+					"rosterSizeMax": 10,
+					"costBudget": null,
+					"costs": []
+				},
+				"review": {
+					"scope": "coverage_and_offense",
+					"uncheckedTransactionRulesAcknowledgedAt": null,
+					"acknowledgedScenarioRevision": null
+				}
+			},
+			{
+				"id": "candidate-b",
+				"revision": 1,
+				"authorId": "demo-analyst",
+				"label": "Candidate B",
+				"memberIds": ["p-c", "p-1b", "p-2b", "p-3b", "p-ss", "p-lf", "p-cf", "p-rf", "p-dh", "p-b"],
+				"incomingIds": ["p-b"],
+				"outgoingIds": ["p-reserve"],
+				"allocations": [
+					{
+						"templateId": "vs-left-starter",
+						"assignments": [
+							{
+								"order": 1,
+								"playerId": "p-c"
+							},
+							{
+								"order": 2,
+								"playerId": "p-1b"
+							},
+							{
+								"order": 3,
+								"playerId": "p-b"
+							},
+							{
+								"order": 4,
+								"playerId": "p-3b"
+							},
+							{
+								"order": 5,
+								"playerId": "p-ss"
+							},
+							{
+								"order": 6,
+								"playerId": "p-lf"
+							},
+							{
+								"order": 7,
+								"playerId": "p-cf"
+							},
+							{
+								"order": 8,
+								"playerId": "p-rf"
+							},
+							{
+								"order": 9,
+								"playerId": "p-dh"
+							}
+						]
+					},
+					{
+						"templateId": "vs-right-starter",
+						"assignments": [
+							{
+								"order": 1,
+								"playerId": "p-c"
+							},
+							{
+								"order": 2,
+								"playerId": "p-1b"
+							},
+							{
+								"order": 3,
+								"playerId": "p-b"
+							},
+							{
+								"order": 4,
+								"playerId": "p-3b"
+							},
+							{
+								"order": 5,
+								"playerId": "p-ss"
+							},
+							{
+								"order": 6,
+								"playerId": "p-lf"
+							},
+							{
+								"order": 7,
+								"playerId": "p-cf"
+							},
+							{
+								"order": 8,
+								"playerId": "p-rf"
+							},
+							{
+								"order": 9,
+								"playerId": "p-dh"
+							}
+						]
+					}
+				],
+				"workloadCaps": [
+					{
+						"playerId": "p-c",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-1b",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-2b",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-3b",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-ss",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-lf",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-cf",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-rf",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-dh",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					},
+					{
+						"playerId": "p-b",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 270,
+						"maxPA": 40,
+						"sourceId": "synthetic-source"
+					}
+				],
+				"constraints": {
+					"rosterSizeMax": 10,
+					"costBudget": null,
+					"costs": []
+				},
+				"review": {
+					"scope": "coverage_and_offense",
+					"uncheckedTransactionRulesAcknowledgedAt": null,
+					"acknowledgedScenarioRevision": null
+				}
+			}
+		]
+	},
+	"results": []
+}

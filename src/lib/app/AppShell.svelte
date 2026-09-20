@@ -50,7 +50,7 @@
 	}
 
 	main {
-		padding: 1.5rem;
-		max-width: 60rem;
+		padding: 0;
+		max-width: none;
 	}
 </style>

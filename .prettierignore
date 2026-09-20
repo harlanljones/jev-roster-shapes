@@ -14,3 +14,4 @@ src/lib/fixtures/golden/
 
 # Miscellaneous
 /static/
+reports/

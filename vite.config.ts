@@ -40,6 +40,15 @@ export default defineConfig({
 					include: ['tests/**/*.test.ts'],
 					exclude: ['tests/**/*.svelte.test.ts', 'tests/integration/**', 'tests/e2e/**']
 				}
+			},
+			{
+				// Cross-component journeys run in Node against the real engine and repository.
+				extends: './vite.config.ts',
+				test: {
+					name: 'integration',
+					environment: 'node',
+					include: ['tests/integration/**/*.test.ts']
+				}
 			}
 		]
 	}
