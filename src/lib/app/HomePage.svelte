@@ -8,6 +8,8 @@
 		createMemoryPersistenceRepository,
 		createPersistenceRepository,
 		MemoryPersistenceStorage,
+		PersistenceImportError,
+		type LoadedComparison,
 		type PersistenceRepository
 	} from '$lib/persistence';
 	import AllocationPanel from '$lib/ui/AllocationPanel.svelte';
@@ -20,6 +22,7 @@
 	import type {
 		AssumptionChange,
 		AssignmentChange,
+		AssignmentSwap,
 		ComparisonViewModel,
 		ReviewScope
 	} from '$lib/ui/types';
@@ -143,6 +146,22 @@
 		});
 	}
 
+	function handleAssignmentSwap(swap: AssignmentSwap): void {
+		commitMutation((next) => {
+			const scenario = [next.comparison.baseline, ...next.comparison.candidates].find(
+				(candidate) => candidate.id === swap.scenarioId
+			);
+			const assignments = scenario?.allocations.find(
+				(candidate) => candidate.templateId === swap.templateId
+			)?.assignments;
+			const a = assignments?.find((candidate) => candidate.order === swap.orderA);
+			const b = assignments?.find((candidate) => candidate.order === swap.orderB);
+			if (!scenario || !a || !b) return;
+			[a.playerId, b.playerId] = [b.playerId, a.playerId];
+			touchScenario(next, scenario);
+		});
+	}
+
 	function handleAssumptionChange(change: AssumptionChange): void {
 		if (!Number.isFinite(change.value)) return;
 		commitMutation((next) => {
@@ -227,6 +246,54 @@
 		storageMessage = 'Export prepared with the current calculation results and input digest.';
 	}
 
+	let pendingConflict = $state<{ text: string; bundleId: string } | null>(null);
+
+	function activateImported(loaded: LoadedComparison, verb: string): void {
+		bundle = loaded.current.bundle;
+		calculation = calculateComparison(bundle);
+		activeScenarioId = bundle.comparison.baseline.id;
+		savedAt = loaded.current.savedAt;
+		unsaved = false;
+		storageState = 'saved';
+		selectedEvidenceId = null;
+		pendingConflict = null;
+		const replay =
+			loaded.replay.status === 'verified'
+				? 'Replay verified.'
+				: `Replay status: ${loaded.replay.status}.`;
+		storageMessage = `${verb} “${model.name}” (${model.snapshotLabel}). ${replay}`;
+	}
+
+	async function runImport(text: string, replace: boolean): Promise<void> {
+		busy = true;
+		try {
+			const result = await repository.importJson(text, { replaceAsNewRevision: replace });
+			if (result.status === 'conflict') {
+				pendingConflict = { text, bundleId: result.bundleId };
+				storageMessage = `A saved comparison with ID ${result.bundleId} already exists. The open comparison is unchanged.`;
+				return;
+			}
+			activateImported(result, 'Imported');
+		} catch (error) {
+			// Validation failures keep the currently open comparison intact.
+			storageState = 'failed';
+			storageMessage =
+				error instanceof PersistenceImportError
+					? `Import rejected; the open comparison is unchanged.\n${error.message}`
+					: `Import failed: ${error instanceof Error ? error.message : 'unknown error'}`;
+		} finally {
+			busy = false;
+		}
+	}
+
+	async function importFile(event: Event): Promise<void> {
+		const input = event.currentTarget as HTMLInputElement;
+		const file = input.files?.[0];
+		input.value = '';
+		if (!file || busy) return;
+		await runImport(await file.text(), false);
+	}
+
 	function openEvidence(evidenceId: string): void {
 		selectedEvidenceId = evidenceId;
 	}
@@ -256,6 +323,16 @@
 		</div>
 		<div class="hero-actions" aria-label="Draft actions">
 			<span class="storage-pill" data-state={model.storageState}>{model.storageState}</span>
+			<label class="secondary-button file-button">
+				Import JSON
+				<input
+					class="sr-only"
+					type="file"
+					accept="application/json,.json"
+					onchange={importFile}
+					disabled={busy}
+				/>
+			</label>
 			<button class="secondary-button" type="button" onclick={exportDraft}>Export JSON</button>
 			<button class="primary-button" type="button" onclick={saveDraft} disabled={busy}>
 				{busy ? 'Saving…' : 'Save draft'}
@@ -265,7 +342,20 @@
 
 	<div class="notice" aria-live="polite">
 		<span class="notice-mark" aria-hidden="true">i</span>
-		<span>{model.storageMessage}</span>
+		<span class="notice-text">{model.storageMessage}</span>
+		{#if pendingConflict}
+			<button
+				class="secondary-button"
+				type="button"
+				disabled={busy}
+				onclick={() => pendingConflict && runImport(pendingConflict.text, true)}
+			>
+				Replace as new revision
+			</button>
+			<button class="secondary-button" type="button" onclick={() => (pendingConflict = null)}>
+				Cancel import
+			</button>
+		{/if}
 		<span class="notice-meta">{model.schemaVersion} · {model.calculationVersion}</span>
 	</div>
 
@@ -342,6 +432,7 @@
 						players={model.players}
 						evidence={model.evidence}
 						onAssignmentChange={handleAssignmentChange}
+						onAssignmentSwap={handleAssignmentSwap}
 						onOpenEvidence={openEvidence}
 					/>
 					<CoveragePanel
@@ -513,6 +604,24 @@
 	button:disabled {
 		cursor: not-allowed;
 		opacity: 0.55;
+	}
+	.file-button {
+		position: relative;
+	}
+	.file-button:focus-within {
+		outline: 3px solid rgb(168 79 50 / 30%);
+		outline-offset: 3px;
+	}
+	.notice-text {
+		white-space: pre-line;
+	}
+	:global(.sr-only) {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
 	}
 	.storage-pill,
 	.snapshot,
