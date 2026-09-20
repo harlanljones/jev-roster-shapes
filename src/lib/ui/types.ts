@@ -182,6 +182,13 @@ export type AssignmentChange = {
 	playerId: string | null;
 };
 
+export type AssignmentSwap = {
+	scenarioId: UiScenarioId;
+	templateId: string;
+	orderA: number;
+	orderB: number;
+};
+
 export type AssumptionChange =
 	| { kind: 'horizonGames'; value: number }
 	| { kind: 'offenseMode'; value: AssumptionsView['offenseMode'] }

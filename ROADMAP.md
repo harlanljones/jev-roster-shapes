@@ -119,6 +119,12 @@ Limitations:
 - This environment's headless Chromium produces no animation frames, so Playwright actionability checks (and full axe runs) hang. Journeys therefore dispatch real DOM events (click/change) instead of trusted input, and the axe audit pins a 19-rule subset (names, labels, ARIA validity, structure, headings, tables, duplicate IDs); the full axe rule set (e.g. color-contrast) blocks the main thread here and could not run. Re-run a full audit in a frame-producing environment before any external demo.
 - Browser-mode Vitest component tests (`tests/app/`) hang for the same reason and were validated via the Playwright e2e suite instead; the keyboard-arc journey (I-07) is exercised via tabs/select semantics but not a literal keystroke walkthrough.
 
+### Post-RS-07 UI gap closure (`feat/ui-gaps`)
+
+Delivered: import-from-file in the app shell (validates the whole bundle via `repository.importJson` before activation; rejection keeps the open comparison and shows field-level issues; a duplicate bundle ID offers an explicit "Replace as new revision" or cancel; replay status shown on success) and a keyboard-operable per-template Swap control that exchanges two slots and recalculates all scenarios. Files: `src/lib/app/HomePage.svelte`, `src/lib/ui/AllocationPanel.svelte`, `src/lib/ui/types.ts`, `tests/e2e/import-swap.spec.ts`.
+
+Observed: `bun run check`, `bun run lint`, `bunx vitest run --project integration --project server` (28 tests) and `bunx playwright test` (6 tests, including 2 new: swap, and malformed-then-valid import against `comparison-v1.json`) pass; `git diff --check` clean. Not run: `bun run test` (its browser project hangs in this environment, see RS-07 limitations). Untested: replace-as-new-revision UI path, Move preview, literal keystroke walkthrough, full axe rule set. The latency e2e rewrites `reports/prototype/edit-latency.json`; the regenerated copy from a 3-worker run was discarded, so the RS-07 single-worker reference is unchanged.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

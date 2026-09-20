@@ -1,17 +1,25 @@
 <script lang="ts">
-	import type { AssignmentChange, EvidenceView, ScenarioView, UiPlayer } from './types';
+	import type {
+		AssignmentChange,
+		AssignmentSwap,
+		EvidenceView,
+		ScenarioView,
+		UiPlayer
+	} from './types';
 
 	let {
 		scenario,
 		players,
 		evidence,
 		onAssignmentChange = () => {},
+		onAssignmentSwap = () => {},
 		onOpenEvidence = () => {}
 	}: {
 		scenario: ScenarioView;
 		players: readonly UiPlayer[];
 		evidence: readonly EvidenceView[];
 		onAssignmentChange?: (change: AssignmentChange) => void;
+		onAssignmentSwap?: (swap: AssignmentSwap) => void;
 		onOpenEvidence?: (evidenceId: string) => void;
 	} = $props();
 
@@ -25,6 +33,22 @@
 
 	function scenarioPlayers(): readonly UiPlayer[] {
 		return players.filter((player) => scenario.memberIds.includes(player.id));
+	}
+
+	function assignedLabel(templateId: string, order: number): string {
+		const slot = scenario.templates
+			.find((template) => template.id === templateId)
+			?.assignments.find((candidate) => candidate.order === order);
+		return slot ? playerName(slot.playerId) : 'Unassigned';
+	}
+
+	function handleSwap(templateId: string, event: SubmitEvent): void {
+		event.preventDefault();
+		const form = event.currentTarget as HTMLFormElement;
+		const orderA = Number((form.elements.namedItem('swap-a') as HTMLSelectElement).value);
+		const orderB = Number((form.elements.namedItem('swap-b') as HTMLSelectElement).value);
+		if (orderA === orderB) return;
+		onAssignmentSwap({ scenarioId: scenario.id, templateId, orderA, orderB });
 	}
 
 	function handleAssignmentChange(templateId: string, order: number, event: Event): void {
@@ -57,8 +81,8 @@
 		</div>
 	</div>
 	<p class="panel-intro">
-		Choose one player per slot. A keyboard selector is the primary editing path; a later integration
-		can add Move or Swap previews without changing this contract.
+		Choose one player per slot with the selectors, or swap two slots in the same template. Both
+		paths work by keyboard alone.
 	</p>
 
 	{#if scenario.issues.length > 0}
@@ -158,6 +182,35 @@
 						</tbody>
 					</table>
 				</div>
+				<form class="swap" onsubmit={(event) => handleSwap(template.id, event)}>
+					<fieldset>
+						<legend>Swap two slots in {template.label}</legend>
+						<label>
+							First slot
+							<select name="swap-a" value={String(template.assignments[0]?.order)}>
+								{#each template.assignments as slot (slot.order)}
+									<option value={String(slot.order)}>
+										{slot.order} · {slot.role} · {assignedLabel(template.id, slot.order)}
+									</option>
+								{/each}
+							</select>
+						</label>
+						<label>
+							Second slot
+							<select
+								name="swap-b"
+								value={String((template.assignments[1] ?? template.assignments[0])?.order)}
+							>
+								{#each template.assignments as slot (slot.order)}
+									<option value={String(slot.order)}>
+										{slot.order} · {slot.role} · {assignedLabel(template.id, slot.order)}
+									</option>
+								{/each}
+							</select>
+						</label>
+						<button class="evidence-button" type="submit">Swap</button>
+					</fieldset>
+				</form>
 			</div>
 		{/each}
 	</div>
@@ -380,6 +433,28 @@
 		font-size: 0.67rem;
 		font-weight: 500;
 		white-space: normal;
+	}
+
+	.swap fieldset {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: end;
+		gap: 0.75rem;
+		margin: 0.75rem 0 0;
+		border: 0;
+		padding: 0;
+	}
+
+	.swap legend {
+		margin-bottom: 0.4rem;
+		font-size: 0.75rem;
+		font-weight: 700;
+	}
+
+	.swap label {
+		display: grid;
+		gap: 0.2rem;
+		font-size: 0.75rem;
 	}
 
 	.sr-only {
