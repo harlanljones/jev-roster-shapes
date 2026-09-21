@@ -1,6 +1,8 @@
 # Demo deployment: build on GitHub Actions, host on Cloudflare Pages (D-41).
-# Pushes to main deploy production; pull requests and manual runs deploy
-# previews. Needs repo secrets CLOUDFLARE_API_TOKEN (Pages:Edit) and
+# Pushes to main deploy production. Pull requests from this repository and
+# manual runs deploy previews; fork pull requests still build and validate but
+# skip deployment because GitHub withholds repository secrets from forks.
+# Needs repo secrets CLOUDFLARE_API_TOKEN (Pages:Edit) and
 # CLOUDFLARE_ACCOUNT_ID — see README "Demo deployment" for the one-time setup.
 name: Deploy demo to Cloudflare Pages
 
@@ -40,14 +42,17 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         id: deploy
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # Self-provision the Pages project on first run; later runs reuse it.
-          preCommands: wrangler pages project create jev-roster-shapes --production-branch main || echo "Pages project already exists, continuing"
           command: pages deploy build --project-name jev-roster-shapes
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Explain skipped fork deployment
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+        run: echo "Skipping Cloudflare preview deployment for a fork pull request because repository secrets are unavailable."
 
       - name: Print deployment URL
         env:

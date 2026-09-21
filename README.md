@@ -68,6 +68,17 @@ bun run test:e2e   # production build + Playwright (Chromium)
 
 Pushes to `main` build on GitHub Actions and deploy to Cloudflare Pages (see "Demo deployment" in the roadmap handoff). Pull requests get preview deployments.
 
+### Demo deployment
+
+The workflow requires repository secrets `CLOUDFLARE_API_TOKEN` with Pages edit
+permission and `CLOUDFLARE_ACCOUNT_ID`. The Pages project
+`jev-roster-shapes` must be provisioned once by an authorized Cloudflare owner;
+the workflow intentionally fails if the project or credentials are invalid.
+Pushes to `main` deploy production. Pull requests from this repository deploy a
+preview, while fork pull requests only run the build and checks because GitHub
+does not expose repository secrets to forks. This is a public demo deployment,
+not the approved authenticated team environment described by RS-08.
+
 | Document | Use it for |
 | --- | --- |
 | [Product specification](SPEC.md) | Scope, hypotheses, pilot plan, non-goals |

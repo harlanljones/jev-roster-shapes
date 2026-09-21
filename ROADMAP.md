@@ -179,6 +179,23 @@ Observed: `bun run check` (0 errors/warnings), `bun run lint` (Prettier + ESLint
 
 Limitations: observed-not-projected 2026 rates, illustrative horizon, placeholder caps, no splits (the lefty-hole storyline says so on its card), analyst-labeled shapes with no evaluator agreement (O-03 open), outgoing members leave the planning roster per the v1 membership equation, saved drafts under retired bundle IDs are not migrated. Two issues found by verification and fixed in this change: the builder initially rounded Contreras 68/533 down (correct: 0.127580) and mis-assigned two candidate reserves against the membership equation (both caught by the script's own guards); the new `{#if}` workspace mount initially threw `DataCloneError` on the `$state` proxy (fixed with `$state.snapshot` at both boundaries, same lesson as RS-07).
 
+### Deployment hardening and RS-08 handoff
+
+Delivered: the Cloudflare Pages workflow now keeps build/typecheck validation on
+all pull requests, deploys previews only when repository secrets are available,
+and skips fork deployments with an explicit explanation instead of failing on
+withheld secrets. The deployment no longer masks arbitrary Pages API or
+authentication errors behind a successful `|| echo` self-provision command; the
+Pages project must be provisioned once by an authorized owner. `docs/pilot/README.md`
+records the RS-08 prerequisites and remains blocked until those external records
+exist.
+
+Observed: the latest `main` deployment workflow run (`35562606070`) completed
+successfully before this hardening change. After installing the pinned lockfile,
+local typecheck, lint, server/integration tests, production build, and diff
+checks pass. RS-08 is not complete: no team permission, staffing, evaluation
+protocol, or shared deployment approval is present.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.
