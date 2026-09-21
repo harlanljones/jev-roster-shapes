@@ -128,6 +128,25 @@
 			};
 		})
 	);
+
+	const depthRows = $derived(
+		(lineupViews[0]?.rows ?? []).map((row) => {
+			const starter = playersById.get(
+				bundle.dataset.players.find((player) => player.name === row.player)?.id ?? ''
+			);
+			const remaining = bundle.dataset.players.filter(
+				(player) =>
+					baselineMemberIds.has(player.id) &&
+					player.id !== starter?.id &&
+					(row.role === 'DH' || player.eligiblePositions.includes(row.role))
+			);
+			const rPlatoon = remaining.find((player) => player.bats === 'R');
+			const lPlatoon = remaining.find((player) => player.bats === 'L');
+			const assigned = new Set([rPlatoon?.id, lPlatoon?.id]);
+			const bench = remaining.filter((player) => !assigned.has(player.id)).slice(0, 2);
+			return { ...row, starter, rPlatoon, lPlatoon, bench };
+		})
+	);
 </script>
 
 <div class="graphic-block">
@@ -290,16 +309,11 @@
 				></thead
 			>
 			<tbody
-				>{#each lineupViews[0]?.rows ?? [] as row (row.role)}<tr
-						><th scope="row">{row.role}</th><td>{row.player}</td><td>{row.exposure.R} PA</td><td
-							>{row.exposure.L} PA</td
-						><td>{row.player}</td><td>—</td><td
-							>{shapeOf(
-								row.player === 'Unassigned'
-									? ''
-									: (bundle.dataset.players.find((player) => player.name === row.player)?.id ?? '')
-							).shape}</td
-						><td>{row.player === 'Unassigned' ? '—' : observedRate(row.player)}</td></tr
+				>{#each depthRows as row (row.role)}<tr
+						><th scope="row">{row.role}</th><td>{row.player}</td><td>{row.rPlatoon?.name ?? '—'}</td
+						><td>{row.lPlatoon?.name ?? '—'}</td><td>{row.bench[0]?.name ?? '—'}</td><td
+							>{row.bench[1]?.name ?? '—'}</td
+						><td>{shapeOf(row.starter?.id ?? '').shape}</td><td>{observedRate(row.player)}</td></tr
 					>{/each}</tbody
 			>
 		</table>
