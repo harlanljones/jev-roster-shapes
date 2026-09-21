@@ -1,4 +1,10 @@
-# Public-data adapter spike (D-34)
+# Public-data adapter spike (D-34) — retired under D-38
+
+The 2025 bundle this spike produced (`redsox-observed-2025.json`) was removed
+from the app and test surface with the synthetic golden fixture; the script
+and this note are retained as the historical record. The live successor is
+`spikes/mlb-2026/build.mjs`, which builds the five 2026 storyline bundles the
+library opens.
 
 Builds one static `public`-class v1 bundle from freely fetchable 2025 data and
 proves the frozen validator and deterministic engine accept real-shaped public
@@ -23,7 +29,7 @@ mlbam-candidate-a rev 1: feasible offense=45.2524 ready=false (ACKNOWLEDGMENT_RE
 inputDigest=45022eaa000160400308a5b42b6f3782c7d6938bf2a1771e7eacd345b426c04f
 ```
 
-Validation: `parseBundle` accepts the built object with no diagnostics; both
+Validation (historical — what this spike proved before retirement): `parseBundle` accepts the built object with no diagnostics; both
 scenarios are feasible with available overall offense; readiness is false only
 for the missing transaction-rule acknowledgment, exactly like the golden
 synthetic fixture. Candidate A (Roman Anthony in, Rob Refsnyder out, Jarren
@@ -41,7 +47,7 @@ Duran sliding to DH) adds about 0.79 runs over the illustrative 360 PA.
   excluded. Observed spread: Duran LF/CF, Rafaela 2B/CF, Refsnyder LF/RF,
   Gonzalez 1B/2B, Anthony LF/RF; single-position regulars unchanged. Lahman
   Fielding stays the independent cross-check option.
-- Templates reuse the synthetic 10-game demand shape with an explicit
+- Templates reused the 10-game demand shape (later inherited by the 2026 storyline bundles) with an explicit
   illustrative-horizon note; workload caps are generous placeholders because real
   limits are TBD (O-02). Costs are disabled.
 - Player IDs are `mlbam-{id}` ASCII strings; names keep official diacritics.

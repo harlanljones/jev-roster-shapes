@@ -4,7 +4,7 @@ import {
 	type Bundle,
 	type CalculationResult
 } from '../../src/lib/contracts';
-import { goldenBundle } from '../../src/lib/fixtures';
+import { getStoryline } from '../../src/lib/storylines/registry';
 import {
 	MemoryPersistenceStorage,
 	PersistenceImportError,
@@ -12,6 +12,12 @@ import {
 	PersistenceStorageError
 } from '../../src/lib/persistence';
 import { describe, expect, it } from 'vitest';
+
+// Structural test bundle: the power-vacuum storyline stands in for the
+// removed golden fixture wherever persistence needs a valid v1 bundle.
+const story = getStoryline('power-vacuum');
+if (!story) throw new Error('power-vacuum storyline missing');
+const storyBundle = story.bundle;
 
 function clone<T>(value: T): T {
 	return structuredClone(value);
@@ -46,8 +52,8 @@ function makeResult(
 }
 
 function bundleWithResult(runs = '6.4'): Bundle {
-	const bundle = clone(goldenBundle);
-	const result = makeResult(bundle, 'baseline', runs);
+	const bundle = clone(storyBundle);
+	const result = makeResult(bundle, 'base', runs);
 	bundle.results = [result];
 	return bundle;
 }
@@ -93,8 +99,8 @@ describe('versioned persistence repository', () => {
 	it('rejects unsupported persistence versions without changing existing records', async () => {
 		const storage = new MemoryPersistenceStorage();
 		const repo = repository(storage);
-		await repo.save(goldenBundle);
-		const unsupported = JSON.parse(await repo.exportJson(goldenBundle.bundleId)) as Record<
+		await repo.save(storyBundle);
+		const unsupported = JSON.parse(await repo.exportJson(storyBundle.bundleId)) as Record<
 			string,
 			unknown
 		>;
@@ -104,14 +110,14 @@ describe('versioned persistence repository', () => {
 			name: 'PersistenceImportError',
 			issues: [expect.objectContaining({ code: 'UNSUPPORTED_VERSION' })]
 		});
-		expect((await repo.load(goldenBundle.bundleId))?.current.bundle).toEqual(goldenBundle);
+		expect((await repo.load(storyBundle.bundleId))?.current.bundle).toEqual(storyBundle);
 	});
 
 	it('rejects malformed imports atomically and leaves the current workspace intact', async () => {
 		const storage = new MemoryPersistenceStorage();
 		const repo = repository(storage);
-		await repo.save(goldenBundle);
-		const malformed = JSON.parse(await repo.exportJson(goldenBundle.bundleId)) as Record<
+		await repo.save(storyBundle);
+		const malformed = JSON.parse(await repo.exportJson(storyBundle.bundleId)) as Record<
 			string,
 			unknown
 		>;
@@ -122,7 +128,7 @@ describe('versioned persistence repository', () => {
 			.importJson(JSON.stringify(malformed))
 			.catch((candidate: unknown) => candidate);
 		expect(error).toBeInstanceOf(PersistenceImportError);
-		expect((await repo.load(goldenBundle.bundleId))?.current.bundle).toEqual(goldenBundle);
+		expect((await repo.load(storyBundle.bundleId))?.current.bundle).toEqual(storyBundle);
 	});
 
 	it('detects a stale cached result through the replay boundary and never replaces it silently', async () => {
@@ -130,7 +136,7 @@ describe('versioned persistence repository', () => {
 		const expected = bundleWithResult('6.4');
 		const repo = repository(new MemoryPersistenceStorage(), {
 			supportedCalculationVersions: ['engine-v1'],
-			replay: ({ bundle }) => makeResult(bundle, 'baseline', '6.4')
+			replay: ({ bundle }) => makeResult(bundle, 'base', '6.4')
 		});
 
 		const imported = await repo.importBundle(stale);
@@ -166,8 +172,8 @@ describe('versioned persistence repository', () => {
 
 	it('requires explicit replace-as-new-revision for duplicate bundle IDs', async () => {
 		const repo = repository(new MemoryPersistenceStorage());
-		const first = clone(goldenBundle);
-		const second = clone(goldenBundle);
+		const first = clone(storyBundle);
+		const second = clone(storyBundle);
 		second.createdAt = '2026-09-20T12:00:00Z';
 
 		await repo.importBundle(first);
@@ -185,19 +191,19 @@ describe('versioned persistence repository', () => {
 		const repo = repository(storage);
 		storage.failNextPut(new Error('quota exceeded'));
 
-		await expect(repo.save(goldenBundle)).rejects.toBeInstanceOf(PersistenceStorageError);
-		expect(await repo.load(goldenBundle.bundleId)).toBeNull();
-		await expect(repo.exportJson(goldenBundle.bundleId)).rejects.toThrow(/not found/);
+		await expect(repo.save(storyBundle)).rejects.toBeInstanceOf(PersistenceStorageError);
+		expect(await repo.load(storyBundle.bundleId)).toBeNull();
+		await expect(repo.exportJson(storyBundle.bundleId)).rejects.toThrow(/not found/);
 	});
 
 	it('exports a raw contract bundle for portable interchange as well as the history envelope', async () => {
 		const repo = repository(new MemoryPersistenceStorage());
-		await repo.save(goldenBundle);
+		await repo.save(storyBundle);
 
-		const raw = await repo.exportBundleJson(goldenBundle.bundleId);
+		const raw = await repo.exportBundleJson(storyBundle.bundleId);
 		const imported = await repository(new MemoryPersistenceStorage()).importJson(raw);
 		expect(imported.status).toBe('imported');
 		if (imported.status === 'conflict') return;
-		expect(imported.current.bundle).toEqual(goldenBundle);
+		expect(imported.current.bundle).toEqual(storyBundle);
 	});
 });

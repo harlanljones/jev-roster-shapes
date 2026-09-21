@@ -185,7 +185,10 @@ function evidenceViews(bundle: Bundle, scenarios: readonly Scenario[]): Evidence
 		sourceTitle: source.title,
 		snapshot: source.effectiveAt,
 		inputReferences: [source.id],
-		limitation: bundle.dataClass === 'synthetic' ? 'Synthetic fixture; not team data.' : undefined
+		limitation:
+			bundle.dataClass === 'synthetic'
+				? 'Synthetic fixture; not team data.'
+				: 'Observed public values; not team-approved projections.'
 	}));
 	const assumptions: EvidenceView = {
 		id: `assumption:${bundle.assumptions.id}`,
@@ -201,12 +204,15 @@ function evidenceViews(bundle: Bundle, scenarios: readonly Scenario[]): Evidence
 	};
 	const calculations = scenarios.map<EvidenceView>((scenario) => ({
 		id: `calculation:${scenario.id}`,
-		layer: 'calculation',
+		layer: 'calculation' as const,
 		title: `${scenario.label} calculation`,
 		description: 'Deterministic workload, coverage, feasibility, and offense calculation.',
 		formula: CALCULATION_VERSION,
 		inputReferences: [scenario.id, bundle.comparison.id],
-		limitation: 'Synthetic demonstration; not a pilot outcome.'
+		limitation:
+			bundle.dataClass === 'synthetic'
+				? 'Synthetic demonstration; not a pilot outcome.'
+				: 'Observed public values with illustrative assumptions; not a pilot outcome.'
 	}));
 	return [...sources, assumptions, ...calculations];
 }
@@ -315,7 +321,7 @@ export function buildComparisonViewModel(
 		calculationVersion: CALCULATION_VERSION,
 		inputDigest: calculation.inputDigest,
 		comparisonRevision: bundle.comparison.revision,
-		snapshotLabel: bundle.sources[0]?.effectiveAt ?? 'Synthetic snapshot',
+		snapshotLabel: bundle.sources[0]?.effectiveAt ?? 'Snapshot date unavailable',
 		activeScenarioId: activeId,
 		calculationState: 'current',
 		storageState,

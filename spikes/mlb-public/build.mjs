@@ -1,4 +1,9 @@
-// Public-data adapter spike (D-34). Fetches completed-2025 Red Sox data from
+// Public-data adapter spike (D-34) — RETIRED under D-38. Its 2025 output was
+// removed from the app and test surface; the live successor is
+// spikes/mlb-2026/build.mjs. This script is retained as the historical record
+// and still runs standalone (writes redsox-observed-2025.json next to itself),
+// but nothing in the app or suite consumes its output.
+// Original header: fetches completed-2025 Red Sox data from
 // the free MLB Stats API, derives observed R/PA rates, assembles one static
 // `public`-class v1 bundle, validates it with the frozen contract validator,
 // and smoke-runs the deterministic engine. Run: bun spikes/mlb-public/build.mjs

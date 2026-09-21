@@ -1,14 +1,14 @@
 # Interaction contract
 
-Status: implementation defaults for the synthetic local prototype. Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
+Status: implementation defaults for the local prototype (D-38 through D-40: library-first, five 2026 public storyline comparisons, analyst-labeled shape rubric v1). Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
 
 ## 1. First complete journey
 
-An analyst loads a labeled synthetic snapshot, defines a shared planning context, copies the baseline into candidate A and B, edits allocations, compares supported results, inspects evidence, and exports a comparison another analyst can replay.
+An analyst opens the start screen's roster-and-shapes graphic, picks one of the five 2026 storyline comparisons, acknowledges its public-data provenance, reviews the shared planning context, edits allocations across baseline and candidates A/B, compares supported results, inspects evidence, and exports a comparison another analyst can replay.
 
 Completion means the exported comparison restores its inputs and results, including gaps and unavailable metrics. An acquisition preference is optional; a recommended transaction is outside this workflow.
 
-The prototype works locally without a model provider or team account. Show `Synthetic demo data` on the workspace and exports. Authentication, real data permissions, and deployment remain separate release gates.
+The prototype works locally without a model provider or team account. Show the bundle's data class (`Public data` with its observed-values limitation, or `Synthetic demo data` for imported synthetic bundles) on the workspace and exports. Authentication, real data permissions, and deployment remain separate release gates.
 
 ## 2. Workspace and navigation
 
@@ -16,7 +16,7 @@ Use one comparison workspace with these reachable views. They may be panels or r
 
 | View | Required content | Primary action |
 | --- | --- | --- |
-| Library / start | Load demo, import bundle, saved comparisons, snapshot dates | Open comparison |
+| Library / start | Interactive roster-and-shapes graphic (position lanes, shape glyphs, player detail, table equivalent) plus the five storyline cards with baseline/A/B previews | Open comparison |
 | Assumptions | Horizon, templates, PA budgets, exposure assumptions, limits, provenance | Apply assumptions |
 | Allocation | Baseline/A/B selector, membership, template slots, workloads, diagnostics | Commit allocation edit |
 | Compare | Baseline/A/B columns, coverage, PA transfers, supported metrics, checks | Inspect a result |
@@ -95,9 +95,9 @@ Show zero as `0` and unavailable as `Unavailable — [reason]`. A scenario with 
 
 For an incomplete draft, label partial assignment quantities provisional and suppress full value comparisons. For an invalid allocation, suppress authoritative computed totals and show raw inputs with diagnostics. A diagnostic links to the exact template, slot, player, or assumption that needs repair.
 
-White space appears only in measured position lanes, labeled with its shortfall and unit. A separate DH/batting view expresses offensive assignments. Shape decoration, empty canvas, and layout spacing have no quantitative interpretation.
+White space appears only in measured position lanes, labeled with its shortfall and unit. A separate DH/batting view expresses offensive assignments. Shape glyphs, empty canvas, and layout spacing have no quantitative interpretation: shapes are assumption-layer profile labels (see the shape rubric), never calculation inputs.
 
-Player tiles show names and numeric workload. Any performance color has a visible measure, unit, scale, and missing-data treatment. A table or text equivalent exposes every visual quantity. Unclassified profiles are a normal state.
+Player tiles show names and numeric workload. Any performance color has a visible measure, unit, scale, and missing-data treatment. A table or text equivalent exposes every visual quantity. Unclassified profiles are a normal state (e.g. a player with no observed inputs).
 
 ## 8. Inspect evidence
 
@@ -149,7 +149,7 @@ All actions have visible labels and keyboard focus. Dialogs restore focus, error
 
 ## 11. Observable user acceptance
 
-1. From a fresh workspace, a user loads the demo and completes baseline/A/B comparison without a provider connection.
+1. From a fresh start screen, a user opens a storyline, acknowledges its public data, and completes a baseline/A/B comparison without a provider connection.
 2. A keyboard-only user makes the same supported assignment and swap edits as a pointer user.
 3. Removing a starter preserves required demand and PA, exposes uncovered assignments, and disables full value comparison until repaired.
 4. A shared exposure change updates all scenarios; starter-hand metadata alone does not rewrite exposure.
@@ -158,4 +158,4 @@ All actions have visible labels and keyboard focus. Dialogs restore focus, error
 7. Saving/exporting an incomplete draft and importing it restores the same shortfalls and unavailable metrics.
 8. A feasible comparison can be marked ready only after saving and acknowledging unchecked transaction rules; editing it removes readiness.
 9. Save failure and stale calculation responses never produce a false saved/current indicator.
-10. Moving decorative tiles changes neither quantities nor replayed results.
+10. Moving decorative tiles — or relabeling shapes — changes neither quantities nor replayed results.

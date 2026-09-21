@@ -1,6 +1,6 @@
 # Domain and calculation rules
 
-Read this before implementing allocations, validation, comparison metrics, or synthetic fixtures. [SPEC.md](../SPEC.md) defines product scope; this document specifies the first implementation. These rules are synthetic-prototype defaults pending baseball review, not claims about official roster rules.
+Read this before implementing allocations, validation, comparison metrics, or storyline bundles. [SPEC.md](../SPEC.md) defines product scope; this document specifies the first implementation. These rules are local-prototype defaults pending baseball review, not claims about official roster rules.
 
 ## 1. Modeling boundary
 
@@ -11,7 +11,7 @@ Use eight defensive positions: `C`, `1B`, `2B`, `3B`, `SS`, `LF`, `CF`, `RF`. `D
 Each template defines its own explicit demand:
 
 - `games`: number of full games using the template.
-- `defensiveOutsPerGame`: demand per defensive position in each game; 27 in the synthetic fixture.
+- `defensiveOutsPerGame`: demand per defensive position in each game; 27 in the storyline bundles.
 - Nine uniquely numbered batting slots, each with a unique role.
 - Each slot's total projected PA over **all games in that template**, including explicit exposure counts by pitcher handedness.
 
@@ -77,7 +77,7 @@ White space is the labeled shortfall within a position lane. Layout spacing, dec
 
 ## 4. Offensive contribution
 
-A comparison declares exactly one `offenseMode`: `overall` or `split`. It also pins one `metricDefinitionId`, whose definition must establish additive runs per PA, the reference baseline, source, and effective snapshot. The synthetic metric is arbitrary demonstration data, not WAR or a forecast of team wins.
+A comparison declares exactly one `offenseMode`: `overall` or `split`. It also pins one `metricDefinitionId`, whose definition must establish additive runs per PA, the reference baseline, source, and effective snapshot. The storyline metric is observed public data, not WAR or a forecast of team wins.
 
 For `overall`, require an overall rate for each player with positive PA and multiply by total PA. For `split`, multiply `L` and `R` PA by their matching rates. Positive `unknown` exposure makes the split total unavailable; do not fill it with overall rates. Missing rates at zero exposure do not affect totals. Never choose modes independently for the compared scenarios.
 

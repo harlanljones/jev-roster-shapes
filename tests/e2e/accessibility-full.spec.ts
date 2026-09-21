@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 import { expect, test } from '@playwright/test';
+import { openPowerVacuum } from './storyline';
 
 const require = createRequire(import.meta.url);
 const axeCorePath = require.resolve('axe-core/axe.min.js');
@@ -10,8 +11,7 @@ const axeCorePath = require.resolve('axe-core/axe.min.js');
 test.setTimeout(120_000);
 
 test('the workspace passes the full axe rule set', async ({ page }) => {
-	await page.goto('/');
-	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
+	await openPowerVacuum(page);
 	await page.addScriptTag({ path: axeCorePath });
 	const audit = await page.evaluate(() =>
 		(

@@ -1,21 +1,22 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { expect, test } from '@playwright/test';
+import { openPowerVacuum } from './storyline';
 
 const require = createRequire(import.meta.url);
 const axeCorePath = require.resolve('axe-core/axe.min.js');
 
-// Real user journey: switch scenario, edit an allocation, save the draft.
+// Real user journey: open a storyline, switch scenario, edit an allocation,
+// save the draft.
 // Clicks and changes are dispatched as DOM events because this environment's
 // headless Chromium does not produce animation frames, which Playwright's
 // actionability ("stable") checks require. The app receives the same
 // synthetic events a real click would generate.
-test('the analyst switches scenarios, edits an allocation, and saves a draft', async ({ page }) => {
-	await page.goto('/');
+test('the analyst opens a storyline, switches scenarios, edits, and saves', async ({ page }) => {
+	await openPowerVacuum(page);
 
-	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
-	await page.getByRole('tab', { name: 'Candidate B' }).dispatchEvent('click');
-	await expect(page.getByRole('tab', { selected: true })).toContainText('Candidate B');
+	await page.getByRole('tab', { name: 'B — Casas DH hope' }).dispatchEvent('click');
+	await expect(page.getByRole('tab', { selected: true })).toContainText('B — Casas DH hope');
 
 	const firstSelect = page.getByLabel(/assigned player/).first();
 	await expect(firstSelect).toBeVisible();
@@ -37,13 +38,16 @@ test('the analyst switches scenarios, edits an allocation, and saves a draft', a
 	await page.getByRole('button', { name: 'Save draft' }).dispatchEvent('click');
 	await expect(page.locator('.storage-pill')).toHaveAttribute('data-state', 'saved');
 
-	// The saved draft survives a reload (localStorage persistence).
+	// The saved draft survives a reload: reopening the storyline restores the
+	// saved revision from localStorage instead of the file.
 	await page.reload();
+	await page.getByRole('button', { name: 'Open storyline: Power vacuum' }).dispatchEvent('click');
+	await page.getByRole('button', { name: 'Open public bundle' }).dispatchEvent('click');
 	await expect(page.locator('.storage-pill')).toHaveAttribute('data-state', 'saved');
 });
 
 test('edit-to-render latency stays within the 250ms prototype budget', async ({ page }) => {
-	await page.goto('/');
+	await openPowerVacuum(page);
 
 	await expect(page.getByLabel(/assigned player/).first()).toBeVisible();
 
@@ -99,9 +103,8 @@ test('edit-to-render latency stays within the 250ms prototype budget', async ({ 
 });
 
 test('the workspace passes a DOM-level axe audit', async ({ page }) => {
-	await page.goto('/');
+	await openPowerVacuum(page);
 
-	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
 	await page.addScriptTag({ path: axeCorePath });
 	// Full axe.run hangs in this environment's headless Chromium (a rule such as
 	// color-contrast blocks the main thread), so the audit pins an explicit rule

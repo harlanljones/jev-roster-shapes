@@ -1,6 +1,12 @@
 # Data contract v1
 
-Read before writing the importer, domain types, persistence, export, or provider adapter. This is the normative JSON boundary for the synthetic prototype. Implement a machine-readable validator as the first domain work package; [examples/comparison-v1.json](examples/comparison-v1.json) is the golden positive example.
+> Status note (D-38, 2026-09-21): the contract itself is unchanged (schema
+> `"1.0"`, same validation/replay semantics). The executable examples are now
+> the five 2026 storyline bundles in `src/lib/storylines/`; the
+> `docs/examples/comparison-v1.json` golden file below is retained read-only
+> as the historical v1 illustration, not a loaded fixture.
+
+Read before writing the importer, domain types, persistence, export, or provider adapter. This is the normative JSON boundary for the local prototype. Implement a machine-readable validator as the first domain work package; the five storyline bundles in `src/lib/storylines/` are the golden positive examples ([examples/comparison-v1.json](examples/comparison-v1.json) is retained read-only as the historical v1 illustration).
 
 ## 1. Common conventions
 

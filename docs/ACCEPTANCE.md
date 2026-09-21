@@ -1,8 +1,16 @@
 # Acceptance and evaluation
 
+> Status note (D-38, 2026-09-21): §1's synthetic golden table is superseded —
+> the golden fixture was removed from the app/test surface and its expectations
+> replaced by the five 2026 storyline tables in D-40 (asserted in
+> `tests/storylines/registry.test.ts`). The calculation cases in §2 below are
+> unchanged in behavior and are re-targeted at the power-vacuum storyline in
+> `tests/engine/calculation.test.ts`. `docs/examples/comparison-v1.json` stays
+> read-only as the historical v1 illustration.
+
 Read when implementing tests, measuring performance, or claiming completion. These are requirements and independently specified expected values, not a record of passing application tests. Record observed results in the report paths assigned by [ROADMAP.md](../ROADMAP.md).
 
-## 1. Golden synthetic comparison
+## 1. Golden synthetic comparison (historical — superseded, see note above)
 
 [comparison-v1.json](examples/comparison-v1.json) is a complete, invented input bundle. It contains no real player or team projections. Preserve this file as the contract example; the implementation may copy it into runtime fixtures and must verify that copy against this version.
 

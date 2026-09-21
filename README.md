@@ -4,8 +4,9 @@ An interactive workspace for comparing how position-player acquisitions change a
 team's positional coverage, lineup options, and allocation of playing time:
 one baseline roster against two candidates under shared, explicit assumptions.
 Every displayed change traces to an input, an assumption, or a versioned
-calculation. Built as a local prototype around clearly labeled synthetic data,
-with a working public-data path demonstrated end to end.
+calculation. The app opens on an interactive roster-and-shapes graphic followed
+by five 2026 Boston Red Sox comparison storylines built from cited public
+observed data (no team data, no projections).
 
 ## Contents
 
@@ -45,29 +46,35 @@ team partnership, approved team data, staffing, or deployment implied — see
 | [Data contract](docs/DATA_CONTRACT.md) | Versioned records, validation, results, replay |
 | [Interaction contract](docs/WORKFLOWS.md) | Screens, editing, failures, keyboard behavior |
 | [Acceptance](docs/ACCEPTANCE.md) | Exact numerical cases and evaluation protocol |
-| [Decisions](docs/DECISIONS.md) | Adopted defaults (D-01–D-36) and open dependencies |
+| [Decisions](docs/DECISIONS.md) | Adopted defaults (D-01–D-40) and open dependencies |
+| [Shape taxonomy](docs/SHAPE_TAXONOMY.md) | Analyst-labeled 8-shape rubric v1 for the roster graphic |
 | [Public data sources](docs/research/2026-09-21-public-data-sources.md) | Alternative-source survey behind the spike |
 
 ## Demo results
 
-Two runnable demonstrations, both verified in CI-equivalent local runs
-(`bun run check`, `bun run lint`, 28 Vitest tests, 17 Playwright journeys).
+Five runnable 2026 storyline comparisons, each baseline plus two candidates
+over the same illustrative 10-game / 360-PA horizon with observed 2026 R/PA in
+overall mode (splits unavailable), verified in CI-equivalent local runs
+(`bun run check`, `bun run lint`, 30 Vitest tests, 17 Playwright journeys).
+Rebuilt from live data with `bun spikes/mlb-2026/build.mjs`, which asserts the
+hand-derived totals below before writing `src/lib/storylines/*.json`:
 
-**Synthetic comparison** ([comparison-v1.json](docs/examples/comparison-v1.json)):
-ten games, 360 PA per scenario, synthetic offensive totals of **6.4 / 8.4 / 7.6**
-runs for baseline/A/B (deltas +2.0 / +1.2). Demonstrates arithmetic only.
+| Storyline | Baseline | Candidate A | Candidate B |
+| --- | --- | --- | --- |
+| Power vacuum (no Devers/Bregman) | 39.13 | 38.32 (−0.81) | Unavailable — Casas has no 2026 rate |
+| Outfield logjam (4 gloves + DH) | 38.32 | 39.13 (+0.81) | 37.46 (−0.86) |
+| Infield reset (worst to steady) | 38.32 | 39.96 (+1.64) | 39.24 (+0.92) |
+| Catcher split (Narváez vs Wong) | 38.32 | 39.05 (+0.73) | 38.33 (+0.01) |
+| Lefty hole (no Refsnyder/Romy) | 39.13 | 40.77 (+1.64) | 39.58 (+0.45) |
 
-**Public-data comparison** (`spikes/mlb-public/`): eleven 2025 Red Sox players
-via the free MLB Stats API, observed R/PA in overall mode, eligibility from
-fielding-split games (≥10). Rebuilt with `bun spikes/mlb-public/build.mjs`:
+Readiness is false only on the missing transaction-rule acknowledgment;
+missing rates stay missing (candidate B of the power vacuum keeps comparable
+coverage with unavailable offense). The prior synthetic golden fixture and the
+2025 public spike were removed under D-38; `docs/examples/comparison-v1.json`
+is retained read-only as the historical v1 illustration.
 
-- Observed baseline: feasible, **44.466 runs** over the illustrative 360 PA
-- Anthony-for-Refsnyder candidate: feasible, **45.2524 runs (+0.7864)**
-- Readiness false only on the missing transaction-rule acknowledgment, exactly
-  like the golden fixture
-
-![Public-data comparison workspace](docs/images/public-demo-overview.png)
-![Allocation table with real names and eligibility](docs/images/public-demo-allocation.png)
+![Start screen: interactive roster-and-shapes graphic](docs/images/library-roster-shapes.png)
+![Power-vacuum storyline comparison](docs/images/storyline-comparison.png)
 
 **Performance**: edit-to-render p95 of **8.8 ms** against the proposed 250 ms
 budget, measured on the RS-07 single-worker reference setup
@@ -109,11 +116,12 @@ result replays without any future model response.
 
 ## Data sources
 
-- **Synthetic** (`dataClass: "synthetic"`): invented fixtures in
-  `src/lib/fixtures/`; the app opens these by default.
-- **Public** (`dataClass: "public"`): the MLB Stats API spike described above.
-  Public bundles open only after an explicit per-bundle acknowledgment
-  ("observed public values, not team-approved projections").
+- **Public** (`dataClass: "public"`): fifteen 2026 Red Sox position players via
+  the free MLB Stats API (no key), observed R/PA through 2026-09-20 in overall
+  mode, eligibility from fielding-split games (≥10). Each storyline opens only
+  after an explicit per-bundle acknowledgment ("observed public values, not
+  team-approved projections"). Input digests are pinned in
+  `src/lib/storylines/registry.ts`; any content change fails the suite.
 - **Restricted** (`dataClass: "restricted"`): hard-blocked at import until an
   RS-08 data-owner permission record exists; the open comparison stays intact.
 - No FanGraphs content is included or scraped — platoon splits would need a
@@ -133,10 +141,13 @@ bun run build
 bun run test:e2e   # production build + Playwright (Chromium)
 ```
 
-To run the public-data demo: `bun run dev`, open the app, use **Import JSON**
-with `spikes/mlb-public/redsox-observed-2025.json`, acknowledge the public-data
-prompt, and compare the observed baseline against the Anthony candidate. To
-rebuild the bundle from live data: `bun spikes/mlb-public/build.mjs`.
+To open a storyline: `bun run dev`, open the app, pick a roster on the
+interactive graphic (position lanes show each player's shape and workload),
+then open one of the five storyline cards and confirm its public-data
+acknowledgment. Declining keeps the library. To rebuild the bundles from live
+2026 data: `bun spikes/mlb-2026/build.mjs` (asserts the hand-derived totals,
+then writes `src/lib/storylines/*.json`; run `prettier --write` on the
+regenerated JSON and rerun the suite — the pinned digests fail until reviewed).
 
 Note: `bun run test` also contains a browser-component project that hangs in
 frame-less headless Chromium; the Playwright journeys cover that surface
@@ -145,12 +156,13 @@ instead (see RS-07 limitations in ROADMAP.md).
 ## Repository layout
 
 ```text
-src/lib/{contracts,engine,persistence,ui,fixtures}/  component sources
-src/lib/app/  workspace wiring (HomePage, view model)
+src/lib/{contracts,storylines,shapes,engine,persistence,ui}/  component sources
+src/lib/app/  library page, roster graphic, workspace wiring (HomePage, view model)
 src/routes/   SvelteKit single-page shell
-tests/{contracts,fixtures,engine,persistence,integration,e2e}/  checks
-spikes/mlb-public/  public-data adapter spike (script + static bundle)
-docs/  contracts, decisions, research, example bundle, screenshots
+tests/{contracts,storylines,engine,persistence,integration,e2e}/  checks
+spikes/mlb-2026/  2026 storyline bundle builder (script + checked-in bundles live in src)
+spikes/mlb-public/  retired 2025 spike (script + notes retained; output removed under D-38)
+docs/  contracts, decisions, shape rubric, research, historical example bundle
 reports/prototype/  measured latency evidence
 ```
 
@@ -158,9 +170,13 @@ reports/prototype/  measured latency evidence
 
 Complete: RS-01 through RS-07 acceptance gates, plus import-from-file,
 Swap/Move controls, drag-and-drop, keyboard walkthrough, full axe audit,
-data-class gate, and the public-data spike. Everything is verified against the
-contracts; see the [roadmap handoff](ROADMAP.md#implementation-handoff) for
-observed commands and per-task limitations.
+data-class gate, and — under D-38 through D-40 — the library-first revision:
+interactive roster-and-shapes graphic, analyst-labeled 8-shape rubric v1, and
+five 2026 public storyline comparisons replacing the retired synthetic golden
+fixture and 2025 spike. Everything is verified against the contracts; see the
+[roadmap handoff](ROADMAP.md#implementation-handoff) for observed commands and
+per-task limitations. Shape labels are assumptions, never calculation inputs;
+evaluator agreement on the taxonomy (O-03) stays open.
 
 Not claimed: team partnership, approved data, pilot staffing, model
 performance, deployment, or any outcome-study result. RS-08 (permissions,

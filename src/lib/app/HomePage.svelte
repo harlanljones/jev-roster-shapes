@@ -3,7 +3,6 @@
 
 	import type { Bundle, Scenario } from '$lib/contracts';
 	import { calculateComparison, calculateScenario, type ComparisonCalculation } from '$lib/engine';
-	import { goldenBundle } from '$lib/fixtures';
 	import {
 		createMemoryPersistenceRepository,
 		createPersistenceRepository,
@@ -29,13 +28,33 @@
 	} from '$lib/ui/types';
 	import { buildComparisonViewModel } from './workspace';
 
-	const initialBundle = structuredClone(goldenBundle);
-	const initialCalculation = calculateComparison(initialBundle);
-	let bundle = $state<Bundle>(initialBundle);
-	let calculation = $state<ComparisonCalculation>(initialCalculation);
-	let activeScenarioId = $state(initialBundle.comparison.baseline.id);
+	// Library-first workspace (D-40): the library collects the D-36 public
+	// acknowledgment before opening, so the initial bundle arrives acknowledged.
+	let {
+		initialBundle,
+		onBack
+	}: {
+		initialBundle: Bundle;
+		onBack: () => void;
+	} = $props();
+
+	// The initial bundle is a one-time seed: the workspace owns its draft from
+	// here on (edits replace it via commitMutation; opening another storyline
+	// remounts this component). Read inside a closure so intent is explicit.
+	function startState(): { bundle: Bundle; calculation: ComparisonCalculation } {
+		// $state.snapshot unwraps the reactive proxy; structuredClone on the
+		// proxy itself throws DataCloneError in real browsers.
+		const start = structuredClone($state.snapshot(initialBundle));
+		return { bundle: start, calculation: calculateComparison(start) };
+	}
+	const start = startState();
+	let bundle = $state<Bundle>(start.bundle);
+	let calculation = $state<ComparisonCalculation>(start.calculation);
+	let activeScenarioId = $state(start.bundle.comparison.baseline.id);
 	let storageState = $state<ComparisonViewModel['storageState']>('unsaved');
-	let storageMessage = $state<string | undefined>('Demo loaded from the synthetic fixture.');
+	let storageMessage = $state<string | undefined>(
+		`Opened ${start.bundle.bundleId} for local review — observed public values, not team-approved projections. Edits stay local until saved.`
+	);
 	let savedAt = $state<string | null>(null);
 	let unsaved = $state(true);
 	let selectedEvidenceId = $state<string | null>(null);
@@ -75,17 +94,24 @@
 			return;
 		}
 		void (async () => {
-			// Restore a previously saved draft so a reload replays the saved
-			// comparison instead of silently resetting to the fixture.
+			// Restore a previously saved draft for this bundle so a reload
+			// replays the saved comparison instead of resetting to the file.
 			try {
-				const loaded = await repository.load(initialBundle.bundleId);
-				if (!loaded) return;
+				const stored = await repository.load(start.bundle.bundleId);
+				if (!stored) return;
+				const loaded = stored;
 				bundle = loaded.current.bundle;
 				calculation = calculateComparison(bundle);
 				savedAt = loaded.current.savedAt;
 				unsaved = false;
 				storageState = 'saved';
 				storageMessage = `Restored saved revision ${loaded.current.storedRevision} at ${formatSavedAt(savedAt)}.`;
+				if (loaded.current.bundle.dataClass === 'public') {
+					if (!ackedPublicIds.includes(loaded.current.bundle.bundleId)) {
+						ackedPublicIds.push(loaded.current.bundle.bundleId);
+					}
+				}
+				pendingPublic = null;
 			} catch {
 				storageState = 'failed';
 				storageMessage = 'The saved draft could not be restored; showing the fixture.';
@@ -278,10 +304,14 @@
 	}
 
 	let pendingConflict = $state<{ text: string; bundleId: string } | null>(null);
+	// The library collects the D-36 acknowledgment before opening, so no
+	// startup prompt is needed. File imports of other public bundles still go
+	// through the per-bundle acknowledgment below.
 	let pendingPublic = $state<{ text: string; replace: boolean; bundleId: string } | null>(null);
 	// Bundle IDs the user explicitly acknowledged as public this session (D-36).
-	// A plain list: only read inside event handlers, never rendered.
-	let ackedPublicIds: string[] = [];
+	// The library-acknowledged opening bundle is pre-seeded. A plain list:
+	// only read inside event handlers, never rendered.
+	let ackedPublicIds: string[] = [start.bundle.bundleId];
 
 	function classGate(
 		text: string
@@ -443,6 +473,7 @@
 		</div>
 		<div class="hero-actions" aria-label="Draft actions">
 			<span class="storage-pill" data-state={model.storageState}>{model.storageState}</span>
+			<button class="secondary-button" type="button" onclick={onBack}>← Storylines</button>
 			<label class="secondary-button file-button">
 				Import JSON
 				<input

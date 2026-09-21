@@ -11,7 +11,15 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 
 // Component ownership (ROADMAP ownership map, DECISIONS D-17). Every file under src/lib and
 // tests must belong to one of these folders; add a folder here before creating it.
-const sourceElements = ['contracts', 'fixtures', 'engine', 'persistence', 'ui', 'classification'];
+const sourceElements = [
+	'contracts',
+	'storylines',
+	'shapes',
+	'engine',
+	'persistence',
+	'ui',
+	'classification'
+];
 const testElements = [...sourceElements, 'app', 'integration', 'e2e'];
 
 const elements = [
@@ -32,18 +40,24 @@ const everySourceElement = [...sourceElements, 'app'];
 // Frozen import boundaries: pure components depend only on contracts; the app composes all.
 const policies = [
 	allow('contracts', ['contracts']),
-	allow('fixtures', ['fixtures', 'contracts']),
+	allow('storylines', ['storylines', 'contracts']),
+	allow('shapes', ['shapes']),
 	allow('engine', ['engine', 'contracts']),
 	allow('persistence', ['persistence', 'contracts']),
-	allow('ui', ['ui', 'contracts']),
+	allow('ui', ['ui', 'contracts', 'shapes']),
 	allow('classification', ['classification', 'contracts']),
 	allow('app', everySourceElement),
-	allow('test-contracts', ['test-contracts', 'contracts', 'fixtures']),
-	allow('test-fixtures', ['test-fixtures', 'fixtures', 'contracts']),
-	allow('test-engine', ['test-engine', 'engine', 'contracts', 'fixtures']),
-	allow('test-persistence', ['test-persistence', 'persistence', 'contracts', 'fixtures']),
-	allow('test-ui', ['test-ui', 'ui', 'contracts', 'fixtures']),
-	allow('test-classification', ['test-classification', 'classification', 'contracts', 'fixtures']),
+	allow('test-contracts', ['test-contracts', 'contracts', 'storylines', 'shapes']),
+	allow('test-storylines', ['test-storylines', 'storylines', 'contracts', 'engine', 'shapes']),
+	allow('test-engine', ['test-engine', 'engine', 'contracts', 'storylines']),
+	allow('test-persistence', ['test-persistence', 'persistence', 'contracts', 'storylines']),
+	allow('test-ui', ['test-ui', 'ui', 'contracts', 'storylines']),
+	allow('test-classification', [
+		'test-classification',
+		'classification',
+		'contracts',
+		'storylines'
+	]),
 	allow('test-app', ['test-app', ...everySourceElement]),
 	allow('test-integration', ['test-integration', ...everySourceElement]),
 	allow('test-e2e', ['test-e2e', ...everySourceElement])
@@ -125,10 +139,11 @@ export default defineConfig(
 		rules: { 'no-restricted-imports': ['error', { patterns: [nodeBuiltins] }] }
 	},
 	{
-		// Contracts, fixtures, engine, and persistence stay framework-free (DECISIONS D-08).
+		// Contracts, storylines, shapes, engine, and persistence stay framework-free (DECISIONS D-08).
 		files: [
 			'src/lib/contracts/**',
-			'src/lib/fixtures/**',
+			'src/lib/storylines/**',
+			'src/lib/shapes/**',
 			'src/lib/engine/**',
 			'src/lib/persistence/**'
 		],
