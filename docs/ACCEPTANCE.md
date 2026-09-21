@@ -12,6 +12,11 @@ Read when implementing tests, measuring performance, or claiming completion. The
 
 ## 1. Golden synthetic comparison (historical — superseded, see note above)
 
+The public storyline library is presented as retrospective analysis. Its event
+window and dated anchors describe when the roster question arose; its source
+snapshot date describes when observed values were fetched. These dates must not
+be collapsed into one generic "current" date in the UI.
+
 [comparison-v1.json](examples/comparison-v1.json) is a complete, invented input bundle. It contains no real player or team projections. Preserve this file as the contract example; the implementation may copy it into runtime fixtures and must verify that copy against this version.
 
 The horizon is ten games: four in template `vs-left-starter`, six in `vs-right-starter`. Each position requires 27 defensive outs per game. Each batting slot has 16 and 24 PA respectively, totaling 40. Every slot has ten PA versus left-handed pitchers and thirty versus right-handed pitchers across both templates. This exposure is explicit and deliberately distinct from starter-handedness metadata.

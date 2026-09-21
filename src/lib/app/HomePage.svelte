@@ -27,6 +27,7 @@
 		ReviewScope
 	} from '$lib/ui/types';
 	import { buildComparisonViewModel } from './workspace';
+	import { storylineRegistry } from '$lib/storylines/registry';
 
 	// Library-first workspace (D-40): the library collects the D-36 public
 	// acknowledgment before opening, so the initial bundle arrives acknowledged.
@@ -74,6 +75,9 @@
 			savedAt,
 			unsaved
 		)
+	);
+	const storylineContext = $derived(
+		storylineRegistry.find((storyline) => storyline.bundle.bundleId === bundle.bundleId)
 	);
 	const activeScenario = $derived(
 		model.scenarios.find((scenario) => scenario.id === model.activeScenarioId)
@@ -449,7 +453,9 @@
 	<header class="hero">
 		<div>
 			<p class="eyebrow">
-				Roster Shapes / {model.dataClass === 'synthetic'
+				{storylineContext?.retrospective
+					? 'Retrospective analysis / '
+					: 'Roster Shapes / '}{model.dataClass === 'synthetic'
 					? 'synthetic workspace'
 					: 'public-data comparison'}
 			</p>
@@ -470,6 +476,12 @@
 					<strong>Public data</strong> — observed public values, not team-approved projections
 				{/if}
 			</p>
+			{#if storylineContext?.retrospective}
+				<p class="retrospective-banner">
+					<strong>Retrospective analysis</strong> · event window: {storylineContext.date} ·
+					{storylineContext.eventBasis}
+				</p>
+			{/if}
 		</div>
 		<div class="hero-actions" aria-label="Draft actions">
 			<span class="storage-pill" data-state={model.storageState}>{model.storageState}</span>
@@ -524,7 +536,9 @@
 				<p class="eyebrow">Decision surface</p>
 				<h2 id="comparison-heading">Comparison snapshot</h2>
 			</div>
-			<span class="snapshot">{model.snapshotLabel} · revision {model.comparisonRevision}</span>
+			<span class="snapshot"
+				>Source snapshot {model.snapshotLabel} · revision {model.comparisonRevision}</span
+			>
 		</div>
 		<div class="comparison-grid">
 			{#each model.scenarios as scenario (scenario.id)}
@@ -731,6 +745,16 @@
 		padding: 0.6rem 0.85rem;
 		color: var(--muted);
 		background: rgb(255 254 249 / 70%);
+		font-size: 0.82rem;
+	}
+	.retrospective-banner {
+		max-width: 48rem;
+		margin: 0.75rem 0 0;
+		border: 1px solid var(--rust);
+		border-radius: 0.75rem;
+		padding: 0.65rem 0.85rem;
+		color: var(--muted);
+		background: rgb(156 74 46 / 7%);
 		font-size: 0.82rem;
 	}
 	.data-class-banner[data-class='public'] {

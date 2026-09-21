@@ -1,10 +1,10 @@
 # Interaction contract
 
-Status: implementation defaults for the local prototype (D-38 through D-40: library-first, five 2026 public storyline comparisons, analyst-labeled shape rubric v1). Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
+Status: implementation defaults for the local prototype (D-38 through D-40: library-first, five public 2026 retrospective analyses, analyst-labeled shape rubric v1). Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
 
 ## 1. First complete journey
 
-An analyst opens the start screen's roster-and-shapes graphic, picks one of the five 2026 storyline comparisons, acknowledges its public-data provenance, reviews the shared planning context, edits allocations across baseline and candidates A/B, compares supported results, inspects evidence, and exports a comparison another analyst can replay.
+An analyst opens the start screen's roster-and-shapes graphic, picks one of the five retrospective analyses, acknowledges its public-data provenance, reviews the event window and source snapshot, edits allocations across baseline and candidates A/B, compares supported results, inspects evidence, and exports a comparison another analyst can replay.
 
 Completion means the exported comparison restores its inputs and results, including gaps and unavailable metrics. An acquisition preference is optional; a recommended transaction is outside this workflow.
 
@@ -16,7 +16,7 @@ Use one comparison workspace with these reachable views. They may be panels or r
 
 | View | Required content | Primary action |
 | --- | --- | --- |
-| Library / start | Interactive roster-and-shapes graphic (position lanes, shape glyphs, player detail, table equivalent) plus the five storyline cards with baseline/A/B previews | Open comparison |
+| Library / start | Interactive roster-and-shapes graphic (position lanes, shape glyphs, player detail, table equivalent) plus five retrospective analyses with event windows and source snapshots | Open analysis |
 | Assumptions | Horizon, templates, PA budgets, exposure assumptions, limits, provenance | Apply assumptions |
 | Allocation | Baseline/A/B selector, membership, template slots, workloads, diagnostics | Commit allocation edit |
 | Compare | Baseline/A/B columns, coverage, PA transfers, supported metrics, checks | Inspect a result |
@@ -149,7 +149,7 @@ All actions have visible labels and keyboard focus. Dialogs restore focus, error
 
 ## 11. Observable user acceptance
 
-1. From a fresh start screen, a user opens a storyline, acknowledges its public data, and completes a baseline/A/B comparison without a provider connection.
+1. From a fresh start screen, a user opens a retrospective analysis, acknowledges its public data, sees the event window and source snapshot, and completes a baseline/A/B comparison without a provider connection.
 2. A keyboard-only user makes the same supported assignment and swap edits as a pointer user.
 3. Removing a starter preserves required demand and PA, exposes uncovered assignments, and disables full value comparison until repaired.
 4. A shared exposure change updates all scenarios; starter-hand metadata alone does not rewrite exposure.

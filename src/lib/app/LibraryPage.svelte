@@ -68,9 +68,13 @@
 	{#if selected}
 		<section class="scenario-heading" aria-labelledby="scenario-title">
 			<div>
-				<p class="eyebrow">{selected.date} · {selected.timeline}</p>
+				<p class="eyebrow">
+					{selected.retrospective ? 'Retrospective analysis' : 'Scenario'} · {selected.date}
+				</p>
 				<h2 id="scenario-title">{selected.title}</h2>
-				<p>{selected.description}</p>
+				<p>{selected.description} {selected.eventBasis}</p>
+				<p class="scenario-source">{selected.sourceLabel}</p>
+				<p class="scenario-source">{selected.sourceLabel}</p>
 			</div>
 			<button class="primary-button" type="button" onclick={() => (pendingOpen = true)}
 				>Open workspace</button

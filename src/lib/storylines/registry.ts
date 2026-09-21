@@ -24,6 +24,8 @@ export interface Storyline {
 	timeline: string;
 	description: string;
 	date: string;
+	retrospective: boolean;
+	eventBasis: string;
 	sourceLabel: string;
 	bundle: Bundle;
 	inputDigest: string;
@@ -37,6 +39,8 @@ function storyline(
 	timeline: string,
 	description: string,
 	date: string,
+	retrospective: boolean,
+	eventBasis: string,
 	sourceLabel: string,
 	json: unknown,
 	expected: readonly StorylineExpectation[]
@@ -49,6 +53,8 @@ function storyline(
 		timeline,
 		description,
 		date,
+		retrospective,
+		eventBasis,
 		sourceLabel,
 		bundle,
 		inputDigest: computeInputDigest(bundle),
@@ -69,10 +75,12 @@ export const storylineRegistry: readonly Storyline[] = [
 		'power-vacuum',
 		'Who carries the lineup without Devers and Bregman?',
 		'Devers was traded, Bregman signed with the Cubs, and no Red Sox hitter was projected for 20 home runs. Is the 21-year-old ready to carry the lineup — or does the veteran cleanup bat, or the injured slugger’s hoped-for return?',
-		'2026 season snapshot · baseline, Anthony, or Casas at DH/left field',
+		'Retrospective roster question · power and DH succession',
 		'Who absorbs the missing middle-of-the-order power?',
-		'September 20, 2026',
-		'MLB Stats API game 822922 + MLB.com depth chart snapshot',
+		'June 15, 2025 → January 14, 2026',
+		true,
+		'Devers traded to San Francisco on June 15, 2025; Bregman signed with Chicago on January 14, 2026.',
+		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		powerVacuumJson,
 		[
 			{ scenarioId: 'base', offenseRuns: '39.13172', offenseDelta: '0', feasibility: 'feasible' },
@@ -89,10 +97,12 @@ export const storylineRegistry: readonly Storyline[] = [
 		'outfield-logjam',
 		'Four gloves, three spots, one DH',
 		'Anthony, Duran, Abreu, Rafaela: four quality outfielders and only three starting spots. Duran slides to DH while Yoshida — the most expensive pinch hitter in the game — waits for at-bats.',
-		'2026 season snapshot · outfield/DH allocation as of the roster snapshot',
+		'Retrospective roster question · outfield/DH congestion',
 		'Four outfield profiles compete for three defensive spots and one DH lane.',
-		'September 21, 2026',
-		'MLB.com depth chart snapshot · MLB Stats API observed totals',
+		'August 15, 2025 → spring training 2026',
+		true,
+		'Refsnyder’s August 15, 2025 injured-list episode and the 2026 spring roster construction create the dated roster question.',
+		'Event records: MLB Stats API transactions + public depth chart · data snapshot: September 20–21, 2026',
 		outfieldLogjamJson,
 		[
 			{ scenarioId: 'base', offenseRuns: '38.3194', offenseDelta: '0', feasibility: 'feasible' },
@@ -114,10 +124,12 @@ export const storylineRegistry: readonly Storyline[] = [
 		'infield-reset',
 		'From the worst infield to steady',
 		'116 errors and the worst infield defense in baseball since 2020. Contreras at first, Durbin at third, rookie Mayer at second — with versatile veteran IKF and utility Monasterio behind him.',
-		'2026 season snapshot · second-base choice against the current infield',
+		'Retrospective roster question · infield reset',
 		'Choose the second baseman without hiding defensive coverage tradeoffs.',
-		'September 21, 2026',
-		'MLB.com depth chart snapshot · MLB Stats API observed totals',
+		'February 9–10, 2026',
+		true,
+		'Durbin, Monasterio, and Seigler arrived in the February 9 trade; Kiner-Falefa signed February 10.',
+		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		infieldResetJson,
 		[
 			{ scenarioId: 'base', offenseRuns: '38.3194', offenseDelta: '0', feasibility: 'feasible' },
@@ -139,10 +151,12 @@ export const storylineRegistry: readonly Storyline[] = [
 		'catcher-split',
 		'Narváez’s middle ground vs Wong’s rebound',
 		'Narváez played the second half of 2025 on a bad left knee that needed surgery. Wong lost the starter job and the bat. Who catches the win-now staff — or do they carry both and sit a rookie outfielder?',
-		'2026 season snapshot · catcher role and DH spillover',
+		'Retrospective roster question · catcher workload',
 		'Compare catcher workload, bat, and the cost of carrying both.',
-		'September 21, 2026',
-		'MLB.com depth chart snapshot · MLB Stats API observed totals',
+		'2025 second half → September 20, 2026',
+		true,
+		'Historical catcher workload is reviewed against the September 20, 2026 observed lineup; no single transaction date is claimed.',
+		'Event record: MLB Stats API game 822922 + public depth chart · data snapshot: September 20–21, 2026',
 		catcherSplitJson,
 		[
 			{ scenarioId: 'base', offenseRuns: '38.3194', offenseDelta: '0', feasibility: 'feasible' },
@@ -164,10 +178,12 @@ export const storylineRegistry: readonly Storyline[] = [
 		'lefty-hole',
 		'No Refsnyder, no Romy: who faces lefties?',
 		'Refsnyder left for Seattle, Gonzalez opened on the 60-day IL, and Devers and Bregman took their lefty-mashing with them. Splits are unavailable — so the righty bench bats audition on overall observed rates only.',
-		'2026 season snapshot · left-handed-starter question, no split claim',
+		'Retrospective roster question · lefty coverage',
 		'Test right-handed depth against a lefty question without inventing splits.',
-		'September 21, 2026',
-		'MLB.com depth chart snapshot · MLB Stats API observed totals',
+		'November 2, 2025 → March 25, 2026',
+		true,
+		'Refsnyder elected free agency November 2, 2025; Gonzalez went to the 60-day IL March 12 and Casas was placed on the IL March 25.',
+		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		leftyHoleJson,
 		[
 			{ scenarioId: 'base', offenseRuns: '39.13172', offenseDelta: '0', feasibility: 'feasible' },

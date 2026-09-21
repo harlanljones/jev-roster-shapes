@@ -22,7 +22,7 @@ It is a working prototype, not a finished product. It uses public baseball data 
 
 ## The demo: five 2026 Red Sox storylines
 
-The demo opens on a roster graphic. Each position shows its player, workload, and profile shape. Five storylines from the real 2026 Red Sox season follow. Each compares a baseline against two candidates over the same illustrative 10-game horizon, using observed 2026 scoring rates (runs per plate appearance through September 20, via the free MLB Stats API).
+The demo opens on a roster graphic. Each position shows its player, workload, and profile shape. Five storylines from real Red Sox roster events follow as retrospective analyses. Their displayed dates are verified event windows or dated anchors, not the later date when public stats were fetched. Each compares a baseline against two candidates over the same illustrative 10-game horizon, using observed 2026 scoring rates (runs per plate appearance through September 20, via the free MLB Stats API).
 
 | Storyline | Baseline | Candidate A | Candidate B |
 | --- | --- | --- | --- |
