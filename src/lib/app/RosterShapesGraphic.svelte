@@ -147,6 +147,17 @@
 				};
 			})
 	);
+	const rosterTokens = $derived(
+		rosterMat.map((item, index) => {
+			const node = nodes.find((candidate) => candidate.playerId === item.player.id);
+			return {
+				...item,
+				role: node?.role ?? 'Reserve',
+				x: node ? Number(node.left.replace('%', '')) * 5.8 : 14 + (index % 6) * 14,
+				y: node ? Number(node.top.replace('%', '')) * 2.9 : 74 + Math.floor(index / 6) * 19
+			};
+		})
+	);
 	const lineupPairs = $derived(
 		lineupViews[0]?.rows.map((row, index) => ({
 			order: row.order,
@@ -269,29 +280,35 @@
 			and profile label. Geometry summarizes the profile; it never creates value or coverage.
 		</p>
 		<div class="shape-board" aria-label="Roster construction visualization">
-			<div class="mat-label">Active roster · shape is the profile mark, not a value scale</div>
-			{#each rosterMat as item (item.player.id)}
-				<button
-					type="button"
-					class="shape-player"
-					class:selected={selectedPlayerId === item.player.id}
-					aria-label="{item.player.name}, {item.shape}, {item.pa} plate appearances"
-					onclick={() => onSelect(selectedPlayerId === item.player.id ? null : item.player.id)}
-				>
-					<div class="shape-player-glyph">
-						<ShapeGlyph shape={item.shape} size={48} /><img
-							src={headshotUrl(item.player.id)}
-							alt=""
-							loading="lazy"
-						/>
-					</div>
-					<div class="shape-player-copy">
-						<strong>{item.player.name}</strong><small
-							>{item.roles.join(' · ') || 'Reserve'} · {item.pa} PA · {item.starts} starts</small
-						>
-					</div>
-				</button>
-			{/each}
+			<div class="mat-label">
+				Roster construction · allocated roles, reserves, and measured white space
+			</div>
+			<svg
+				class="roster-canvas"
+				viewBox="0 0 600 190"
+				role="img"
+				aria-label="Active roster arranged by field role and reserve status"
+			>
+				<rect x="8" y="8" width="584" height="128" rx="14" class="canvas-field" />
+				<path d="M300 18v108M18 72h564" class="canvas-grid" />
+				<text x="22" y="28" class="canvas-label">ALLOCATED FIELD / DH</text>
+				<text x="22" y="158" class="canvas-label">REMAINDER RAIL · NOT SIMULTANEOUS COVERAGE</text>
+				{#each rosterTokens as item (item.player.id)}
+					<button
+						type="button"
+						class:selected={selectedPlayerId === item.player.id}
+						class="canvas-player"
+						style="left: {item.x}px; top: {item.y}px"
+						aria-label="{item.player.name}, {item.role}, {item.shape}, {item.pa} plate appearances"
+						onclick={() => onSelect(selectedPlayerId === item.player.id ? null : item.player.id)}
+					>
+						<ShapeGlyph shape={item.shape} size={34} />
+						<img src={headshotUrl(item.player.id)} alt="" loading="lazy" />
+						<strong>{item.player.name}</strong>
+						<small>{item.role} · {item.pa} PA</small>
+					</button>
+				{/each}
+			</svg>
 		</div>
 	</section>
 
@@ -519,10 +536,34 @@
 		box-shadow: 8px 8px 0 var(--rust);
 	}
 	.shape-board {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-		gap: 0.7rem;
+		position: relative;
+		min-height: 12rem;
 		margin-top: 1rem;
+	}
+	.roster-canvas {
+		display: block;
+		width: 100%;
+		height: auto;
+		min-height: 12rem;
+		border: 1px solid var(--line);
+		border-radius: 0.85rem;
+		background: var(--paper);
+	}
+	.canvas-field {
+		fill: var(--panel);
+		stroke: var(--line-strong);
+	}
+	.canvas-grid {
+		fill: none;
+		stroke: var(--line);
+		stroke-dasharray: 4 4;
+	}
+	.canvas-label {
+		fill: var(--muted);
+		font:
+			700 8px system-ui,
+			sans-serif;
+		letter-spacing: 1.2px;
 	}
 	.shape-roster-intro {
 		max-width: 48rem;
@@ -539,11 +580,12 @@
 		letter-spacing: 0.04em;
 		text-transform: uppercase;
 	}
-	.shape-player {
+	.canvas-player {
+		position: absolute;
 		display: grid;
 		justify-items: center;
 		gap: 0.12rem;
-		min-width: 5.4rem;
+		width: 7.5rem;
 		border: 1px solid var(--line);
 		border-radius: 0.6rem;
 		padding: 0.35rem;
@@ -552,30 +594,26 @@
 		cursor: pointer;
 		font: inherit;
 		text-align: center;
+		transform: translate(-50%, -50%);
+		z-index: 1;
 	}
-	.shape-player-glyph {
-		position: relative;
-		display: grid;
-		place-items: center;
-		color: var(--rust);
-	}
-	.shape-player-glyph img {
+	.canvas-player img {
 		position: absolute;
-		width: 1.55rem;
-		height: 1.55rem;
+		width: 1.25rem;
+		height: 1.25rem;
+		margin-top: -2.05rem;
 		border-radius: 50%;
 		object-fit: cover;
-		background: var(--paper-deep);
 	}
-	.shape-player strong {
-		font-size: 0.68rem;
-		font-weight: 700;
+	.canvas-player strong {
+		font-size: 0.64rem;
+		white-space: nowrap;
 	}
-	.shape-player small {
+	.canvas-player small {
 		color: var(--muted);
-		font-size: 0.62rem;
+		font-size: 0.58rem;
 	}
-	.shape-player.selected {
+	.canvas-player.selected {
 		border-color: var(--rust-dark);
 		box-shadow: 0 0 0 3px rgb(168 79 50 / 16%);
 	}
