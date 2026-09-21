@@ -128,6 +128,13 @@
 			};
 		})
 	);
+	const lineupPairs = $derived(
+		lineupViews[0]?.rows.map((row, index) => ({
+			order: row.order,
+			left: row,
+			right: lineupViews[1]?.rows[index] ?? row
+		})) ?? []
+	);
 
 	const depthRows = $derived(
 		(lineupViews[0]?.rows ?? []).map((row) => {
@@ -195,34 +202,44 @@
 				</button>
 			{/each}
 		</div>
-		<div class="lineup-tables" aria-label="Scenario lineups by pitcher-hand context">
-			{#each lineupViews as lineup (lineup.template.id)}
-				<section class="source-table" aria-labelledby="lineup-{lineup.template.id}">
-					<div class="table-kicker">Scenario lineup · {lineup.template.starterHand} context</div>
-					<h3 id="lineup-{lineup.template.id}">{lineup.template.label}</h3>
-					<p>
-						{lineup.template.games} games · explicit L/R exposure per batting slot. No platoon substitution
-						is inferred.
-					</p>
-					<table>
-						<thead
-							><tr
-								><th scope="col">#</th><th scope="col">Player</th><th scope="col">Role</th><th
-									scope="col">L PA</th
-								><th scope="col">R PA</th></tr
-							></thead
-						>
-						<tbody
-							>{#each lineup.rows as row (row.order)}<tr
-									><th scope="row">{row.order}</th><td>{row.player}</td><td>{row.role}</td><td
-										>{row.exposure.L}</td
-									><td>{row.exposure.R}</td></tr
-								>{/each}</tbody
-						>
-					</table>
-				</section>
-			{/each}
-		</div>
+		<section class="lineup-card" aria-labelledby="lineup-heading">
+			<div class="table-kicker">Scenario lineup · one card, two platoon contexts</div>
+			<h3 id="lineup-heading">{lineupViews[0]?.template.label ?? 'Scenario lineup'}</h3>
+			<p class="source-note">
+				Both contexts use the same assigned players. L/R columns are explicit PA exposure; no
+				substitution is inferred.
+			</p>
+			<div class="lineup-columns">
+				<table>
+					<caption
+						>Left-handed pitcher context · {lineupViews[0]?.template.games ?? 0} games</caption
+					><thead
+						><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th></tr
+						></thead
+					><tbody
+						>{#each lineupPairs as pair (pair.order)}<tr
+								><th scope="row">{pair.order}</th><td>{pair.left.player}</td><td
+									>{pair.left.role}</td
+								></tr
+							>{/each}</tbody
+					>
+				</table>
+				<table>
+					<caption
+						>Right-handed pitcher context · {lineupViews[1]?.template.games ?? 0} games</caption
+					><thead
+						><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th></tr
+						></thead
+					><tbody
+						>{#each lineupPairs as pair (pair.order)}<tr
+								><th scope="row">{pair.order}</th><td>{pair.right.player}</td><td
+									>{pair.right.role}</td
+								></tr
+							>{/each}</tbody
+					>
+				</table>
+			</div>
+		</section>
 	</div>
 
 	<section class="shape-roster" aria-labelledby="shape-roster-heading">
@@ -232,7 +249,7 @@
 			Shapes are the roster’s visual language: each player keeps a readable name, role, workload,
 			and profile label. Geometry summarizes the profile; it never creates value or coverage.
 		</p>
-		<div class="roster-strip">
+		<div class="shape-board">
 			{#each rosterPlayers.filter( (player) => baselineMemberIds.has(player.id) ) as player (player.id)}
 				<button
 					type="button"
@@ -240,12 +257,13 @@
 					class:selected={selectedPlayerId === player.id}
 					onclick={() => onSelect(selectedPlayerId === player.id ? null : player.id)}
 				>
+					<div class="shape-token"><ShapeGlyph shape={shapeOf(player.id).shape} size={54} /></div>
 					<img src={headshotUrl(player.id)} alt="" loading="lazy" />
-					<ShapeGlyph shape={shapeOf(player.id).shape} size={26} />
-					<span>{player.name}</span>
+					<strong>{player.name}</strong>
 					<small
-						>{shapeOf(player.id).shape} · {player.eligiblePositions.join('/') ||
-							'DH / no fielding eligibility'}</small
+						>{shapeOf(player.id).shape} · {player.eligiblePositions.join('/') || 'DH'} · {nodes.find(
+							(node) => node.playerId === player.id
+						)?.pa ?? 0} PA</small
 					>
 				</button>
 			{/each}
@@ -428,25 +446,20 @@
 		gap: 1rem;
 		align-items: start;
 	}
-	.lineup-tables {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.75rem;
-	}
-	.source-table {
+	.lineup-card {
 		border: 1px solid var(--line);
 		border-radius: 1rem;
 		padding: 1rem;
 		background: var(--panel);
 	}
-	.source-table h3,
+	.lineup-card h3,
 	.shape-roster h3 {
 		margin: 0.1rem 0 0.35rem;
 		font-family: Georgia, serif;
 		font-size: 1.2rem;
 		font-weight: 500;
 	}
-	.source-table p {
+	.lineup-card p {
 		margin: 0 0 0.65rem;
 		color: var(--muted);
 		font-size: 0.7rem;
@@ -458,18 +471,18 @@
 		letter-spacing: 0.13em;
 		text-transform: uppercase;
 	}
-	.source-table table {
+	.lineup-card table {
 		width: 100%;
 		border-collapse: collapse;
 		font-size: 0.74rem;
 	}
-	.source-table th,
-	.source-table td {
+	.lineup-card th,
+	.lineup-card td {
 		border-top: 1px solid var(--line);
 		padding: 0.32rem 0.25rem;
 		text-align: left;
 	}
-	.source-table th {
+	.lineup-card th {
 		color: var(--muted);
 		font-weight: 700;
 	}
@@ -480,10 +493,10 @@
 		background: var(--panel);
 		box-shadow: 8px 8px 0 var(--rust);
 	}
-	.roster-strip {
+	.shape-board {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-		gap: 0.6rem;
+		grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+		gap: 0.5rem;
 		margin-top: 1rem;
 	}
 	.shape-roster-intro {
@@ -495,12 +508,12 @@
 	}
 	.roster-player {
 		display: grid;
-		grid-template-columns: auto auto 1fr;
+		grid-template-columns: auto 1fr;
 		align-items: center;
 		column-gap: 0.45rem;
 		border: 1px solid var(--line);
 		border-radius: 0.75rem;
-		padding: 0.45rem 0.6rem;
+		padding: 0.45rem;
 		background: var(--panel);
 		color: var(--ink);
 		cursor: pointer;
@@ -508,24 +521,31 @@
 		text-align: left;
 	}
 	.roster-player img {
-		width: 2.2rem;
-		height: 2.2rem;
+		width: 1.8rem;
+		height: 1.8rem;
 		border-radius: 50%;
 		object-fit: cover;
 		background: var(--paper-deep);
 	}
-	.roster-player span {
+	.roster-player strong {
+		grid-column: 2;
 		font-size: 0.74rem;
 		font-weight: 700;
 	}
 	.roster-player small {
-		grid-column: 3;
+		grid-column: 2;
 		color: var(--muted);
 		font-size: 0.62rem;
 	}
 	.roster-player.selected {
 		border-color: var(--rust-dark);
 		box-shadow: 0 0 0 3px rgb(168 79 50 / 16%);
+	}
+	.shape-token {
+		grid-row: span 2;
+		display: grid;
+		place-items: center;
+		color: var(--rust);
 	}
 	.position-node {
 		position: absolute;
@@ -667,9 +687,6 @@
 	}
 	@media (max-width: 520px) {
 		.field-and-tables {
-			grid-template-columns: 1fr;
-		}
-		.lineup-tables {
 			grid-template-columns: 1fr;
 		}
 		.position-node {
