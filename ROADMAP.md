@@ -136,6 +136,32 @@ Limitations and notes:
 - The RS-07 full-axe hang does **not** reproduce here: the full rule set completes in ~1–2s. It initially reported 25 color-contrast nodes (one root cause: `--muted`/`--rust` on `--paper-deep`) and 1 landmark-unique node (nested "Assumptions" regions); both repaired per D-32 and now green, so the full-audit spec is a permanent suite member. If the hang recurs on another setup, fall back to the pinned rule set.
 - The RS-07 headless-Chromium frame limitation still stands: journeys use DOM events / `selectOption` except `keyboard.spec.ts`, whose interactions are literal trusted key presses; pointer drag-and-drop (D-20) remains unimplemented — selectors plus Swap/Move cover every operation by keyboard.
 - Fixes touched UI copy (inner "Shared planning context" heading) and the shared palette only; no contract, engine, fixture, or persistence changes.
+- The RS-07 headless-Chromium frame limitation still stands: journeys use DOM events / `selectOption` except `keyboard.spec.ts`, whose interactions are literal trusted key presses. Pointer drag-and-drop is now implemented (see below); selectors plus Swap/Move still cover every operation by keyboard.
+- Fixes touched UI copy (inner "Shared planning context" heading) and the shared palette only; no contract, engine, fixture, or persistence changes.
+
+### Post-RS-07 drag-and-drop (D-20, D-33)
+
+Delivered: pointer-only native HTML5 drag-and-drop on the allocation table rows. Dropping an assigned row onto an occupied slot in the same template commits a Swap; onto an Unassigned slot commits a Move — both through the existing Swap/Move callbacks, with a live drop preview naming both slots. Same-slot, cross-template, and Unassigned-source drags are ignored. Files: `src/lib/ui/AllocationPanel.svelte`, `tests/e2e/drag-drop.spec.ts` (swap, move, and unassigned-guard journeys via dispatched DragEvents with a DataTransfer).
+
+Observed: `bun run check` (0 errors/warnings), `bun run lint` (Prettier + ESLint clean), `bunx vitest run --project integration --project server` (28 tests passed), `bunx playwright test` (13 tests passed, including the 3 new drag journeys and the still-green full axe audit). Not run: `bun run test` (browser project hangs in this environment, see RS-07 limitations). The latency e2e rewrote `reports/prototype/edit-latency.json` under multi-worker parallelism; restored via `git checkout`, so the RS-07 single-worker reference is unchanged.
+
+Limitations: touch drag is out of scope; keyboard parity is unchanged and covered by `keyboard.spec.ts`. No contract, engine, fixture, or persistence changes.
+
+### Public-data adapter spike (D-34, research follow-up)
+
+Delivered: `spikes/mlb-public/build.mjs` fetches completed-2025 Red Sox data from the free MLB Stats API (no key), derives observed R/PA, and writes the static `public`-class bundle `spikes/mlb-public/redsox-observed-2025.json` (11 players, baseline + Anthony-for-Refsnyder candidate, overall mode, splits null). No app wiring; the app still opens only `synthetic` per D-28.
+
+Observed (`bun spikes/mlb-public/build.mjs`, 2026-09-21): `parseBundle` accepts with no diagnostics; baseline feasible at 44.466 runs, candidate A feasible at 45.2524 (+0.79 over 360 PA); readiness false only on `ACKNOWLEDGMENT_REQUIRED`; `inputDigest=45022eaa…`. Eligibility update (D-35): fielding-split games aggregated at ≥10 per position — Duran LF/CF, Rafaela 2B/CF, Refsnyder LF/RF, Gonzalez 1B/2B, Anthony LF/RF; offense unchanged. `bun run check` / `bun run lint` clean (spike scripts run outside the app tsconfig via a scoped eslint override).
+
+Limitations: observed-not-projected rates, generous placeholder caps, no splits (FanGraphs export not provided — no scraping). Rebuilding rewrites `createdAt`/data and therefore the digest; run `prettier --write` on the regenerated JSON.
+
+### Data-class gate and public demo (D-28 implemented, D-36)
+
+Delivered: the importer pre-reads `dataClass` before touching storage. `restricted` bundles are hard-blocked naming the RS-08 permission record; the open comparison stays intact. `public` bundles open only after an explicit per-bundle-ID session acknowledgment ("observed public values, not team-approved projections"); declining keeps the current comparison. Shell badge, hero eyebrow/lede/title now render from the open bundle's `dataClass`, and the `public` copy never claims synthetic. Files: `src/lib/app/HomePage.svelte`, `src/lib/app/AppShell.svelte` (static badge moved into the data-aware hero), `tests/e2e/data-class-gate.spec.ts` (acknowledge-and-open, decline, restricted block, no-repeat-ask).
+
+Observed: `bun run check` / `bun run lint` clean; `bunx playwright test` 17 passed (13 prior + 4 gate). Live demo (temporary spec, since removed): importing `spikes/mlb-public/redsox-observed-2025.json`, acknowledging, and screenshotting shows the public-data hero/banner, feasible baseline (44.466 runs) and candidate A (45.2524, +0.7864) cards, and the allocation table with real names, eligibility, and workloads (`/tmp/jev-public-demo-top.png`, `/tmp/jev-public-demo-allocation.png`; replay status correctly reads `unevaluated` for the results-empty spike bundle).
+
+Limitations: the session acknowledgment is a demo path the user explicitly requested, not an RS-08 permission record — team data and any decision use still wait on RS-08. No contract/engine/fixture changes.
 
 ## Measures and review cadence
 

@@ -278,6 +278,37 @@
 	}
 
 	let pendingConflict = $state<{ text: string; bundleId: string } | null>(null);
+	let pendingPublic = $state<{ text: string; replace: boolean; bundleId: string } | null>(null);
+	// Bundle IDs the user explicitly acknowledged as public this session (D-36).
+	// A plain list: only read inside event handlers, never rendered.
+	let ackedPublicIds: string[] = [];
+
+	function classGate(
+		text: string
+	):
+		| { verdict: 'ok' }
+		| { verdict: 'confirm-public'; bundleId: string }
+		| { verdict: 'blocked-restricted' } {
+		// Pre-read dataClass before touching storage; malformed input falls
+		// through to the repository validator, which rejects it as today.
+		let probe: unknown;
+		try {
+			probe = JSON.parse(text);
+		} catch {
+			return { verdict: 'ok' };
+		}
+		if (typeof probe !== 'object' || probe === null) return { verdict: 'ok' };
+		const record = probe as { dataClass?: unknown; bundleId?: unknown };
+		if (record.dataClass === 'restricted') return { verdict: 'blocked-restricted' };
+		if (
+			record.dataClass === 'public' &&
+			typeof record.bundleId === 'string' &&
+			!ackedPublicIds.includes(record.bundleId)
+		) {
+			return { verdict: 'confirm-public', bundleId: record.bundleId };
+		}
+		return { verdict: 'ok' };
+	}
 
 	function activateImported(loaded: LoadedComparison, verb: string): void {
 		bundle = loaded.current.bundle;
@@ -295,7 +326,21 @@
 		storageMessage = `${verb} “${model.name}” (${model.snapshotLabel}). ${replay}`;
 	}
 
-	async function runImport(text: string, replace: boolean): Promise<void> {
+	async function runImport(text: string, replace: boolean, publicAck = false): Promise<void> {
+		if (!publicAck) {
+			const gate = classGate(text);
+			if (gate.verdict === 'blocked-restricted') {
+				storageState = 'failed';
+				storageMessage =
+					'Import blocked: this bundle is marked restricted. Restricted data needs an RS-08 data-owner permission record before it can be opened here; the open comparison is unchanged.';
+				return;
+			}
+			if (gate.verdict === 'confirm-public') {
+				pendingPublic = { text, replace, bundleId: gate.bundleId };
+				storageMessage = `This bundle (${gate.bundleId}) uses public data — observed public values, not team-approved projections. Open it for local review?`;
+				return;
+			}
+		}
 		busy = true;
 		try {
 			const result = await repository.importJson(text, { replaceAsNewRevision: replace });
@@ -315,6 +360,19 @@
 		} finally {
 			busy = false;
 		}
+	}
+
+	function confirmPublicImport(): void {
+		const pending = pendingPublic;
+		pendingPublic = null;
+		if (!pending || busy) return;
+		ackedPublicIds.push(pending.bundleId);
+		void runImport(pending.text, pending.replace, true);
+	}
+
+	function declinePublicImport(): void {
+		pendingPublic = null;
+		storageMessage = 'Public import declined; the open comparison is unchanged.';
 	}
 
 	async function importFile(event: Event): Promise<void> {
@@ -346,21 +404,41 @@
 </script>
 
 <svelte:head>
-	<title>Roster Shapes · Synthetic comparison</title>
+	<title
+		>Roster Shapes · {model.dataClass === 'synthetic' ? 'Synthetic' : 'Public-data'} comparison</title
+	>
 	<meta
 		name="description"
-		content="A reproducible position-player acquisition comparison using synthetic data."
+		content={model.dataClass === 'synthetic'
+			? 'A reproducible position-player acquisition comparison using synthetic data.'
+			: 'A reproducible position-player acquisition comparison using cited public data.'}
 	/>
 </svelte:head>
 
 <div class="workspace">
 	<header class="hero">
 		<div>
-			<p class="eyebrow">Roster Shapes / synthetic workspace</p>
+			<p class="eyebrow">
+				Roster Shapes / {model.dataClass === 'synthetic'
+					? 'synthetic workspace'
+					: 'public-data comparison'}
+			</p>
 			<h1>{model.name}</h1>
 			<p class="lede">
-				Compare one baseline and two candidates under the same explicit assumptions. Every number is
-				synthetic, versioned, and traceable to a source or calculation.
+				Compare one baseline and two candidates under the same explicit assumptions.
+				{#if model.dataClass === 'synthetic'}
+					Every number is synthetic, versioned, and traceable to a source or calculation.
+				{:else}
+					Every number is drawn from the cited public sources, versioned, and traceable to a source
+					or calculation — not a team-approved projection.
+				{/if}
+			</p>
+			<p class="data-class-banner" data-class={model.dataClass}>
+				{#if model.dataClass === 'synthetic'}
+					<strong>Synthetic demo data</strong> — invented values, not team data
+				{:else}
+					<strong>Public data</strong> — observed public values, not team-approved projections
+				{/if}
 			</p>
 		</div>
 		<div class="hero-actions" aria-label="Draft actions">
@@ -385,6 +463,14 @@
 	<div class="notice" aria-live="polite">
 		<span class="notice-mark" aria-hidden="true">i</span>
 		<span class="notice-text">{model.storageMessage}</span>
+		{#if pendingPublic}
+			<button class="secondary-button" type="button" disabled={busy} onclick={confirmPublicImport}>
+				Open public bundle
+			</button>
+			<button class="secondary-button" type="button" onclick={declinePublicImport}>
+				Keep current comparison
+			</button>
+		{/if}
 		{#if pendingConflict}
 			<button
 				class="secondary-button"
@@ -605,6 +691,19 @@
 		color: var(--muted);
 		font-size: 1.04rem;
 		line-height: 1.55;
+	}
+	.data-class-banner {
+		max-width: 43rem;
+		margin: 0.8rem 0 0;
+		border: 1px solid var(--line);
+		border-radius: 0.75rem;
+		padding: 0.6rem 0.85rem;
+		color: var(--muted);
+		background: rgb(255 254 249 / 70%);
+		font-size: 0.82rem;
+	}
+	.data-class-banner[data-class='public'] {
+		border-color: var(--navy);
 	}
 	.eyebrow {
 		margin-bottom: 0.5rem;

@@ -8,7 +8,6 @@
 
 <header class="shell-header">
 	<p class="product">Roster Shapes</p>
-	<p class="data-class"><strong>Synthetic demo data</strong> — invented values, not team data</p>
 </header>
 
 <main id="main" tabindex="-1">

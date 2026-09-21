@@ -89,6 +89,11 @@ export default defineConfig(
 		extends: [ts.configs.disableTypeChecked]
 	},
 	{
+		// Spike scripts run on Bun/Node and stay outside the app tsconfig project.
+		files: ['spikes/**/*.mjs'],
+		extends: [ts.configs.disableTypeChecked]
+	},
+	{
 		files: ['src/**/*.ts', 'src/**/*.svelte', 'tests/**/*.ts', 'tests/**/*.svelte'],
 		plugins: { boundaries },
 		settings: {
