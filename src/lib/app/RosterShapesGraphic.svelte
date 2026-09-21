@@ -98,6 +98,24 @@
 	);
 	const rosterPlayers = $derived(bundle.dataset.players);
 	const baselineMemberIds = $derived(new Set(baseline.memberIds));
+	const shapeGroups = $derived(
+		[
+			'Star',
+			'Rectangle',
+			'Circle',
+			'Pentagon',
+			'Octagon',
+			'Diamond',
+			'Square',
+			'Funky',
+			'Unclassified'
+		].map((shape) => ({
+			shape: shape as ShapeLabel,
+			players: rosterPlayers.filter(
+				(player) => baselineMemberIds.has(player.id) && shapeOf(player.id).shape === shape
+			)
+		}))
+	);
 	function playerForName(name: string) {
 		return bundle.dataset.players.find((player) => player.name === name);
 	}
@@ -249,23 +267,42 @@
 			Shapes are the roster’s visual language: each player keeps a readable name, role, workload,
 			and profile label. Geometry summarizes the profile; it never creates value or coverage.
 		</p>
-		<div class="shape-board">
-			{#each rosterPlayers.filter( (player) => baselineMemberIds.has(player.id) ) as player (player.id)}
-				<button
-					type="button"
-					class="roster-player"
-					class:selected={selectedPlayerId === player.id}
-					onclick={() => onSelect(selectedPlayerId === player.id ? null : player.id)}
-				>
-					<div class="shape-token"><ShapeGlyph shape={shapeOf(player.id).shape} size={54} /></div>
-					<img src={headshotUrl(player.id)} alt="" loading="lazy" />
-					<strong>{player.name}</strong>
-					<small
-						>{shapeOf(player.id).shape} · {player.eligiblePositions.join('/') || 'DH'} · {nodes.find(
-							(node) => node.playerId === player.id
-						)?.pa ?? 0} PA</small
-					>
-				</button>
+		<div class="shape-board" aria-label="Roster shape visualization">
+			{#each shapeGroups.filter((group) => group.players.length > 0) as group (group.shape)}
+				<section class="shape-cluster" aria-labelledby="shape-cluster-{group.shape}">
+					<div class="cluster-heading">
+						<ShapeGlyph shape={group.shape} size={28} />
+						<h4 id="shape-cluster-{group.shape}">{group.shape}</h4>
+						<span>{group.players.length}</span>
+					</div>
+					<div class="shape-cluster-players">
+						{#each group.players as player (player.id)}
+							<button
+								type="button"
+								class="shape-player"
+								class:selected={selectedPlayerId === player.id}
+								aria-label="{player.name}, {group.shape}, {nodes.find(
+									(node) => node.playerId === player.id
+								)?.pa ?? 0} plate appearances"
+								onclick={() => onSelect(selectedPlayerId === player.id ? null : player.id)}
+							>
+								<div class="shape-player-glyph">
+									<ShapeGlyph shape={group.shape} size={46} /><img
+										src={headshotUrl(player.id)}
+										alt=""
+										loading="lazy"
+									/>
+								</div>
+								<strong>{player.name}</strong>
+								<small
+									>{player.eligiblePositions.join('/') || 'DH'} · {nodes.find(
+										(node) => node.playerId === player.id
+									)?.pa ?? 0} PA</small
+								>
+							</button>
+						{/each}
+					</div>
+				</section>
 			{/each}
 		</div>
 	</section>
@@ -495,8 +532,8 @@
 	}
 	.shape-board {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
-		gap: 0.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		gap: 0.7rem;
 		margin-top: 1rem;
 	}
 	.shape-roster-intro {
@@ -506,46 +543,75 @@
 		font-size: 0.86rem;
 		line-height: 1.5;
 	}
-	.roster-player {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		align-items: center;
-		column-gap: 0.45rem;
+	.shape-cluster {
 		border: 1px solid var(--line);
-		border-radius: 0.75rem;
-		padding: 0.45rem;
+		border-radius: 0.9rem;
+		padding: 0.7rem;
+		background: var(--paper);
+	}
+	.cluster-heading {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		color: var(--rust);
+	}
+	.cluster-heading h4 {
+		margin: 0;
+		color: var(--ink);
+		font-size: 0.78rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+	.cluster-heading span {
+		margin-left: auto;
+		color: var(--muted);
+		font-size: 0.68rem;
+	}
+	.shape-cluster-players {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+		margin-top: 0.55rem;
+	}
+	.shape-player {
+		display: grid;
+		justify-items: center;
+		gap: 0.12rem;
+		min-width: 5.4rem;
+		border: 1px solid var(--line);
+		border-radius: 0.6rem;
+		padding: 0.35rem;
 		background: var(--panel);
 		color: var(--ink);
 		cursor: pointer;
 		font: inherit;
-		text-align: left;
+		text-align: center;
 	}
-	.roster-player img {
-		width: 1.8rem;
-		height: 1.8rem;
+	.shape-player-glyph {
+		position: relative;
+		display: grid;
+		place-items: center;
+		color: var(--rust);
+	}
+	.shape-player-glyph img {
+		position: absolute;
+		width: 1.55rem;
+		height: 1.55rem;
 		border-radius: 50%;
 		object-fit: cover;
 		background: var(--paper-deep);
 	}
-	.roster-player strong {
-		grid-column: 2;
-		font-size: 0.74rem;
+	.shape-player strong {
+		font-size: 0.68rem;
 		font-weight: 700;
 	}
-	.roster-player small {
-		grid-column: 2;
+	.shape-player small {
 		color: var(--muted);
 		font-size: 0.62rem;
 	}
-	.roster-player.selected {
+	.shape-player.selected {
 		border-color: var(--rust-dark);
 		box-shadow: 0 0 0 3px rgb(168 79 50 / 16%);
-	}
-	.shape-token {
-		grid-row: span 2;
-		display: grid;
-		place-items: center;
-		color: var(--rust);
 	}
 	.position-node {
 		position: absolute;
