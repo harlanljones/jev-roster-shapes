@@ -44,6 +44,8 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Self-provision the Pages project on first run; later runs reuse it.
+          preCommands: wrangler pages project create jev-roster-shapes --production-branch main || echo "Pages project already exists, continuing"
           command: pages deploy build --project-name jev-roster-shapes
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
