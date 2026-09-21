@@ -15,6 +15,7 @@ observed data (no team data, no projections).
 - [Design and architecture](#design-and-architecture)
 - [Data sources](#data-sources)
 - [Trying it locally](#trying-it-locally)
+- [Demo deployment](#demo-deployment)
 - [Repository layout](#repository-layout)
 - [Status, limitations, and what's next](#status-limitations-and-whats-next)
 - [License](#license)
@@ -152,6 +153,27 @@ regenerated JSON and rerun the suite — the pinned digests fail until reviewed)
 Note: `bun run test` also contains a browser-component project that hangs in
 frame-less headless Chromium; the Playwright journeys cover that surface
 instead (see RS-07 limitations in ROADMAP.md).
+
+## Demo deployment
+
+Pushes to `main` build on GitHub Actions (`.github/workflows/deploy-demo.yml`:
+install → `bun run check` → `bun run build`) and deploy `build/` to the
+`jev-roster-shapes` Cloudflare Pages project. Pull requests and manual runs
+produce preview deployments with their own URLs.
+
+One-time setup (account owner):
+
+1. Create an API token (Cloudflare Dashboard → My Profile → API Tokens) with
+   the **Cloudflare Pages → Edit** permission.
+2. Add repo secrets (Settings → Secrets and variables → Actions):
+   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+3. Push to `main`. The first deploy provisions the Pages project and prints
+   its `*.pages.dev` URL.
+
+Until the secrets exist, the deploy step fails while install/check/build still
+validate the change. Only public storyline content ships; this does not
+satisfy the RS-08/RS-10 team-data, access-control, or retention prerequisites
+(O-05 stays open), and browser drafts stay per-device.
 
 ## Repository layout
 

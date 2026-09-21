@@ -1,0 +1,54 @@
+# Demo deployment: build on GitHub Actions, host on Cloudflare Pages (D-41).
+# Pushes to main deploy production; pull requests and manual runs deploy
+# previews. Needs repo secrets CLOUDFLARE_API_TOKEN (Pages:Edit) and
+# CLOUDFLARE_ACCOUNT_ID — see README "Demo deployment" for the one-time setup.
+name: Deploy demo to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Build and deploy demo
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Typecheck
+        run: bun run check
+
+      - name: Production build
+        run: bun run build
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy build --project-name jev-roster-shapes
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print deployment URL
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+          ALIAS_URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
+        run: echo "deployment=$DEPLOYMENT_URL alias=$ALIAS_URL"
