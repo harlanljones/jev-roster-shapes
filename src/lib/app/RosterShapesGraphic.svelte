@@ -98,24 +98,6 @@
 	);
 	const rosterPlayers = $derived(bundle.dataset.players);
 	const baselineMemberIds = $derived(new Set(baseline.memberIds));
-	const shapeGroups = $derived(
-		[
-			'Star',
-			'Rectangle',
-			'Circle',
-			'Pentagon',
-			'Octagon',
-			'Diamond',
-			'Square',
-			'Funky',
-			'Unclassified'
-		].map((shape) => ({
-			shape: shape as ShapeLabel,
-			players: rosterPlayers.filter(
-				(player) => baselineMemberIds.has(player.id) && shapeOf(player.id).shape === shape
-			)
-		}))
-	);
 	function playerForName(name: string) {
 		return bundle.dataset.players.find((player) => player.name === name);
 	}
@@ -145,6 +127,25 @@
 				})
 			};
 		})
+	);
+	const rosterMat = $derived(
+		rosterPlayers
+			.filter((player) => baselineMemberIds.has(player.id))
+			.map((player) => {
+				const workload = lineupViews
+					.flatMap((view) => view.rows)
+					.filter((row) => row.player === player.name);
+				return {
+					player,
+					shape: shapeOf(player.id).shape,
+					roles: [...new Set(workload.map((row) => row.role))],
+					pa: workload.reduce(
+						(sum, row) => sum + row.exposure.L + row.exposure.R + row.exposure.unknown,
+						0
+					),
+					starts: workload.length
+				};
+			})
 	);
 	const lineupPairs = $derived(
 		lineupViews[0]?.rows.map((row, index) => ({
@@ -267,42 +268,29 @@
 			Shapes are the roster’s visual language: each player keeps a readable name, role, workload,
 			and profile label. Geometry summarizes the profile; it never creates value or coverage.
 		</p>
-		<div class="shape-board" aria-label="Roster shape visualization">
-			{#each shapeGroups.filter((group) => group.players.length > 0) as group (group.shape)}
-				<section class="shape-cluster" aria-labelledby="shape-cluster-{group.shape}">
-					<div class="cluster-heading">
-						<ShapeGlyph shape={group.shape} size={28} />
-						<h4 id="shape-cluster-{group.shape}">{group.shape}</h4>
-						<span>{group.players.length}</span>
+		<div class="shape-board" aria-label="Roster construction visualization">
+			<div class="mat-label">Active roster · shape is the profile mark, not a value scale</div>
+			{#each rosterMat as item (item.player.id)}
+				<button
+					type="button"
+					class="shape-player"
+					class:selected={selectedPlayerId === item.player.id}
+					aria-label="{item.player.name}, {item.shape}, {item.pa} plate appearances"
+					onclick={() => onSelect(selectedPlayerId === item.player.id ? null : item.player.id)}
+				>
+					<div class="shape-player-glyph">
+						<ShapeGlyph shape={item.shape} size={48} /><img
+							src={headshotUrl(item.player.id)}
+							alt=""
+							loading="lazy"
+						/>
 					</div>
-					<div class="shape-cluster-players">
-						{#each group.players as player (player.id)}
-							<button
-								type="button"
-								class="shape-player"
-								class:selected={selectedPlayerId === player.id}
-								aria-label="{player.name}, {group.shape}, {nodes.find(
-									(node) => node.playerId === player.id
-								)?.pa ?? 0} plate appearances"
-								onclick={() => onSelect(selectedPlayerId === player.id ? null : player.id)}
-							>
-								<div class="shape-player-glyph">
-									<ShapeGlyph shape={group.shape} size={46} /><img
-										src={headshotUrl(player.id)}
-										alt=""
-										loading="lazy"
-									/>
-								</div>
-								<strong>{player.name}</strong>
-								<small
-									>{player.eligiblePositions.join('/') || 'DH'} · {nodes.find(
-										(node) => node.playerId === player.id
-									)?.pa ?? 0} PA</small
-								>
-							</button>
-						{/each}
+					<div class="shape-player-copy">
+						<strong>{item.player.name}</strong><small
+							>{item.roles.join(' · ') || 'Reserve'} · {item.pa} PA · {item.starts} starts</small
+						>
 					</div>
-				</section>
+				</button>
 			{/each}
 		</div>
 	</section>
@@ -543,35 +531,13 @@
 		font-size: 0.86rem;
 		line-height: 1.5;
 	}
-	.shape-cluster {
-		border: 1px solid var(--line);
-		border-radius: 0.9rem;
-		padding: 0.7rem;
-		background: var(--paper);
-	}
-	.cluster-heading {
-		display: flex;
-		align-items: center;
-		gap: 0.4rem;
-		color: var(--rust);
-	}
-	.cluster-heading h4 {
-		margin: 0;
-		color: var(--ink);
-		font-size: 0.78rem;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-	}
-	.cluster-heading span {
-		margin-left: auto;
+	.mat-label {
+		grid-column: 1 / -1;
 		color: var(--muted);
 		font-size: 0.68rem;
-	}
-	.shape-cluster-players {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.3rem;
-		margin-top: 0.55rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
 	}
 	.shape-player {
 		display: grid;
