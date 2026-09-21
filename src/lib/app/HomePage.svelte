@@ -22,6 +22,7 @@
 	import type {
 		AssumptionChange,
 		AssignmentChange,
+		AssignmentMove,
 		AssignmentSwap,
 		ComparisonViewModel,
 		ReviewScope
@@ -38,6 +39,7 @@
 	let savedAt = $state<string | null>(null);
 	let unsaved = $state(true);
 	let selectedEvidenceId = $state<string | null>(null);
+	let evidenceTrigger: HTMLElement | null = null;
 	let repository = $state<PersistenceRepository>(
 		createMemoryPersistenceRepository(new MemoryPersistenceStorage())
 	);
@@ -159,6 +161,35 @@
 			if (!scenario || !a || !b) return;
 			[a.playerId, b.playerId] = [b.playerId, a.playerId];
 			touchScenario(next, scenario);
+		});
+	}
+
+	function handleAssignmentMove(move: AssignmentMove): void {
+		// Re-validate against the current bundle so a blocked Move (empty source
+		// or occupied destination) never flips the draft to a false "changed".
+		const scenario = [bundle.comparison.baseline, ...bundle.comparison.candidates].find(
+			(candidate) => candidate.id === move.scenarioId
+		);
+		const assignments = scenario?.allocations.find(
+			(candidate) => candidate.templateId === move.templateId
+		)?.assignments;
+		const from = assignments?.find((candidate) => candidate.order === move.fromOrder);
+		const to = assignments?.find((candidate) => candidate.order === move.toOrder);
+		if (!scenario || !from || !to) return;
+		if (from.playerId === null || to.playerId !== null) return;
+		commitMutation((next) => {
+			const target = [next.comparison.baseline, ...next.comparison.candidates].find(
+				(candidate) => candidate.id === move.scenarioId
+			);
+			const targetAssignments = target?.allocations.find(
+				(candidate) => candidate.templateId === move.templateId
+			)?.assignments;
+			const targetFrom = targetAssignments?.find((candidate) => candidate.order === move.fromOrder);
+			const targetTo = targetAssignments?.find((candidate) => candidate.order === move.toOrder);
+			if (!target || !targetFrom || !targetTo) return;
+			targetTo.playerId = targetFrom.playerId;
+			targetFrom.playerId = null;
+			touchScenario(next, target);
 		});
 	}
 
@@ -295,7 +326,18 @@
 	}
 
 	function openEvidence(evidenceId: string): void {
+		// Remember the trigger so closing the drawer returns keyboard focus to
+		// it (WORKFLOWS §8). The drawer itself is not a modal dialog.
+		if (typeof document !== 'undefined' && document.activeElement instanceof HTMLElement) {
+			evidenceTrigger = document.activeElement;
+		}
 		selectedEvidenceId = evidenceId;
+	}
+
+	function closeEvidence(): void {
+		selectedEvidenceId = null;
+		evidenceTrigger?.focus?.();
+		evidenceTrigger = null;
 	}
 
 	function selectScenario(scenarioId: string): void {
@@ -433,6 +475,7 @@
 						evidence={model.evidence}
 						onAssignmentChange={handleAssignmentChange}
 						onAssignmentSwap={handleAssignmentSwap}
+						onAssignmentMove={handleAssignmentMove}
 						onOpenEvidence={openEvidence}
 					/>
 					<CoveragePanel
@@ -476,7 +519,7 @@
 						Limitation: {selectedEvidence.limitation}
 					</p>{/if}
 			</div>
-			<button class="secondary-button" type="button" onclick={() => (selectedEvidenceId = null)}>
+			<button class="secondary-button" type="button" onclick={closeEvidence}>
 				Close evidence
 			</button>
 		</aside>
@@ -486,14 +529,14 @@
 <style>
 	:global(:root) {
 		--ink: #252522;
-		--muted: #716f67;
+		--muted: #5f5d56;
 		--line: #dedbd1;
 		--line-strong: #c8c4b8;
 		--paper: #f6f4ee;
 		--paper-light: #fffef9;
 		--paper-deep: #ebe8df;
 		--panel: #fffef9;
-		--rust: #a84f32;
+		--rust: #9c4a2e;
 		--rust-dark: #813a27;
 		--rust-soft: #e6b8a8;
 		--sage: #596f58;
