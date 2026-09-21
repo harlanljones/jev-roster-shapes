@@ -6,13 +6,14 @@ Live demo: https://jev-roster-shapes.pages.dev/
 
 ## What it is
 
-Roster Shapes is an interactive workspace for position-player roster decisions. An analyst loads a roster, builds two alternative scenarios against the current baseline, and compares them under identical assumptions. Every number traces to a source, an explicit assumption, or a versioned calculation.
+Roster Shapes is an interactive workspace for position-player roster decisions. The central concept is a roster visually represented with shapes: every player has a readable identity, role, workload, and profile glyph before an analyst builds two alternative scenarios against the current baseline. Every number traces to a source, an explicit assumption, or a versioned calculation.
 
 It is a working prototype, not a finished product. It uses public baseball data only. No team partnership or private data is involved.
 
 ## What it does
 
 - Compares one baseline roster against two candidate scenarios.
+- Makes the roster itself legible first: field positions, depth, workload, and shape profiles share one view.
 - Shows positional coverage and gaps ("white space") by position and game context.
 - Shows playing-time transfers: who gains and loses plate appearances.
 - Shows projected offensive contribution, but only where the inputs support it. Missing data stays missing. It is never silently filled with zero.
@@ -50,7 +51,7 @@ Three layers stay separate. Source evidence holds the raw values and their prove
 
 The engine is deterministic. The same versioned inputs always produce identical outputs. Validation rejects broken files atomically and keeps valid-but-flawed drafts open for inspection. Saved results replay against stored inputs, and mismatches block review instead of failing silently.
 
-Player shapes (Star, Square, Rectangle, Circle, Pentagon, Octagon, Diamond, Funky) are analyst-applied profile labels under a documented rubric. They are display only. One player with no 2026 inputs stays Unclassified rather than guessed.
+Player shapes (Star, Square, Rectangle, Circle, Pentagon, Octagon, Diamond, Funky) are analyst-applied profile labels under a documented rubric. They are the demo's primary visual language, not decoration: the roster board makes every profile inspectable before comparison. Shapes remain display-only and never change calculations. One player with no 2026 inputs stays Unclassified rather than guessed.
 
 ## For developers
 

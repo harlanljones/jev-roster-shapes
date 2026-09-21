@@ -22,6 +22,7 @@ export interface Storyline {
 	title: string;
 	lede: string;
 	timeline: string;
+	description: string;
 	date: string;
 	sourceLabel: string;
 	bundle: Bundle;
@@ -34,6 +35,7 @@ function storyline(
 	title: string,
 	lede: string,
 	timeline: string,
+	description: string,
 	date: string,
 	sourceLabel: string,
 	json: unknown,
@@ -45,6 +47,7 @@ function storyline(
 		title,
 		lede,
 		timeline,
+		description,
 		date,
 		sourceLabel,
 		bundle,
@@ -67,6 +70,7 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Who carries the lineup without Devers and Bregman?',
 		'Devers was traded, Bregman signed with the Cubs, and no Red Sox hitter was projected for 20 home runs. Is the 21-year-old ready to carry the lineup — or does the veteran cleanup bat, or the injured slugger’s hoped-for return?',
 		'2026 season snapshot · baseline, Anthony, or Casas at DH/left field',
+		'Who absorbs the missing middle-of-the-order power?',
 		'September 20, 2026',
 		'MLB Stats API game 822922 + MLB.com depth chart snapshot',
 		powerVacuumJson,
@@ -86,6 +90,7 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Four gloves, three spots, one DH',
 		'Anthony, Duran, Abreu, Rafaela: four quality outfielders and only three starting spots. Duran slides to DH while Yoshida — the most expensive pinch hitter in the game — waits for at-bats.',
 		'2026 season snapshot · outfield/DH allocation as of the roster snapshot',
+		'Four outfield profiles compete for three defensive spots and one DH lane.',
 		'September 21, 2026',
 		'MLB.com depth chart snapshot · MLB Stats API observed totals',
 		outfieldLogjamJson,
@@ -110,6 +115,7 @@ export const storylineRegistry: readonly Storyline[] = [
 		'From the worst infield to steady',
 		'116 errors and the worst infield defense in baseball since 2020. Contreras at first, Durbin at third, rookie Mayer at second — with versatile veteran IKF and utility Monasterio behind him.',
 		'2026 season snapshot · second-base choice against the current infield',
+		'Choose the second baseman without hiding defensive coverage tradeoffs.',
 		'September 21, 2026',
 		'MLB.com depth chart snapshot · MLB Stats API observed totals',
 		infieldResetJson,
@@ -134,6 +140,7 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Narváez’s middle ground vs Wong’s rebound',
 		'Narváez played the second half of 2025 on a bad left knee that needed surgery. Wong lost the starter job and the bat. Who catches the win-now staff — or do they carry both and sit a rookie outfielder?',
 		'2026 season snapshot · catcher role and DH spillover',
+		'Compare catcher workload, bat, and the cost of carrying both.',
 		'September 21, 2026',
 		'MLB.com depth chart snapshot · MLB Stats API observed totals',
 		catcherSplitJson,
@@ -158,6 +165,7 @@ export const storylineRegistry: readonly Storyline[] = [
 		'No Refsnyder, no Romy: who faces lefties?',
 		'Refsnyder left for Seattle, Gonzalez opened on the 60-day IL, and Devers and Bregman took their lefty-mashing with them. Splits are unavailable — so the righty bench bats audition on overall observed rates only.',
 		'2026 season snapshot · left-handed-starter question, no split claim',
+		'Test right-handed depth against a lefty question without inventing splits.',
 		'September 21, 2026',
 		'MLB.com depth chart snapshot · MLB Stats API observed totals',
 		leftyHoleJson,

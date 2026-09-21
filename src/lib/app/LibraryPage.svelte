@@ -138,6 +138,7 @@
 					<p class="eyebrow">Storyline {index + 1} · {storyline.date}</p>
 					<h3 id="storyline-{storyline.slug}">{storyline.title}</h3>
 					<p class="card-timeline">{storyline.timeline}</p>
+					<p class="card-description">{storyline.description}</p>
 					<p class="card-lede">{storyline.lede}</p>
 					<dl class="card-chips">
 						<div>
@@ -352,6 +353,13 @@
 		color: var(--rust-dark);
 		font-size: 0.76rem;
 		font-weight: 750;
+	}
+	.card-description {
+		margin: 0;
+		color: var(--ink);
+		font-size: 0.86rem;
+		font-weight: 750;
+		line-height: 1.4;
 	}
 	.card-chips {
 		display: grid;

@@ -179,6 +179,16 @@ Observed: `bun run check` (0 errors/warnings), `bun run lint` (Prettier + ESLint
 
 Limitations: observed-not-projected 2026 rates, illustrative horizon, placeholder caps, no splits (the lefty-hole storyline says so on its card), analyst-labeled shapes with no evaluator agreement (O-03 open), outgoing members leave the planning roster per the v1 membership equation, saved drafts under retired bundle IDs are not migrated. Two issues found by verification and fixed in this change: the builder initially rounded Contreras 68/533 down (correct: 0.127580) and mis-assigned two candidate reserves against the membership equation (both caught by the script's own guards); the new `{#if}` workspace mount initially threw `DataCloneError` on the `$state` proxy (fixed with `$state.snapshot` at both boundaries, same lesson as RS-07).
 
+### Shape-first landing refinement
+
+Delivered: the landing page now treats the shape roster as the primary product
+surface. The field is a stable baseline overview without the platoon/template
+switch, the actual lineup and depth chart remain visible as side-by-side tables,
+and the full source roster appears in a bordered shape board with names,
+eligibility, and rubric labels. Storyline cards add exact dates, concise
+descriptions, and source context. Shapes remain assumption-layer display labels;
+the workspace keeps the underlying scenario templates and calculations intact.
+
 ### Deployment hardening and RS-08 handoff
 
 Delivered: the Cloudflare Pages workflow now keeps build/typecheck validation on

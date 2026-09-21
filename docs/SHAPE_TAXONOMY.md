@@ -6,6 +6,14 @@ analyst labels, not evaluator consensus: O-03 stays open. Shape labels live in
 inputs, the input digest, or the calculation identity — rearranging or
 relabeling shapes cannot change a quantitative result (C-21 equivalent).
 
+## Product Role
+
+Shapes are the central visual language of the Roster Shapes demo. The landing
+page begins with the actual roster represented in a bounded roster board, then
+connects those profiles to field positions, lineup evidence, depth, workload,
+and scenario comparisons. A shape is not ornamental filler: it is a compact,
+inspectable profile summary paired with the player's name and readable data.
+
 Required inputs per player: 2026 observed R/PA (or explicit null), 2026 games
 by position (≥10 = eligible, D-35 rule reused), season PA total, age/role
 context from the cited March 2026 previews. A player with zero PA and no

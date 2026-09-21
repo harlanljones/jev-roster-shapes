@@ -14,18 +14,13 @@
 		onSelect: (playerId: string | null) => void;
 	} = $props();
 
-	const templates = $derived(bundle.assumptions.templates);
-	// Default to the template with the most games; read once at startup.
-	function defaultTemplateIndex(): number {
-		const options = bundle.assumptions.templates;
-		const mostGames = Math.max(...options.map((option) => option.games));
-		return Math.max(
-			0,
-			options.findIndex((option) => option.games === mostGames)
-		);
-	}
-	let templateIndex = $state(defaultTemplateIndex());
-	const template = $derived(templates[templateIndex] ?? templates[0]);
+	// The landing field is a stable baseline view. Scenario editing and
+	// assumption controls remain in the workspace, not in this overview.
+	const template = $derived(
+		bundle.assumptions.templates.reduce((current, option) =>
+			option.games > current.games ? option : current
+		)
+	);
 	const baseline = $derived(bundle.comparison.baseline);
 	const allocation = $derived(
 		baseline.allocations.find((candidate) => candidate.templateId === template?.id)
@@ -101,33 +96,10 @@
 				}
 			: null
 	);
-	const rosterPlayers = $derived(
-		baseline
-			? baseline.memberIds
-					.map((playerId) => playersById.get(playerId))
-					.filter((player): player is NonNullable<typeof player> => Boolean(player))
-			: []
-	);
-
-	function selectTemplate(index: number): void {
-		templateIndex = index;
-	}
+	const rosterPlayers = $derived(bundle.dataset.players);
 </script>
 
 <div class="graphic-block">
-	<div class="template-switch" role="group" aria-label="Graphic lineup template">
-		{#each templates as option, index (option.id)}
-			<button
-				type="button"
-				class="template-button"
-				aria-pressed={index === templateIndex}
-				onclick={() => selectTemplate(index)}
-			>
-				{option.label} · {option.games} games
-			</button>
-		{/each}
-	</div>
-
 	<div class="field-and-tables">
 		<div class="diamond-stage" aria-label="Fenway-style field roster view">
 			<svg class="diamond-backdrop" viewBox="0 0 400 380" aria-hidden="true" focusable="false">
@@ -195,8 +167,12 @@
 	</div>
 
 	<section class="shape-roster" aria-labelledby="shape-roster-heading">
-		<div class="table-kicker">The actual roster, in shapes</div>
-		<h3 id="shape-roster-heading">Every player is a profile, not a placeholder</h3>
+		<div class="table-kicker">The concept</div>
+		<h3 id="shape-roster-heading">The actual roster, represented as shapes</h3>
+		<p class="shape-roster-intro">
+			Shapes are the roster’s visual language: each player keeps a readable name, role, workload,
+			and profile label. Geometry summarizes the profile; it never creates value or coverage.
+		</p>
 		<div class="roster-strip">
 			{#each rosterPlayers as player (player.id)}
 				<button
@@ -207,7 +183,10 @@
 				>
 					<ShapeGlyph shape={shapeOf(player.id).shape} size={26} />
 					<span>{player.name}</span>
-					<small>{shapeOf(player.id).shape}</small>
+					<small
+						>{shapeOf(player.id).shape} · {player.eligiblePositions.join('/') ||
+							'DH / no fielding eligibility'}</small
+					>
 				</button>
 			{/each}
 		</div>
@@ -291,27 +270,6 @@
 		display: grid;
 		gap: 1rem;
 	}
-	.template-switch {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-	.template-button {
-		border: 1px solid var(--line);
-		border-radius: 999px;
-		padding: 0.5rem 0.85rem;
-		background: transparent;
-		color: var(--ink);
-		cursor: pointer;
-		font: inherit;
-		font-size: 0.78rem;
-		font-weight: 700;
-	}
-	.template-button[aria-pressed='true'] {
-		border-color: var(--rust-dark);
-		color: #fffaf2;
-		background: var(--rust);
-	}
 	.diamond-stage {
 		position: relative;
 		width: 100%;
@@ -374,7 +332,8 @@
 	}
 	.source-tables {
 		display: grid;
-		gap: 1rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.75rem;
 	}
 	.source-table {
 		border: 1px solid var(--line);
@@ -417,14 +376,24 @@
 		font-weight: 700;
 	}
 	.shape-roster {
-		border-top: 1px solid var(--line);
-		padding-top: 1rem;
+		border: 2px solid var(--ink);
+		border-radius: 1.25rem;
+		padding: 1.25rem;
+		background: var(--panel);
+		box-shadow: 8px 8px 0 var(--rust);
 	}
 	.roster-strip {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin-top: 0.7rem;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+		gap: 0.6rem;
+		margin-top: 1rem;
+	}
+	.shape-roster-intro {
+		max-width: 48rem;
+		margin: 0.5rem 0 0;
+		color: var(--muted);
+		font-size: 0.86rem;
+		line-height: 1.5;
 	}
 	.roster-player {
 		display: grid;
@@ -571,6 +540,9 @@
 	}
 	@media (max-width: 520px) {
 		.field-and-tables {
+			grid-template-columns: 1fr;
+		}
+		.source-tables {
 			grid-template-columns: 1fr;
 		}
 		.position-node {
