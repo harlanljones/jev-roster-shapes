@@ -18,7 +18,7 @@ test('the production shell opens on the public storyline library with no axe vio
 	// The interactive graphic exposes every position lane as a labeled button
 	// with a table equivalent.
 	await expect(page.getByRole('button', { name: /C: Carlos Narváez/ })).toBeVisible();
-	await expect(page.getByRole('table')).toBeVisible();
+	await expect(page.getByRole('table', { name: /Roster graphic data/ })).toBeVisible();
 
 	// DOM-level audit (see workspace-journey.spec.ts for why the rule set is
 	// pinned instead of running every axe rule).

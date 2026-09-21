@@ -2,6 +2,7 @@
 	import type { Bundle } from '$lib/contracts';
 	import { SHAPE_RUBRIC_VERSION, shapeOf, type ShapeLabel } from '$lib/shapes/taxonomy';
 	import ShapeGlyph from '$lib/ui/ShapeGlyph.svelte';
+	import { DEPTH_CHART_SNAPSHOT, ACTUAL_LINEUP_SNAPSHOT } from './roster-data';
 
 	let {
 		bundle,
@@ -50,9 +51,10 @@
 		'2B': { left: '64%', top: '45%' },
 		'3B': { left: '22%', top: '63%' },
 		'1B': { left: '78%', top: '63%' },
-		C: { left: '50%', top: '87%' },
-		DH: { left: '50%', top: '30%' }
+		C: { left: '41%', top: '84%' },
+		DH: { left: '61%', top: '73%' }
 	};
+	const FIELD_ROLE_ORDER = ['C', 'DH', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
 
 	interface GraphicNode {
 		order: number;
@@ -66,25 +68,27 @@
 	}
 
 	const nodes = $derived<GraphicNode[]>(
-		(template?.slots ?? []).map((slot) => {
-			const assignment = allocation?.assignments.find(
-				(candidate) => candidate.order === slot.order
-			);
-			const playerId = assignment?.playerId ?? null;
-			const player = playerId ? playersById.get(playerId) : undefined;
-			const pa = slot.paByPitcherHand.L + slot.paByPitcherHand.R + slot.paByPitcherHand.unknown;
-			const shape = shapeOf(playerId ?? '').shape;
-			return {
-				order: slot.order,
-				role: slot.role,
-				playerId,
-				name: player?.name ?? 'Unassigned',
-				pa,
-				shape,
-				left: ROLE_POSITION[slot.role]?.left ?? '50%',
-				top: ROLE_POSITION[slot.role]?.top ?? '50%'
-			};
-		})
+		[...(template?.slots ?? [])]
+			.sort((a, b) => FIELD_ROLE_ORDER.indexOf(a.role) - FIELD_ROLE_ORDER.indexOf(b.role))
+			.map((slot) => {
+				const assignment = allocation?.assignments.find(
+					(candidate) => candidate.order === slot.order
+				);
+				const playerId = assignment?.playerId ?? null;
+				const player = playerId ? playersById.get(playerId) : undefined;
+				const pa = slot.paByPitcherHand.L + slot.paByPitcherHand.R + slot.paByPitcherHand.unknown;
+				const shape = shapeOf(playerId ?? '').shape;
+				return {
+					order: slot.order,
+					role: slot.role,
+					playerId,
+					name: player?.name ?? 'Unassigned',
+					pa,
+					shape,
+					left: ROLE_POSITION[slot.role]?.left ?? '50%',
+					top: ROLE_POSITION[slot.role]?.top ?? '50%'
+				};
+			})
 	);
 
 	const selected = $derived(
@@ -96,6 +100,13 @@
 					node: nodes.find((node) => node.playerId === selectedPlayerId)
 				}
 			: null
+	);
+	const rosterPlayers = $derived(
+		baseline
+			? baseline.memberIds
+					.map((playerId) => playersById.get(playerId))
+					.filter((player): player is NonNullable<typeof player> => Boolean(player))
+			: []
 	);
 
 	function selectTemplate(index: number): void {
@@ -117,30 +128,90 @@
 		{/each}
 	</div>
 
-	<div class="diamond-stage">
-		<svg class="diamond-backdrop" viewBox="0 0 400 380" aria-hidden="true" focusable="false">
-			<ellipse cx="200" cy="190" rx="185" ry="175" class="grass" />
-			<polygon points="200,140 260,200 200,260 140,200" class="infield" />
-			<rect x="192" y="192" width="16" height="16" class="base" />
-			<circle cx="200" cy="120" r="26" class="dh-box" />
-		</svg>
-		{#each nodes as node (node.order)}
-			<button
-				type="button"
-				class="position-node"
-				class:selected={node.playerId !== null && node.playerId === selectedPlayerId}
-				style="left: {node.left}; top: {node.top};"
-				aria-label="{node.role}: {node.name}, {node.shape}, {node.pa} plate appearances"
-				aria-pressed={node.playerId !== null && node.playerId === selectedPlayerId}
-				onclick={() => onSelect(node.playerId === selectedPlayerId ? null : node.playerId)}
-			>
-				<span class="node-role">{node.role}</span>
-				<ShapeGlyph shape={node.shape} size={22} />
-				<span class="node-name">{node.name}</span>
-				<span class="node-pa">{node.pa} PA</span>
-			</button>
-		{/each}
+	<div class="field-and-tables">
+		<div class="diamond-stage" aria-label="Fenway-style field roster view">
+			<svg class="diamond-backdrop" viewBox="0 0 400 380" aria-hidden="true" focusable="false">
+				<path d="M16 24 Q200 -12 384 24 L348 286 Q200 382 52 286 Z" class="outfield" />
+				<path d="M40 34 L200 350 L360 34" class="foul-line" />
+				<path d="M200 350 L120 270 L200 190 L280 270 Z" class="infield" />
+				<circle cx="200" cy="270" r="28" class="dirt" />
+				<circle cx="200" cy="270" r="8" class="mound" />
+				<rect x="192" y="342" width="16" height="16" class="base home" />
+				<rect x="112" y="262" width="16" height="16" class="base" transform="rotate(45 120 270)" />
+				<rect x="192" y="182" width="16" height="16" class="base" transform="rotate(45 200 190)" />
+				<rect x="272" y="262" width="16" height="16" class="base" transform="rotate(45 280 270)" />
+				<rect x="302" y="314" width="52" height="34" class="dh-box" />
+				<text x="328" y="334" class="dh-label">DH</text>
+			</svg>
+			{#each nodes as node (node.order)}
+				<button
+					type="button"
+					class="position-node"
+					class:selected={node.playerId !== null && node.playerId === selectedPlayerId}
+					style="left: {node.left}; top: {node.top};"
+					aria-label="{node.role}: {node.name}, {node.shape}, {node.pa} plate appearances"
+					aria-pressed={node.playerId !== null && node.playerId === selectedPlayerId}
+					onclick={() => onSelect(node.playerId === selectedPlayerId ? null : node.playerId)}
+				>
+					<span class="node-role">{node.role}</span>
+					<ShapeGlyph shape={node.shape} size={22} />
+					<span class="node-name">{node.name}</span>
+					<span class="node-pa">{node.pa} PA</span>
+				</button>
+			{/each}
+		</div>
+		<div class="source-tables">
+			<section class="source-table" aria-labelledby="actual-lineup-heading">
+				<div class="table-kicker">Actual lineup</div>
+				<h3 id="actual-lineup-heading">September 20, 2026</h3>
+				<p>{ACTUAL_LINEUP_SNAPSHOT.source}</p>
+				<table>
+					<thead
+						><tr><th scope="col">#</th><th scope="col">Batter</th><th scope="col">Pos</th></tr
+						></thead
+					>
+					<tbody
+						>{#each ACTUAL_LINEUP_SNAPSHOT.entries as entry (entry.order)}<tr
+								><th scope="row">{entry.order}</th><td>{entry.player}</td><td>{entry.position}</td
+								></tr
+							>{/each}</tbody
+					>
+				</table>
+			</section>
+			<section class="source-table" aria-labelledby="depth-chart-heading">
+				<div class="table-kicker">Actual depth chart</div>
+				<h3 id="depth-chart-heading">Snapshot · September 21</h3>
+				<p>{DEPTH_CHART_SNAPSHOT.source}</p>
+				<table>
+					<thead><tr><th scope="col">Pos</th><th scope="col">Depth</th></tr></thead>
+					<tbody
+						>{#each DEPTH_CHART_SNAPSHOT.entries as entry (entry.position)}<tr
+								><th scope="row">{entry.position}</th><td>{entry.players.join(' · ')}</td></tr
+							>{/each}</tbody
+					>
+				</table>
+			</section>
+		</div>
 	</div>
+
+	<section class="shape-roster" aria-labelledby="shape-roster-heading">
+		<div class="table-kicker">The actual roster, in shapes</div>
+		<h3 id="shape-roster-heading">Every player is a profile, not a placeholder</h3>
+		<div class="roster-strip">
+			{#each rosterPlayers as player (player.id)}
+				<button
+					type="button"
+					class="roster-player"
+					class:selected={selectedPlayerId === player.id}
+					onclick={() => onSelect(selectedPlayerId === player.id ? null : player.id)}
+				>
+					<ShapeGlyph shape={shapeOf(player.id).shape} size={26} />
+					<span>{player.name}</span>
+					<small>{shapeOf(player.id).shape}</small>
+				</button>
+			{/each}
+		</div>
+	</section>
 
 	{#if selected?.player}
 		<aside class="player-detail" aria-label="Selected player detail">
@@ -244,11 +315,14 @@
 	.diamond-stage {
 		position: relative;
 		width: 100%;
-		max-width: 44rem;
+		max-width: 40rem;
 		aspect-ratio: 400 / 380;
 		border: 1px solid var(--line);
 		border-radius: 1rem;
-		background: var(--panel);
+		background: #264d3b;
+		box-shadow:
+			inset 0 0 0 1px rgb(255 254 249 / 14%),
+			0 18px 36px rgb(38 77 59 / 20%);
 		overflow: hidden;
 	}
 	.diamond-backdrop {
@@ -257,20 +331,127 @@
 		width: 100%;
 		height: 100%;
 	}
-	.grass {
-		fill: rgb(89 111 88 / 12%);
+	.outfield {
+		fill: #356849;
+	}
+	.foul-line {
+		fill: none;
+		stroke: rgb(255 254 249 / 72%);
+		stroke-width: 2;
 	}
 	.infield {
-		fill: rgb(168 79 50 / 12%);
-		stroke: var(--line-strong);
+		fill: #a8643c;
+		stroke: #e4c09d;
+		stroke-width: 2;
+	}
+	.dirt {
+		fill: #a8643c;
+		opacity: 0.9;
+	}
+	.mound {
+		fill: #e4c09d;
 	}
 	.base {
-		fill: rgb(168 79 50 / 35%);
+		fill: #fffef9;
+		stroke: #d8c4a9;
 	}
 	.dh-box {
 		fill: none;
-		stroke: var(--line-strong);
+		stroke: #fffef9;
 		stroke-dasharray: 4 3;
+	}
+	.dh-label {
+		fill: #fffef9;
+		font: 700 12px sans-serif;
+		letter-spacing: 2px;
+		text-anchor: middle;
+	}
+	.field-and-tables {
+		display: grid;
+		grid-template-columns: minmax(24rem, 1.25fr) minmax(30rem, 1fr);
+		gap: 1rem;
+		align-items: start;
+	}
+	.source-tables {
+		display: grid;
+		gap: 1rem;
+	}
+	.source-table {
+		border: 1px solid var(--line);
+		border-radius: 1rem;
+		padding: 1rem;
+		background: var(--panel);
+	}
+	.source-table h3,
+	.shape-roster h3 {
+		margin: 0.1rem 0 0.35rem;
+		font-family: Georgia, serif;
+		font-size: 1.2rem;
+		font-weight: 500;
+	}
+	.source-table p {
+		margin: 0 0 0.65rem;
+		color: var(--muted);
+		font-size: 0.7rem;
+	}
+	.table-kicker {
+		color: var(--rust);
+		font-size: 0.66rem;
+		font-weight: 800;
+		letter-spacing: 0.13em;
+		text-transform: uppercase;
+	}
+	.source-table table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.74rem;
+	}
+	.source-table th,
+	.source-table td {
+		border-top: 1px solid var(--line);
+		padding: 0.32rem 0.25rem;
+		text-align: left;
+	}
+	.source-table th {
+		color: var(--muted);
+		font-weight: 700;
+	}
+	.shape-roster {
+		border-top: 1px solid var(--line);
+		padding-top: 1rem;
+	}
+	.roster-strip {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-top: 0.7rem;
+	}
+	.roster-player {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: center;
+		column-gap: 0.45rem;
+		border: 1px solid var(--line);
+		border-radius: 0.75rem;
+		padding: 0.45rem 0.6rem;
+		background: var(--panel);
+		color: var(--ink);
+		cursor: pointer;
+		font: inherit;
+		text-align: left;
+	}
+	.roster-player span {
+		font-size: 0.74rem;
+		font-weight: 700;
+	}
+	.roster-player small {
+		grid-column: 2;
+		color: var(--muted);
+		font-size: 0.62rem;
+	}
+	.roster-player.selected {
+		border-color: var(--rust-dark);
+		box-shadow: 0 0 0 3px rgb(168 79 50 / 16%);
 	}
 	.position-node {
 		position: absolute;
@@ -389,6 +570,9 @@
 		text-align: left;
 	}
 	@media (max-width: 520px) {
+		.field-and-tables {
+			grid-template-columns: 1fr;
+		}
 		.position-node {
 			min-width: 3.6rem;
 			padding: 0.3rem;

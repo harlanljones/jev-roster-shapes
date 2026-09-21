@@ -135,8 +135,9 @@
 					calculation.offenseDeltas.map((delta) => [delta.scenarioId, delta.runs])
 				)}
 				<article class="storyline-card" aria-labelledby="storyline-{storyline.slug}">
-					<p class="eyebrow">Storyline {index + 1} · public data</p>
+					<p class="eyebrow">Storyline {index + 1} · {storyline.date}</p>
 					<h3 id="storyline-{storyline.slug}">{storyline.title}</h3>
+					<p class="card-timeline">{storyline.timeline}</p>
 					<p class="card-lede">{storyline.lede}</p>
 					<dl class="card-chips">
 						<div>
@@ -161,8 +162,10 @@
 						</div>
 					</dl>
 					<p class="card-source">
-						MLB Stats API observed 2026 · {storyline.inputDigest.slice(0, 12)}… · splits unavailable
-						· illustrative 10-game horizon
+						{storyline.sourceLabel} · observed 2026 values through September 20 · {storyline.inputDigest.slice(
+							0,
+							12
+						)}… · splits unavailable · illustrative 10-game horizon
 					</p>
 					{#if pendingSlug === storyline.slug}
 						<div class="ack-box" role="group" aria-label="Public data acknowledgment">
@@ -343,6 +346,12 @@
 		color: var(--muted);
 		font-size: 0.86rem;
 		line-height: 1.5;
+	}
+	.card-timeline {
+		margin: -0.2rem 0 0;
+		color: var(--rust-dark);
+		font-size: 0.76rem;
+		font-weight: 750;
 	}
 	.card-chips {
 		display: grid;
