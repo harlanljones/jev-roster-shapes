@@ -142,6 +142,94 @@
 			playerId: playerId === '' ? null : playerId
 		});
 	}
+
+	// Pointer-only drag-and-drop (D-20, D-33). Drops commit through the same
+	// Swap/Move callbacks as the keyboard forms; the engine stays the validator.
+	let dragSource = $state<{ templateId: string; order: number } | null>(null);
+	let dropTarget = $state<{ templateId: string; order: number } | null>(null);
+
+	function handleDragStart(template: TemplateView, order: number, event: DragEvent): void {
+		const slot = template.assignments.find((candidate) => candidate.order === order);
+		if (!slot || slot.playerId === null) {
+			event.preventDefault();
+			return;
+		}
+		try {
+			event.dataTransfer?.setData(
+				'application/json',
+				JSON.stringify({ templateId: template.id, order })
+			);
+			if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+		} catch {
+			// A missing DataTransfer (e.g. synthetic events) still allows the
+			// state-tracked drop path below to commit.
+		}
+		dragSource = { templateId: template.id, order };
+	}
+
+	function handleDragOver(template: TemplateView, order: number, event: DragEvent): void {
+		event.preventDefault();
+		if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+		dropTarget = { templateId: template.id, order };
+	}
+
+	function handleDragLeave(event: DragEvent): void {
+		const row = event.currentTarget;
+		if (
+			event.relatedTarget instanceof Node &&
+			row instanceof Node &&
+			row.contains(event.relatedTarget)
+		) {
+			return;
+		}
+		dropTarget = null;
+	}
+
+	function handleDrop(template: TemplateView, order: number, event: DragEvent): void {
+		event.preventDefault();
+		const source = dragSource;
+		dragSource = null;
+		dropTarget = null;
+		if (!source || source.templateId !== template.id || source.order === order) return;
+		const fromSlot = template.assignments.find((candidate) => candidate.order === source.order);
+		const toSlot = template.assignments.find((candidate) => candidate.order === order);
+		if (!fromSlot || fromSlot.playerId === null || !toSlot) return;
+		if (toSlot.playerId === null) {
+			onAssignmentMove({
+				scenarioId: scenario.id,
+				templateId: template.id,
+				fromOrder: source.order,
+				toOrder: order
+			});
+		} else {
+			onAssignmentSwap({
+				scenarioId: scenario.id,
+				templateId: template.id,
+				orderA: source.order,
+				orderB: order
+			});
+		}
+	}
+
+	function handleDragEnd(): void {
+		dragSource = null;
+		dropTarget = null;
+	}
+
+	function dropPreview(template: TemplateView): string | null {
+		if (!dragSource || dragSource.templateId !== template.id) return null;
+		const fromName = assignedLabel(template.id, dragSource.order);
+		if (!dropTarget || dropTarget.templateId !== template.id) {
+			return `Dragging ${fromName} — drop on a slot in ${template.label} to swap or move.`;
+		}
+		if (dropTarget.order === dragSource.order) return null;
+		const toSlot = template.assignments.find((candidate) => candidate.order === dropTarget?.order);
+		if (!toSlot) return null;
+		if (toSlot.playerId === null) {
+			return `Drop to move ${fromName} from ${slotSummary(template, dragSource.order)} to ${slotSummary(template, toSlot.order)}.`;
+		}
+		return `Drop to swap ${slotSummary(template, dragSource.order)} with ${slotSummary(template, toSlot.order)}.`;
+	}
 </script>
 
 <div
@@ -164,7 +252,8 @@
 	</div>
 	<p class="panel-intro">
 		Choose one player per slot with the selectors, or swap two slots in the same template. Both
-		paths work by keyboard alone.
+		paths work by keyboard alone. With a pointer you can also drag an assigned row onto another slot
+		in the same template — onto an occupied slot to swap, onto an Unassigned slot to move.
 	</p>
 
 	{#if scenario.issues.length > 0}
@@ -216,6 +305,18 @@
 								<tr
 									class:problem={slot.eligibility === 'ineligible' ||
 										slot.eligibility === 'unassigned'}
+									class:drag-source={dragSource?.templateId === template.id &&
+										dragSource?.order === slot.order}
+									class:drop-target={dropTarget?.templateId === template.id &&
+										dropTarget?.order === slot.order}
+									data-template={template.id}
+									data-order={slot.order}
+									draggable={slot.playerId === null ? 'false' : 'true'}
+									ondragstart={(event) => handleDragStart(template, slot.order, event)}
+									ondragover={(event) => handleDragOver(template, slot.order, event)}
+									ondragleave={handleDragLeave}
+									ondrop={(event) => handleDrop(template, slot.order, event)}
+									ondragend={handleDragEnd}
 								>
 									<th scope="row">{slot.order}</th>
 									<td><strong>{slot.role}</strong></td>
@@ -264,6 +365,9 @@
 						</tbody>
 					</table>
 				</div>
+				{#if dropPreview(template)}
+					<p class="form-preview drop-preview" aria-live="polite">{dropPreview(template)}</p>
+				{/if}
 				<form class="swap" onsubmit={(event) => handleSwap(template.id, event)}>
 					<fieldset>
 						<legend>Swap two slots in {template.label}</legend>
@@ -569,6 +673,24 @@
 
 	tr.problem {
 		background: rgb(188 91 62 / 0.06);
+	}
+
+	tr[draggable='true'] {
+		cursor: grab;
+	}
+
+	tr.drag-source {
+		opacity: 0.55;
+	}
+
+	tr.drop-target {
+		outline: 3px solid var(--rust-soft);
+		outline-offset: -3px;
+	}
+
+	.drop-preview {
+		padding: 0.45rem 0.85rem 0;
+		font-weight: 700;
 	}
 
 	.status {
