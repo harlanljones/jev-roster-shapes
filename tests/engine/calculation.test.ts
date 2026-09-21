@@ -204,6 +204,31 @@ describe('deterministic calculation engine', () => {
 		expect(unknown.offense.reasons.some(({ code }) => code === 'UNKNOWN_EXPOSURE')).toBe(true);
 	});
 
+	it('does not derive platoon exposure from starter-hand metadata', () => {
+		const original = copyBundle();
+		const changed = copyBundle();
+		original.assumptions.offenseMode = 'split';
+		changed.assumptions.offenseMode = 'split';
+		for (const row of original.dataset.projections) {
+			if (row.overall !== null) {
+				row.vsL = row.overall;
+				row.vsR = row.overall;
+			}
+		}
+		for (const row of changed.dataset.projections) {
+			if (row.overall !== null) {
+				row.vsL = row.overall;
+				row.vsR = row.overall;
+			}
+		}
+		for (const template of changed.assumptions.templates) {
+			template.starterHand = template.starterHand === 'L' ? 'R' : 'L';
+		}
+		expect(calculateComparison(changed).results.map((result) => result.offense.runs)).toEqual(
+			calculateComparison(original).results.map((result) => result.offense.runs)
+		);
+	});
+
 	it('keeps coverage available when rates are missing, and accepts negative rates', () => {
 		const missing = calculateScenario(copyBundle(), 'cand-b');
 		expect(missing.feasibility).toBe('feasible');

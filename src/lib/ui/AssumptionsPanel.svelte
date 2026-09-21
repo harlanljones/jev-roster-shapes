@@ -79,13 +79,19 @@
 			</button>
 		{/if}
 	</div>
+	<p class="platoon-rule">
+		<strong>Platoon rule:</strong> pitcher-hand exposure is explicit per batting slot. Starter-hand labels
+		are context only and never rewrite L/R/unknown PA buckets.
+	</p>
 
 	<div class="template-list">
 		{#each assumptions.templates as template (template.id)}
 			<div class="template-row">
 				<div>
 					<strong>{template.label}</strong>
-					<span class="template-context">{template.starterHand} starter context</span>
+					<span class="template-context"
+						>{template.starterHand} context · explicit slot exposure below</span
+					>
 				</div>
 				<label>
 					<span>Games</span>

@@ -273,7 +273,7 @@
 		"templates": [
 			{
 				"id": "bos26-vs-left",
-				"label": "Vs left starter (illustrative)",
+				"label": "Left-starter context · explicit 4 L / 12 R PA per slot",
 				"starterHand": "L",
 				"games": 4,
 				"defensiveOutsPerGame": 27,
@@ -363,7 +363,7 @@
 			},
 			{
 				"id": "bos26-vs-right",
-				"label": "Vs right starter (illustrative)",
+				"label": "Right-starter context · explicit 6 L / 18 R PA per slot",
 				"starterHand": "R",
 				"games": 6,
 				"defensiveOutsPerGame": 27,

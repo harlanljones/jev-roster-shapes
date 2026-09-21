@@ -274,7 +274,7 @@
 						<h3>{template.label}</h3>
 						<span
 							>{template.games} games · {template.defensiveOutsPerGame} defensive outs per game · {template.starterHand}
-							starter context</span
+							context only</span
 						>
 					</div>
 					{#if template.evidenceId && evidence.some((item) => item.id === template.evidenceId)}

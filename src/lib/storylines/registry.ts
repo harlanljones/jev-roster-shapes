@@ -57,11 +57,11 @@ function storyline(
 }
 
 export const PINNED_STORYLINE_DIGESTS = {
-	'power-vacuum': 'd60784cba3d7fe2293c9953874358bad49e4de6190631a8861abf5e7a7a637bc',
-	'outfield-logjam': '1315625da2ec4152bf1e8cf00d156b5455e4beb4e423d9ea55e6117d8694034c',
-	'infield-reset': '62812d7c14ce9e07071a02eac8214adaaff98eeb5364be7331fd502e812b016a',
-	'catcher-split': '4dddaefe56e39fc7f2bac5543f0b4b05da8fe061ed20ea564bebe0bb86a00ff6',
-	'lefty-hole': '6a4d1ad6e81e155dbbc8187487a3b57241bb1ed7242b88588f157c6afc2e61de'
+	'power-vacuum': '9009a570f529d416bb61adddae8106515a70da9a462f3996cba7fba097b235dd',
+	'outfield-logjam': 'e9050613a50da3bb89cf25030b41cf2230a171e2b37678f247a9eff3eecb0e83',
+	'infield-reset': 'd9443ee8e6a1851956cd7e36af99bc1e2e3bb8ae8d6e12b67190f753af5ef4e7',
+	'catcher-split': 'cc70c80c5399441b9ea9f0bbb42f8d63669835e3a64b8e5c24306321c1a94767',
+	'lefty-hole': '310e320bad881d0669ccc2a0812c03dcf4e4b07c1a56439483f785f41878953f'
 } as const;
 
 export const storylineRegistry: readonly Storyline[] = [
