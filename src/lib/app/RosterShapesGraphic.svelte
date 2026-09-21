@@ -2,7 +2,7 @@
 	import type { Bundle } from '$lib/contracts';
 	import { SHAPE_RUBRIC_VERSION, shapeOf, type ShapeLabel } from '$lib/shapes/taxonomy';
 	import ShapeGlyph from '$lib/ui/ShapeGlyph.svelte';
-	import { ACTUAL_LINEUP_SNAPSHOTS, DEPTH_CHART_SNAPSHOT, headshotUrl } from './roster-data';
+	import { headshotUrl } from './roster-data';
 
 	let {
 		bundle,
@@ -107,10 +107,27 @@
 		return player ? (projectionsById.get(player.id)?.overall ?? 'Unavailable') : '—';
 	}
 
-	function scenarioPlayer(name: string): boolean {
-		const player = playerForName(name);
-		return player ? baselineMemberIds.has(player.id) : false;
-	}
+	const lineupViews = $derived(
+		bundle.assumptions.templates.map((lineupTemplate) => {
+			const lineupAllocation = baseline.allocations.find(
+				(candidate) => candidate.templateId === lineupTemplate.id
+			);
+			return {
+				template: lineupTemplate,
+				rows: lineupTemplate.slots.map((slot) => {
+					const playerId = lineupAllocation?.assignments.find(
+						(assignment) => assignment.order === slot.order
+					)?.playerId;
+					return {
+						order: slot.order,
+						role: slot.role,
+						player: playerId ? (playersById.get(playerId)?.name ?? 'Unknown player') : 'Unassigned',
+						exposure: slot.paByPitcherHand
+					};
+				})
+			};
+		})
+	);
 </script>
 
 <div class="graphic-block">
@@ -159,28 +176,30 @@
 				</button>
 			{/each}
 		</div>
-		<div class="lineup-tables" aria-label="Actual lineups by pitcher hand">
-			{#each ACTUAL_LINEUP_SNAPSHOTS as lineup (lineup.label)}
-				<section class="source-table" aria-labelledby="lineup-{lineup.label}">
-					<div class="table-kicker">Actual lineup · {lineup.label}</div>
-					<h3 id="lineup-{lineup.label}">{lineup.date}</h3>
-					<p>{lineup.source}</p>
+		<div class="lineup-tables" aria-label="Scenario lineups by pitcher-hand context">
+			{#each lineupViews as lineup (lineup.template.id)}
+				<section class="source-table" aria-labelledby="lineup-{lineup.template.id}">
+					<div class="table-kicker">Scenario lineup · {lineup.template.starterHand} context</div>
+					<h3 id="lineup-{lineup.template.id}">{lineup.template.label}</h3>
+					<p>
+						{lineup.template.games} games · explicit L/R exposure per batting slot. No platoon substitution
+						is inferred.
+					</p>
 					<table>
 						<thead
-							><tr><th scope="col">#</th><th scope="col">Batter</th><th scope="col">Pos</th></tr
+							><tr
+								><th scope="col">#</th><th scope="col">Player</th><th scope="col">Role</th><th
+									scope="col">L PA</th
+								><th scope="col">R PA</th></tr
 							></thead
 						>
-						<tbody>
-							{#if lineup.entries.length === 0}
-								<tr><td colspan="3">Unavailable — no published platoon lineup</td></tr>
-							{:else}
-								{#each lineup.entries as entry (entry.order)}<tr
-										><th scope="row">{entry.order}</th><td>{entry.player}</td><td
-											>{entry.position}</td
-										></tr
-									>{/each}
-							{/if}
-						</tbody>
+						<tbody
+							>{#each lineup.rows as row (row.order)}<tr
+									><th scope="row">{row.order}</th><td>{row.player}</td><td>{row.role}</td><td
+										>{row.exposure.L}</td
+									><td>{row.exposure.R}</td></tr
+								>{/each}</tbody
+						>
 					</table>
 				</section>
 			{/each}
@@ -256,28 +275,31 @@
 
 	<section class="depth-chart" aria-labelledby="depth-chart-heading">
 		<div class="table-kicker">Roster construction</div>
-		<h3 id="depth-chart-heading">Depth chart · September 21, 2026</h3>
+		<h3 id="depth-chart-heading">Depth chart · active scenario roster</h3>
 		<p class="source-note">
-			{DEPTH_CHART_SNAPSHOT.source} · platoon columns are only populated when published.
+			Derived from the active scenario’s current roster membership and eligibility. L/R columns show
+			explicit PA exposure for the assigned starter; they do not invent platoon replacements.
 		</p>
 		<table>
 			<thead
 				><tr
-					><th scope="col">Position</th><th scope="col">Starter</th><th scope="col">R</th><th
-						scope="col">L</th
-					><th scope="col">Bench / defensive rep 1</th><th scope="col">Bench / defensive rep 2</th
+					><th scope="col">Position</th><th scope="col">Starter</th><th scope="col">R exposure</th
+					><th scope="col">L exposure</th><th scope="col">Bench / rep 1</th><th scope="col"
+						>Bench / rep 2</th
 					><th scope="col">Shape</th><th scope="col">Observed R/PA</th></tr
 				></thead
 			>
 			<tbody
-				>{#each DEPTH_CHART_SNAPSHOT.entries as entry (entry.position)}<tr
-						><th scope="row">{entry.position}</th><td>{entry.starter}</td><td
-							>{scenarioPlayer(entry.rightHanded) ? entry.rightHanded : '—'}</td
-						><td>{scenarioPlayer(entry.leftHanded) ? entry.leftHanded : '—'}</td><td
-							>{scenarioPlayer(entry.benchOne) ? entry.benchOne : '—'}</td
-						><td></td><td>{scenarioPlayer(entry.benchTwo) ? entry.benchTwo : '—'}</td><td
-							>{shapeOf(playerForName(entry.starter)?.id ?? '').shape}</td
-						><td>{observedRate(entry.starter)}</td></tr
+				>{#each lineupViews[0]?.rows ?? [] as row (row.role)}<tr
+						><th scope="row">{row.role}</th><td>{row.player}</td><td>{row.exposure.R} PA</td><td
+							>{row.exposure.L} PA</td
+						><td>{row.player}</td><td>—</td><td
+							>{shapeOf(
+								row.player === 'Unassigned'
+									? ''
+									: (bundle.dataset.players.find((player) => player.name === row.player)?.id ?? '')
+							).shape}</td
+						><td>{row.player === 'Unassigned' ? '—' : observedRate(row.player)}</td></tr
 					>{/each}</tbody
 			>
 		</table>
