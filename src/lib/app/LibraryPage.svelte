@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { goto } from '$app/navigation';
 	import type { Bundle } from '$lib/contracts';
 	import { storylineRegistry } from '$lib/storylines/registry';
 	import RosterShapesGraphic from './RosterShapesGraphic.svelte';
-	import LiveRosterRender from './LiveRosterRender.svelte';
 
 	let {
 		activeSlug = storylineRegistry[0]?.slug ?? '',
@@ -97,12 +95,6 @@
 				</div>
 			</div>
 		{/if}
-		<LiveRosterRender
-			bundle={selected.bundle}
-			activeScenarioId={selected.bundle.comparison.baseline.id}
-			onSelect={(playerId: string) =>
-				void goto(resolve('/player/[id]', { id: playerId.slice('mlbam-'.length) }))}
-		/>
 		<RosterShapesGraphic
 			bundle={selected.bundle}
 			{selectedPlayerId}

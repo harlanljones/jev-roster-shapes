@@ -3,6 +3,7 @@
 	import { SHAPE_RUBRIC_VERSION, shapeOf, type ShapeLabel } from '$lib/shapes/taxonomy';
 	import ShapeGlyph from '$lib/ui/ShapeGlyph.svelte';
 	import { headshotUrl } from './roster-data';
+	import LiveRosterRender from './LiveRosterRender.svelte';
 
 	let {
 		bundle,
@@ -279,6 +280,7 @@
 			Shapes are the roster’s visual language: each player keeps a readable name, role, workload,
 			and profile label. Geometry summarizes the profile; it never creates value or coverage.
 		</p>
+		<LiveRosterRender {bundle} activeScenarioId={baseline.id} />
 		<div class="shape-board" aria-label="Roster construction visualization">
 			<div class="mat-label">
 				Roster construction · allocated roles, reserves, and measured white space
