@@ -134,6 +134,8 @@ Observed: `bun run check` (0 errors/warnings), `bun run lint` (Prettier + ESLint
 Limitations and notes:
 
 - The RS-07 full-axe hang does **not** reproduce here: the full rule set completes in ~1–2s. It initially reported 25 color-contrast nodes (one root cause: `--muted`/`--rust` on `--paper-deep`) and 1 landmark-unique node (nested "Assumptions" regions); both repaired per D-32 and now green, so the full-audit spec is a permanent suite member. If the hang recurs on another setup, fall back to the pinned rule set.
+- The RS-07 headless-Chromium frame limitation still stands: journeys use DOM events / `selectOption` except `keyboard.spec.ts`, whose interactions are literal trusted key presses; pointer drag-and-drop (D-20) remains unimplemented — selectors plus Swap/Move cover every operation by keyboard.
+- Fixes touched UI copy (inner "Shared planning context" heading) and the shared palette only; no contract, engine, fixture, or persistence changes.
 - The RS-07 headless-Chromium frame limitation still stands: journeys use DOM events / `selectOption` except `keyboard.spec.ts`, whose interactions are literal trusted key presses. Pointer drag-and-drop is now implemented (see below); selectors plus Swap/Move still cover every operation by keyboard.
 - Fixes touched UI copy (inner "Shared planning context" heading) and the shared palette only; no contract, engine, fixture, or persistence changes.
 
