@@ -1,10 +1,10 @@
 # Roster Shapes
 
-A local synthetic workspace for comparing position-player acquisitions through explicit workload, coverage, and projection assumptions. The SvelteKit scaffold and RS-02 data-contract layer are implemented; calculation, persistence, and comparison workflows remain in the next roadmap wave.
+A local synthetic workspace for comparing position-player acquisitions through explicit workload, coverage, and projection assumptions. The prototype is complete: a SvelteKit static app in which an analyst compares baseline/A/B allocations under shared assumptions, edits assignments (selectors, Swap, Move), inspects evidence, saves drafts, and exports/imports versioned bundles with verified replay. All data is labeled synthetic; no team partnership or approved data is assumed.
 
 ## Start here
 
-Development agents should read [AGENTS.md](AGENTS.md), then take the first dependency-ready work item in [ROADMAP.md](ROADMAP.md). RS-01 and RS-02 are complete; the next wave is RS-03/04/05 with exclusive ownership of engine, persistence, and UI components. This handoff does not assume a Red Sox partnership or approved team data.
+Development agents should read [AGENTS.md](AGENTS.md), then check [ROADMAP.md](ROADMAP.md) for status. RS-01 through RS-07 are complete plus a post-RS-07 UI gap closure (import-from-file, Swap/Move controls, keyboard walkthrough, full axe audit). RS-08 through RS-10 need people, permissions, or external decisions and are out of scope for synthetic work.
 
 | Document | Use it for |
 | --- | --- |
@@ -22,14 +22,26 @@ The focused documents refine SPEC within its scope. Domain rules own arithmetic 
 
 ## Development status
 
-The pinned local stack is Bun 1.4.2, Node 26.x (26.8.2 observed), Svelte 5.57, SvelteKit 2.70, Vite 8.3, TypeScript 6.0, Zod 4.6, and `@noble/hashes` 2.4. `bun run check`, `bun run lint`, the Node Vitest project, and `bun run build` pass for the current scaffold and contract layer. Team deployment and optional Jev integration have separate prerequisites and do not block synthetic work.
+The pinned local stack is Bun 1.4.2, Node 26.x, Svelte 5.57, SvelteKit 2.70 (static single-page app), Vite 8.3, TypeScript 6.0, Zod 4.6, and `@noble/hashes` 2.4 (`mise.toml` pins the runtimes; `package.json` pins exact versions). `bun run check`, `bun run lint`, the Vitest server/integration projects (28 tests), and the Playwright suite (10 journeys: comparison edit/save/reload, latency, pinned and full axe audits, import/swap/move/replace, keyboard walkthrough) pass against the production build. Team deployment and optional Jev integration have separate prerequisites and do not block synthetic work.
 
-The current RS-02 gate freezes `BundleSchema`, `validateBundle`, `parseBundle`, `computeInputDigest`, the typed fixture registry, and the golden digest. See the [roadmap implementation handoff](ROADMAP.md#implementation-handoff) for fixture IDs, observed commands, and limitations.
+The frozen v1 contract is `BundleSchema` validation, canonical SHA-256 input digests, and the deterministic `deterministic-engine-v1` calculation. See the [roadmap implementation handoff](ROADMAP.md#implementation-handoff) for fixture IDs, observed commands, and limitations (including the RS-07 headless-Chromium notes).
 
 The golden fixture is ten games and 360 PA per scenario, with synthetic offensive totals of **6.4 / 8.4 / 7.6** runs for baseline/A/B. It demonstrates arithmetic only. Detailed expectations and mutations are in the acceptance document.
 
+## Commands
+
+```sh
+bun install --frozen-lockfile
+bun run dev        # local dev server
+bun run check      # svelte-check, zero warnings
+bun run lint       # prettier + eslint
+bunx vitest run --project server --project integration
+bun run build
+bun run test:e2e   # production build + Playwright (Chromium)
+```
+
+`bun run test` also includes a browser-component project that hangs in frame-less headless Chromium; the Playwright journeys cover that surface instead (see RS-07 limitations in ROADMAP.md).
+
 ## Next development assignment
 
-> Implement RS-03, RS-04, and RS-05 after the RS-02 review. Read AGENTS.md and the linked contracts. Keep calculations, persistence, and rendering separate; use the frozen contract and fixture IDs; and preserve the distinction between source evidence, assumptions, and calculated effects.
-
-To start a larger delegated implementation, use the roadmap's dependency waves and exclusive ownership after RS-02 freezes the interfaces. Documentation is ready for implementation; the human pilot remains conditional on its listed prerequisites.
+> Synthetic prototype work is complete. The remaining roadmap items (RS-08 pilot prerequisites, RS-09 optional classification experiment, RS-10 outcome study) each wait on people, permissions, or external decisions — writing code or documents does not satisfy those gates. The only unblocked code option is pointer drag-and-drop (D-20, enhancement only; every operation already works by keyboard).

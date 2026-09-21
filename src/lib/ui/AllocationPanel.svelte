@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type {
 		AssignmentChange,
+		AssignmentMove,
 		AssignmentSwap,
 		EvidenceView,
 		ScenarioView,
+		TemplateView,
 		UiPlayer
 	} from './types';
 
@@ -13,6 +15,7 @@
 		evidence,
 		onAssignmentChange = () => {},
 		onAssignmentSwap = () => {},
+		onAssignmentMove = () => {},
 		onOpenEvidence = () => {}
 	}: {
 		scenario: ScenarioView;
@@ -20,6 +23,7 @@
 		evidence: readonly EvidenceView[];
 		onAssignmentChange?: (change: AssignmentChange) => void;
 		onAssignmentSwap?: (swap: AssignmentSwap) => void;
+		onAssignmentMove?: (move: AssignmentMove) => void;
 		onOpenEvidence?: (evidenceId: string) => void;
 	} = $props();
 
@@ -42,13 +46,91 @@
 		return slot ? playerName(slot.playerId) : 'Unassigned';
 	}
 
+	function slotSummary(template: TemplateView, order: number): string {
+		const slot = template.assignments.find((candidate) => candidate.order === order);
+		if (!slot) return `slot ${order}`;
+		return `slot ${slot.order} (${slot.role} · ${slot.pa} PA · ${playerName(slot.playerId)})`;
+	}
+
+	// Controlled per-template selections for the Swap/Move forms. Defaults fall
+	// back to the first slots so the live preview always describes a real edit.
+	let swapA = $state<Record<string, number>>({});
+	let swapB = $state<Record<string, number>>({});
+	let moveFrom = $state<Record<string, number>>({});
+	let moveTo = $state<Record<string, number>>({});
+
+	function swapOrderA(template: TemplateView): number {
+		return swapA[template.id] ?? template.assignments[0]?.order ?? 1;
+	}
+
+	function swapOrderB(template: TemplateView): number {
+		return (
+			swapB[template.id] ?? template.assignments[1]?.order ?? template.assignments[0]?.order ?? 1
+		);
+	}
+
+	function moveOrderFrom(template: TemplateView): number {
+		return (
+			moveFrom[template.id] ??
+			template.assignments.find((slot) => slot.playerId !== null)?.order ??
+			template.assignments[0]?.order ??
+			1
+		);
+	}
+
+	function moveOrderTo(template: TemplateView): number {
+		return (
+			moveTo[template.id] ??
+			template.assignments.find((slot) => slot.playerId === null)?.order ??
+			template.assignments[0]?.order ??
+			1
+		);
+	}
+
+	function movePreview(template: TemplateView): { text: string; valid: boolean } {
+		const from = moveOrderFrom(template);
+		const to = moveOrderTo(template);
+		if (from === to) {
+			return { text: 'Choose two different slots to move a player.', valid: false };
+		}
+		const fromSlot = template.assignments.find((slot) => slot.order === from);
+		const toSlot = template.assignments.find((slot) => slot.order === to);
+		if (!fromSlot || fromSlot.playerId === null) {
+			return { text: `${slotSummary(template, from)} has no player to move.`, valid: false };
+		}
+		if (!toSlot || toSlot.playerId !== null) {
+			return {
+				text: `${slotSummary(template, to)} is occupied by ${assignedLabel(template.id, to)} — use Swap to exchange two players.`,
+				valid: false
+			};
+		}
+		return {
+			text: `Move ${playerName(fromSlot.playerId)} from ${slotSummary(template, from)} to ${slotSummary(template, to)}. Slot ${from} becomes Unassigned.`,
+			valid: true
+		};
+	}
+
 	function handleSwap(templateId: string, event: SubmitEvent): void {
 		event.preventDefault();
-		const form = event.currentTarget as HTMLFormElement;
-		const orderA = Number((form.elements.namedItem('swap-a') as HTMLSelectElement).value);
-		const orderB = Number((form.elements.namedItem('swap-b') as HTMLSelectElement).value);
+		const template = scenario.templates.find((candidate) => candidate.id === templateId);
+		if (!template) return;
+		const orderA = swapOrderA(template);
+		const orderB = swapOrderB(template);
 		if (orderA === orderB) return;
 		onAssignmentSwap({ scenarioId: scenario.id, templateId, orderA, orderB });
+	}
+
+	function handleMove(templateId: string, event: SubmitEvent): void {
+		event.preventDefault();
+		const template = scenario.templates.find((candidate) => candidate.id === templateId);
+		if (!template) return;
+		if (!movePreview(template).valid) return;
+		onAssignmentMove({
+			scenarioId: scenario.id,
+			templateId,
+			fromOrder: moveOrderFrom(template),
+			toOrder: moveOrderTo(template)
+		});
 	}
 
 	function handleAssignmentChange(templateId: string, order: number, event: Event): void {
@@ -187,7 +269,13 @@
 						<legend>Swap two slots in {template.label}</legend>
 						<label>
 							First slot
-							<select name="swap-a" value={String(template.assignments[0]?.order)}>
+							<select
+								name="swap-a"
+								value={String(swapOrderA(template))}
+								onchange={(event) => {
+									swapA[template.id] = Number(event.currentTarget.value);
+								}}
+							>
 								{#each template.assignments as slot (slot.order)}
 									<option value={String(slot.order)}>
 										{slot.order} · {slot.role} · {assignedLabel(template.id, slot.order)}
@@ -199,7 +287,10 @@
 							Second slot
 							<select
 								name="swap-b"
-								value={String((template.assignments[1] ?? template.assignments[0])?.order)}
+								value={String(swapOrderB(template))}
+								onchange={(event) => {
+									swapB[template.id] = Number(event.currentTarget.value);
+								}}
 							>
 								{#each template.assignments as slot (slot.order)}
 									<option value={String(slot.order)}>
@@ -208,8 +299,69 @@
 								{/each}
 							</select>
 						</label>
-						<button class="evidence-button" type="submit">Swap</button>
+						<button
+							class="evidence-button"
+							type="submit"
+							disabled={swapOrderA(template) === swapOrderB(template)}
+							aria-describedby={`swap-preview-${template.id}`}
+						>
+							Swap
+						</button>
 					</fieldset>
+					<p class="form-preview" id={`swap-preview-${template.id}`}>
+						Swap {slotSummary(template, swapOrderA(template))} with {slotSummary(
+							template,
+							swapOrderB(template)
+						)}.
+					</p>
+				</form>
+				<form class="swap" onsubmit={(event) => handleMove(template.id, event)}>
+					<fieldset>
+						<legend>Move one player in {template.label}</legend>
+						<label>
+							From slot
+							<select
+								name="move-from"
+								value={String(moveOrderFrom(template))}
+								onchange={(event) => {
+									moveFrom[template.id] = Number(event.currentTarget.value);
+								}}
+							>
+								{#each template.assignments as slot (slot.order)}
+									<option value={String(slot.order)}>
+										{slot.order} · {slot.role} · {assignedLabel(template.id, slot.order)}
+									</option>
+								{/each}
+							</select>
+						</label>
+						<label>
+							To slot
+							<select
+								name="move-to"
+								value={String(moveOrderTo(template))}
+								onchange={(event) => {
+									moveTo[template.id] = Number(event.currentTarget.value);
+								}}
+							>
+								{#each template.assignments as slot (slot.order)}
+									<option value={String(slot.order)}>
+										{slot.order} · {slot.role} · {assignedLabel(template.id, slot.order)}
+									</option>
+								{/each}
+							</select>
+						</label>
+						<button
+							class="evidence-button"
+							type="submit"
+							disabled={!movePreview(template).valid}
+							aria-describedby={`move-preview-${template.id}`}
+						>
+							Move
+						</button>
+					</fieldset>
+					<p class="form-preview" id={`move-preview-${template.id}`}>
+						{movePreview(template).text}
+					</p>
 				</form>
 			</div>
 		{/each}
@@ -344,6 +496,12 @@
 		white-space: nowrap;
 	}
 
+	.evidence-button:disabled {
+		cursor: not-allowed;
+		opacity: 0.55;
+		text-decoration: none;
+	}
+
 	.table-scroll {
 		overflow-x: auto;
 	}
@@ -455,6 +613,13 @@
 		display: grid;
 		gap: 0.2rem;
 		font-size: 0.75rem;
+	}
+
+	.form-preview {
+		margin: 0.45rem 0 0;
+		color: var(--muted);
+		font-size: 0.75rem;
+		line-height: 1.5;
 	}
 
 	.sr-only {

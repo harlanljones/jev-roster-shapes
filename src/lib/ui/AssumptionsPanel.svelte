@@ -22,7 +22,7 @@
 	<div class="section-heading">
 		<div>
 			<span class="eyebrow">Shared context</span>
-			<h2 id="assumptions-title">Assumptions</h2>
+			<h2 id="assumptions-title">Shared planning context</h2>
 		</div>
 		<div class="revision">Revision {assumptions.revision}</div>
 	</div>
