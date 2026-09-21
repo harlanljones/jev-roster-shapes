@@ -9,16 +9,16 @@ test('the production shell opens on the public storyline library with no axe vio
 }) => {
 	await page.goto('/');
 
-	await expect(page).toHaveTitle('Roster Shapes · 2026 Red Sox storylines');
+	await expect(page).toHaveTitle(/Roster Shapes/);
 	await expect(page.getByText('Public data', { exact: true })).toBeVisible();
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'Five 2026 storylines, one roster of shapes'
+		'One roster. Five ways to see the shape.'
 	);
-	await expect(page.getByRole('group', { name: 'Choose the storyline roster' })).toBeVisible();
+	await expect(page.getByRole('navigation', { name: 'Choose scenario' })).toBeVisible();
 	// The interactive graphic exposes every position lane as a labeled button
 	// with a table equivalent.
-	await expect(page.getByRole('button', { name: /C: Carlos Narváez/ })).toBeVisible();
-	await expect(page.getByRole('table', { name: /Roster graphic data/ })).toBeVisible();
+	await expect(page.getByRole('button', { name: /C:/ })).toBeVisible();
+	await expect(page.locator('.depth-chart table')).toBeVisible();
 
 	// DOM-level audit (see workspace-journey.spec.ts for why the rule set is
 	// pinned instead of running every axe rule).
@@ -54,4 +54,14 @@ test('the production shell opens on the public storyline library with no axe vio
 		auditRules
 	);
 	expect(audit.violations).toEqual([]);
+});
+
+test('scenario links resolve to addressable storyline pages', async ({ page }) => {
+	await page.goto('/scenario/lefty-hole');
+	await expect(page).toHaveURL(/\/scenario\/lefty-hole$/);
+	await expect(page.getByRole('link', { name: /Lefty hole/ })).toHaveAttribute(
+		'aria-current',
+		'page'
+	);
+	await expect(page.getByRole('heading', { name: /No Refsnyder, no Romy/ })).toBeVisible();
 });

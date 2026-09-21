@@ -121,7 +121,7 @@ export default defineConfig(
 			'boundaries/elements': elements,
 			// SvelteKit's generated route types resolve through tsconfig rootDirs, which the
 			// resolver does not follow; they are generated declarations, not a component.
-			'boundaries/flag-as-external': { customSourcePatterns: ['./$types'] }
+			'boundaries/flag-as-external': { customSourcePatterns: ['./$types', '$app/*'] }
 		},
 		rules: {
 			'boundaries/dependencies': ['error', { default: 'disallow', policies }],

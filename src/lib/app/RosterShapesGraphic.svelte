@@ -2,7 +2,7 @@
 	import type { Bundle } from '$lib/contracts';
 	import { SHAPE_RUBRIC_VERSION, shapeOf, type ShapeLabel } from '$lib/shapes/taxonomy';
 	import ShapeGlyph from '$lib/ui/ShapeGlyph.svelte';
-	import { DEPTH_CHART_SNAPSHOT, ACTUAL_LINEUP_SNAPSHOT } from './roster-data';
+	import { ACTUAL_LINEUP_SNAPSHOTS, DEPTH_CHART_SNAPSHOT, headshotUrl } from './roster-data';
 
 	let {
 		bundle,
@@ -39,15 +39,15 @@
 	);
 
 	const ROLE_POSITION: Record<string, { left: string; top: string }> = {
-		CF: { left: '50%', top: '6%' },
-		LF: { left: '13%', top: '30%' },
-		RF: { left: '87%', top: '30%' },
-		SS: { left: '36%', top: '45%' },
-		'2B': { left: '64%', top: '45%' },
-		'3B': { left: '22%', top: '63%' },
-		'1B': { left: '78%', top: '63%' },
-		C: { left: '41%', top: '84%' },
-		DH: { left: '61%', top: '73%' }
+		CF: { left: '50%', top: '13%' },
+		LF: { left: '18%', top: '29%' },
+		RF: { left: '82%', top: '29%' },
+		SS: { left: '36%', top: '51%' },
+		'2B': { left: '64%', top: '51%' },
+		'3B': { left: '25%', top: '68%' },
+		'1B': { left: '75%', top: '68%' },
+		C: { left: '50%', top: '88%' },
+		DH: { left: '82%', top: '84%' }
 	};
 	const FIELD_ROLE_ORDER = ['C', 'DH', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
 
@@ -97,23 +97,38 @@
 			: null
 	);
 	const rosterPlayers = $derived(bundle.dataset.players);
+	function playerForName(name: string) {
+		return bundle.dataset.players.find((player) => player.name === name);
+	}
+
+	function observedRate(name: string): string {
+		const player = playerForName(name);
+		return player ? (projectionsById.get(player.id)?.overall ?? 'Unavailable') : '—';
+	}
 </script>
 
 <div class="graphic-block">
 	<div class="field-and-tables">
-		<div class="diamond-stage" aria-label="Fenway-style field roster view">
-			<svg class="diamond-backdrop" viewBox="0 0 400 380" aria-hidden="true" focusable="false">
-				<path d="M16 24 Q200 -12 384 24 L348 286 Q200 382 52 286 Z" class="outfield" />
-				<path d="M40 34 L200 350 L360 34" class="foul-line" />
-				<path d="M200 350 L120 270 L200 190 L280 270 Z" class="infield" />
-				<circle cx="200" cy="270" r="28" class="dirt" />
-				<circle cx="200" cy="270" r="8" class="mound" />
-				<rect x="192" y="342" width="16" height="16" class="base home" />
-				<rect x="112" y="262" width="16" height="16" class="base" transform="rotate(45 120 270)" />
-				<rect x="192" y="182" width="16" height="16" class="base" transform="rotate(45 200 190)" />
-				<rect x="272" y="262" width="16" height="16" class="base" transform="rotate(45 280 270)" />
-				<rect x="302" y="314" width="52" height="34" class="dh-box" />
-				<text x="328" y="334" class="dh-label">DH</text>
+		<div class="diamond-stage" aria-label="Baseball field roster view">
+			<div class="field-caption">
+				<span>BASELINE FIELD</span><small>{template?.label ?? 'Full-game allocation'}</small>
+			</div>
+			<svg class="diamond-backdrop" viewBox="0 0 400 440" aria-hidden="true" focusable="false">
+				<path d="M12 42 Q200 -30 388 42 L358 332 Q200 436 42 332 Z" class="outfield" />
+				<path d="M24 43 Q200 -12 376 43" class="warning-track" />
+				<path d="M200 404 L42 43 M200 404 L358 43" class="foul-line" />
+				<path d="M200 404 L94 298 L200 192 L306 298 Z" class="base-path" />
+				<path d="M200 404 L108 312 L200 220 L292 312 Z" class="infield" />
+				<path d="M112 312 A118 118 0 0 0 288 312" class="infield-arc" />
+				<circle cx="200" cy="278" r="31" class="dirt" />
+				<ellipse cx="200" cy="278" rx="12" ry="7" class="mound" />
+				<path d="M188 267 H212" class="rubber" />
+				<path d="M188 405 L200 417 L212 405 L200 393 Z" class="home-plate" />
+				<rect x="101" y="301" width="16" height="16" class="base" transform="rotate(45 109 309)" />
+				<rect x="192" y="184" width="16" height="16" class="base" transform="rotate(45 200 192)" />
+				<rect x="283" y="301" width="16" height="16" class="base" transform="rotate(45 291 309)" />
+				<rect x="302" y="354" width="68" height="38" class="dh-box" />
+				<text x="336" y="377" class="dh-label">DH / BAT</text>
 			</svg>
 			{#each nodes as node (node.order)}
 				<button
@@ -125,6 +140,12 @@
 					aria-pressed={node.playerId !== null && node.playerId === selectedPlayerId}
 					onclick={() => onSelect(node.playerId === selectedPlayerId ? null : node.playerId)}
 				>
+					{#if node.playerId}<img
+							class="node-headshot"
+							src={headshotUrl(node.playerId)}
+							alt=""
+							loading="lazy"
+						/>{/if}
 					<span class="node-role">{node.role}</span>
 					<ShapeGlyph shape={node.shape} size={22} />
 					<span class="node-name">{node.name}</span>
@@ -132,37 +153,31 @@
 				</button>
 			{/each}
 		</div>
-		<div class="source-tables">
-			<section class="source-table" aria-labelledby="actual-lineup-heading">
-				<div class="table-kicker">Actual lineup</div>
-				<h3 id="actual-lineup-heading">September 20, 2026</h3>
-				<p>{ACTUAL_LINEUP_SNAPSHOT.source}</p>
-				<table>
-					<thead
-						><tr><th scope="col">#</th><th scope="col">Batter</th><th scope="col">Pos</th></tr
-						></thead
-					>
-					<tbody
-						>{#each ACTUAL_LINEUP_SNAPSHOT.entries as entry (entry.order)}<tr
-								><th scope="row">{entry.order}</th><td>{entry.player}</td><td>{entry.position}</td
-								></tr
-							>{/each}</tbody
-					>
-				</table>
-			</section>
-			<section class="source-table" aria-labelledby="depth-chart-heading">
-				<div class="table-kicker">Actual depth chart</div>
-				<h3 id="depth-chart-heading">Snapshot · September 21</h3>
-				<p>{DEPTH_CHART_SNAPSHOT.source}</p>
-				<table>
-					<thead><tr><th scope="col">Pos</th><th scope="col">Depth</th></tr></thead>
-					<tbody
-						>{#each DEPTH_CHART_SNAPSHOT.entries as entry (entry.position)}<tr
-								><th scope="row">{entry.position}</th><td>{entry.players.join(' · ')}</td></tr
-							>{/each}</tbody
-					>
-				</table>
-			</section>
+		<div class="lineup-tables" aria-label="Actual lineups by pitcher hand">
+			{#each ACTUAL_LINEUP_SNAPSHOTS as lineup (lineup.label)}
+				<section class="source-table" aria-labelledby="lineup-{lineup.label}">
+					<div class="table-kicker">Actual lineup · {lineup.label}</div>
+					<h3 id="lineup-{lineup.label}">{lineup.date}</h3>
+					<p>{lineup.source}</p>
+					<table>
+						<thead
+							><tr><th scope="col">#</th><th scope="col">Batter</th><th scope="col">Pos</th></tr
+							></thead
+						>
+						<tbody>
+							{#if lineup.entries.length === 0}
+								<tr><td colspan="3">Unavailable — no published platoon lineup</td></tr>
+							{:else}
+								{#each lineup.entries as entry (entry.order)}<tr
+										><th scope="row">{entry.order}</th><td>{entry.player}</td><td
+											>{entry.position}</td
+										></tr
+									>{/each}
+							{/if}
+						</tbody>
+					</table>
+				</section>
+			{/each}
 		</div>
 	</div>
 
@@ -181,6 +196,7 @@
 					class:selected={selectedPlayerId === player.id}
 					onclick={() => onSelect(selectedPlayerId === player.id ? null : player.id)}
 				>
+					<img src={headshotUrl(player.id)} alt="" loading="lazy" />
 					<ShapeGlyph shape={shapeOf(player.id).shape} size={26} />
 					<span>{player.name}</span>
 					<small
@@ -232,37 +248,32 @@
 		</aside>
 	{/if}
 
-	<table class="graphic-table">
-		<caption>
-			Roster graphic data — {baseline.label}, {template?.label ?? 'no template'}
-		</caption>
-		<thead>
-			<tr>
-				<th scope="col">Position</th>
-				<th scope="col">Player</th>
-				<th scope="col">Shape</th>
-				<th scope="col">Bats</th>
-				<th scope="col">Observed R/PA</th>
-				<th scope="col">Lineup PA</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each nodes as node (node.order)}
-				<tr>
-					<th scope="row">{node.role}</th>
-					<td>{node.name}</td>
-					<td>{node.shape}</td>
-					<td>{node.playerId ? (playersById.get(node.playerId)?.bats ?? '—') : '—'}</td>
-					<td
-						>{node.playerId
-							? (projectionsById.get(node.playerId)?.overall ?? 'Unavailable')
-							: '—'}</td
-					>
-					<td>{node.pa}</td>
-				</tr>
-			{/each}
-		</tbody>
-	</table>
+	<section class="depth-chart" aria-labelledby="depth-chart-heading">
+		<div class="table-kicker">Roster construction</div>
+		<h3 id="depth-chart-heading">Depth chart · September 21, 2026</h3>
+		<p class="source-note">
+			{DEPTH_CHART_SNAPSHOT.source} · platoon columns are only populated when published.
+		</p>
+		<table>
+			<thead
+				><tr
+					><th scope="col">Position</th><th scope="col">Starter</th><th scope="col">R</th><th
+						scope="col">L</th
+					><th scope="col">Bench / defensive rep 1</th><th scope="col">Bench / defensive rep 2</th
+					><th scope="col">Shape</th><th scope="col">Observed R/PA</th></tr
+				></thead
+			>
+			<tbody
+				>{#each DEPTH_CHART_SNAPSHOT.entries as entry (entry.position)}<tr
+						><th scope="row">{entry.position}</th><td>{entry.starter}</td><td
+							>{entry.rightHanded}</td
+						><td>{entry.leftHanded}</td><td>{entry.benchOne}</td><td>{entry.benchTwo}</td><td
+							>{shapeOf(playerForName(entry.starter)?.id ?? '').shape}</td
+						><td>{observedRate(entry.starter)}</td></tr
+					>{/each}</tbody
+			>
+		</table>
+	</section>
 </div>
 
 <style>
@@ -274,7 +285,7 @@
 		position: relative;
 		width: 100%;
 		max-width: 40rem;
-		aspect-ratio: 400 / 380;
+		aspect-ratio: 400 / 440;
 		border: 1px solid var(--line);
 		border-radius: 1rem;
 		background: #264d3b;
@@ -283,6 +294,26 @@
 			0 18px 36px rgb(38 77 59 / 20%);
 		overflow: hidden;
 	}
+	.field-caption {
+		position: absolute;
+		z-index: 2;
+		top: 0.8rem;
+		left: 1rem;
+		display: flex;
+		align-items: baseline;
+		gap: 0.55rem;
+		color: rgb(255 254 249 / 88%);
+		font-size: 0.62rem;
+		font-weight: 800;
+		letter-spacing: 0.16em;
+	}
+	.field-caption small {
+		color: rgb(255 254 249 / 68%);
+		font-size: 0.58rem;
+		font-weight: 500;
+		letter-spacing: 0.02em;
+		text-transform: none;
+	}
 	.diamond-backdrop {
 		position: absolute;
 		inset: 0;
@@ -290,16 +321,31 @@
 		height: 100%;
 	}
 	.outfield {
-		fill: #356849;
+		fill: #2f6245;
+	}
+	.warning-track {
+		fill: none;
+		stroke: rgb(226 190 142 / 60%);
+		stroke-width: 3;
 	}
 	.foul-line {
 		fill: none;
 		stroke: rgb(255 254 249 / 72%);
-		stroke-width: 2;
+		stroke-width: 2.5;
+	}
+	.base-path {
+		fill: none;
+		stroke: rgb(228 192 157 / 30%);
+		stroke-width: 1;
 	}
 	.infield {
 		fill: #a8643c;
 		stroke: #e4c09d;
+		stroke-width: 2;
+	}
+	.infield-arc {
+		fill: none;
+		stroke: rgb(228 192 157 / 62%);
 		stroke-width: 2;
 	}
 	.dirt {
@@ -308,6 +354,14 @@
 	}
 	.mound {
 		fill: #e4c09d;
+	}
+	.rubber {
+		stroke: #fffef9;
+		stroke-width: 2;
+	}
+	.home-plate {
+		fill: #fffef9;
+		stroke: #d8c4a9;
 	}
 	.base {
 		fill: #fffef9;
@@ -330,7 +384,7 @@
 		gap: 1rem;
 		align-items: start;
 	}
-	.source-tables {
+	.lineup-tables {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.75rem;
@@ -397,7 +451,7 @@
 	}
 	.roster-player {
 		display: grid;
-		grid-template-columns: auto 1fr;
+		grid-template-columns: auto auto 1fr;
 		align-items: center;
 		column-gap: 0.45rem;
 		border: 1px solid var(--line);
@@ -409,12 +463,19 @@
 		font: inherit;
 		text-align: left;
 	}
+	.roster-player img {
+		width: 2.2rem;
+		height: 2.2rem;
+		border-radius: 50%;
+		object-fit: cover;
+		background: var(--paper-deep);
+	}
 	.roster-player span {
 		font-size: 0.74rem;
 		font-weight: 700;
 	}
 	.roster-player small {
-		grid-column: 2;
+		grid-column: 3;
 		color: var(--muted);
 		font-size: 0.62rem;
 	}
@@ -427,19 +488,27 @@
 		display: grid;
 		justify-items: center;
 		gap: 0.1rem;
-		min-width: 4.5rem;
-		padding: 0.4rem 0.5rem;
-		border: 1px solid var(--line);
-		border-radius: 0.75rem;
-		background: rgb(255 254 249 / 92%);
+		min-width: 4.8rem;
+		padding: 0.3rem 0.4rem;
+		border: 1px solid rgb(255 254 249 / 75%);
+		border-radius: 0.65rem;
+		background: rgb(255 254 249 / 95%);
 		color: var(--ink);
 		cursor: pointer;
 		font: inherit;
 		transform: translate(-50%, -50%);
+		box-shadow: 0 5px 12px rgb(20 48 35 / 22%);
 	}
 	.position-node.selected {
 		border-color: var(--rust-dark);
 		box-shadow: 0 0 0 3px rgb(168 79 50 / 30%);
+	}
+	.node-headshot {
+		width: 1.6rem;
+		height: 1.6rem;
+		border-radius: 50%;
+		object-fit: cover;
+		background: var(--paper-deep);
 	}
 	.node-role {
 		font-size: 0.65rem;
@@ -522,18 +591,32 @@
 		font-weight: 700;
 		white-space: nowrap;
 	}
-	.graphic-table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 0.82rem;
+	.depth-chart {
+		border: 1px solid var(--line);
+		border-radius: 1rem;
+		padding: 1rem;
+		background: var(--panel);
+		overflow-x: auto;
 	}
-	.graphic-table caption {
-		margin-bottom: 0.5rem;
+	.depth-chart h3 {
+		margin: 0.15rem 0 0.25rem;
+		font-family: Georgia, serif;
+		font-size: 1.35rem;
+		font-weight: 500;
+	}
+	.source-note {
+		margin: 0 0 0.7rem;
 		color: var(--muted);
-		text-align: left;
+		font-size: 0.72rem;
 	}
-	.graphic-table th,
-	.graphic-table td {
+	.depth-chart table {
+		width: 100%;
+		min-width: 48rem;
+		border-collapse: collapse;
+		font-size: 0.78rem;
+	}
+	.depth-chart th,
+	.depth-chart td {
 		border-bottom: 1px solid var(--line);
 		padding: 0.45rem 0.5rem;
 		text-align: left;
@@ -542,7 +625,7 @@
 		.field-and-tables {
 			grid-template-columns: 1fr;
 		}
-		.source-tables {
+		.lineup-tables {
 			grid-template-columns: 1fr;
 		}
 		.position-node {

@@ -40,9 +40,9 @@ test('the analyst opens a storyline, switches scenarios, edits, and saves', asyn
 
 	// The saved draft survives a reload: reopening the storyline restores the
 	// saved revision from localStorage instead of the file.
-	await page.reload();
-	await page.getByRole('button', { name: 'Open storyline: Power vacuum' }).dispatchEvent('click');
-	await page.getByRole('button', { name: 'Open public bundle' }).dispatchEvent('click');
+	await page.goto('/scenario/power-vacuum');
+	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
+	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
 	await expect(page.locator('.storage-pill')).toHaveAttribute('data-state', 'saved');
 });
 

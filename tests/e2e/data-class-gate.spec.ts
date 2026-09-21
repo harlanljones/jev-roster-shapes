@@ -18,14 +18,14 @@ test('a storyline card asks for acknowledgment, then opens with public labels', 
 	await page.goto('/');
 	const heading = page.getByRole('heading', { level: 1 });
 	// First paint is the library: the roster graphic plus five storyline cards.
-	await expect(heading).toHaveText('Five 2026 storylines, one roster of shapes');
-	await expect(page.getByRole('group', { name: 'Choose the storyline roster' })).toBeVisible();
-	await expect(page.getByRole('button', { name: 'Open storyline: Power vacuum' })).toBeVisible();
+	await expect(heading).toHaveText('One roster. Five ways to see the shape.');
+	await expect(page.getByRole('navigation', { name: 'Choose scenario' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Open workspace' })).toBeVisible();
 
-	await page.getByRole('button', { name: 'Open storyline: Power vacuum' }).dispatchEvent('click');
-	await expect(page.getByRole('button', { name: 'Open public bundle' })).toBeVisible();
+	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
+	await expect(page.getByRole('button', { name: 'Open public scenario' })).toBeVisible();
 
-	await page.getByRole('button', { name: 'Open public bundle' }).dispatchEvent('click');
+	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
 	await expect(heading).toHaveText('mlbam-bos-2026-power-vacuum');
 	await expect(page).toHaveTitle('Roster Shapes · Public-data comparison');
@@ -40,14 +40,16 @@ test('a storyline card asks for acknowledgment, then opens with public labels', 
 test('declining the acknowledgment keeps browsing the library', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'Five 2026 storylines, one roster of shapes'
+		'One roster. Five ways to see the shape.'
 	);
 
-	await page.getByRole('button', { name: 'Open storyline: Lefty hole' }).dispatchEvent('click');
-	await expect(page.getByRole('button', { name: 'Open public bundle' })).toBeVisible();
+	await page.getByRole('link', { name: /Lefty hole/ }).click();
+	await expect(page.getByRole('button', { name: 'Open workspace' })).toBeVisible();
+	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
+	await expect(page.getByRole('button', { name: 'Open public scenario' })).toBeVisible();
 	await page.getByRole('button', { name: 'Keep browsing' }).dispatchEvent('click');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'Five 2026 storylines, one roster of shapes'
+		'One roster. Five ways to see the shape.'
 	);
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeHidden();
 });
