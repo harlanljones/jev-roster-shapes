@@ -28,6 +28,7 @@
 	} from '$lib/ui/types';
 	import { buildComparisonViewModel } from './workspace';
 	import { storylineRegistry } from '$lib/storylines/registry';
+	import LiveRosterRender from './LiveRosterRender.svelte';
 
 	// Library-first workspace (D-40): the library collects the D-36 public
 	// acknowledgment before opening, so the initial bundle arrives acknowledged.
@@ -595,6 +596,11 @@
 			scenarios={model.scenarios}
 			activeScenarioId={model.activeScenarioId}
 			onScenarioChange={selectScenario}
+		/>
+		<LiveRosterRender
+			{bundle}
+			activeScenarioId={model.activeScenarioId}
+			onSelect={(playerId) => (selectedEvidenceId = `player:${playerId}`)}
 		/>
 
 		{#if activeScenario}
