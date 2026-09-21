@@ -53,8 +53,8 @@ describe('deterministic calculation engine', () => {
 			'cand-b'
 		]);
 		expect(comparison.results.map(({ offense }) => offense.runs)).toEqual([
-			'39.13172',
-			'38.3194',
+			'41.49604',
+			'40.68372',
 			null
 		]);
 		expect(comparison.results[2]?.offense.status).toBe('unavailable');
@@ -102,7 +102,7 @@ describe('deterministic calculation engine', () => {
 				.reduce((total, lane) => total + (lane.shortfallOuts ?? 0), 0)
 		).toBe(270);
 		expect(reconciliation).toMatchObject({ allocatedPA: 320, unallocatedPA: 40, conserved: true });
-		expect(comparison.results[1]?.offense.runs).toBe('38.3194');
+		expect(comparison.results[1]?.offense.runs).toBe('40.68372');
 	});
 
 	it('invalidates simultaneous duplicate and ineligible assignments without authoritative totals', () => {
@@ -172,7 +172,7 @@ describe('deterministic calculation engine', () => {
 		projection(split, ANTHONY).vsL = '0.10';
 		projection(split, ANTHONY).vsR = '0.06';
 		const result = calculateScenario(split, 'cand-a');
-		expect(result.offense.runs).toBe('37.3526');
+		expect(result.offense.runs).toBe('39.71692');
 		expect(calculateOffenseDelta(calculateScenario(split, 'base'), result).runs).toBe('-1.77912');
 
 		const changedExposure = copyBundle();
@@ -191,7 +191,7 @@ describe('deterministic calculation engine', () => {
 			if (template.id === 'bos26-vs-left') slot.paByPitcherHand = { L: 8, R: 8, unknown: 0 };
 			else slot.paByPitcherHand = { L: 12, R: 12, unknown: 0 };
 		}
-		expect(calculateScenario(changedExposure, 'cand-a').offense.runs).toBe('37.7526');
+		expect(calculateScenario(changedExposure, 'cand-a').offense.runs).toBe('40.11692');
 
 		const unknownExposure = copyBundle();
 		unknownExposure.assumptions.offenseMode = 'split';
@@ -239,7 +239,7 @@ describe('deterministic calculation engine', () => {
 		const negative = copyBundle();
 		projection(negative, ANTHONY).overall = '-0.01';
 		const comparison = calculateComparison(negative);
-		expect(comparison.results[1]?.offense.runs).toBe('34.1526');
+		expect(comparison.results[1]?.offense.runs).toBe('36.51692');
 		expect(comparison.offenseDeltas[1]?.runs).toBe('-4.97912');
 	});
 

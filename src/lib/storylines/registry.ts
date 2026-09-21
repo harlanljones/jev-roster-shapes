@@ -63,11 +63,11 @@ function storyline(
 }
 
 export const PINNED_STORYLINE_DIGESTS = {
-	'power-vacuum': '9cfa5140642b8270dc57030adf10c0b014101d59a632311aa1c53550dd79092e',
-	'outfield-logjam': '97ba04539b84be17f1da107f454872fa7ffdbe0e1a49479775ad17fa099aef4c',
-	'infield-reset': '14c0c81ca06c3cb89a5f5293158657ef8c1af56d7d194dc7776d63318bb4e7f2',
-	'catcher-split': 'bb1eb1a564a52b4a72cbd562a76fd210593b34bdfe1169c8acee9906c3c93e31',
-	'lefty-hole': 'b24021ac22dfaffcfbb547a598f3e2b5c33cbb72d107b20343c0c03a4493c997'
+	'power-vacuum': '6224ab1a3c868185ade5bda1e2ccde2358f123a4650fb24275e8e101e3baa7d6',
+	'outfield-logjam': '1271a0540fb9dcae9553060adb9c833410e71836afee6fc4f9e39154aebc9b8c',
+	'infield-reset': 'f69d7434a620e3068620e010d7e8cdacb41996f1e05ffb5aa323a346f3e84b78',
+	'catcher-split': '2a75308841e270fa35fa33820f1da85c2ce8483fef43d4b8128a73d256b43f37',
+	'lefty-hole': '81a8fc38ea6fa86891967a04ca3b230875b20f02752bc7f91b153327c3851172'
 } as const;
 
 export const storylineRegistry: readonly Storyline[] = [
@@ -83,10 +83,10 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		powerVacuumJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '39.13172', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '41.49604', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '38.3194',
+				offenseRuns: '40.68372',
 				offenseDelta: '-0.81232',
 				feasibility: 'feasible'
 			},
@@ -105,16 +105,16 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event records: MLB Stats API transactions + public depth chart · data snapshot: September 20–21, 2026',
 		outfieldLogjamJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '38.3194', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '40.68372', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '39.13172',
+				offenseRuns: '41.49604',
 				offenseDelta: '0.81232',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '37.46168',
+				offenseRuns: '39.826',
 				offenseDelta: '-0.85772',
 				feasibility: 'feasible'
 			}
@@ -123,7 +123,7 @@ export const storylineRegistry: readonly Storyline[] = [
 	storyline(
 		'infield-reset',
 		'From the worst infield to steady',
-		'116 errors and the worst infield defense in baseball since 2020. Contreras at first, Durbin at third, rookie Mayer at second — with versatile veteran IKF and utility Monasterio behind him.',
+		'116 errors and the worst infield defense in baseball since 2020. Contreras at first, Durbin at third, current-roster Sogard at second — with versatile veteran IKF and utility Monasterio behind him.',
 		'Retrospective roster question · infield reset',
 		'Choose the second baseman without hiding defensive coverage tradeoffs.',
 		'February 9–10, 2026',
@@ -132,25 +132,25 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		infieldResetJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '38.3194', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '40.68372', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '39.95648',
-				offenseDelta: '1.63708',
+				offenseRuns: '41.20968',
+				offenseDelta: '0.52596',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '39.2414',
-				offenseDelta: '0.922',
+				offenseRuns: '40.4946',
+				offenseDelta: '-0.18912',
 				feasibility: 'feasible'
 			}
 		]
 	),
 	storyline(
 		'catcher-split',
-		'Narváez’s middle ground vs Wong’s rebound',
-		'Narváez played the second half of 2025 on a bad left knee that needed surgery. Wong lost the starter job and the bat. Who catches the win-now staff — or do they carry both and sit a rookie outfielder?',
+		'Rutschman’s middle ground vs Wong’s rebound',
+		'Rutschman is the current catching anchor while Wong remains the alternate bat. Who catches the win-now staff — or do they carry both and sit a rookie outfielder?',
 		'Retrospective roster question · catcher workload',
 		'Compare catcher workload, bat, and the cost of carrying both.',
 		'2025 second half → September 20, 2026',
@@ -159,16 +159,16 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event record: MLB Stats API game 822922 + public depth chart · data snapshot: September 20–21, 2026',
 		catcherSplitJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '38.3194', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '40.68372', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '39.05276',
-				offenseDelta: '0.73336',
+				offenseRuns: '40.16388',
+				offenseDelta: '-0.51984',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '38.32944',
+				offenseRuns: '40.69376',
 				offenseDelta: '0.01004',
 				feasibility: 'feasible'
 			}
@@ -186,16 +186,16 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		leftyHoleJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '39.13172', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '41.49604', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '40.7688',
-				offenseDelta: '1.63708',
+				offenseRuns: '42.022',
+				offenseDelta: '0.52596',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '39.57752',
+				offenseRuns: '41.94184',
 				offenseDelta: '0.4458',
 				feasibility: 'feasible'
 			}

@@ -28,11 +28,11 @@ const POSITION_ORDER = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
 // Slot orders follow the domain contract: 1 C, 2 1B, 3 2B, 4 3B, 5 SS,
 // 6 LF, 7 CF, 8 RF, 9 DH.
 const MLBAM = {
-	narvaez: 665966,
+	rutschman: 668939,
 	wong: 657136,
 	contreras: 575929,
 	casas: 671213,
-	mayer: 691785,
+	sogard: 686765,
 	ikf: 643396,
 	monasterio: 655316,
 	durbin: 702332,
@@ -46,7 +46,7 @@ const MLBAM = {
 };
 
 // Common starters shared by every storyline baseline.
-const CORE = { 1: 'narvaez', 2: 'contreras', 4: 'durbin', 7: 'rafaela', 8: 'abreu' };
+const CORE = { 1: 'rutschman', 2: 'contreras', 4: 'durbin', 7: 'rafaela', 8: 'abreu' };
 
 const STORYLINES = [
 	{
@@ -58,7 +58,7 @@ const STORYLINES = [
 			{
 				id: 'base',
 				label: 'Baseline — Yoshida DH',
-				extra: { 3: 'mayer', 5: 'story', 6: 'duran', 9: 'yoshida' },
+				extra: { 3: 'sogard', 5: 'story', 6: 'duran', 9: 'yoshida' },
 				reserve: 'anthony',
 				incoming: [],
 				outgoing: []
@@ -66,7 +66,7 @@ const STORYLINES = [
 			{
 				id: 'cand-a',
 				label: 'A — Anthony everyday',
-				extra: { 3: 'mayer', 5: 'story', 6: 'anthony', 9: 'duran' },
+				extra: { 3: 'sogard', 5: 'story', 6: 'anthony', 9: 'duran' },
 				reserve: null,
 				incoming: ['anthony'],
 				outgoing: ['yoshida']
@@ -74,7 +74,7 @@ const STORYLINES = [
 			{
 				id: 'cand-b',
 				label: 'B — Casas DH hope',
-				extra: { 3: 'mayer', 5: 'story', 6: 'duran', 9: 'casas' },
+				extra: { 3: 'sogard', 5: 'story', 6: 'duran', 9: 'casas' },
 				reserve: 'anthony',
 				incoming: ['casas'],
 				outgoing: ['yoshida']
@@ -91,7 +91,7 @@ const STORYLINES = [
 			{
 				id: 'base',
 				label: 'Baseline — Anthony LF, Duran DH',
-				extra: { 3: 'mayer', 5: 'story', 6: 'anthony', 9: 'duran' },
+				extra: { 3: 'sogard', 5: 'story', 6: 'anthony', 9: 'duran' },
 				reserve: 'yoshida',
 				incoming: [],
 				outgoing: []
@@ -99,7 +99,7 @@ const STORYLINES = [
 			{
 				id: 'cand-a',
 				label: 'A — WBC-hot Yoshida DH',
-				extra: { 3: 'mayer', 5: 'story', 6: 'duran', 9: 'yoshida' },
+				extra: { 3: 'sogard', 5: 'story', 6: 'duran', 9: 'yoshida' },
 				reserve: null,
 				incoming: ['yoshida'],
 				outgoing: ['anthony']
@@ -107,7 +107,7 @@ const STORYLINES = [
 			{
 				id: 'cand-b',
 				label: 'B — Eaton speed DH',
-				extra: { 3: 'mayer', 5: 'story', 6: 'duran', 9: 'eaton' },
+				extra: { 3: 'sogard', 5: 'story', 6: 'duran', 9: 'eaton' },
 				reserve: 'yoshida',
 				incoming: ['eaton'],
 				outgoing: ['anthony']
@@ -129,8 +129,8 @@ const STORYLINES = [
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — Mayer everyday 2B',
-				extra: { 3: 'mayer', 5: 'story', 6: 'anthony', 9: 'duran' },
+				label: 'Baseline — Sogard everyday 2B',
+				extra: { 3: 'sogard', 5: 'story', 6: 'anthony', 9: 'duran' },
 				reserve: 'wong',
 				incoming: [],
 				outgoing: []
@@ -141,7 +141,7 @@ const STORYLINES = [
 				extra: { 3: 'ikf', 5: 'story', 6: 'anthony', 9: 'duran' },
 				reserve: 'wong',
 				incoming: ['ikf'],
-				outgoing: ['mayer']
+				outgoing: ['sogard']
 			},
 			{
 				id: 'cand-b',
@@ -149,7 +149,7 @@ const STORYLINES = [
 				extra: { 3: 'monasterio', 5: 'story', 6: 'anthony', 9: 'duran' },
 				reserve: 'wong',
 				incoming: ['monasterio'],
-				outgoing: ['mayer']
+				outgoing: ['sogard']
 			}
 		],
 		expected: {
@@ -168,8 +168,8 @@ const STORYLINES = [
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — Narváez starts',
-				extra: { 3: 'mayer', 5: 'story', 6: 'anthony', 9: 'duran' },
+				label: 'Baseline — Rutschman starts',
+				extra: { 3: 'sogard', 5: 'story', 6: 'anthony', 9: 'duran' },
 				reserve: 'eaton',
 				incoming: [],
 				outgoing: []
@@ -177,15 +177,15 @@ const STORYLINES = [
 			{
 				id: 'cand-a',
 				label: 'A — Wong starts',
-				extra: { 1: 'wong', 3: 'mayer', 5: 'story', 6: 'anthony', 9: 'duran' },
+				extra: { 1: 'wong', 3: 'sogard', 5: 'story', 6: 'anthony', 9: 'duran' },
 				reserve: 'eaton',
 				incoming: ['wong'],
-				outgoing: ['narvaez']
+				outgoing: ['rutschman']
 			},
 			{
 				id: 'cand-b',
 				label: 'B — Carry both catchers',
-				extra: { 3: 'mayer', 5: 'story', 6: 'duran', 9: 'wong' },
+				extra: { 3: 'sogard', 5: 'story', 6: 'duran', 9: 'wong' },
 				reserve: 'eaton',
 				incoming: ['wong'],
 				outgoing: ['anthony']
@@ -208,7 +208,7 @@ const STORYLINES = [
 			{
 				id: 'base',
 				label: 'Baseline — Yoshida DH',
-				extra: { 3: 'mayer', 5: 'story', 6: 'duran', 9: 'yoshida' },
+				extra: { 3: 'sogard', 5: 'story', 6: 'duran', 9: 'yoshida' },
 				reserve: 'eaton',
 				incoming: [],
 				outgoing: []
@@ -217,14 +217,14 @@ const STORYLINES = [
 				id: 'cand-a',
 				label: 'A — IKF righty 2B',
 				extra: { 3: 'ikf', 5: 'story', 6: 'duran', 9: 'yoshida' },
-				reserve: 'mayer',
+				reserve: 'sogard',
 				incoming: ['ikf'],
 				outgoing: ['eaton']
 			},
 			{
 				id: 'cand-b',
 				label: 'B — Monasterio SS, Story sits',
-				extra: { 3: 'mayer', 5: 'monasterio', 6: 'duran', 9: 'yoshida' },
+				extra: { 3: 'sogard', 5: 'monasterio', 6: 'duran', 9: 'yoshida' },
 				reserve: 'story',
 				incoming: ['monasterio'],
 				outgoing: ['eaton']

@@ -36,6 +36,14 @@ export const SHAPE_LABELS: readonly ShapeLabel[] = [
 
 // Keyed by stable `mlbam-{id}` player IDs shared across storyline bundles.
 export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
+	'mlbam-668939': {
+		shape: 'Square',
+		rationale: 'Current-roster catching anchor with a full observed 2026 workload.'
+	},
+	'mlbam-686765': {
+		shape: 'Circle',
+		rationale: 'Current-roster multi-position infielder with 1B/2B eligibility.'
+	},
 	'mlbam-702332': {
 		shape: 'Star',
 		rationale:

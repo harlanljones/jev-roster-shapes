@@ -109,4 +109,12 @@ describe('2026 storyline registry', () => {
 		}
 		expect(shapeOf('mlbam-671213').shape).toBe('Unclassified');
 	});
+
+	it('does not ship post-deadline players in refreshed scenario data', () => {
+		for (const storyline of storylineRegistry) {
+			const playerIds = storyline.bundle.dataset.players.map((player) => player.id);
+			expect(playerIds).not.toContain('mlbam-691785');
+			expect(playerIds).not.toContain('mlbam-665966');
+		}
+	});
 });

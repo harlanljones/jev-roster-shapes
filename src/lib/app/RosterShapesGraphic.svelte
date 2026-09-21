@@ -97,6 +97,7 @@
 			: null
 	);
 	const rosterPlayers = $derived(bundle.dataset.players);
+	const baselineMemberIds = $derived(new Set(baseline.memberIds));
 	function playerForName(name: string) {
 		return bundle.dataset.players.find((player) => player.name === name);
 	}
@@ -104,6 +105,11 @@
 	function observedRate(name: string): string {
 		const player = playerForName(name);
 		return player ? (projectionsById.get(player.id)?.overall ?? 'Unavailable') : '—';
+	}
+
+	function scenarioPlayer(name: string): boolean {
+		const player = playerForName(name);
+		return player ? baselineMemberIds.has(player.id) : false;
 	}
 </script>
 
@@ -189,7 +195,7 @@
 			and profile label. Geometry summarizes the profile; it never creates value or coverage.
 		</p>
 		<div class="roster-strip">
-			{#each rosterPlayers as player (player.id)}
+			{#each rosterPlayers.filter( (player) => baselineMemberIds.has(player.id) ) as player (player.id)}
 				<button
 					type="button"
 					class="roster-player"
@@ -266,8 +272,10 @@
 			<tbody
 				>{#each DEPTH_CHART_SNAPSHOT.entries as entry (entry.position)}<tr
 						><th scope="row">{entry.position}</th><td>{entry.starter}</td><td
-							>{entry.rightHanded}</td
-						><td>{entry.leftHanded}</td><td>{entry.benchOne}</td><td>{entry.benchTwo}</td><td
+							>{scenarioPlayer(entry.rightHanded) ? entry.rightHanded : '—'}</td
+						><td>{scenarioPlayer(entry.leftHanded) ? entry.leftHanded : '—'}</td><td
+							>{scenarioPlayer(entry.benchOne) ? entry.benchOne : '—'}</td
+						><td></td><td>{scenarioPlayer(entry.benchTwo) ? entry.benchTwo : '—'}</td><td
 							>{shapeOf(playerForName(entry.starter)?.id ?? '').shape}</td
 						><td>{observedRate(entry.starter)}</td></tr
 					>{/each}</tbody
