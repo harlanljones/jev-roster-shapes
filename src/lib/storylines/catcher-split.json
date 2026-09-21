@@ -1,7 +1,7 @@
 {
 	"schemaVersion": "1.0",
 	"bundleId": "mlbam-bos-2026-catcher-split",
-	"createdAt": "2026-09-21T03:45:00Z",
+	"createdAt": "2026-09-21T00:00:00Z",
 	"dataClass": "public",
 	"sources": [
 		{
@@ -9,19 +9,19 @@
 			"title": "MLB Stats API — 2026 regular-season observed totals",
 			"kind": "projection",
 			"effectiveAt": "2026-09-20T00:00:00Z",
-			"note": "Free public endpoints (people, season hitting and fielding stats) for 15 Red Sox position players, observed totals through 2026-09-20, fetched 2026-09-21. Eligibility aggregates fielding games by position across stints at >= 10 games (spike default, D-35); DH rows excluded. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
+			"note": "Free public endpoints (team 40-man roster, people, season hitting and fielding stats) for the configured Red Sox decision pool, observed through 2026-09-20, fetched 2026-09-21T00:00:00Z. Eligibility aggregates fielding games by position across stints at >= 10 games (spike default, D-35); DH rows excluded. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
 		},
 		{
 			"id": "storyline-assumptions",
 			"title": "Storyline 10-game illustrative horizon",
 			"kind": "manual",
-			"effectiveAt": "2026-09-21T00:00:00Z",
+			"effectiveAt": "2026-09-20T00:00:00Z",
 			"note": "Equal-share demand (40 PA per slot: 10 vs L, 30 vs R; 27 defensive outs per game). Not a team planning horizon. Workload caps are generous placeholders; real limits are TBD (O-02)."
 		}
 	],
 	"dataset": {
 		"id": "mlbam-bos-2026",
-		"revision": 1,
+		"revision": 20260920,
 		"sourceIds": ["mlb-stats-api-2026"],
 		"players": [
 			{
@@ -458,7 +458,7 @@
 		"revision": 1,
 		"datasetRef": {
 			"id": "mlbam-bos-2026",
-			"revision": 1
+			"revision": 20260920
 		},
 		"assumptionRef": {
 			"id": "storyline-horizon-10",

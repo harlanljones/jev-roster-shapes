@@ -87,6 +87,18 @@ Owner roles are responsibilities to assign, not named commitments. `TBD` is an u
 | O-07 | What constitutes an acceptable classification error, review burden, latency, and cost? | Analytics/model lead | Model adoption | Exploratory results labeled as such |
 | O-08 | Which cost period and roster constraints should the first decision actually enforce? | Baseball/analytics lead | Real cost/transaction interpretation | Disabled checks labeled unchecked |
 
+## Public refresh policy
+
+The common public 2026 decision-pool snapshot is refreshed daily by
+`.github/workflows/refresh-public-data.yml`. The job runs the existing MLB Stats
+API builder against the configured pool and opens a pull request when generated
+bundles change. It does not change retrospective event metadata, silently rewrite
+the pinned registry, or deploy directly. A reviewer must reconcile changed
+eligibility, rates, input digests, and hand-derived storyline expectations before
+merging the refresh PR. The builder fails before writing any bundle when a
+configured scenario player is absent from the current 40-man roster; it never
+silently invents a replacement or leaves a stale player in a refreshed scenario.
+
 ## Change protocol
 
 For a material implementation choice, append its ID, status, owner/task, rationale, affected contracts, and validation evidence before dependent work. A contract revision changes the schema/calculation version when old records would otherwise be interpreted differently. Preserve old fixtures and provide an explicit migration plan.

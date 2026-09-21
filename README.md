@@ -80,6 +80,12 @@ preview, while fork pull requests only run the build and checks because GitHub
 does not expose repository secrets to forks. This is a public demo deployment,
 not the approved authenticated team environment described by RS-08.
 
+The public 2026 decision-pool snapshot is refreshed daily by GitHub Actions.
+The job opens a reviewable pull request when source data changes; it never
+silently changes production or the retrospective event dates. A refresh PR must
+be reviewed for roster membership, eligibility, rates, digests, and
+hand-derived scenario expectations before merge.
+
 | Document | Use it for |
 | --- | --- |
 | [Product specification](SPEC.md) | Scope, hypotheses, pilot plan, non-goals |

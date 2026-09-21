@@ -175,6 +175,20 @@ Limitations: observed-not-projected rates, generous placeholder caps, no splits,
 
 Delivered: `/` opens a start screen whose first section is the interactive roster-and-shapes graphic (SVG baseball field, eight position lanes + DH, per-player shape glyph from the analyst-labeled 8-shape rubric v1 in `docs/SHAPE_TAXONOMY.md` / `src/lib/shapes/taxonomy.ts`, click/keyboard selection, player detail, headshots, depth chart, and side-by-side lineup tables), followed by five dated retrospective analyses. Each analysis carries verified event dates/anchors separately from the later public-data source snapshot. Opening an analysis goes through the D-36 per-bundle public acknowledgment; the workspace (save/export/import, evidence, Swap/Move/keyboard/drag, restricted block) shows the retrospective label, event window, and source snapshot. The five `public` bundles in `src/lib/storylines/` remain calculation inputs; the retrospective metadata is UI-layer context and does not change digests or results. Every e2e journey now opens an analysis through an addressable scenario route.
 
+### Daily public refresh
+
+Delivered: `.github/workflows/refresh-public-data.yml` schedules a daily
+repull of the common configured 2026 decision pool and opens a reviewable PR
+when generated bundles change. `DATA_AS_OF` and `DATA_FETCHED_AT` make reruns
+deterministic for a given day; `DATA_REFRESH=1` allows the builder to report
+changed hand-derived expectations without silently accepting them as product
+truth. The job validates bundle generation, but does not deploy or alter the
+historical retrospective event metadata. Refresh PRs require review of rates,
+eligibility, digests, and expected results before merge. The builder now fails
+before writing bundles if any configured scenario player is absent from the
+current 40-man roster; player replacements require an explicit scenario-plan
+update rather than inference.
+
 Observed: `bun run check` (0 errors/warnings), `bun run lint` (Prettier + ESLint clean), `bunx vitest run --project server --project integration` (5 files, 30 tests passed), `bun run build` (static build completed), `bunx playwright test` (17 passed: library ack/decline/restricted/re-import, journey + reload-restore, latency, pinned + full axe, shell, swap, malformed/valid import, replace-as-new-revision, move, keyboard, 3 drag journeys). Not run: `bun run test` (browser project hangs in this environment, see RS-07 limitations). `git diff --check` clean; the latency e2e rewrote `reports/prototype/edit-latency.json` under multi-worker parallelism and it was restored, so the RS-07 single-worker reference is unchanged.
 
 Limitations: observed-not-projected 2026 rates, illustrative horizon, placeholder caps, no splits (the lefty-hole storyline says so on its card), analyst-labeled shapes with no evaluator agreement (O-03 open), outgoing members leave the planning roster per the v1 membership equation, saved drafts under retired bundle IDs are not migrated. Two issues found by verification and fixed in this change: the builder initially rounded Contreras 68/533 down (correct: 0.127580) and mis-assigned two candidate reserves against the membership equation (both caught by the script's own guards); the new `{#if}` workspace mount initially threw `DataCloneError` on the `$state` proxy (fixed with `$state.snapshot` at both boundaries, same lesson as RS-07).

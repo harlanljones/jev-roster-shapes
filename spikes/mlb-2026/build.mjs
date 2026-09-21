@@ -14,6 +14,9 @@ import { calculateComparison } from '../../src/lib/engine/calculation.ts';
 import { computeInputDigest, parseBundle } from '../../src/lib/contracts/bundle.ts';
 
 const SEASON = 2026;
+const AS_OF_DATE = process.env.DATA_AS_OF ?? new Date().toISOString().slice(0, 10);
+const FETCHED_AT = process.env.DATA_FETCHED_AT ?? `${AS_OF_DATE}T00:00:00Z`;
+const SNAPSHOT_REVISION = Number(AS_OF_DATE.replaceAll('-', ''));
 const METRIC_ID = 'mlbam-observed-r-per-pa-2026';
 const MLB_SOURCE_ID = 'mlb-stats-api-2026';
 const SPIKE_SOURCE_ID = 'storyline-assumptions';
@@ -249,6 +252,18 @@ function rateString(runs, pa) {
 }
 
 const players = new Map();
+const roster = await getJson(
+	`https://statsapi.mlb.com/api/v1/teams/111/roster?rosterType=40Man&season=${SEASON}`
+);
+const rosterIds = new Set((roster.roster ?? []).map((entry) => entry.person.id));
+const missingConfiguredPlayers = Object.entries(MLBAM)
+	.filter(([, mlbam]) => !rosterIds.has(mlbam))
+	.map(([key]) => key);
+if (missingConfiguredPlayers.length > 0) {
+	throw new Error(
+		`configured scenario players are not on the ${SEASON} 40-man roster: ${missingConfiguredPlayers.join(', ')}. Update STORYLINES before refreshing; no bundles were written.`
+	);
+}
 for (const key of Object.keys(MLBAM)) {
 	const mlbam = MLBAM[key];
 	const person = (await getJson(`https://statsapi.mlb.com/api/v1/people/${mlbam}`)).people[0];
@@ -306,8 +321,22 @@ function template(id, label, starterHand, games, paL, paR) {
 }
 
 const templates = [
-	template('bos26-vs-left', 'Vs left starter (illustrative)', 'L', 4, 4, 12),
-	template('bos26-vs-right', 'Vs right starter (illustrative)', 'R', 6, 6, 18)
+	template(
+		'bos26-vs-left',
+		'Left-starter context · explicit 4 L / 12 R PA per slot',
+		'L',
+		4,
+		4,
+		12
+	),
+	template(
+		'bos26-vs-right',
+		'Right-starter context · explicit 6 L / 18 R PA per slot',
+		'R',
+		6,
+		6,
+		18
+	)
 ];
 
 function scenarioFor(def, memberKeys, assignments) {
@@ -385,27 +414,27 @@ for (const story of STORYLINES) {
 	const bundle = {
 		schemaVersion: '1.0',
 		bundleId: story.bundleId,
-		createdAt: new Date().toISOString().replace(/\.\d+Z$/, 'Z'),
+		createdAt: FETCHED_AT,
 		dataClass: 'public',
 		sources: [
 			{
 				id: MLB_SOURCE_ID,
 				title: 'MLB Stats API — 2026 regular-season observed totals',
 				kind: 'projection',
-				effectiveAt: '2026-09-20T00:00:00Z',
-				note: 'Free public endpoints (people, season hitting and fielding stats) for 15 Red Sox position players, observed totals through 2026-09-20, fetched 2026-09-21. Eligibility aggregates fielding games by position across stints at >= 10 games (spike default, D-35); DH rows excluded. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable.'
+				effectiveAt: `${AS_OF_DATE}T00:00:00Z`,
+				note: `Free public endpoints (team 40-man roster, people, season hitting and fielding stats) for the configured Red Sox decision pool, observed through ${AS_OF_DATE}, fetched ${FETCHED_AT}. Eligibility aggregates fielding games by position across stints at >= 10 games (spike default, D-35); DH rows excluded. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable.`
 			},
 			{
 				id: SPIKE_SOURCE_ID,
 				title: 'Storyline 10-game illustrative horizon',
 				kind: 'manual',
-				effectiveAt: '2026-09-21T00:00:00Z',
+				effectiveAt: `${AS_OF_DATE}T00:00:00Z`,
 				note: 'Equal-share demand (40 PA per slot: 10 vs L, 30 vs R; 27 defensive outs per game). Not a team planning horizon. Workload caps are generous placeholders; real limits are TBD (O-02).'
 			}
 		],
 		dataset: {
 			id: 'mlbam-bos-2026',
-			revision: 1,
+			revision: SNAPSHOT_REVISION,
 			sourceIds: [MLB_SOURCE_ID],
 			players: [...players.values()].map((player) => ({
 				id: player.id,
@@ -445,7 +474,7 @@ for (const story of STORYLINES) {
 		comparison: {
 			id: story.comparisonId,
 			revision: 1,
-			datasetRef: { id: 'mlbam-bos-2026', revision: 1 },
+			datasetRef: { id: 'mlbam-bos-2026', revision: SNAPSHOT_REVISION },
 			assumptionRef: { id: 'storyline-horizon-10', revision: 1 },
 			baseline: scenarioFor(
 				story.scenarios[0],
@@ -495,8 +524,10 @@ for (const story of STORYLINES) {
 			`${story.slug}/${result.scenarioId}: ${result.feasibility} offense=${result.offense.runs ?? result.offense.status}`
 		);
 	}
-	if (failures.length > 0)
+	if (failures.length > 0 && process.env.DATA_REFRESH !== '1')
 		throw new Error(`hand-derived mismatch (${story.slug}): ${failures.join('; ')}`);
+	if (failures.length > 0)
+		console.warn(`refresh requires review (${story.slug}): ${failures.join('; ')}`);
 	console.log(`${story.slug}: inputDigest=${digest}`);
 	writeFileSync(join(outDir, `${story.slug}.json`), `${JSON.stringify(bundle, null, 2)}\n`);
 }
