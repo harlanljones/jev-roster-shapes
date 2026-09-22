@@ -242,8 +242,11 @@ the bundle's additive observed runs-per-PA split measure; L/R rates therefore
 remain unavailable and split-specific run contributions stay suppressed. The
 baseline assignments remain the same across both contexts; no substitution is
 inferred from OPS alone. Shape-board whitespace is visual only. The local dev
-server could not bind to `127.0.0.1:5173` (`EPERM`), so no browser visual pass
-or team-data validation was performed.
+server could not bind to `127.0.0.1:5173` (`EPERM`). Post-deploy visual
+verification passed on both the commit-specific Pages URL and the canonical
+production domain: the page showed the 156/234 team-PA tables and ten unique
+scenario-member tiles with 50/40 PA totals. Workflow run 35772548578 completed
+successfully. No team-data validation was performed.
 
 ## Measures and review cadence
 
