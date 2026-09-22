@@ -97,7 +97,6 @@
 				}
 			: null
 	);
-	const rosterPlayers = $derived(bundle.dataset.players);
 	const baselineMemberIds = $derived(new Set(baseline.memberIds));
 	function playerForName(name: string) {
 		return bundle.dataset.players.find((player) => player.name === name);
@@ -115,6 +114,11 @@
 			);
 			return {
 				template: lineupTemplate,
+				teamPa: lineupTemplate.slots.reduce(
+					(sum, slot) =>
+						sum + slot.paByPitcherHand.L + slot.paByPitcherHand.R + slot.paByPitcherHand.unknown,
+					0
+				),
 				rows: lineupTemplate.slots.map((slot) => {
 					const playerId = lineupAllocation?.assignments.find(
 						(assignment) => assignment.order === slot.order
@@ -123,50 +127,13 @@
 						order: slot.order,
 						role: slot.role,
 						player: playerId ? (playersById.get(playerId)?.name ?? 'Unknown player') : 'Unassigned',
-						exposure: slot.paByPitcherHand
+						exposure: slot.paByPitcherHand,
+						totalPa: slot.paByPitcherHand.L + slot.paByPitcherHand.R + slot.paByPitcherHand.unknown
 					};
 				})
 			};
 		})
 	);
-	const rosterMat = $derived(
-		rosterPlayers
-			.filter((player) => baselineMemberIds.has(player.id))
-			.map((player) => {
-				const workload = lineupViews
-					.flatMap((view) => view.rows)
-					.filter((row) => row.player === player.name);
-				return {
-					player,
-					shape: shapeOf(player.id).shape,
-					roles: [...new Set(workload.map((row) => row.role))],
-					pa: workload.reduce(
-						(sum, row) => sum + row.exposure.L + row.exposure.R + row.exposure.unknown,
-						0
-					),
-					starts: workload.length
-				};
-			})
-	);
-	const rosterTokens = $derived(
-		rosterMat.map((item, index) => {
-			const node = nodes.find((candidate) => candidate.playerId === item.player.id);
-			return {
-				...item,
-				role: node?.role ?? 'Reserve',
-				x: node ? Number(node.left.replace('%', '')) * 5.8 : 14 + (index % 6) * 14,
-				y: node ? Number(node.top.replace('%', '')) * 2.9 : 74 + Math.floor(index / 6) * 19
-			};
-		})
-	);
-	const lineupPairs = $derived(
-		lineupViews[0]?.rows.map((row, index) => ({
-			order: row.order,
-			left: row,
-			right: lineupViews[1]?.rows[index] ?? row
-		})) ?? []
-	);
-
 	const depthRows = $derived(
 		(lineupViews[0]?.rows ?? []).map((row) => {
 			const starter = playersById.get(
@@ -234,41 +201,46 @@
 			{/each}
 		</div>
 		<section class="lineup-card" aria-labelledby="lineup-heading">
-			<div class="table-kicker">Scenario lineup · one card, two platoon contexts</div>
-			<h3 id="lineup-heading">{lineupViews[0]?.template.label ?? 'Scenario lineup'}</h3>
+			<div class="table-kicker">Baseline lineups · handedness contexts</div>
+			<h3 id="lineup-heading">One assigned lineup for each starter context</h3>
 			<p class="source-note">
-				Both contexts use the same assigned players. L/R columns are explicit PA exposure; no
-				substitution is inferred.
+				Each player receives the full PA demand for the assigned slot in that context. L/R columns
+				show explicit exposure; each template is represented separately, and no substitution is
+				inferred from OPS alone. These are baseline allocations.
 			</p>
 			<div class="lineup-columns">
-				<table>
-					<caption
-						>Left-handed pitcher context · {lineupViews[0]?.template.games ?? 0} games</caption
-					><thead
-						><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th></tr
-						></thead
-					><tbody
-						>{#each lineupPairs as pair (pair.order)}<tr
-								><th scope="row">{pair.order}</th><td>{pair.left.player}</td><td
-									>{pair.left.role}</td
-								></tr
-							>{/each}</tbody
-					>
-				</table>
-				<table>
-					<caption
-						>Right-handed pitcher context · {lineupViews[1]?.template.games ?? 0} games</caption
-					><thead
-						><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Pos</th></tr
-						></thead
-					><tbody
-						>{#each lineupPairs as pair (pair.order)}<tr
-								><th scope="row">{pair.order}</th><td>{pair.right.player}</td><td
-									>{pair.right.role}</td
-								></tr
-							>{/each}</tbody
-					>
-				</table>
+				{#each lineupViews as view (view.template.id)}
+					<table>
+						<caption>
+							<strong>{view.template.label}</strong>
+							<span>{view.template.games} games · {view.teamPa} team PA</span>
+						</caption>
+						<thead>
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Player</th>
+								<th scope="col">Pos</th>
+								<th scope="col">Total PA</th>
+								<th scope="col">L PA</th>
+								<th scope="col">R PA</th>
+								<th scope="col">? PA</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each view.rows as row (row.order)}
+								<tr>
+									<th scope="row">{row.order}</th>
+									<td>{row.player}</td>
+									<td>{row.role}</td>
+									<td>{row.totalPa}</td>
+									<td>{row.exposure.L}</td>
+									<td>{row.exposure.R}</td>
+									<td>{row.exposure.unknown}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				{/each}
 			</div>
 		</section>
 	</div>
@@ -281,37 +253,6 @@
 			and profile label. Geometry summarizes the profile; it never creates value or coverage.
 		</p>
 		<LiveRosterRender {bundle} activeScenarioId={baseline.id} />
-		<div class="shape-board" aria-label="Roster construction visualization">
-			<div class="mat-label">
-				Roster construction · allocated roles, reserves, and measured white space
-			</div>
-			<svg
-				class="roster-canvas"
-				viewBox="0 0 600 190"
-				role="img"
-				aria-label="Active roster arranged by field role and reserve status"
-			>
-				<rect x="8" y="8" width="584" height="128" rx="14" class="canvas-field" />
-				<path d="M300 18v108M18 72h564" class="canvas-grid" />
-				<text x="22" y="28" class="canvas-label">ALLOCATED FIELD / DH</text>
-				<text x="22" y="158" class="canvas-label">REMAINDER RAIL · NOT SIMULTANEOUS COVERAGE</text>
-				{#each rosterTokens as item (item.player.id)}
-					<button
-						type="button"
-						class:selected={selectedPlayerId === item.player.id}
-						class="canvas-player"
-						style="left: {item.x}px; top: {item.y}px"
-						aria-label="{item.player.name}, {item.role}, {item.shape}, {item.pa} plate appearances"
-						onclick={() => onSelect(selectedPlayerId === item.player.id ? null : item.player.id)}
-					>
-						<ShapeGlyph shape={item.shape} size={34} />
-						<img src={headshotUrl(item.player.id)} alt="" loading="lazy" />
-						<strong>{item.player.name}</strong>
-						<small>{item.role} · {item.pa} PA</small>
-					</button>
-				{/each}
-			</svg>
-		</div>
 	</section>
 
 	{#if selected?.player}
@@ -486,7 +427,7 @@
 	}
 	.field-and-tables {
 		display: grid;
-		grid-template-columns: minmax(24rem, 1.25fr) minmax(30rem, 1fr);
+		grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
 		gap: 1rem;
 		align-items: start;
 	}
@@ -520,6 +461,34 @@
 		border-collapse: collapse;
 		font-size: 0.74rem;
 	}
+	.lineup-columns {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.85rem;
+		align-items: start;
+	}
+	.lineup-columns table {
+		min-width: 0;
+		font-variant-numeric: tabular-nums;
+	}
+	.lineup-columns caption {
+		padding: 0.55rem 0.25rem;
+		border-bottom: 1px solid var(--line-strong);
+		text-align: left;
+	}
+	.lineup-columns caption strong,
+	.lineup-columns caption span {
+		display: block;
+	}
+	.lineup-columns caption strong {
+		font-size: 0.8rem;
+	}
+	.lineup-columns caption span {
+		margin-top: 0.15rem;
+		color: var(--muted);
+		font-size: 0.68rem;
+		font-weight: 500;
+	}
 	.lineup-card th,
 	.lineup-card td {
 		border-top: 1px solid var(--line);
@@ -537,87 +506,12 @@
 		background: var(--panel);
 		box-shadow: 8px 8px 0 var(--rust);
 	}
-	.shape-board {
-		position: relative;
-		min-height: 12rem;
-		margin-top: 1rem;
-	}
-	.roster-canvas {
-		display: block;
-		width: 100%;
-		height: auto;
-		min-height: 12rem;
-		border: 1px solid var(--line);
-		border-radius: 0.85rem;
-		background: var(--paper);
-	}
-	.canvas-field {
-		fill: var(--panel);
-		stroke: var(--line-strong);
-	}
-	.canvas-grid {
-		fill: none;
-		stroke: var(--line);
-		stroke-dasharray: 4 4;
-	}
-	.canvas-label {
-		fill: var(--muted);
-		font:
-			700 8px system-ui,
-			sans-serif;
-		letter-spacing: 1.2px;
-	}
 	.shape-roster-intro {
 		max-width: 48rem;
 		margin: 0.5rem 0 0;
 		color: var(--muted);
 		font-size: 0.86rem;
 		line-height: 1.5;
-	}
-	.mat-label {
-		grid-column: 1 / -1;
-		color: var(--muted);
-		font-size: 0.68rem;
-		font-weight: 700;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
-	}
-	.canvas-player {
-		position: absolute;
-		display: grid;
-		justify-items: center;
-		gap: 0.12rem;
-		width: 7.5rem;
-		border: 1px solid var(--line);
-		border-radius: 0.6rem;
-		padding: 0.35rem;
-		background: var(--panel);
-		color: var(--ink);
-		cursor: pointer;
-		font: inherit;
-		text-align: center;
-		transform: translate(-50%, -50%);
-		z-index: 1;
-	}
-	.canvas-player img {
-		position: absolute;
-		width: 1.25rem;
-		height: 1.25rem;
-		margin-top: -2.05rem;
-		border-radius: 50%;
-		object-fit: cover;
-	}
-	.canvas-player strong {
-		font-size: 0.64rem;
-		white-space: nowrap;
-	}
-	.canvas-player small {
-		color: var(--muted);
-		font-size: 0.58rem;
-	}
-	.canvas-player.selected {
-		border-color: var(--rust-dark);
-		box-shadow: 0 0 0 3px rgb(168 79 50 / 16%);
 	}
 	.position-node {
 		position: absolute;
@@ -757,10 +651,17 @@
 		padding: 0.45rem 0.5rem;
 		text-align: left;
 	}
-	@media (max-width: 520px) {
+	@media (max-width: 920px) {
 		.field-and-tables {
 			grid-template-columns: 1fr;
 		}
+	}
+	@media (max-width: 700px) {
+		.lineup-columns {
+			grid-template-columns: 1fr;
+		}
+	}
+	@media (max-width: 520px) {
 		.position-node {
 			min-width: 3.6rem;
 			padding: 0.3rem;

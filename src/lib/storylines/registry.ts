@@ -63,11 +63,11 @@ function storyline(
 }
 
 export const PINNED_STORYLINE_DIGESTS = {
-	'power-vacuum': '6224ab1a3c868185ade5bda1e2ccde2358f123a4650fb24275e8e101e3baa7d6',
-	'outfield-logjam': '1271a0540fb9dcae9553060adb9c833410e71836afee6fc4f9e39154aebc9b8c',
-	'infield-reset': 'f69d7434a620e3068620e010d7e8cdacb41996f1e05ffb5aa323a346f3e84b78',
-	'catcher-split': '2a75308841e270fa35fa33820f1da85c2ce8483fef43d4b8128a73d256b43f37',
-	'lefty-hole': '81a8fc38ea6fa86891967a04ca3b230875b20f02752bc7f91b153327c3851172'
+	'power-vacuum': 'cdd73bd7367e414704d01a42adefb97b645090284841de84956045b1bab728c3',
+	'outfield-logjam': 'f445656256fe106795fcd308b6520c53d5f797bda753f94410b28cdd06474bd8',
+	'infield-reset': '4778b3ed597e56731d7f65757d1fbccacc7bacfebbefcac323cbf5ef75350c30',
+	'catcher-split': '416b15b8de4e5e7ef5ebaeeedd7b66c8169f4fddab352bdb5e7e0ff79dab1738',
+	'lefty-hole': '65c8ffd3f8ababb9f5a7ccbc327808ab91b6517f8bd1891580d7e309f6af41d6'
 } as const;
 
 export const storylineRegistry: readonly Storyline[] = [
@@ -83,10 +83,10 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		powerVacuumJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '41.49604', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '44.95712', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '40.68372',
+				offenseRuns: '44.1448',
 				offenseDelta: '-0.81232',
 				feasibility: 'feasible'
 			},
@@ -105,16 +105,16 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event records: MLB Stats API transactions + public depth chart · data snapshot: September 20–21, 2026',
 		outfieldLogjamJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '40.68372', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '44.1448', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '41.49604',
+				offenseRuns: '44.95712',
 				offenseDelta: '0.81232',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '39.826',
+				offenseRuns: '43.28708',
 				offenseDelta: '-0.85772',
 				feasibility: 'feasible'
 			}
@@ -132,17 +132,17 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		infieldResetJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '40.68372', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '44.1448', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '41.20968',
-				offenseDelta: '0.52596',
+				offenseRuns: '44.80225',
+				offenseDelta: '0.65745',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '40.4946',
-				offenseDelta: '-0.18912',
+				offenseRuns: '43.9084',
+				offenseDelta: '-0.2364',
 				feasibility: 'feasible'
 			}
 		]
@@ -159,16 +159,16 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event record: MLB Stats API game 822922 + public depth chart · data snapshot: September 20–21, 2026',
 		catcherSplitJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '40.68372', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '44.1448', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '40.16388',
-				offenseDelta: '-0.51984',
+				offenseRuns: '43.495',
+				offenseDelta: '-0.6498',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '40.69376',
+				offenseRuns: '44.15484',
 				offenseDelta: '0.01004',
 				feasibility: 'feasible'
 			}
@@ -186,16 +186,16 @@ export const storylineRegistry: readonly Storyline[] = [
 		'Event records: MLB Stats API transactions · data snapshot: September 20–21, 2026',
 		leftyHoleJson,
 		[
-			{ scenarioId: 'base', offenseRuns: '41.49604', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '44.95712', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '42.022',
-				offenseDelta: '0.52596',
+				offenseRuns: '45.61457',
+				offenseDelta: '0.65745',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '41.94184',
+				offenseRuns: '45.40292',
 				offenseDelta: '0.4458',
 				feasibility: 'feasible'
 			}

@@ -44,7 +44,7 @@ describe('2026 storyline registry', () => {
 		}
 	});
 
-	it('matches every hand-derived D-40 expectation through the real engine', () => {
+	it('matches every hand-derived D-42 expectation through the real engine', () => {
 		for (const storyline of storylineRegistry) {
 			const calculation = calculateComparison(storyline.bundle);
 			const runs = new Map(

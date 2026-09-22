@@ -304,7 +304,7 @@ for (const key of Object.keys(MLBAM)) {
 	);
 }
 
-function template(id, label, starterHand, games, paL, paR) {
+function template(id, label, starterHand, games) {
 	const roles = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'];
 	return {
 		id,
@@ -312,38 +312,32 @@ function template(id, label, starterHand, games, paL, paR) {
 		starterHand,
 		games,
 		defensiveOutsPerGame: 27,
-		slots: roles.map((role, index) => ({
-			order: index + 1,
-			role,
-			paByPitcherHand: { L: paL, R: paR, unknown: 0 }
-		}))
+		slots: roles.map((role, index) => {
+			const totalPA = games * (index < 3 ? 5 : 4);
+			const leftHandedPA = Math.round(totalPA * 0.25);
+			return {
+				order: index + 1,
+				role,
+				paByPitcherHand: {
+					L: leftHandedPA,
+					R: totalPA - leftHandedPA,
+					unknown: 0
+				}
+			};
+		})
 	};
 }
 
 const templates = [
-	template(
-		'bos26-vs-left',
-		'Left-starter context · explicit 4 L / 12 R PA per slot',
-		'L',
-		4,
-		4,
-		12
-	),
-	template(
-		'bos26-vs-right',
-		'Right-starter context · explicit 6 L / 18 R PA per slot',
-		'R',
-		6,
-		6,
-		18
-	)
+	template('bos26-vs-left', 'Left-starter context · 4 games', 'L', 4),
+	template('bos26-vs-right', 'Right-starter context · 6 games', 'R', 6)
 ];
 
 function scenarioFor(def, memberKeys, assignments) {
 	const byKey = (key) => players.get(key).id;
 	return {
 		id: def.id,
-		revision: 1,
+		revision: 2,
 		authorId: 'storyline-adapter',
 		label: def.label,
 		memberIds: memberKeys.map(byKey),
@@ -426,10 +420,10 @@ for (const story of STORYLINES) {
 			},
 			{
 				id: SPIKE_SOURCE_ID,
-				title: 'Storyline 10-game illustrative horizon',
+				title: 'Observed batting-order pattern · illustrative 10-game allocation',
 				kind: 'manual',
 				effectiveAt: `${AS_OF_DATE}T00:00:00Z`,
-				note: 'Equal-share demand (40 PA per slot: 10 vs L, 30 vs R; 27 defensive outs per game). Not a team planning horizon. Workload caps are generous placeholders; real limits are TBD (O-02).'
+				note: 'PA demand is scaled from one observed nine-inning Boston–Pittsburgh game on 2026-08-14: 39 PA across the nine starting slots (5 each for batting orders 1–3; 4 each for orders 4–9). Applied to four left-starter-context games and six right-starter-context games: top three slots receive 20/30 PA per context; remaining slots receive 16/24. L/R exposure is an illustrative 25/75 split assumption, not measured context data. This is not a team planning horizon or forecast. Workload caps remain generous placeholders (O-02). Source box score: https://www.baseball-almanac.com/box-scores/boxscore.php?boxid=202608140PIT'
 			}
 		],
 		dataset: {
@@ -463,7 +457,7 @@ for (const story of STORYLINES) {
 		},
 		assumptions: {
 			id: 'storyline-horizon-10',
-			revision: 1,
+			revision: 2,
 			authorId: 'storyline-adapter',
 			horizonGames: 10,
 			offenseMode: 'overall',
@@ -473,9 +467,9 @@ for (const story of STORYLINES) {
 		},
 		comparison: {
 			id: story.comparisonId,
-			revision: 1,
+			revision: 2,
 			datasetRef: { id: 'mlbam-bos-2026', revision: SNAPSHOT_REVISION },
-			assumptionRef: { id: 'storyline-horizon-10', revision: 1 },
+			assumptionRef: { id: 'storyline-horizon-10', revision: 2 },
 			baseline: scenarioFor(
 				story.scenarios[0],
 				[...Object.values(assignmentsFor(story.scenarios[0])), story.scenarios[0].reserve].filter(

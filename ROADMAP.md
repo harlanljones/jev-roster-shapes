@@ -220,6 +220,31 @@ local typecheck, lint, server/integration tests, production build, and diff
 checks pass. RS-08 is not complete: no team permission, staffing, evaluation
 protocol, or shared deployment approval is present.
 
+### Platoon workload and roster-shape correction (D-42)
+
+Delivered: the public 2026 lineups now appear in separate side-by-side pitcher-hand
+context tables with per-slot total and L/R/unknown PA, and the shape board renders
+each scenario member once across contexts inside a bounded roster container.
+Illustrative workload follows one observed 2026 BOS–PIT nine-inning box score:
+orders 1–3 receive 5 PA/game and orders 4–9 receive 4 PA/game, scaled to the
+existing four/six-game horizon. The 25/75 L/R allocation remains an explicit
+assumption. All five fixture digests and calculated run expectations were
+re-pinned after the workload change.
+
+Observed: `bun run check` (0 errors, 0 warnings), `bun run lint` (Prettier and
+ESLint clean), `bunx vitest run --project server --project integration
+tests/storylines/registry.test.ts` (1 file, 6 tests passed), and
+`git -c core.fsmonitor=false diff --check` (clean).
+
+Limitations: the box-score workload basis is one observed game, not a league
+average or forecast. Public splits expose PA/AB and OPS by pitcher hand, but not
+the bundle's additive observed runs-per-PA split measure; L/R rates therefore
+remain unavailable and split-specific run contributions stay suppressed. The
+baseline assignments remain the same across both contexts; no substitution is
+inferred from OPS alone. Shape-board whitespace is visual only. The local dev
+server could not bind to `127.0.0.1:5173` (`EPERM`), so no browser visual pass
+or team-data validation was performed.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

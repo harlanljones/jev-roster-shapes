@@ -2,7 +2,6 @@
 	import type { Bundle } from '$lib/contracts';
 	import { shapeOf } from '$lib/shapes/taxonomy';
 	import ShapeGlyph from '$lib/ui/ShapeGlyph.svelte';
-	import { headshotUrl } from './roster-data';
 
 	let {
 		bundle,
@@ -15,35 +14,75 @@
 			(candidate) => candidate.id === activeScenarioId
 		) ?? bundle.comparison.baseline
 	);
-	const template = $derived(
-		bundle.assumptions.templates.reduce((current, candidate) =>
-			candidate.games > current.games ? candidate : current
-		)
-	);
 	const players = $derived(new Map(bundle.dataset.players.map((player) => [player.id, player])));
-	const assignments = $derived(
-		new Map(
-			(
-				scenario.allocations.find((allocation) => allocation.templateId === template.id)
-					?.assignments ?? []
-			).map((assignment) => [assignment.order, assignment.playerId])
-		)
-	);
-	const tokens = $derived(
-		template.slots.map((slot, index) => {
-			const playerId = assignments.get(slot.order);
-			const player = playerId ? players.get(playerId) : undefined;
-			return {
-				id: playerId ?? `empty-${slot.order}`,
-				playerId,
-				name: player?.name ?? 'Unassigned',
-				role: slot.role,
-				shape: shapeOf(playerId ?? '').shape,
-				pa: slot.paByPitcherHand.L + slot.paByPitcherHand.R + slot.paByPitcherHand.unknown,
-				x: 70 + (index % 5) * 112,
-				y: 82 + Math.floor(index / 5) * 92
-			};
+	const slots = $derived(
+		bundle.assumptions.templates.flatMap((template) => {
+			const allocation = scenario.allocations.find((item) => item.templateId === template.id);
+			return template.slots.map((slot) => {
+				const assignment = allocation?.assignments.find((item) => item.order === slot.order);
+				const player = assignment?.playerId ? players.get(assignment.playerId) : undefined;
+				return {
+					playerId: player?.id,
+					name: player?.name,
+					role: slot.role,
+					context: template.label,
+					pa: slot.paByPitcherHand.L + slot.paByPitcherHand.R + slot.paByPitcherHand.unknown
+				};
+			});
 		})
+	);
+	// A malformed or incomplete allocation can place one player in several slots.
+	// Keep their shape identity to one tile and summarize the assigned roles/workload.
+	type RosterEntry = {
+		id: string;
+		name: string;
+		roles: string[];
+		pa: number;
+		shape: ReturnType<typeof shapeOf>['shape'];
+		contexts: string[];
+	};
+	const roster = $derived.by(() => {
+		const byPlayer = slots.reduce<Record<string, RosterEntry>>((entries, slot) => {
+			if (!slot.playerId || !slot.name) return entries;
+			const entry = entries[slot.playerId] ?? {
+				id: slot.playerId,
+				name: slot.name,
+				roles: [],
+				pa: 0,
+				shape: shapeOf(slot.playerId).shape,
+				contexts: []
+			};
+			return {
+				...entries,
+				[slot.playerId]: {
+					...entry,
+					roles: entry.roles.includes(slot.role) ? entry.roles : [...entry.roles, slot.role],
+					pa: entry.pa + slot.pa,
+					contexts: entry.contexts.includes(slot.context)
+						? entry.contexts
+						: [...entry.contexts, slot.context]
+				}
+			};
+		}, {});
+		return scenario.memberIds.flatMap((id) => {
+			const assigned = byPlayer[id];
+			const player = players.get(id);
+			if (!player) return [];
+			return [
+				assigned ?? {
+					id,
+					name: player.name,
+					roles: [],
+					pa: 0,
+					shape: shapeOf(id).shape,
+					contexts: []
+				}
+			];
+		});
+	});
+	const unassigned = $derived(slots.filter((slot) => !slot.playerId));
+	const horizonGames = $derived(
+		bundle.assumptions.templates.reduce((total, item) => total + item.games, 0)
 	);
 </script>
 
@@ -53,57 +92,61 @@
 			<p class="eyebrow">Live roster rendering</p>
 			<h3 id="live-render-title">{scenario.label}</h3>
 		</div>
-		<span>{template.games} games · {template.label}</span>
+		<span>{horizonGames} games · {bundle.assumptions.templates.length} lineup contexts</span>
 	</div>
-	<svg
-		viewBox="0 0 620 280"
+	<p class="board-note" id="shape-board-note">
+		Each player appears once. Shape is the profile label; open space is for visual separation and
+		does not measure coverage. Review position shortfalls in the coverage view.
+	</p>
+	<div
+		class="roster-board"
 		role="group"
-		aria-label="Live roster allocation for {scenario.label}"
-		focusable="false"
+		aria-label="Roster shapes for {scenario.label}"
+		aria-describedby="shape-board-note"
 	>
-		<rect x="8" y="8" width="604" height="264" rx="18" class="render-surface" />
-		<path d="M24 182H596" class="render-divider" />
-		<text x="26" y="30" class="render-label">ACTIVE SCENARIO ALLOCATION</text>
-		<text x="26" y="204" class="render-label">UNASSIGNED SPACE / DEMAND REMAINS VISIBLE</text>
-		{#each tokens as token (token.id)}
-			<g
-				class:unassigned={!token.playerId}
-				class="live-token"
-				transform="translate({token.x} {token.y})"
-			>
-				{#if token.playerId}
-					<g
-						class="token-hit"
-						role="button"
-						tabindex="0"
-						aria-label="Select {token.name}, {token.role}, {token.pa} plate appearances"
-						onclick={() => onSelect(token.playerId!)}
-						onkeydown={(event) => {
-							if (event.key === 'Enter' || event.key === ' ') onSelect(token.playerId!);
-						}}
+		<p class="board-label">ROSTER SHAPES · {roster.length} SCENARIO MEMBERS</p>
+		{#if roster.length}
+			<div class="shape-roster">
+				{#each roster as player (player.id)}
+					<button
+						class="player-tile"
+						type="button"
+						aria-label="Select {player.name}, {player.shape}, {player.roles.length
+							? player.roles.join(' and ')
+							: 'reserve, unassigned in every context'}, {player.pa} plate appearances"
+						onclick={() => onSelect(player.id)}
 					>
-						<title>{token.name} · {token.role} · {token.pa} PA</title>
-						<ShapeGlyph shape={token.shape} size={48} />
-						<image
-							aria-hidden="true"
-							href={headshotUrl(token.playerId)}
-							x="-14"
-							y="-14"
-							width="28"
-							height="28"
-							clip-path="circle(14px at 14px 14px)"
-						/>
-						<text x="0" y="34" class="token-name">{token.name}</text>
-						<text x="0" y="47" class="token-meta">{token.role} · {token.pa} PA</text>
-					</g>
-				{:else}
-					<ShapeGlyph shape="Unclassified" size={42} />
-					<text x="0" y="33" class="token-name">{token.role}</text>
-					<text x="0" y="46" class="token-meta">Unassigned · {token.pa} PA</text>
-				{/if}
-			</g>
-		{/each}
-	</svg>
+						<ShapeGlyph shape={player.shape} size={52} />
+						<span class="player-name">{player.name}</span>
+						<span class="player-role"
+							>{player.roles.length ? player.roles.join(' / ') : 'Reserve · unused'}</span
+						>
+						<span class="player-meta">{player.pa} PA across contexts</span>
+						{#if player.roles.length > 1}<span class="player-meta"
+								>{player.contexts.join(' · ')}</span
+							>{/if}
+						<span class="profile-label">{player.shape}</span>
+					</button>
+				{/each}
+			</div>
+		{:else}
+			<p class="empty-roster">No assigned players in this template.</p>
+		{/if}
+		{#if unassigned.length}
+			<div class="open-slots" aria-label="Unassigned lineup slots">
+				<p class="open-slots-label">Unassigned roles · {unassigned.length}</p>
+				<ul>
+					{#each unassigned as slot, index (`${slot.role}-${index}`)}
+						<li>
+							<strong>{slot.role} · {slot.context}</strong><span
+								>{slot.pa} PA demand unassigned</span
+							>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
+	</div>
 </section>
 
 <style>
@@ -139,61 +182,126 @@
 		letter-spacing: 0.13em;
 		text-transform: uppercase;
 	}
-	.live-render svg {
-		width: 100%;
-		height: auto;
-		overflow: visible;
-	}
-	.render-surface {
-		fill: var(--paper);
-		stroke: var(--line-strong);
-	}
-	.render-divider {
-		stroke: var(--line);
-		stroke-dasharray: 5 4;
-	}
-	.render-label {
-		fill: var(--muted);
-		font:
-			700 8px system-ui,
-			sans-serif;
-		letter-spacing: 1px;
-	}
-	.live-token {
-		color: var(--rust);
-		text-anchor: middle;
-	}
-	.live-token.unassigned {
+	.board-note {
+		max-width: 75ch;
+		margin: 0;
 		color: var(--muted);
-		opacity: 0.62;
+		font-size: 0.9rem;
+		line-height: 1.45;
 	}
-	.token-hit {
-		position: relative;
+	.roster-board {
+		min-height: 24rem;
+		padding: clamp(1rem, 3vw, 2rem);
+		border: 2px solid var(--line-strong);
+		border-radius: 1.5rem;
+		background: var(--paper);
+	}
+	.board-label,
+	.open-slots-label {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.72rem;
+		font-weight: 800;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+	.shape-roster {
 		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+		gap: clamp(1.25rem, 4vw, 3rem);
+		align-items: center;
 		justify-items: center;
-		border: 0;
-		padding: 0;
+		padding: clamp(2rem, 6vw, 4rem) clamp(0.5rem, 3vw, 2rem);
+	}
+	.player-tile {
+		display: grid;
+		min-width: 9rem;
+		min-height: 10.5rem;
+		align-content: center;
+		justify-items: center;
+		gap: 0.28rem;
+		border: 1px solid transparent;
+		border-radius: 1rem;
+		padding: 0.85rem;
 		background: transparent;
-		color: inherit;
+		color: var(--rust);
+		text-align: center;
 		cursor: pointer;
 		font: inherit;
 	}
-	.token-name {
-		fill: var(--ink);
-		font:
-			700 9px system-ui,
-			sans-serif;
+	.player-tile:hover {
+		border-color: var(--line);
+		background: var(--panel);
 	}
-	.token-meta {
-		fill: var(--muted);
-		font:
-			8px system-ui,
-			sans-serif;
+	.player-tile:focus-visible {
+		outline: 3px solid var(--rust);
+		outline-offset: 3px;
+	}
+	.player-name {
+		color: var(--ink);
+		font-size: 0.95rem;
+		font-weight: 750;
+	}
+	.player-role,
+	.player-meta {
+		color: var(--muted);
+		font-size: 0.82rem;
+	}
+	.profile-label {
+		margin-top: 0.15rem;
+		color: var(--rust);
+		font-size: 0.66rem;
+		font-weight: 800;
+		letter-spacing: 0.09em;
+		text-transform: uppercase;
+	}
+	.open-slots {
+		max-width: 40rem;
+		margin: 0 auto;
+		padding-top: 1rem;
+		border-top: 1px dashed var(--line-strong);
+	}
+	.open-slots ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1rem;
+		margin: 0.6rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	.open-slots li {
+		display: grid;
+		gap: 0.1rem;
+		color: var(--muted);
+		font-size: 0.82rem;
+	}
+	.open-slots strong {
+		color: var(--ink);
+	}
+	.empty-roster {
+		margin: 7rem auto;
+		color: var(--muted);
+		text-align: center;
 	}
 	@media (max-width: 600px) {
 		.live-heading {
 			align-items: flex-start;
 			flex-direction: column;
+		}
+		.roster-board {
+			min-height: 18rem;
+			padding: 1rem;
+		}
+		.shape-roster {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 0.75rem;
+			padding: 1.5rem 0.25rem;
+		}
+		.player-tile {
+			min-width: 0;
+			width: 100%;
+			min-height: 9rem;
+			padding: 0.5rem 0.25rem;
 		}
 	}
 </style>

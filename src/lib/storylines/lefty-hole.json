@@ -13,10 +13,10 @@
 		},
 		{
 			"id": "storyline-assumptions",
-			"title": "Storyline 10-game illustrative horizon",
+			"title": "Observed batting-order pattern · illustrative 10-game allocation",
 			"kind": "manual",
 			"effectiveAt": "2026-09-21T00:00:00Z",
-			"note": "Equal-share demand (40 PA per slot: 10 vs L, 30 vs R; 27 defensive outs per game). Not a team planning horizon. Workload caps are generous placeholders; real limits are TBD (O-02)."
+			"note": "PA demand is scaled from one observed nine-inning Boston–Pittsburgh game on 2026-08-14: 39 PA across the nine starting slots (5 each for batting orders 1–3; 4 each for orders 4–9). Applied to four left-starter-context games and six right-starter-context games: top three slots receive 20/30 PA per context; remaining slots receive 16/24. L/R exposure is an illustrative 25/75 split assumption, not measured context data. This is not a team planning horizon or forecast. Workload caps remain generous placeholders (O-02). Source box score: https://www.baseball-almanac.com/box-scores/boxscore.php?boxid=202608140PIT"
 		}
 	],
 	"dataset": {
@@ -264,7 +264,7 @@
 	},
 	"assumptions": {
 		"id": "storyline-horizon-10",
-		"revision": 1,
+		"revision": 2,
 		"authorId": "storyline-adapter",
 		"horizonGames": 10,
 		"offenseMode": "overall",
@@ -273,7 +273,7 @@
 		"templates": [
 			{
 				"id": "bos26-vs-left",
-				"label": "Left-starter context · explicit 4 L / 12 R PA per slot",
+				"label": "Left-starter context · 4 games",
 				"starterHand": "L",
 				"games": 4,
 				"defensiveOutsPerGame": 27,
@@ -282,8 +282,8 @@
 						"order": 1,
 						"role": "C",
 						"paByPitcherHand": {
-							"L": 4,
-							"R": 12,
+							"L": 5,
+							"R": 15,
 							"unknown": 0
 						}
 					},
@@ -291,8 +291,8 @@
 						"order": 2,
 						"role": "1B",
 						"paByPitcherHand": {
-							"L": 4,
-							"R": 12,
+							"L": 5,
+							"R": 15,
 							"unknown": 0
 						}
 					},
@@ -300,8 +300,8 @@
 						"order": 3,
 						"role": "2B",
 						"paByPitcherHand": {
-							"L": 4,
-							"R": 12,
+							"L": 5,
+							"R": 15,
 							"unknown": 0
 						}
 					},
@@ -363,7 +363,7 @@
 			},
 			{
 				"id": "bos26-vs-right",
-				"label": "Right-starter context · explicit 6 L / 18 R PA per slot",
+				"label": "Right-starter context · 6 games",
 				"starterHand": "R",
 				"games": 6,
 				"defensiveOutsPerGame": 27,
@@ -372,8 +372,8 @@
 						"order": 1,
 						"role": "C",
 						"paByPitcherHand": {
-							"L": 6,
-							"R": 18,
+							"L": 8,
+							"R": 22,
 							"unknown": 0
 						}
 					},
@@ -381,8 +381,8 @@
 						"order": 2,
 						"role": "1B",
 						"paByPitcherHand": {
-							"L": 6,
-							"R": 18,
+							"L": 8,
+							"R": 22,
 							"unknown": 0
 						}
 					},
@@ -390,8 +390,8 @@
 						"order": 3,
 						"role": "2B",
 						"paByPitcherHand": {
-							"L": 6,
-							"R": 18,
+							"L": 8,
+							"R": 22,
 							"unknown": 0
 						}
 					},
@@ -455,18 +455,18 @@
 	},
 	"comparison": {
 		"id": "cmp-lefty-hole",
-		"revision": 1,
+		"revision": 2,
 		"datasetRef": {
 			"id": "mlbam-bos-2026",
 			"revision": 20260921
 		},
 		"assumptionRef": {
 			"id": "storyline-horizon-10",
-			"revision": 1
+			"revision": 2
 		},
 		"baseline": {
 			"id": "base",
-			"revision": 1,
+			"revision": 2,
 			"authorId": "storyline-adapter",
 			"label": "Baseline — Yoshida DH",
 			"memberIds": [
@@ -653,7 +653,7 @@
 		"candidates": [
 			{
 				"id": "cand-a",
-				"revision": 1,
+				"revision": 2,
 				"authorId": "storyline-adapter",
 				"label": "A — IKF righty 2B",
 				"memberIds": [
@@ -839,7 +839,7 @@
 			},
 			{
 				"id": "cand-b",
-				"revision": 1,
+				"revision": 2,
 				"authorId": "storyline-adapter",
 				"label": "B — Monasterio SS, Story sits",
 				"memberIds": [
