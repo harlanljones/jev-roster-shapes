@@ -1,10 +1,15 @@
-// Analyst-labeled 8-shape taxonomy, rubric v1 (D-39).
+// Analyst-labeled 8-shape taxonomy, rubric v2 (D-39, revised by D-43).
 // Labels are UI-layer judgments grounded in observed 2026 inputs. They never
 // enter bundle inputs, input digests, or the calculation identity. See
 // docs/SHAPE_TAXONOMY.md for definitions, examples, counterexamples, and
 // boundary rules. O-03 (evaluator agreement) stays open.
+//
+// Rubric v2 (D-43) adopts Harlan's revision: a Star is a quirky or tough fit,
+// not a star player. The recorded rule is a platoon gap of at least .200 OPS
+// between vs-LHP and vs-RHP with 50+ PA on each side (2026 statSplits). The
+// two v1 Stars (elite production) had no such quirk and become Squares.
 
-export const SHAPE_RUBRIC_VERSION = 'shape-rubric-v1';
+export const SHAPE_RUBRIC_VERSION = 'shape-rubric-v2';
 
 export type ShapeLabel =
 	| 'Square'
@@ -45,14 +50,14 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 		rationale: 'Current-roster multi-position infielder with 1B/2B eligibility.'
 	},
 	'mlbam-702332': {
-		shape: 'Star',
+		shape: 'Square',
 		rationale:
-			'Elite observed production: 0.130742 R/PA, highest among regulars, over 566 PA at third base.'
+			'Steady everyday single-position regular: .727 vs LHP, .725 vs RHP, no platoon quirk. Observed 0.130742 R/PA, highest among regulars, over 566 PA at third base.'
 	},
 	'mlbam-575929': {
-		shape: 'Star',
+		shape: 'Square',
 		rationale:
-			'Elite observed production: 0.127580 R/PA over 533 PA; the veteran cleanup answer at first base.'
+			'Steady everyday single-position regular: .981 vs LHP, .878 vs RHP, no platoon quirk. Observed 0.127580 R/PA over 533 PA; the veteran cleanup answer at first base.'
 	},
 	'mlbam-665966': {
 		shape: 'Square',
@@ -71,12 +76,14 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 		rationale: 'Volume workhorse: 592 PA across left, center, and DH in the bounce-back season.'
 	},
 	'mlbam-643396': {
-		shape: 'Circle',
-		rationale: 'Well-rounded righty utility: 2B/SS eligible, 0.124260 in a part-time role.'
+		shape: 'Star',
+		rationale:
+			'Tough fit: .445 OPS vs LHP (51 PA) against .708 vs RHP (122 PA), a .263 platoon gap. Plays right-handed pitching well, so he needs a partner to fill a slot.'
 	},
 	'mlbam-655316': {
-		shape: 'Circle',
-		rationale: 'Well-rounded righty utility: 2B/SS eligible, 0.106383 over 329 PA.'
+		shape: 'Star',
+		rationale:
+			'Tough fit: .889 OPS vs LHP (104 PA) against .642 vs RHP (194 PA), a .247 platoon gap. Plays left-handed pitching well, so he needs a partner to fill a slot.'
 	},
 	'mlbam-701350': {
 		shape: 'Pentagon',

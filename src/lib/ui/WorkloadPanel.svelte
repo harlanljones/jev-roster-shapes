@@ -30,7 +30,6 @@
 <section class="panel workload" aria-labelledby="workload-title">
 	<div class="section-heading">
 		<div>
-			<span class="eyebrow">Opportunity ledger</span>
 			<h2 id="workload-title">Workload & eligibility</h2>
 		</div>
 		<span class="state-note">0 is a real value · unknown stays unknown</span>
@@ -142,10 +141,10 @@
 
 	h2 {
 		margin: 0.2rem 0 0;
-		font-family: Georgia, 'Times New Roman', serif;
-		font-size: clamp(1.35rem, 2vw, 1.75rem);
-		font-weight: 500;
-		letter-spacing: -0.03em;
+		font-family: var(--display);
+		font-size: clamp(1.25rem, 2vw, 1.5rem);
+		font-weight: 400;
+		letter-spacing: 0.04em;
 	}
 
 	.state-note {
@@ -202,7 +201,7 @@
 	tbody td:nth-child(2),
 	tbody td:nth-child(3),
 	tbody td:nth-child(4) {
-		font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+		font-family: var(--mono);
 		font-size: 0.77rem;
 		font-weight: 700;
 	}
@@ -251,7 +250,8 @@
 		gap: 0.5rem 0.8rem;
 		margin-top: 1rem;
 		padding: 0.75rem 0.85rem;
-		border-left: 3px solid var(--teal);
+		border: 1px solid var(--rule);
+		border-radius: 6px;
 		background: var(--paper-deep);
 		font-size: 0.78rem;
 	}

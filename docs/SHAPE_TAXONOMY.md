@@ -1,17 +1,19 @@
-# Shape taxonomy rubric v1 (analyst-labeled)
+# Shape taxonomy rubric v2 (analyst-labeled)
 
-Status: adopted for the local prototype UI only (D-39). These are
+Status: adopted for the local prototype UI only (D-39, revised by D-43). These are
 analyst labels, not evaluator consensus: O-03 stays open. Shape labels live in
-`src/lib/shapes/taxonomy.ts` (rubric `shape-rubric-v1`) and never enter bundle
+`src/lib/shapes/taxonomy.ts` (rubric `shape-rubric-v2`) and never enter bundle
 inputs, the input digest, or the calculation identity — rearranging or
 relabeling shapes cannot change a quantitative result (C-21 equivalent).
 
 ## Product Role
 
 Shapes are the central visual language of the Roster Shapes demo. The landing
-page begins with the actual roster represented in a bounded roster board, then
-connects those profiles to field positions, lineup evidence, depth, workload,
-and scenario comparisons. A shape is not ornamental filler: it is a compact,
+page begins with the roster as a fitted case (D-43): each lineup slot is a
+cutout cut to the shape it asks for, and each player is a piece in their rubric
+shape, so a piece that fills its cutout is a snug fit and visible foam is
+friction. The same pieces then appear in the interaction map, the capacity bin,
+and the slot-by-slot bars. A shape is not ornamental filler: it is a compact,
 inspectable profile summary paired with the player's name and readable data.
 
 Required inputs per player: 2026 observed R/PA (or explicit null), 2026 games
@@ -23,15 +25,35 @@ eligibility is Unclassified — the taxonomy never forces a label.
 
 | Shape | Plain-language definition | 2026 examples | Counterexample (looks close, is not) | Boundary rule |
 | --- | --- | --- | --- | --- |
-| Star | Elite observed run production among regulars (≥0.120 R/PA) with an everyday role | Caleb Durbin (0.130742, 566 PA, 3B); Willson Contreras (0.127580, 533 PA, 1B) | Wilyer Abreu (0.123288 but role story is durability, not stardom — Rectangle) | Rate below 0.120 with any PA total is never a Star |
-| Square | Steady single-position regular with a mid observed rate; solid, unspectacular | Carlos Narváez (0.076087, 552 PA, C); Connor Wong (0.094421, C) | Trevor Story (SS-only but the 2026 question is his throws — Octagon) | Multi-position eligibility moves a player to Circle |
+| Star | A quirky or tough fit: a hitter who plays one side of the platoon well and the other poorly, so he fills a slot snugly only as half of a platoon. Rule: a gap of at least .200 OPS between vs-LHP and vs-RHP, with 50+ PA on each side (2026 statSplits) | Isiah Kiner-Falefa (.445 vs LHP over 51 PA, .708 vs RHP over 122 PA); Andruw Monasterio (.889 vs LHP over 104 PA, .642 vs RHP over 194 PA) | Caleb Durbin (elite 0.130742 R/PA but .727 / .725 splits, no quirk — Square) | A gap under .200, or under 50 PA on either side, is never a Star; production level alone never makes a Star |
+| Square | Steady single-position regular with no platoon quirk; solid everyday piece | Caleb Durbin (0.130742, 566 PA, 3B, .727 / .725); Willson Contreras (0.127580, 533 PA, 1B, .981 / .878); Adley Rutschman (C); Connor Wong (0.094421, C) | Trevor Story (SS-only but the 2026 question is his throws — Octagon) | Multi-position eligibility moves a player to Circle; a .200+ platoon gap moves him to Star |
 | Rectangle | High-PA workhorse (≥550 PA) carrying everyday volume | Wilyer Abreu (657 PA); Jarren Duran (592 PA) | Ceddanne Rafaela (569 PA but the story is the Gold Glove — Pentagon/Octagon judgment call, see below) | Below 550 PA is never a Rectangle |
-| Circle | Well-rounded righty utility: multi-position eligible, mid rate, no everyday slot | Isiah Kiner-Falefa (2B/SS); Andruw Monasterio (2B/SS) | Marcelo Mayer (multi-position but the story is fragility — Diamond) | Single-position players are never Circles |
+| Circle | Well-rounded utility: multi-position eligible, mid rate, no everyday slot, no platoon quirk | Nick Sogard (1B/2B, .799 / .713) | Isiah Kiner-Falefa (2B/SS, but a .263 platoon gap — Star under v2); Marcelo Mayer (multi-position but the story is fragility — Diamond) | Single-position players are never Circles; a .200+ platoon gap moves a Circle to Star |
 | Pentagon | Young flash: 25 or under with extra-base/speed electricity and high variance | Roman Anthony (21, first full season); Ceddanne Rafaela (25, Gold Glove, swings at everything) | Jarren Duran (29, established volume — Rectangle) | Over 25, or below 200 PA on a full season, needs a written exception |
 | Octagon | Defensive anchor: the shortstop-grade glove the infield is built around | Trevor Story (SS, club leader; 2025 late-season throw slippage recorded as the limitation, not a disqualifier) | Marcelo Mayer (plus defender but only 228 PA — Diamond) | A player benched for defense in the storyline set cannot be the Octagon |
 | Diamond | High-value but fragile: above-roster-median rate with an injury-limited season (<300 PA) | Marcelo Mayer (0.083333 over 228 PA; never topped 91 pro games before 2026) | Roman Anthony (223 PA but the story is ascent, not fragility — Pentagon) | ≥300 PA is never a Diamond |
 | Funky | Irregular profile: DH-only (no position ≥10 games) or fringe (<100 PA) bat | Masataka Yoshida (DH-only, most expensive pinch hitter); Nate Eaton (55 PA, no eligibility) | Rob Refsnyder-type platoon bats with real eligibility would be Circles, not Funky | Any ≥10-game position disqualifies Funky (except DH) |
 | Unclassified | Missing inputs: zero PA and no eligible position | Triston Casas (0 PA in 2026, 60-day IL, null rate) | Every other roster player has inputs and takes a label | Never display a rate or shape-based claim for Unclassified |
+
+## Rubric v2 revision (D-43, 2026-09-24)
+
+Harlan's definition: a Star is a player with quirks, a tough fit, not a star
+player. Under v1 a Star meant elite production; v2 moves that meaning out of the
+shape entirely (production is already the piece's size) and gives Star to the
+two hitters whose 2026 splits make them platoon halves. Durbin and Contreras,
+the v1 Stars, have no split quirk and become Squares. Circles in v1 that meet
+the Star rule (Kiner-Falefa, Monasterio) become Stars. Split evidence is the
+display-only snapshot in `src/lib/app/split-evidence.ts` (MLB Stats API
+statSplits, fetched 2026-09-24); it never enters a bundle. The revision is
+reversible without touching any bundle, digest, or result.
+
+Cutout asks (what shape each lineup slot is cut for) are a proposed judgment
+layer in `src/lib/app/shape-case.ts`: C Square; 1B Square (accepts Rectangle);
+2B Square (accepts Circle, Octagon, Star); 3B Square (accepts Octagon); SS
+Octagon (accepts Circle, Star); LF and RF Rectangle (accept Pentagon, Square);
+CF Octagon (accepts Pentagon, Rectangle); DH Funky (accepts Rectangle, Square,
+Star). A piece matching the primary ask is snug, an accepted shape fits, any
+other shape is loose, and Unclassified has no grade.
 
 ## Known judgment calls (recorded, not hidden)
 
@@ -49,7 +71,9 @@ eligibility is Unclassified — the taxonomy never forces a label.
 
 ## Glyphs
 
-Square = square; Rectangle = wide rectangle; Circle = circle; Pentagon =
+Every shape is drawn at the same area for the same radius
+(`src/lib/shapes/geometry.ts`), so a glyph or piece shows which shape, never how
+much. Square = square; Rectangle = 1.8:1 rectangle; Circle = circle; Pentagon =
 regular pentagon; Octagon = regular octagon; Diamond = rotated square; Star =
 five-pointed star; Funky = irregular blob; Unclassified = dashed hollow circle.
 Every glyph is paired with its text label and a table equivalent (WORKFLOWS §7).

@@ -12,13 +12,21 @@ test('the production shell opens on the public storyline library with no axe vio
 	await expect(page).toHaveTitle(/Roster Shapes/);
 	await expect(page.getByText('Public data', { exact: true })).toBeVisible();
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'One roster. Five ways to see the shape.'
+		'Who carries the lineup without Devers and Bregman?'
 	);
 	await expect(page.getByRole('navigation', { name: 'Choose scenario' })).toBeVisible();
-	// The interactive graphic exposes every position lane as a labeled button
-	// with a table equivalent.
-	await expect(page.getByRole('button', { name: /C:/ })).toBeVisible();
-	await expect(page.locator('.depth-chart table')).toBeVisible();
+	// The case (D-43) exposes every lineup piece as a labeled button, and the
+	// same pieces as a table.
+	await expect(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
+	await expect(page.getByRole('button', { name: /^C: Adley Rutschman/ })).toBeVisible();
+	await page.getByText('The case as a table').click();
+	await expect(page.locator('.case-table table')).toBeVisible();
+	// The other three diagrams render from the same pool.
+	await expect(
+		page.getByRole('group', { name: 'Interaction map of the player pool' })
+	).toBeVisible();
+	await expect(page.getByRole('img', { name: /tightest fit packed into the bin/ })).toBeVisible();
+	await expect(page.getByRole('img', { name: /tightest fit slot by slot/ })).toBeVisible();
 
 	// DOM-level audit (see workspace-journey.spec.ts for why the rule set is
 	// pinned instead of running every axe rule).

@@ -17,8 +17,8 @@ test('a storyline card asks for acknowledgment, then opens with public labels', 
 }) => {
 	await page.goto('/');
 	const heading = page.getByRole('heading', { level: 1 });
-	// First paint is the library: the roster graphic plus five storyline cards.
-	await expect(heading).toHaveText('One roster. Five ways to see the shape.');
+	// First paint is the case for the first storyline, with five storyline links.
+	await expect(heading).toHaveText('Who carries the lineup without Devers and Bregman?');
 	await expect(page.getByRole('navigation', { name: 'Choose scenario' })).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Open workspace' })).toBeVisible();
 
@@ -40,7 +40,7 @@ test('a storyline card asks for acknowledgment, then opens with public labels', 
 test('declining the acknowledgment keeps browsing the library', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'One roster. Five ways to see the shape.'
+		'Who carries the lineup without Devers and Bregman?'
 	);
 
 	await page.getByRole('link', { name: /Lefty hole/ }).click();
@@ -49,7 +49,7 @@ test('declining the acknowledgment keeps browsing the library', async ({ page })
 	await expect(page.getByRole('button', { name: 'Open public scenario' })).toBeVisible();
 	await page.getByRole('button', { name: 'Keep browsing' }).dispatchEvent('click');
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'One roster. Five ways to see the shape.'
+		'No Refsnyder, no Romy: who faces lefties?'
 	);
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeHidden();
 });
