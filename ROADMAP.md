@@ -248,6 +248,56 @@ production domain: the page showed the 156/234 team-PA tables and ten unique
 scenario-member tiles with 50/40 PA totals. Workflow run 35772548578 completed
 successfully. No team-data validation was performed.
 
+### Shape Case redesign (D-43, user directive 2026-09-24)
+
+Delivered: the landing page (`/`, `/scenario/[slug]`) now leads with the
+storyline's roster as a fitted case, followed by the interaction map, the
+capacity bin ("what's left off") and slot-by-slot bars, each with findings and
+a table equivalent for the case. The workspace opens on side-by-side capacity
+bins for baseline, A, B and the pool's tightest fit under each scenario's pinned
+engine total, and draws the active scenario's case in place of the old live
+roster render. Model: `src/lib/app/shape-case.ts`; diagrams:
+`src/lib/app/diagrams/`; equal-area geometry: `src/lib/shapes/geometry.ts`;
+display-only split snapshot: `src/lib/app/split-evidence.ts`; rubric v2 in
+`src/lib/shapes/taxonomy.ts`; visual system in `DESIGN.md`. No bundle, digest,
+engine input or pinned result changed. The lefty-hole storyline lede now says
+the bundle carries no splits instead of "splits are unavailable".
+
+Observed:
+
+- `bun run check`: 0 errors, 0 warnings (524 files).
+- `bun run lint`: Prettier and ESLint clean.
+- `bunx vitest run --project server tests/app/shape-case.test.ts`: 6 tests
+  passed. They reproduce the concept artifact's outfield-logjam numbers
+  (baseline 472.11, A 485.11, B 455.33 actual-2026 runs; tightest fit 499.82
+  runs at 71% fill with Wong vs LHP and Yoshida vs RHP at DH), check that Casas
+  stays missing and suppresses lineup and bin totals, and check that no
+  scenario overflows the bin.
+- `bun run verify`: exits 1 at `bun run test`. Five engine and integration
+  tests (`tests/engine/calculation.test.ts` ×4,
+  `tests/integration/comparison.test.ts` ×1) fail identically on the base
+  commit `7464ed3` with this change stashed; they still expect the pre-D-42
+  run totals (for example 41.49604 against the re-pinned 44.95712). The
+  `client` browser project cannot launch here because Playwright 1.63's
+  headless shell is not installed.
+- Client project with a local Chromium override
+  (`launchOptions.executablePath=/opt/pw-browsers/chromium-1194/chrome-linux/chrome`
+  in an uncommitted config copy): 2 tests passed.
+- `bunx playwright test` with the same override (uncommitted config copy):
+  18 passed, including the full axe rule set on the workspace and the 250ms
+  edit-to-render budget. A full axe run on `/`, `/scenario/lefty-hole` and
+  `/player/702332` reported no violations.
+- `git diff --check`: clean.
+
+Limitations: piece sizes, split halves, bin fills and bar fills use actual 2026
+PA and split OPS from a snapshot outside the bundles; split run estimates scale
+observed R/PA by split OPS and are a judgment layer, not a published measure.
+League lines come from 25 of 30 teams' split rows. Cutout asks, fit grades and
+the rubric v2 Star rule are analyst judgments (O-03 stays open). The
+workspace case and bins follow each scenario's busiest pitcher-hand template.
+The interaction map's fixed node positions cover the 15-player storyline pool;
+other pools fall back to a simple grid. No team data was used.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

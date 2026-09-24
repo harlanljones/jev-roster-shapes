@@ -28,7 +28,19 @@
 	} from '$lib/ui/types';
 	import { buildComparisonViewModel } from './workspace';
 	import { storylineRegistry } from '$lib/storylines/registry';
-	import LiveRosterRender from './LiveRosterRender.svelte';
+	import CapacityBin from './diagrams/CapacityBin.svelte';
+	import CaseKey from './diagrams/CaseKey.svelte';
+	import PieceDetail from './diagrams/PieceDetail.svelte';
+	import ShapeCase from './diagrams/ShapeCase.svelte';
+	import {
+		buildPool,
+		caseView,
+		lineupBin,
+		lineupIds,
+		scenarioLineup,
+		tightestBin,
+		type BinResult
+	} from './shape-case';
 
 	// Library-first workspace (D-40): the library collects the D-36 public
 	// acknowledgment before opening, so the initial bundle arrives acknowledged.
@@ -86,6 +98,33 @@
 	const selectedEvidence = $derived(
 		model.evidence.find((evidence) => evidence.id === selectedEvidenceId)
 	);
+
+	// Shape Case display layer (D-43): each scenario's lineup in its busiest
+	// pitcher-hand template, packed into the pool's bin and drawn as the case.
+	// Recomputed from the edited draft; never feeds the engine or the digest.
+	const pool = $derived(buildPool(bundle));
+	const bundleScenarios = $derived([bundle.comparison.baseline, ...bundle.comparison.candidates]);
+	const baseLineup = $derived(scenarioLineup(bundle, bundle.comparison.baseline));
+	const scenarioBins = $derived(
+		new Map(bundleScenarios.map((s) => [s.id, lineupBin(pool, scenarioLineup(bundle, s))]))
+	);
+	const bestBin = $derived(tightestBin(pool));
+	const activeBundleScenario = $derived(
+		bundleScenarios.find((s) => s.id === model.activeScenarioId) ?? bundle.comparison.baseline
+	);
+	const activeView = $derived(
+		caseView(pool, scenarioLineup(bundle, activeBundleScenario), baseLineup)
+	);
+	let selectedPieceId = $state<string | null>(null);
+	const selectedPiece = $derived(
+		selectedPieceId && pool.has(selectedPieceId)
+			? selectedPieceId
+			: (activeView.lineup['3B'] ?? lineupIds(activeView.lineup)[0] ?? null)
+	);
+	const actualRuns = (b: BinResult | undefined) =>
+		b?.runs == null ? 'unavailable' : `${b.runs.toFixed(1)} R`;
+	const binStats = (b: BinResult) =>
+		`${Math.round(b.fill)}% filled · ${Math.round(b.gaps)}% gaps · ${Math.round(b.headroom)}% headroom`;
 
 	onMount(() => {
 		try {
@@ -452,29 +491,23 @@
 
 <div class="workspace">
 	<header class="hero">
-		<div>
-			<p class="eyebrow">
-				{storylineContext?.retrospective
-					? 'Retrospective analysis / '
-					: 'Roster Shapes / '}{model.dataClass === 'synthetic'
-					? 'synthetic workspace'
-					: 'public-data comparison'}
-			</p>
+		<div class="hero-copy">
 			<h1>{model.name}</h1>
 			<p class="lede">
+				{#if storylineContext}<strong>{storylineContext.title}</strong>{/if}
 				Compare one baseline and two candidates under the same explicit assumptions.
 				{#if model.dataClass === 'synthetic'}
 					Every number is synthetic, versioned, and traceable to a source or calculation.
 				{:else}
-					Every number is drawn from the cited public sources, versioned, and traceable to a source
-					or calculation — not a team-approved projection.
+					Every engine number is drawn from the cited public sources, versioned, and traceable to a
+					source or calculation, not a team-approved projection.
 				{/if}
 			</p>
 			<p class="data-class-banner" data-class={model.dataClass}>
 				{#if model.dataClass === 'synthetic'}
-					<strong>Synthetic demo data</strong> — invented values, not team data
+					<strong>Synthetic demo data</strong> · invented values, not team data
 				{:else}
-					<strong>Public data</strong> — observed public values, not team-approved projections
+					<strong>Public data</strong> · observed public values, not team-approved projections
 				{/if}
 			</p>
 			{#if storylineContext?.retrospective}
@@ -505,7 +538,6 @@
 	</header>
 
 	<div class="notice" aria-live="polite">
-		<span class="notice-mark" aria-hidden="true">i</span>
 		<span class="notice-text">{model.storageMessage}</span>
 		{#if pendingPublic}
 			<button class="secondary-button" type="button" disabled={busy} onclick={confirmPublicImport}>
@@ -533,23 +565,26 @@
 
 	<section class="workspace-section" aria-labelledby="comparison-heading">
 		<div class="section-heading">
-			<div>
-				<p class="eyebrow">Decision surface</p>
-				<h2 id="comparison-heading">Comparison snapshot</h2>
-			</div>
+			<h2 id="comparison-heading">Comparison snapshot</h2>
 			<span class="snapshot"
 				>Source snapshot {model.snapshotLabel} · revision {model.comparisonRevision}</span
 			>
 		</div>
-		<div class="comparison-grid">
+		<p class="section-intro">
+			The large number is the engine's pinned estimate for the horizon. Under it, each lineup is
+			packed into the same bin as the pool's tightest fit, sized by actual 2026 runs; headroom under
+			the lid is value that lineup leaves off. The bins are a display layer and never change an
+			engine number.
+		</p>
+		<div class="bins-grid">
 			{#each model.scenarios as scenario (scenario.id)}
+				{@const bin = scenarioBins.get(scenario.id)}
 				<article class:active-card={scenario.id === model.activeScenarioId} class="summary-card">
 					<div class="card-topline">
-						<span class="scenario-label">{scenario.label}</span>
+						<h3 class="scenario-label">{scenario.label}</h3>
 						<span class="status-dot">{scenario.feasibility}</span>
 					</div>
 					<p class="summary-metric">{formatMetric(scenario.offense, { withUnit: true })}</p>
-					<p class="summary-caption">Estimated runs · {scenario.offense.reason ?? 'Available'}</p>
 					<dl class="mini-stats">
 						<div>
 							<dt>Offense delta</dt>
@@ -560,20 +595,44 @@
 							<dd>{scenario.readiness.ready ? 'Ready' : 'Needs review'}</dd>
 						</div>
 					</dl>
+					{#if bin}
+						<div class="bin-block">
+							<p class="bin-meta">Actual 2026 {actualRuns(bin)} · {binStats(bin)}</p>
+							<CapacityBin
+								{pool}
+								{bin}
+								label="{scenario.label} packed into the bin: {binStats(bin)}"
+							/>
+						</div>
+					{/if}
 					<button class="card-link" type="button" onclick={() => (activeScenarioId = scenario.id)}>
 						Inspect {scenario.label} <span aria-hidden="true">→</span>
 					</button>
 				</article>
 			{/each}
+			<article class="summary-card best-card">
+				<div class="card-topline">
+					<h3 class="scenario-label">Pool's tightest fit</h3>
+				</div>
+				<p class="summary-caption">
+					Platoons and position moves allowed. A reference lid, not an engine scenario, so it has no
+					pinned estimate or review state.
+				</p>
+				<div class="bin-block">
+					<p class="bin-meta">Actual 2026 {actualRuns(bestBin)} · {binStats(bestBin)}</p>
+					<CapacityBin
+						{pool}
+						bin={bestBin}
+						label="The pool's tightest fit packed into the bin: {binStats(bestBin)}"
+					/>
+				</div>
+			</article>
 		</div>
 	</section>
 
 	<section class="workspace-section" aria-labelledby="assumptions-heading">
 		<div class="section-heading compact">
-			<div>
-				<p class="eyebrow">Shared inputs</p>
-				<h2 id="assumptions-heading">Assumptions</h2>
-			</div>
+			<h2 id="assumptions-heading">Assumptions</h2>
 			<span class="section-note">Applied to baseline and candidates</span>
 		</div>
 		<AssumptionsPanel
@@ -586,10 +645,7 @@
 
 	<section class="workspace-section" aria-labelledby="scenario-heading">
 		<div class="section-heading compact">
-			<div>
-				<p class="eyebrow">Scenario workspace</p>
-				<h2 id="scenario-heading">Allocation and feasibility</h2>
-			</div>
+			<h2 id="scenario-heading">Allocation and feasibility</h2>
 			<span class="section-note">Edit a draft, then save a reproducible snapshot</span>
 		</div>
 		<ScenarioTabs
@@ -597,11 +653,26 @@
 			activeScenarioId={model.activeScenarioId}
 			onScenarioChange={selectScenario}
 		/>
-		<LiveRosterRender
-			{bundle}
-			activeScenarioId={model.activeScenarioId}
-			onSelect={(playerId) => (selectedEvidenceId = `player:${playerId}`)}
-		/>
+		<div class="case-row">
+			<ShapeCase
+				{pool}
+				view={activeView}
+				selected={selectedPiece}
+				onSelect={(id: string) => (selectedPieceId = id)}
+				label="Roster case for {activeScenario?.label ??
+					'the active scenario'}: nine position cutouts and a bench tray"
+			/>
+			<aside class="case-side" aria-label="Selected piece">
+				{#if selectedPiece}
+					<PieceDetail
+						{pool}
+						playerId={selectedPiece}
+						role={activeView.roleOf.get(selectedPiece)}
+					/>
+				{/if}
+				<CaseKey compact />
+			</aside>
+		</div>
 
 		{#if activeScenario}
 			<div class="scenario-grid">
@@ -643,8 +714,8 @@
 	{#if selectedEvidence}
 		<aside class="evidence-drawer" aria-label="Evidence detail">
 			<div>
-				<p class="eyebrow">{selectedEvidence.layer} evidence</p>
 				<h2>{selectedEvidence.title}</h2>
+				<p class="drawer-layer">{selectedEvidence.layer} evidence</p>
 				<p>{selectedEvidence.description}</p>
 				{#if selectedEvidence.sourceTitle}<p class="drawer-meta">
 						Source: {selectedEvidence.sourceTitle}
@@ -664,32 +735,13 @@
 </div>
 
 <style>
-	:global(:root) {
-		--ink: #252522;
-		--muted: #5f5d56;
-		--line: #dedbd1;
-		--line-strong: #c8c4b8;
-		--paper: #f6f4ee;
-		--paper-light: #fffef9;
-		--paper-deep: #ebe8df;
-		--panel: #fffef9;
-		--rust: #9c4a2e;
-		--rust-dark: #813a27;
-		--rust-soft: #e6b8a8;
-		--sage: #596f58;
-		--navy: #2d4555;
-	}
-
-	:global(body) {
-		background: var(--paper);
-	}
-
 	.workspace {
-		min-height: 100vh;
-		padding: 3rem clamp(1rem, 4vw, 4rem) 5rem;
+		display: grid;
+		gap: 3rem;
+		max-width: 88rem;
+		margin: 0 auto;
+		padding: 2rem clamp(1rem, 4vw, 3rem) 5rem;
 		color: var(--ink);
-		background:
-			radial-gradient(circle at 90% 0%, rgb(168 79 50 / 8%), transparent 30rem), var(--paper);
 	}
 
 	.hero,
@@ -712,97 +764,83 @@
 		gap: 1rem;
 	}
 
-	.hero,
-	.notice,
-	.workspace-section {
-		max-width: 78rem;
-		margin-inline: auto;
-	}
-
-	.hero {
-		margin-bottom: 2rem;
-	}
-	.hero h1,
 	h2,
 	p {
 		margin-top: 0;
 	}
+	.hero-copy {
+		display: grid;
+		gap: 0.75rem;
+	}
 	.hero h1 {
-		max-width: 42rem;
-		margin-bottom: 0.7rem;
-		font-family: Georgia, serif;
-		font-size: clamp(2.25rem, 5vw, 4.75rem);
-		font-weight: 500;
-		letter-spacing: -0.055em;
-		line-height: 0.98;
+		margin: 0;
+		font-family: var(--display);
+		font-size: clamp(1.75rem, 4vw, 3rem);
+		font-weight: 400;
+		letter-spacing: 0.02em;
+		line-height: 1;
+		overflow-wrap: anywhere;
 	}
 	.lede {
-		max-width: 43rem;
-		margin-bottom: 0;
-		color: var(--muted);
-		font-size: 1.04rem;
+		max-width: 66ch;
+		margin: 0;
+		color: var(--ink-soft);
+		font-size: 1rem;
 		line-height: 1.55;
 	}
-	.data-class-banner {
-		max-width: 43rem;
-		margin: 0.8rem 0 0;
-		border: 1px solid var(--line);
-		border-radius: 0.75rem;
-		padding: 0.6rem 0.85rem;
-		color: var(--muted);
-		background: rgb(255 254 249 / 70%);
+	.lede strong {
+		color: var(--ink);
+		font-weight: 600;
+	}
+	.data-class-banner,
+	.retrospective-banner {
+		max-width: 66ch;
+		margin: 0;
+		border: 1px solid var(--rule);
+		border-radius: 8px;
+		padding: 0.55rem 0.8rem;
+		color: var(--ink-soft);
+		background: var(--panel);
 		font-size: 0.82rem;
 	}
-	.retrospective-banner {
-		max-width: 48rem;
-		margin: 0.75rem 0 0;
-		border: 1px solid var(--rust);
-		border-radius: 0.75rem;
-		padding: 0.65rem 0.85rem;
-		color: var(--muted);
-		background: rgb(156 74 46 / 7%);
-		font-size: 0.82rem;
+	.data-class-banner strong,
+	.retrospective-banner strong {
+		color: var(--ink);
 	}
 	.data-class-banner[data-class='public'] {
-		border-color: var(--navy);
+		border-color: var(--marker);
 	}
-	.eyebrow {
-		margin-bottom: 0.5rem;
-		color: var(--rust);
-		font-size: 0.7rem;
-		font-weight: 750;
-		letter-spacing: 0.13em;
-		text-transform: uppercase;
+	.retrospective-banner {
+		border-color: var(--accent);
 	}
 	.hero-actions {
 		align-items: center;
 		flex-wrap: wrap;
 		justify-content: flex-end;
+		gap: 0.5rem;
 	}
 	.primary-button,
 	.secondary-button {
-		border: 1px solid var(--line);
-		border-radius: 999px;
-		padding: 0.72rem 1rem;
+		display: inline-flex;
+		box-sizing: border-box;
+		align-items: center;
+		min-height: 2.75rem;
+		border: 1px solid var(--ink);
+		border-radius: 8px;
+		padding: 0.55rem 1rem;
 		cursor: pointer;
 		font: inherit;
-		font-size: 0.85rem;
-		font-weight: 700;
+		font-size: 0.88rem;
+		font-weight: 600;
 	}
 	.primary-button {
-		border-color: var(--rust-dark);
-		color: #fffaf2;
-		background: var(--rust);
+		color: var(--panel);
+		background: var(--ink);
 	}
 	.secondary-button {
+		border-color: var(--rule-strong);
 		color: var(--ink);
-		background: transparent;
-	}
-	button:focus-visible,
-	:global(select:focus-visible),
-	:global(input:focus-visible) {
-		outline: 3px solid rgb(168 79 50 / 30%);
-		outline-offset: 3px;
+		background: var(--panel);
 	}
 	button:disabled {
 		cursor: not-allowed;
@@ -810,9 +848,10 @@
 	}
 	.file-button {
 		position: relative;
+		white-space: nowrap;
 	}
 	.file-button:focus-within {
-		outline: 3px solid rgb(168 79 50 / 30%);
+		outline: 3px solid var(--marker);
 		outline-offset: 3px;
 	}
 	.notice-text {
@@ -829,130 +868,165 @@
 	.storage-pill,
 	.snapshot,
 	.section-note {
-		color: var(--muted);
+		color: var(--ink-soft);
+		font-family: var(--mono);
 		font-size: 0.75rem;
 	}
 	.storage-pill {
-		border: 1px solid var(--line);
+		border: 1px solid var(--rule);
 		border-radius: 999px;
-		padding: 0.55rem 0.75rem;
-		background: rgb(255 254 249 / 70%);
+		padding: 0.45rem 0.75rem;
+		background: var(--panel);
 		text-transform: capitalize;
 	}
 	.storage-pill[data-state='saved'] {
-		color: var(--sage);
+		color: var(--snug);
 	}
 	.storage-pill[data-state='failed'] {
-		color: var(--rust-dark);
+		color: var(--loose);
 	}
 	.notice {
 		align-items: center;
-		margin-bottom: 3rem;
-		border: 1px solid var(--line);
-		border-radius: 0.75rem;
-		padding: 0.85rem 1rem;
-		color: var(--muted);
-		background: rgb(255 254 249 / 70%);
-		font-size: 0.82rem;
-	}
-	.notice-mark {
-		display: grid;
-		width: 1.5rem;
-		height: 1.5rem;
-		flex: 0 0 auto;
-		place-items: center;
-		border-radius: 50%;
-		color: #fff;
-		background: var(--sage);
-		font-weight: 800;
+		flex-wrap: wrap;
+		border: 1px solid var(--rule);
+		border-radius: 8px;
+		padding: 0.75rem 1rem;
+		color: var(--ink-soft);
+		background: var(--panel);
+		font-size: 0.85rem;
 	}
 	.notice-meta {
 		margin-left: auto;
-		color: #8c897e;
+		font-family: var(--mono);
 		font-size: 0.72rem;
 	}
 	.workspace-section {
-		margin-bottom: 3.2rem;
-	}
-	.section-heading {
-		align-items: end;
-		margin-bottom: 1.1rem;
-	}
-	.section-heading.compact {
-		margin-bottom: 0.85rem;
-	}
-	.section-heading h2 {
-		margin-bottom: 0;
-		font-family: Georgia, serif;
-		font-size: clamp(1.65rem, 3vw, 2.45rem);
-		font-weight: 500;
-		letter-spacing: -0.04em;
-	}
-	.comparison-grid {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 1rem;
 	}
+	.section-heading {
+		align-items: baseline;
+		flex-wrap: wrap;
+	}
+	.section-heading h2 {
+		margin: 0;
+		font-family: var(--display);
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		font-weight: 400;
+		letter-spacing: 0.04em;
+	}
+	.section-intro {
+		max-width: 72ch;
+		margin: 0;
+		color: var(--ink-soft);
+		font-size: 0.95rem;
+	}
+	.bins-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 1rem;
+		align-items: start;
+	}
 	.summary-card {
-		min-height: 16.5rem;
-		border: 1px solid var(--line);
-		border-radius: 1rem;
-		padding: 1.25rem;
+		display: grid;
+		gap: 0.75rem;
+		border: 1px solid var(--rule);
+		border-radius: 10px;
+		padding: 1rem;
 		background: var(--panel);
-		box-shadow: 0 14px 34px rgb(56 46 31 / 8%);
+		box-shadow:
+			0 1px 2px rgb(22 32 42 / 6%),
+			0 8px 20px rgb(22 32 42 / 6%);
 	}
 	.summary-card.active-card {
-		border-color: rgb(168 79 50 / 55%);
-		box-shadow: 0 18px 42px rgb(168 79 50 / 12%);
+		border-color: var(--ink);
+		box-shadow: inset 0 0 0 1px var(--ink);
+	}
+	.best-card {
+		border: 2px dashed var(--marker);
+		background: transparent;
+		box-shadow: none;
+	}
+	.card-topline {
+		align-items: baseline;
 	}
 	.scenario-label {
+		margin: 0;
 		font-size: 0.95rem;
-		font-weight: 750;
+		font-weight: 600;
+		line-height: 1.3;
 	}
 	.status-dot {
-		color: var(--sage);
-		font-size: 0.68rem;
-		font-weight: 750;
+		color: var(--snug);
+		font-family: var(--mono);
+		font-size: 0.7rem;
 		text-transform: uppercase;
 	}
 	.summary-metric {
-		margin: 2rem 0 0.15rem;
-		font-family: Georgia, serif;
-		font-size: 2.5rem;
-		letter-spacing: -0.05em;
+		margin: 0;
+		font-family: var(--mono);
+		font-size: 1.6rem;
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		font-variant-numeric: tabular-nums;
+		line-height: 1.2;
 	}
 	.summary-caption {
-		min-height: 2.5rem;
-		color: var(--muted);
-		font-size: 0.78rem;
+		margin: 0;
+		color: var(--ink-soft);
+		font-size: 0.8rem;
 		line-height: 1.45;
 	}
 	.mini-stats {
-		gap: 1.25rem;
-		margin: 1.35rem 0;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.25rem;
+		margin: 0;
 	}
 	.mini-stats div {
 		display: grid;
-		gap: 0.2rem;
+		gap: 0.1rem;
 	}
 	dt {
-		color: var(--muted);
-		font-size: 0.68rem;
-		text-transform: uppercase;
+		color: var(--ink-soft);
+		font-size: 0.72rem;
 	}
 	dd {
 		margin: 0;
-		font-weight: 700;
+		font-family: var(--mono);
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+	.bin-block {
+		display: grid;
+		gap: 0.4rem;
+	}
+	.bin-meta {
+		margin: 0;
+		color: var(--ink-soft);
+		font-family: var(--mono);
+		font-size: 0.72rem;
 	}
 	.card-link {
+		justify-self: start;
+		min-height: 2.75rem;
 		border: 0;
 		padding: 0;
-		color: var(--rust-dark);
+		color: var(--marker);
 		background: transparent;
 		cursor: pointer;
 		font: inherit;
-		font-size: 0.82rem;
-		font-weight: 750;
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+	.case-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 22rem;
+		gap: 1.5rem;
+		align-items: start;
+	}
+	.case-side {
+		display: grid;
+		gap: 1rem;
 	}
 	.scenario-grid {
 		display: grid;
@@ -963,7 +1037,15 @@
 	.scenario-main,
 	.scenario-side {
 		display: grid;
+		min-width: 0;
 		gap: 1rem;
+	}
+	.workspace > *,
+	.case-row > *,
+	.summary-card,
+	.scenario-main > :global(*),
+	.scenario-side > :global(*) {
+		min-width: 0;
 	}
 	.evidence-drawer {
 		position: fixed;
@@ -972,30 +1054,40 @@
 		z-index: 5;
 		width: min(28rem, calc(100vw - 2rem));
 		align-items: flex-end;
-		border: 1px solid var(--line);
-		border-radius: 1rem;
+		border: 1px solid var(--rule);
+		border-radius: 12px;
 		padding: 1.25rem;
 		background: var(--panel);
-		box-shadow: 0 20px 60px rgb(56 46 31 / 18%);
+		box-shadow: 0 20px 60px rgb(22 32 42 / 18%);
 	}
 	.evidence-drawer h2 {
-		margin-bottom: 0.5rem;
-		font-family: Georgia, serif;
-		font-size: 1.5rem;
-		font-weight: 500;
+		margin-bottom: 0.25rem;
+		font-size: 1.25rem;
+		font-weight: 600;
 	}
-	.evidence-drawer p:not(.eyebrow) {
-		color: var(--muted);
-		font-size: 0.84rem;
+	.evidence-drawer p {
+		color: var(--ink-soft);
+		font-size: 0.85rem;
 		line-height: 1.5;
+	}
+	.drawer-layer {
+		font-family: var(--mono);
+		font-size: 0.75rem !important;
 	}
 	.drawer-meta {
 		margin-bottom: 0.25rem;
-		font-size: 0.76rem !important;
+		font-size: 0.78rem !important;
+	}
+	@media (max-width: 1100px) {
+		.bins-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+		.case-row {
+			grid-template-columns: 1fr;
+		}
 	}
 	@media (max-width: 850px) {
 		.hero,
-		.section-heading,
 		.notice {
 			align-items: flex-start;
 			flex-direction: column;
@@ -1006,17 +1098,13 @@
 		.notice-meta {
 			margin-left: 0;
 		}
-		.comparison-grid,
 		.scenario-grid {
 			grid-template-columns: 1fr;
 		}
 	}
-	@media (max-width: 520px) {
-		.workspace {
-			padding-inline: 0.85rem;
-		}
-		.summary-card {
-			min-height: auto;
+	@media (max-width: 560px) {
+		.bins-grid {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>

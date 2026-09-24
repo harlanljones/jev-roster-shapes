@@ -112,7 +112,7 @@
 	}
 
 	.tab-state {
-		font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+		font-family: var(--mono);
 		font-size: 0.68rem;
 		font-weight: 560;
 		opacity: 0.72;

@@ -177,7 +177,7 @@ export const storylineRegistry: readonly Storyline[] = [
 	storyline(
 		'lefty-hole',
 		'No Refsnyder, no Romy: who faces lefties?',
-		'Refsnyder left for Seattle, Gonzalez opened on the 60-day IL, and Devers and Bregman took their lefty-mashing with them. Splits are unavailable — so the righty bench bats audition on overall observed rates only.',
+		'Refsnyder left for Seattle, Gonzalez opened on the 60-day IL, and Devers and Bregman took their lefty-mashing with them. The bundle carries no splits, so the engine scores the righty bench bats on overall observed rates only; the split halves in the case come from a separate display snapshot.',
 		'Retrospective roster question · lefty coverage',
 		'Test right-handed depth against a lefty question without inventing splits.',
 		'November 2, 2025 → March 25, 2026',

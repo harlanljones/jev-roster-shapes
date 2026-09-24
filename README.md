@@ -22,7 +22,7 @@ It is a working prototype, not a finished product. It uses public baseball data 
 
 ## The demo: five 2026 Red Sox storylines
 
-The demo opens on a roster graphic. Each position shows its player, workload, and profile shape. Five storylines from real Red Sox roster events follow as retrospective analyses. Their displayed dates are verified event windows or dated anchors, not the later date when public stats were fetched. Each compares a baseline against two candidates over the same illustrative 10-game horizon, using observed 2026 scoring rates (runs per plate appearance through September 20, via the free MLB Stats API).
+The demo opens on the roster as a fitted case. Each lineup slot is a foam cutout cut to the shape it asks for, and each player is a piece in their profile shape, sized by the runs they actually produced in 2026 and split into a vs-left and a vs-right half colored against the league. Visible foam is friction, an empty cutout is a position nobody on the bench covers, and the same pieces then appear in an interaction map, a capacity bin whose lid is the pool's tightest fit, and slot-by-slot bars. These diagrams are a labeled display layer (D-43); the workspace keeps the pinned engine totals below. Five storylines from real Red Sox roster events follow as retrospective analyses. Their displayed dates are verified event windows or dated anchors, not the later date when public stats were fetched. Each compares a baseline against two candidates over the same illustrative 10-game horizon, using observed 2026 scoring rates (runs per plate appearance through September 20, via the free MLB Stats API).
 
 | Storyline | Baseline | Candidate A | Candidate B |
 | --- | --- | --- | --- |
@@ -32,8 +32,8 @@ The demo opens on a roster graphic. Each position shows its player, workload, an
 | Narváez's middle ground vs Wong's rebound | 38.32 | 39.05 (+0.73) | 38.33 (+0.01) |
 | No Refsnyder, no Romy: who faces lefties? | 39.13 | 40.77 (+1.64) | 39.58 (+0.45) |
 
-![Start screen: interactive roster-and-shapes graphic](docs/images/library-roster-shapes.png)
-![Power-vacuum storyline comparison](docs/images/storyline-comparison.png)
+![Start screen: the roster as a fitted case](docs/images/library-roster-shapes.png)
+![Workspace: side-by-side capacity bins for baseline, A, B and the tightest fit](docs/images/storyline-comparison.png)
 
 The demo is honest about uncertainty. The injured slugger's hoped-for return shows no offensive total, because he has no 2026 at-bats. The backup catcher out-hit the starter on observed numbers, and the tables say so. Shapes summarize player profiles. They never change a calculation.
 
@@ -96,13 +96,14 @@ hand-derived scenario expectations before merge.
 | [Interaction contract](docs/WORKFLOWS.md) | Screens, editing, failures, keyboard behavior |
 | [Acceptance](docs/ACCEPTANCE.md) | Exact numerical cases and evaluation protocol |
 | [Decisions](docs/DECISIONS.md) | Adopted defaults (D-01–D-41) and open dependencies |
-| [Shape taxonomy](docs/SHAPE_TAXONOMY.md) | Analyst-labeled 8-shape rubric v1 for the roster graphic |
+| [Shape taxonomy](docs/SHAPE_TAXONOMY.md) | Analyst-labeled 8-shape rubric v2 for the Shape Case diagrams |
+| [Design](DESIGN.md) | Visual system: the case metaphor, tokens, type, and diagram components |
 
 Repository layout:
 
 ```text
 src/lib/{contracts,storylines,shapes,engine,persistence,ui}/  component sources
-src/lib/app/  library page, roster graphic, workspace wiring
+src/lib/app/  landing case, Shape Case model and diagrams, workspace wiring
 src/routes/   single-page shell
 tests/{contracts,storylines,engine,persistence,integration,e2e}/  checks
 spikes/mlb-2026/  2026 storyline bundle builder

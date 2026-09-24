@@ -240,7 +240,6 @@
 >
 	<div class="section-heading">
 		<div>
-			<span class="eyebrow">Editable allocation</span>
 			<h2 id="allocation-title">Lineup ledger</h2>
 		</div>
 		<div class="allocation-status">
@@ -490,20 +489,12 @@
 		gap: 1rem;
 	}
 
-	.eyebrow {
-		color: var(--rust);
-		font-size: 0.68rem;
-		font-weight: 800;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
 	h2 {
 		margin: 0.2rem 0 0;
-		font-family: Georgia, 'Times New Roman', serif;
-		font-size: clamp(1.35rem, 2vw, 1.75rem);
-		font-weight: 500;
-		letter-spacing: -0.03em;
+		font-family: var(--display);
+		font-size: clamp(1.25rem, 2vw, 1.5rem);
+		font-weight: 400;
+		letter-spacing: 0.04em;
 	}
 
 	.allocation-status {
@@ -511,7 +502,7 @@
 		flex-wrap: wrap;
 		gap: 0.45rem;
 		color: var(--muted);
-		font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+		font-family: var(--mono);
 		font-size: 0.72rem;
 	}
 
@@ -538,7 +529,8 @@
 		align-items: baseline;
 		margin-bottom: 1rem;
 		padding: 0.75rem 0.85rem;
-		border-left: 3px solid var(--rust);
+		border: 1px solid var(--rust);
+		border-radius: 6px;
 		background: var(--paper-deep);
 		color: var(--muted);
 		font-size: 0.78rem;
@@ -550,7 +542,7 @@
 	}
 
 	.issue-banner code {
-		font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+		font-family: var(--mono);
 	}
 
 	.template-stack {
@@ -645,7 +637,7 @@
 
 	.number,
 	.exposure {
-		font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+		font-family: var(--mono);
 		font-size: 0.75rem;
 	}
 

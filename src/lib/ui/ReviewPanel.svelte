@@ -24,7 +24,6 @@
 <section class="panel review" aria-labelledby="review-title">
 	<div class="section-heading">
 		<div>
-			<span class="eyebrow">Review gate</span>
 			<h2 id="review-title">Save, review, export</h2>
 		</div>
 		<span class:ready={scenario.readiness.ready} class="ready-state">
@@ -160,20 +159,12 @@
 		gap: 1rem;
 	}
 
-	.eyebrow {
-		color: var(--rust);
-		font-size: 0.68rem;
-		font-weight: 800;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
 	h2 {
 		margin: 0.2rem 0 0;
-		font-family: Georgia, 'Times New Roman', serif;
-		font-size: clamp(1.35rem, 2vw, 1.75rem);
-		font-weight: 500;
-		letter-spacing: -0.03em;
+		font-family: var(--display);
+		font-size: clamp(1.25rem, 2vw, 1.5rem);
+		font-weight: 400;
+		letter-spacing: 0.04em;
 	}
 
 	.ready-state {
@@ -251,7 +242,7 @@
 		border: 1px solid var(--rust);
 		border-radius: 50%;
 		color: var(--rust);
-		font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+		font-family: var(--mono);
 		font-size: 0.72rem;
 		font-weight: 900;
 	}
@@ -292,7 +283,8 @@
 		gap: 0.2rem;
 		margin-top: 0.9rem;
 		padding: 0.7rem 0.8rem;
-		border-left: 3px solid var(--rust);
+		border: 1px solid var(--rust);
+		border-radius: 6px;
 		background: var(--paper-deep);
 		color: var(--muted);
 		font-size: 0.75rem;
