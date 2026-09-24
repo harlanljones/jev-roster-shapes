@@ -285,7 +285,9 @@ Observed:
   in an uncommitted config copy): 2 tests passed.
 - `bunx playwright test` with the same override (uncommitted config copy):
   18 passed, including the full axe rule set on the workspace and the 250ms
-  edit-to-render budget. A full axe run on `/`, `/scenario/lefty-hole` and
+  edit-to-render budget (p95 59.9ms over 9 samples here, against 9.6ms recorded
+  on 2026-09-20; the bins and case now recompute on every edit, and
+  `reports/prototype/edit-latency.json` was left at its earlier record). A full axe run on `/`, `/scenario/lefty-hole` and
   `/player/702332` reported no violations.
 - `git diff --check`: clean.
 
