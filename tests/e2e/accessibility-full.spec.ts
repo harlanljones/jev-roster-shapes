@@ -22,3 +22,26 @@ test('the workspace passes the full axe rule set', async ({ page }) => {
 	);
 	expect(audit.violations).toEqual([]);
 });
+
+const PAGES = [
+	['the season index', '/'],
+	['a decision page with the engine pool fit', '/scenario/preseason-second'],
+	['the snapshots subpage', '/scenario/preseason-dh/snapshots']
+] as const;
+
+for (const [name, path] of PAGES) {
+	test(`${name} passes the full axe rule set`, async ({ page }) => {
+		await page.goto(path);
+		await page.addScriptTag({ path: axeCorePath });
+		const audit = await page.evaluate(() =>
+			(
+				window as unknown as {
+					axe: {
+						run: (d: Document) => Promise<{ violations: { id: string; nodes: unknown[] }[] }>;
+					};
+				}
+			).axe.run(document)
+		);
+		expect(audit.violations.map(({ id }) => id)).toEqual([]);
+	});
+}

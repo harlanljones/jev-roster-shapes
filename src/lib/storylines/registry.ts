@@ -1,4 +1,4 @@
-// 2026 season-timeline storyline library (D-44, revised by D-45). Five `public`-class v1
+// 2026 season-timeline storyline library (D-44, revised by D-48). Five `public`-class v1
 // bundles built offline by spikes/mlb-2026/timeline-build.mjs from the
 // checked-in MLB Stats API snapshot. Each storyline sits on a date in the
 // season and scores its options with what was known that day. Each bundle is
@@ -213,6 +213,9 @@ export const storylineRegistry: readonly Storyline[] = [
 		]
 	})
 ];
+
+/** The decision `/` opens on (D-49): the latest pin, the Wild Card roster. */
+export const CURRENT_SLUG = 'wild-card-roster';
 
 export function getStoryline(slug: string): Storyline | undefined {
 	return storylineRegistry.find((storyline) => storyline.slug === slug);

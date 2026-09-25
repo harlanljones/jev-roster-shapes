@@ -1,0 +1,993 @@
+{
+	"schemaVersion": "1.0",
+	"bundleId": "mlbam-bos-2026-preseason-second",
+	"createdAt": "2026-09-25T07:05:02Z",
+	"dataClass": "public",
+	"sources": [
+		{
+			"id": "mlb-stats-api-2026",
+			"title": "MLB Stats API — Red Sox season-timeline snapshot, as of 2026-03-25",
+			"kind": "projection",
+			"effectiveAt": "2026-03-25T00:00:00Z",
+			"note": "Free public endpoints, fetched 2026-09-25T07:05:02Z into spikes/mlb-2026/timeline-snapshot.json. Rates are observed 2025 regular-season totals (what was known before Opening Day); for traded players the combined all-teams row is used. Eligibility: >= 10 fielding games at a position in 2025 or >= 10 Boston starts there in 2026 through 2026-03-25 (D-35 rule, adapted), or >= 3 starts there in Boston's starting lineups from 2026-03-26 to 2026-04-08; DH excluded. Boston starts only: a traded player's starts for another club do not count toward the 2026 rule. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
+		},
+		{
+			"id": "storyline-assumptions",
+			"title": "Observed batting-order pattern · illustrative 10-game allocation",
+			"kind": "manual",
+			"effectiveAt": "2026-03-25T00:00:00Z",
+			"note": "PA demand is scaled from one observed nine-inning Boston–Pittsburgh game on 2026-08-14: 39 PA across the nine starting slots (5 each for batting orders 1–3; 4 each for orders 4–9). Applied to four left-starter-context games and six right-starter-context games: top three slots receive 20/30 PA per context; remaining slots receive 16/24. L/R exposure is an illustrative 25/75 split assumption, not measured context data. This is not a team planning horizon or forecast. Workload caps remain generous placeholders (O-02). Baseline lineups are the club’s observed starting lineups for the storyline’s window. Source box score: https://www.baseball-almanac.com/box-scores/boxscore.php?boxid=202608140PIT"
+		}
+	],
+	"dataset": {
+		"id": "mlbam-bos-asof-2026-03-25",
+		"revision": 20260325,
+		"sourceIds": ["mlb-stats-api-2026"],
+		"players": [
+			{
+				"id": "mlbam-665966",
+				"name": "Carlos Narváez",
+				"bats": "R",
+				"eligiblePositions": ["C"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-575929",
+				"name": "Willson Contreras",
+				"bats": "R",
+				"eligiblePositions": ["1B"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-691785",
+				"name": "Marcelo Mayer",
+				"bats": "L",
+				"eligiblePositions": ["2B", "3B"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-702332",
+				"name": "Caleb Durbin",
+				"bats": "R",
+				"eligiblePositions": ["2B", "3B"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-596115",
+				"name": "Trevor Story",
+				"bats": "R",
+				"eligiblePositions": ["SS"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-680776",
+				"name": "Jarren Duran",
+				"bats": "L",
+				"eligiblePositions": ["LF", "CF"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-678882",
+				"name": "Ceddanne Rafaela",
+				"bats": "R",
+				"eligiblePositions": ["2B", "CF"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-677800",
+				"name": "Wilyer Abreu",
+				"bats": "L",
+				"eligiblePositions": ["RF"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-701350",
+				"name": "Roman Anthony",
+				"bats": "L",
+				"eligiblePositions": ["LF", "RF"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-643396",
+				"name": "Isiah Kiner-Falefa",
+				"bats": "R",
+				"eligiblePositions": ["2B", "3B", "SS"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-655316",
+				"name": "Andruw Monasterio",
+				"bats": "R",
+				"eligiblePositions": ["1B", "2B", "SS"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			}
+		],
+		"metricDefinitions": [
+			{
+				"id": "mlbam-observed-r-per-pa-2025",
+				"unit": "runs_per_PA",
+				"referenceBaseline": "observed MLB regular-season R/PA, 2025 season (all teams)",
+				"sourceId": "mlb-stats-api-2026",
+				"note": "Derived rate R/PA rounded to six decimals per SPEC 5.3; documented conversion, not a published projection. Missing splits remain null."
+			}
+		],
+		"projections": [
+			{
+				"playerId": "mlbam-665966",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.114350",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-575929",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.124334",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-691785",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.147059",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-702332",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.118577",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-596115",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.139144",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-680776",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.123563",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-678882",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.143101",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-677800",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.127098",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-701350",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.158416",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-643396",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.098039",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-655316",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.140741",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			}
+		]
+	},
+	"assumptions": {
+		"id": "storyline-horizon-10",
+		"revision": 2,
+		"authorId": "storyline-adapter",
+		"horizonGames": 10,
+		"offenseMode": "overall",
+		"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+		"sourceId": "storyline-assumptions",
+		"templates": [
+			{
+				"id": "bos26-vs-left",
+				"label": "Left-starter context · 4 games",
+				"starterHand": "L",
+				"games": 4,
+				"defensiveOutsPerGame": 27,
+				"slots": [
+					{
+						"order": 1,
+						"role": "C",
+						"paByPitcherHand": {
+							"L": 5,
+							"R": 15,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 2,
+						"role": "1B",
+						"paByPitcherHand": {
+							"L": 5,
+							"R": 15,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 3,
+						"role": "2B",
+						"paByPitcherHand": {
+							"L": 5,
+							"R": 15,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 4,
+						"role": "3B",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 5,
+						"role": "SS",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 6,
+						"role": "LF",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 7,
+						"role": "CF",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 8,
+						"role": "RF",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 9,
+						"role": "DH",
+						"paByPitcherHand": {
+							"L": 4,
+							"R": 12,
+							"unknown": 0
+						}
+					}
+				]
+			},
+			{
+				"id": "bos26-vs-right",
+				"label": "Right-starter context · 6 games",
+				"starterHand": "R",
+				"games": 6,
+				"defensiveOutsPerGame": 27,
+				"slots": [
+					{
+						"order": 1,
+						"role": "C",
+						"paByPitcherHand": {
+							"L": 8,
+							"R": 22,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 2,
+						"role": "1B",
+						"paByPitcherHand": {
+							"L": 8,
+							"R": 22,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 3,
+						"role": "2B",
+						"paByPitcherHand": {
+							"L": 8,
+							"R": 22,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 4,
+						"role": "3B",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 5,
+						"role": "SS",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 6,
+						"role": "LF",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 7,
+						"role": "CF",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 8,
+						"role": "RF",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					},
+					{
+						"order": 9,
+						"role": "DH",
+						"paByPitcherHand": {
+							"L": 6,
+							"R": 18,
+							"unknown": 0
+						}
+					}
+				]
+			}
+		]
+	},
+	"comparison": {
+		"id": "cmp-preseason-second",
+		"revision": 1,
+		"datasetRef": {
+			"id": "mlbam-bos-asof-2026-03-25",
+			"revision": 20260325
+		},
+		"assumptionRef": {
+			"id": "storyline-horizon-10",
+			"revision": 2
+		},
+		"baseline": {
+			"id": "base",
+			"revision": 1,
+			"authorId": "storyline-adapter",
+			"label": "Baseline — Mayer at second (as the season opened)",
+			"memberIds": [
+				"mlbam-665966",
+				"mlbam-575929",
+				"mlbam-691785",
+				"mlbam-702332",
+				"mlbam-596115",
+				"mlbam-680776",
+				"mlbam-678882",
+				"mlbam-677800",
+				"mlbam-701350",
+				"mlbam-643396",
+				"mlbam-655316"
+			],
+			"incomingIds": [],
+			"outgoingIds": [],
+			"allocations": [
+				{
+					"templateId": "bos26-vs-left",
+					"assignments": [
+						{
+							"order": 1,
+							"playerId": "mlbam-665966"
+						},
+						{
+							"order": 2,
+							"playerId": "mlbam-575929"
+						},
+						{
+							"order": 3,
+							"playerId": "mlbam-691785"
+						},
+						{
+							"order": 4,
+							"playerId": "mlbam-702332"
+						},
+						{
+							"order": 5,
+							"playerId": "mlbam-596115"
+						},
+						{
+							"order": 6,
+							"playerId": "mlbam-680776"
+						},
+						{
+							"order": 7,
+							"playerId": "mlbam-678882"
+						},
+						{
+							"order": 8,
+							"playerId": "mlbam-677800"
+						},
+						{
+							"order": 9,
+							"playerId": "mlbam-701350"
+						}
+					]
+				},
+				{
+					"templateId": "bos26-vs-right",
+					"assignments": [
+						{
+							"order": 1,
+							"playerId": "mlbam-665966"
+						},
+						{
+							"order": 2,
+							"playerId": "mlbam-575929"
+						},
+						{
+							"order": 3,
+							"playerId": "mlbam-691785"
+						},
+						{
+							"order": 4,
+							"playerId": "mlbam-702332"
+						},
+						{
+							"order": 5,
+							"playerId": "mlbam-596115"
+						},
+						{
+							"order": 6,
+							"playerId": "mlbam-680776"
+						},
+						{
+							"order": 7,
+							"playerId": "mlbam-678882"
+						},
+						{
+							"order": 8,
+							"playerId": "mlbam-677800"
+						},
+						{
+							"order": 9,
+							"playerId": "mlbam-701350"
+						}
+					]
+				}
+			],
+			"workloadCaps": [
+				{
+					"playerId": "mlbam-665966",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-575929",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-691785",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-702332",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-596115",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-680776",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-678882",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-677800",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-701350",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-643396",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-655316",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				}
+			],
+			"constraints": {
+				"rosterSizeMax": null,
+				"costBudget": null,
+				"costs": []
+			},
+			"review": {
+				"scope": "coverage_and_offense",
+				"uncheckedTransactionRulesAcknowledgedAt": null,
+				"acknowledgedScenarioRevision": null
+			}
+		},
+		"candidates": [
+			{
+				"id": "cand-a",
+				"revision": 1,
+				"authorId": "storyline-adapter",
+				"label": "A — Kiner-Falefa at second",
+				"memberIds": [
+					"mlbam-665966",
+					"mlbam-575929",
+					"mlbam-643396",
+					"mlbam-702332",
+					"mlbam-596115",
+					"mlbam-680776",
+					"mlbam-678882",
+					"mlbam-677800",
+					"mlbam-701350",
+					"mlbam-691785",
+					"mlbam-655316"
+				],
+				"incomingIds": [],
+				"outgoingIds": [],
+				"allocations": [
+					{
+						"templateId": "bos26-vs-left",
+						"assignments": [
+							{
+								"order": 1,
+								"playerId": "mlbam-665966"
+							},
+							{
+								"order": 2,
+								"playerId": "mlbam-575929"
+							},
+							{
+								"order": 3,
+								"playerId": "mlbam-643396"
+							},
+							{
+								"order": 4,
+								"playerId": "mlbam-702332"
+							},
+							{
+								"order": 5,
+								"playerId": "mlbam-596115"
+							},
+							{
+								"order": 6,
+								"playerId": "mlbam-680776"
+							},
+							{
+								"order": 7,
+								"playerId": "mlbam-678882"
+							},
+							{
+								"order": 8,
+								"playerId": "mlbam-677800"
+							},
+							{
+								"order": 9,
+								"playerId": "mlbam-701350"
+							}
+						]
+					},
+					{
+						"templateId": "bos26-vs-right",
+						"assignments": [
+							{
+								"order": 1,
+								"playerId": "mlbam-665966"
+							},
+							{
+								"order": 2,
+								"playerId": "mlbam-575929"
+							},
+							{
+								"order": 3,
+								"playerId": "mlbam-643396"
+							},
+							{
+								"order": 4,
+								"playerId": "mlbam-702332"
+							},
+							{
+								"order": 5,
+								"playerId": "mlbam-596115"
+							},
+							{
+								"order": 6,
+								"playerId": "mlbam-680776"
+							},
+							{
+								"order": 7,
+								"playerId": "mlbam-678882"
+							},
+							{
+								"order": 8,
+								"playerId": "mlbam-677800"
+							},
+							{
+								"order": 9,
+								"playerId": "mlbam-701350"
+							}
+						]
+					}
+				],
+				"workloadCaps": [
+					{
+						"playerId": "mlbam-665966",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-575929",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-643396",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-702332",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-596115",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-680776",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-678882",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-677800",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-701350",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-691785",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-655316",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					}
+				],
+				"constraints": {
+					"rosterSizeMax": null,
+					"costBudget": null,
+					"costs": []
+				},
+				"review": {
+					"scope": "coverage_and_offense",
+					"uncheckedTransactionRulesAcknowledgedAt": null,
+					"acknowledgedScenarioRevision": null
+				}
+			},
+			{
+				"id": "cand-b",
+				"revision": 1,
+				"authorId": "storyline-adapter",
+				"label": "B — Platoon: Monasterio vs LHP, Mayer vs RHP",
+				"memberIds": [
+					"mlbam-665966",
+					"mlbam-575929",
+					"mlbam-655316",
+					"mlbam-702332",
+					"mlbam-596115",
+					"mlbam-680776",
+					"mlbam-678882",
+					"mlbam-677800",
+					"mlbam-701350",
+					"mlbam-691785",
+					"mlbam-643396"
+				],
+				"incomingIds": [],
+				"outgoingIds": [],
+				"allocations": [
+					{
+						"templateId": "bos26-vs-left",
+						"assignments": [
+							{
+								"order": 1,
+								"playerId": "mlbam-665966"
+							},
+							{
+								"order": 2,
+								"playerId": "mlbam-575929"
+							},
+							{
+								"order": 3,
+								"playerId": "mlbam-655316"
+							},
+							{
+								"order": 4,
+								"playerId": "mlbam-702332"
+							},
+							{
+								"order": 5,
+								"playerId": "mlbam-596115"
+							},
+							{
+								"order": 6,
+								"playerId": "mlbam-680776"
+							},
+							{
+								"order": 7,
+								"playerId": "mlbam-678882"
+							},
+							{
+								"order": 8,
+								"playerId": "mlbam-677800"
+							},
+							{
+								"order": 9,
+								"playerId": "mlbam-701350"
+							}
+						]
+					},
+					{
+						"templateId": "bos26-vs-right",
+						"assignments": [
+							{
+								"order": 1,
+								"playerId": "mlbam-665966"
+							},
+							{
+								"order": 2,
+								"playerId": "mlbam-575929"
+							},
+							{
+								"order": 3,
+								"playerId": "mlbam-691785"
+							},
+							{
+								"order": 4,
+								"playerId": "mlbam-702332"
+							},
+							{
+								"order": 5,
+								"playerId": "mlbam-596115"
+							},
+							{
+								"order": 6,
+								"playerId": "mlbam-680776"
+							},
+							{
+								"order": 7,
+								"playerId": "mlbam-678882"
+							},
+							{
+								"order": 8,
+								"playerId": "mlbam-677800"
+							},
+							{
+								"order": 9,
+								"playerId": "mlbam-701350"
+							}
+						]
+					}
+				],
+				"workloadCaps": [
+					{
+						"playerId": "mlbam-665966",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-575929",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-655316",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-702332",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-596115",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-680776",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-678882",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-677800",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-701350",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-691785",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-643396",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					}
+				],
+				"constraints": {
+					"rosterSizeMax": null,
+					"costBudget": null,
+					"costs": []
+				},
+				"review": {
+					"scope": "coverage_and_offense",
+					"uncheckedTransactionRulesAcknowledgedAt": null,
+					"acknowledgedScenarioRevision": null
+				}
+			}
+		]
+	},
+	"results": []
+}

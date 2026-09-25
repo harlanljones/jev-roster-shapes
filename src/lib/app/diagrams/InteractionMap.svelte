@@ -49,7 +49,7 @@
 		'mlbam-668670': [52, 615],
 		'mlbam-663330': [660, 262],
 		'mlbam-681508': [720, 478],
-		// D-45: Bregman, the offseason counterfactual.
+		// D-48: Bregman, the offseason counterfactual.
 		'mlbam-608324': [58, 292]
 	};
 	// Hand-tuned curvature so parallel edges and labels don't stack.

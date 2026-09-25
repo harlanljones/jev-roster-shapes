@@ -1,4 +1,4 @@
-# 2026 season-timeline storylines (D-44, pins reworked in D-45)
+# 2026 season-timeline storylines (D-44, pins reworked in D-48)
 
 Builds the five static `public`-class v1 bundles the library opens, one per
 dated decision on the 2026 season timeline, plus the display-layer season file

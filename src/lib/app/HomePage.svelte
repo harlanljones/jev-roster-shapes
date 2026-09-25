@@ -2,7 +2,13 @@
 	import { onMount } from 'svelte';
 
 	import type { Bundle, Scenario } from '$lib/contracts';
-	import { calculateComparison, calculateScenario, type ComparisonCalculation } from '$lib/engine';
+	import {
+		calculateComparison,
+		calculatePoolFit,
+		calculateScenario,
+		poolFitFor,
+		type ComparisonCalculation
+	} from '$lib/engine';
 	import {
 		createMemoryPersistenceRepository,
 		createPersistenceRepository,
@@ -38,8 +44,8 @@
 		lineupBin,
 		lineupIds,
 		scenarioLineup,
-		tightestBin,
-		type BinResult
+		type BinResult,
+		type Lineup
 	} from './shape-case';
 
 	// Library-first workspace (D-40): the library collects the D-36 public
@@ -108,10 +114,26 @@
 	const scenarioBins = $derived(
 		new Map(bundleScenarios.map((s) => [s.id, lineupBin(pool, scenarioLineup(bundle, s))]))
 	);
-	const bestBin = $derived(tightestBin(pool));
 	const activeBundleScenario = $derived(
 		bundleScenarios.find((s) => s.id === model.activeScenarioId) ?? bundle.comparison.baseline
 	);
+	// The engine's pool fit (D-45): the best nine this scenario's own roster can
+	// field, searched per context and judged by the engine. Its lineup is drawn
+	// in the same bin as the scenarios, but its numbers are engine numbers.
+	const analysis = $derived(calculatePoolFit(bundle));
+	const activeFit = $derived(poolFitFor(analysis, model.activeScenarioId));
+	const fitLineup = $derived.by((): Lineup => {
+		const contexts = activeFit?.contexts ?? [];
+		const busiest = contexts.reduce((a, b) => (b.games > a.games ? b : a));
+		const lineup: Lineup = {};
+		for (const slot of busiest?.slots ?? []) lineup[slot.role] = slot.playerId;
+		return lineup;
+	});
+	const fitBin = $derived(lineupBin(pool, fitLineup));
+	const engineDelta = (value: string | null | undefined) =>
+		value == null
+			? 'unavailable'
+			: `${Number(value) >= 0 ? '+' : '−'}${Math.abs(Number(value)).toFixed(3)} runs`;
 	const activeView = $derived(
 		caseView(pool, scenarioLineup(bundle, activeBundleScenario), baseLineup)
 	);
@@ -572,9 +594,9 @@
 		</div>
 		<p class="section-intro">
 			The large number is the engine's pinned estimate for the horizon. Under it, each lineup is
-			packed into the same bin as the pool's tightest fit, sized by actual 2026 runs; headroom under
-			the lid is value that lineup leaves off. The bins are a display layer and never change an
-			engine number.
+			packed into the same bin as the engine's best nine for that roster, sized by actual 2026 runs,
+			so the headroom you can see is the value that lineup leaves off. The bins are a display layer
+			and never change an engine number; the fit's total and delta are engine numbers.
 		</p>
 		<div class="bins-grid">
 			{#each model.scenarios as scenario (scenario.id)}
@@ -612,20 +634,38 @@
 			{/each}
 			<article class="summary-card best-card">
 				<div class="card-topline">
-					<h3 class="scenario-label">Pool's tightest fit</h3>
+					<h3 class="scenario-label">Pool's tightest fit · engine</h3>
+					{#if activeFit}<span class="status-dot">{activeFit.feasibility}</span>{/if}
 				</div>
-				<p class="summary-caption">
-					Platoons and position moves allowed. A reference lid, not an engine scenario, so it has no
-					pinned estimate or review state.
+				<p class="summary-metric">
+					{activeFit?.runs ?? 'unavailable'}
+					<span class="unit">runs</span>
 				</p>
-				<div class="bin-block">
-					<p class="bin-meta">Actual 2026 {actualRuns(bestBin)} · {binStats(bestBin)}</p>
-					<CapacityBin
-						{pool}
-						bin={bestBin}
-						label="The pool's tightest fit packed into the bin: {binStats(bestBin)}"
-					/>
-				</div>
+				<dl class="mini-stats">
+					<div>
+						<dt>Left on the table</dt>
+						<dd>{engineDelta(activeFit?.deltaVsReference?.runs)}</dd>
+					</div>
+					<div>
+						<dt>Transfers · benched</dt>
+						<dd>{activeFit?.transfers.length ?? 0} · {activeFit?.bench.length ?? 0}</dd>
+					</div>
+				</dl>
+				<p class="summary-caption">
+					The best nine this scenario's roster can field, searched per pitcher-hand context from the
+					bundle's dated rates and checked by the engine. Piece sizes below are still actual 2026
+					runs, so this bin is a display layer over an engine lineup.
+				</p>
+				{#if fitBin}
+					<div class="bin-block">
+						<p class="bin-meta">Actual 2026 {actualRuns(fitBin)} · {binStats(fitBin)}</p>
+						<CapacityBin
+							{pool}
+							bin={fitBin}
+							label="The engine's best nine for this roster packed into the bin: {binStats(fitBin)}"
+						/>
+					</div>
+				{/if}
 			</article>
 		</div>
 	</section>

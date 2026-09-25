@@ -6,15 +6,38 @@
 	import '@fontsource/ibm-plex-mono/latin-500.css';
 	import '@fontsource/ibm-plex-mono/latin-600.css';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import type { Snippet } from 'svelte';
+	import { getStoryline } from '$lib/storylines/registry';
 
 	let { children }: { children: Snippet } = $props();
+
+	// D-46: the shell names where you are. `snapshots` is a subpage of the
+	// decision it explains, so the nav only offers it when a decision is open.
+	const slug = $derived(page.params.slug ?? null);
+	const story = $derived(slug ? getStoryline(slug) : undefined);
+	const onSnapshots = $derived(page.route.id === '/scenario/[slug]/snapshots');
+	const decisionHref = $derived(story ? resolve('/scenario/[slug]', { slug: story.slug }) : null);
 </script>
 
 <a class="skip-link" href="#main">Skip to content</a>
 
 <header class="shell-header">
-	<a class="wordmark" href={resolve('/')}>Roster Shapes</a>
+	<a class="wordmark" href={resolve('/decisions')}>Roster Shapes</a>
+	<nav class="shell-nav" aria-label="Sections">
+		<a href={resolve('/decisions')} aria-current={slug ? undefined : 'page'}>Decisions</a>
+		{#if story && decisionHref}
+			<a href={decisionHref} aria-current={onSnapshots ? undefined : 'page'}>
+				{story.short}
+			</a>
+			<a
+				href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}
+				aria-current={onSnapshots ? 'page' : undefined}
+			>
+				Snapshots
+			</a>
+		{/if}
+	</nav>
 	<p class="shell-meta">2026 Red Sox · position players · public observed data</p>
 </header>
 
@@ -112,6 +135,34 @@
 		letter-spacing: 0.08em;
 		text-decoration: none;
 		text-transform: uppercase;
+	}
+
+	.shell-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	.shell-nav a {
+		border: 1px solid transparent;
+		border-radius: 6px;
+		padding: 0.3rem 0.6rem;
+		color: var(--ink-soft);
+		font: 500 0.8rem var(--mono);
+		letter-spacing: 0.04em;
+		text-decoration: none;
+		text-transform: uppercase;
+	}
+
+	.shell-nav a:hover {
+		border-color: var(--rule);
+		color: var(--ink);
+	}
+
+	.shell-nav a[aria-current='page'] {
+		border-color: var(--ink);
+		color: var(--panel);
+		background: var(--ink);
 	}
 
 	.shell-meta {

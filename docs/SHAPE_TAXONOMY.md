@@ -55,7 +55,7 @@ CF Octagon (accepts Pentagon, Rectangle); DH Funky (accepts Rectangle, Square,
 Star). A piece matching the primary ask is snug, an accepted shape fits, any
 other shape is loose, and Unclassified has no grade.
 
-## Full-season reapplication (D-44, 2026-09-25; refreshed under D-45)
+## Full-season reapplication (D-44, 2026-09-25; refreshed under D-48)
 
 The season timeline reapplied the unchanged v2 rule to the full-season
 combined rows in `src/lib/storylines/season.json` (MLB Stats API, through
@@ -83,6 +83,17 @@ refreshed with it.
   ascent-vs-fragility distinction; small input changes near the 200/300 PA
   lines can flip Pentagon/Diamond/Rectangle, which is why shapes stay out of
   the calculation identity.
+
+## The model rubric is a separate artifact
+
+`src/lib/classification/rubric.ts` holds `jev-profile-rubric-v1`: the closed set of
+nine options and their plain-language definitions and boundary rules, in the form the
+Jev request sends them. It is derived from this document's table, and it is *not* the
+analyst labels in `src/lib/shapes/taxonomy.ts` — those are the comparison target and are
+deliberately withheld from every prompt, together with their rationales, so the
+comparison is not circular. The rubric version is part of the classification cache key,
+so rewording a definition re-asks the question instead of reusing an answer. Both
+artifacts are display-layer: neither enters a bundle, a digest, or a result.
 
 ## Glyphs
 

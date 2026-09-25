@@ -11,7 +11,7 @@
 // D-44 reapplies the rule to full-season combined rows (September 25):
 // Kiner-Falefa stays a Star; Monasterio's gap narrows to .190 and he becomes
 // a Circle. Storyline players added by the season timeline are labeled here
-// under the same rule, including Bregman for the D-45 offseason storyline.
+// under the same rule, including Bregman for the D-48 offseason storyline.
 
 export const SHAPE_RUBRIC_VERSION = 'shape-rubric-v2';
 

@@ -26,6 +26,32 @@ export function datePosition(iso: string): number {
 	return Math.min(1, Math.max(0, t));
 }
 
+/** Today in the viewer's own timezone, as an ISO date. */
+export function todayIso(now: Date = new Date()): string {
+	const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000);
+	return local.toISOString().slice(0, 10);
+}
+
+export interface TodayMarker {
+	date: string;
+	position: number;
+	/** False once the season has moved past the timeline's window. */
+	inRange: boolean;
+}
+
+/**
+ * Where today sits on the timeline. A date after the window is clamped to the
+ * edge and flagged, so a stale timeline says so instead of pretending the
+ * season ended.
+ */
+export function todayMarker(iso: string = todayIso()): TodayMarker {
+	return {
+		date: iso,
+		position: datePosition(iso),
+		inRange: iso >= TIMELINE_START && iso <= TIMELINE_END
+	};
+}
+
 export interface RecordPoint {
 	date: string;
 	wins: number;
