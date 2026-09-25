@@ -36,6 +36,7 @@ const WINDOWS = {
 // Players the storylines name even if they never start a game in the window.
 const NAMED = {
 	bregman: 608324,
+	mead: 678554,
 	casas: 671213,
 	narvaez: 665966,
 	mayer: 691785,
