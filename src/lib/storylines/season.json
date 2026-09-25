@@ -1,7 +1,7 @@
 {
 	"source": "MLB Stats API (statsapi.mlb.com), free public endpoints; MLBAM copyright applies",
 	"asOf": "2026-09-25",
-	"fetchedAt": "2026-09-25T07:05:02Z",
+	"fetchedAt": "2026-09-25T23:22:14Z",
 	"record": [
 		{
 			"date": "2026-03-26",
@@ -956,6 +956,12 @@
 			"win": false,
 			"runs": 0,
 			"oppRuns": 1
+		},
+		{
+			"date": "2026-09-25",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 3
 		}
 	],
 	"players": {
@@ -976,7 +982,7 @@
 		},
 		"mlbam-596115": {
 			"name": "Trevor Story",
-			"pa": 259,
+			"pa": 262,
 			"runs": 24,
 			"split": {
 				"vL": {
@@ -989,24 +995,39 @@
 				}
 			}
 		},
+		"mlbam-608324": {
+			"name": "Alex Bregman",
+			"pa": 697,
+			"runs": 89,
+			"split": {
+				"vL": {
+					"pa": 176,
+					"ops": ".850"
+				},
+				"vR": {
+					"pa": 521,
+					"ops": ".782"
+				}
+			}
+		},
 		"mlbam-643396": {
 			"name": "Isiah Kiner-Falefa",
-			"pa": 176,
-			"runs": 21,
+			"pa": 182,
+			"runs": 22,
 			"split": {
 				"vL": {
 					"pa": 54,
 					"ops": ".417"
 				},
 				"vR": {
-					"pa": 122,
-					"ops": ".708"
+					"pa": 126,
+					"ops": ".701"
 				}
 			}
 		},
 		"mlbam-655316": {
 			"name": "Andruw Monasterio",
-			"pa": 337,
+			"pa": 343,
 			"runs": 35,
 			"split": {
 				"vL": {
@@ -1014,14 +1035,14 @@
 					"ops": ".798"
 				},
 				"vR": {
-					"pa": 211,
-					"ops": ".611"
+					"pa": 215,
+					"ops": ".608"
 				}
 			}
 		},
 		"mlbam-657136": {
 			"name": "Connor Wong",
-			"pa": 233,
+			"pa": 236,
 			"runs": 22,
 			"split": {
 				"vL": {
@@ -1029,14 +1050,14 @@
 					"ops": ".732"
 				},
 				"vR": {
-					"pa": 164,
-					"ops": ".624"
+					"pa": 165,
+					"ops": ".639"
 				}
 			}
 		},
 		"mlbam-663330": {
 			"name": "Jahmai Jones",
-			"pa": 175,
+			"pa": 178,
 			"runs": 19,
 			"split": {
 				"vL": {
@@ -1051,16 +1072,16 @@
 		},
 		"mlbam-665966": {
 			"name": "Carlos Narváez",
-			"pa": 280,
-			"runs": 21,
+			"pa": 285,
+			"runs": 22,
 			"split": {
 				"vL": {
 					"pa": 77,
 					"ops": ".450"
 				},
 				"vR": {
-					"pa": 203,
-					"ops": ".480"
+					"pa": 208,
+					"ops": ".474"
 				}
 			}
 		},
@@ -1081,16 +1102,16 @@
 		},
 		"mlbam-668939": {
 			"name": "Adley Rutschman",
-			"pa": 403,
+			"pa": 407,
 			"runs": 43,
 			"split": {
 				"vL": {
-					"pa": 139,
-					"ops": ".604"
+					"pa": 140,
+					"ops": ".615"
 				},
 				"vR": {
-					"pa": 264,
-					"ops": ".793"
+					"pa": 267,
+					"ops": ".792"
 				}
 			}
 		},
@@ -1102,16 +1123,16 @@
 		},
 		"mlbam-677800": {
 			"name": "Wilyer Abreu",
-			"pa": 669,
+			"pa": 676,
 			"runs": 81,
 			"split": {
 				"vL": {
-					"pa": 210,
-					"ops": ".862"
+					"pa": 211,
+					"ops": ".857"
 				},
 				"vR": {
-					"pa": 459,
-					"ops": ".744"
+					"pa": 462,
+					"ops": ".739"
 				}
 			}
 		},
@@ -1127,6 +1148,21 @@
 				"vR": {
 					"pa": 131,
 					"ops": ".784"
+				}
+			}
+		},
+		"mlbam-678554": {
+			"name": "Curtis Mead",
+			"pa": 329,
+			"runs": 49,
+			"split": {
+				"vL": {
+					"pa": 141,
+					"ops": ".897"
+				},
+				"vR": {
+					"pa": 188,
+					"ops": ".815"
 				}
 			}
 		},
@@ -1147,46 +1183,31 @@
 		},
 		"mlbam-680776": {
 			"name": "Jarren Duran",
-			"pa": 599,
+			"pa": 605,
 			"runs": 66,
 			"split": {
 				"vL": {
-					"pa": 137,
-					"ops": ".626"
+					"pa": 138,
+					"ops": ".622"
 				},
 				"vR": {
-					"pa": 462,
-					"ops": ".629"
-				}
-			}
-		},
-		"mlbam-681508": {
-			"name": "Mickey Gasper",
-			"pa": 222,
-			"runs": 26,
-			"split": {
-				"vL": {
-					"pa": 28,
-					"ops": ".268"
-				},
-				"vR": {
-					"pa": 194,
-					"ops": ".917"
+					"pa": 465,
+					"ops": ".636"
 				}
 			}
 		},
 		"mlbam-686765": {
 			"name": "Nick Sogard",
-			"pa": 265,
+			"pa": 271,
 			"runs": 28,
 			"split": {
 				"vL": {
-					"pa": 67,
-					"ops": ".804"
+					"pa": 68,
+					"ops": ".793"
 				},
 				"vR": {
-					"pa": 198,
-					"ops": ".708"
+					"pa": 201,
+					"ops": ".704"
 				}
 			}
 		},
@@ -1207,31 +1228,31 @@
 		},
 		"mlbam-701350": {
 			"name": "Roman Anthony",
-			"pa": 232,
-			"runs": 21,
+			"pa": 239,
+			"runs": 24,
 			"split": {
 				"vL": {
 					"pa": 77,
 					"ops": ".592"
 				},
 				"vR": {
-					"pa": 155,
-					"ops": ".757"
+					"pa": 159,
+					"ops": ".817"
 				}
 			}
 		},
 		"mlbam-702332": {
 			"name": "Caleb Durbin",
-			"pa": 578,
+			"pa": 582,
 			"runs": 74,
 			"split": {
 				"vL": {
-					"pa": 160,
-					"ops": ".702"
+					"pa": 161,
+					"ops": ".697"
 				},
 				"vR": {
-					"pa": 418,
-					"ops": ".723"
+					"pa": 421,
+					"ops": ".718"
 				}
 			}
 		},

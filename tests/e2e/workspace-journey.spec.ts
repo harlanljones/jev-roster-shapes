@@ -15,9 +15,9 @@ const axeCorePath = require.resolve('axe-core/axe.min.js');
 test('the analyst opens a storyline, switches scenarios, edits, and saves', async ({ page }) => {
 	await openFirstStoryline(page);
 
-	await page.getByRole('tab', { name: /^B — Casas DH/ }).dispatchEvent('click');
+	await page.getByRole('tab', { name: /^B — No Contreras trade/ }).dispatchEvent('click');
 	await expect(page.getByRole('tab', { selected: true })).toContainText(
-		'B — Casas DH, back from the IL'
+		'B — No Contreras trade: Casas at first'
 	);
 
 	const firstSelect = page.getByLabel(/assigned player/).first();
@@ -42,7 +42,7 @@ test('the analyst opens a storyline, switches scenarios, edits, and saves', asyn
 
 	// The saved draft survives a reload: reopening the storyline restores the
 	// saved revision from localStorage instead of the file.
-	await page.goto('/scenario/preseason-dh');
+	await page.goto('/scenario/offseason-infield');
 	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
 	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
 	await expect(page.locator('.storage-pill')).toHaveAttribute('data-state', 'saved');

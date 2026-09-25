@@ -12,7 +12,7 @@ import {
 } from '../../src/lib/app/shape-case';
 import { getStoryline } from '../../src/lib/storylines/registry';
 
-const story = getStoryline('preseason-dh')!;
+const story = getStoryline('offseason-infield')!;
 const bundle = story.bundle;
 const pool = buildPool(bundle);
 const lineups = [bundle.comparison.baseline, ...bundle.comparison.candidates].map((s) =>
@@ -22,30 +22,34 @@ const lineups = [bundle.comparison.baseline, ...bundle.comparison.candidates].ma
 describe('Shape Case model (display layer, D-43)', () => {
 	it('sizes pieces from actual 2026 PA × season R/PA and keeps missing data missing', () => {
 		expect(pool.get('mlbam-677800')!.runs).toBeCloseTo(81, 6); // Abreu: 669 PA, 81 R
-		expect(pool.get('mlbam-701350')!.runs).toBeCloseTo(21, 6); // Anthony: 232 PA, 21 R
+		expect(pool.get('mlbam-701350')!.runs).toBeCloseTo(24, 6); // Anthony: 237 PA, 24 R
 		expect(pool.get('mlbam-701350')!.rateText).not.toBe(pool.get('mlbam-701350')!.seasonRateText);
 		expect(pool.get('mlbam-671213')!.runs).toBeNull(); // Casas: no 2026 PA
 	});
 
 	it('sums actual 2026 runs for each scenario and suppresses the one with Casas', () => {
-		// Baseline: Narváez 21, Contreras 68, Mayer 19, Durbin 74, Story 24,
-		// Duran 66, Rafaela 67, Abreu 81, Anthony 21. A swaps Anthony for Yoshida (34).
+		// Baseline vs RHP: Narváez 22, Contreras 68, Mayer 19, Durbin 74, Story 24,
+		// Anthony 24, Rafaela 67, Abreu 81, Duran 66. A swaps Mayer for Bregman's
+		// 89 with the Cubs (Durbin to second).
 		expect(lineups.map((l) => lineupRuns(pool, l)?.toFixed(2) ?? null)).toEqual([
-			'441.00',
-			'454.00',
+			'445.00',
+			'515.00',
 			null
 		]);
 	});
 
 	it('finds the tightest fit against each hand and packs it to the lid', () => {
 		const fit = tightestFit(pool);
-		expect(fit.L.DH).toBe('mlbam-701350'); // Anthony vs LHP
-		expect(fit.R.DH).toBe('mlbam-807799'); // Yoshida vs RHP
-		expect(fit.L['3B']).toBe('mlbam-691785'); // Mayer moves to third against lefties
+		expect(fit.L.DH).toBe('mlbam-608324'); // Bregman vs LHP
+		expect(fit.R['3B']).toBe('mlbam-608324'); // Bregman at third vs RHP
+		// Rafaela (67 runs) and Duran (66) both cover center; with the
+		// September 25 refresh the fit puts Duran in center and Rafaela at DH.
+		expect(fit.R.CF).toBe('mlbam-680776'); // Duran in center vs RHP
+		expect(fit.R.DH).toBe('mlbam-678882'); // Rafaela vs RHP
 		const bin = tightestBin(pool);
-		expect(bin.runs?.toFixed(2)).toBe('456.31');
+		expect(bin.runs?.toFixed(2)).toBe('526.71');
 		expect(bin.overflows).toBe(false);
-		expect(Math.round(bin.fill)).toBe(63);
+		expect(Math.round(bin.fill)).toBe(69);
 		expect(Math.round(bin.gaps + bin.headroom + bin.fill)).toBe(100);
 	});
 

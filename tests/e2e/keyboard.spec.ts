@@ -9,11 +9,11 @@ test('a keyboard-only user tabs, edits, swaps, and inspects evidence', async ({ 
 	await openFirstStoryline(page);
 
 	// Arrow-key tab navigation: Baseline → candidate A.
-	await page.getByRole('tab', { name: /^Baseline — Anthony DH/ }).evaluate((el) => el.focus());
+	await page
+		.getByRole('tab', { name: /^Baseline — The infield Boston built/ })
+		.evaluate((el) => el.focus());
 	await page.keyboard.press('ArrowRight');
-	await expect(page.getByRole('tab', { selected: true })).toContainText(
-		'A — Yoshida DH, Anthony sits'
-	);
+	await expect(page.getByRole('tab', { selected: true })).toContainText('A — Bregman re-signs');
 
 	// Change an assignment with the keyboard: Home then ArrowDown guarantees a
 	// selection change no matter which option started selected.
@@ -69,4 +69,43 @@ test('a keyboard-only user tabs, edits, swaps, and inspects evidence', async ({ 
 	await expect(drawer).toBeHidden();
 	const returnedFocus = await page.evaluate(() => document.activeElement?.textContent ?? '');
 	expect(returnedFocus).toContain('Inspect template source');
+});
+
+// I-16: the index, a decision, and the snapshots subpage are reachable and
+// readable by keyboard alone, including the collapsible request body.
+test('a keyboard-only user reaches a decision, its snapshots, and the prompt', async ({ page }) => {
+	// The skip link comes first, then the shell nav. Focus starts in the
+	// document, not the first control, so move it into the page first.
+	await page.goto('/decisions');
+	await page.locator('body').evaluate((el) => el.focus());
+	await page.keyboard.press('Tab');
+	await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
+	await page.keyboard.press('Tab');
+	await expect(page.getByRole('link', { name: 'Roster Shapes' })).toBeFocused();
+	await page.keyboard.press('Tab');
+	await expect(page.getByRole('link', { name: 'Decisions' })).toBeFocused();
+
+	// Open a decision card by keyboard.
+	const card = page.getByRole('link', { name: 'How do you replace Bregman?' });
+	await card.evaluate((el) => el.focus());
+	await page.keyboard.press('Enter');
+	await expect(page).toHaveURL(/\/scenario\/offseason-infield$/);
+	await expect(page.getByRole('region', { name: /Pool fit for/ })).toBeVisible();
+
+	// Follow the nav to the snapshots subpage.
+	const nav = page.getByRole('navigation', { name: 'Sections' });
+	await nav.getByRole('link', { name: 'Snapshots' }).evaluate((el) => el.focus());
+	await page.keyboard.press('Enter');
+	await expect(page).toHaveURL(/\/scenario\/offseason-infield\/snapshots$/);
+
+	// The request body is a native disclosure: focusable, operable with Enter.
+	const toggle = page.getByText('Request body, exactly as it would be sent');
+	await toggle.evaluate((el) => el.focus());
+	await page.keyboard.press('Enter');
+	await expect(page.locator('.request-toggle pre')).toContainText('Player:');
+	// And it is scrollable without a pointer, so the region takes focus.
+	const region = page.locator('.request-toggle pre');
+	await region.evaluate((el) => el.focus());
+	await page.keyboard.press('End');
+	await expect(region).toBeVisible();
 });

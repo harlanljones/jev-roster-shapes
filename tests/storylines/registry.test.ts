@@ -2,6 +2,7 @@ import { computeInputDigest, validateBundle } from '../../src/lib/contracts';
 import { calculateComparison } from '../../src/lib/engine';
 import { shapeOf } from '../../src/lib/shapes/taxonomy';
 import {
+	CURRENT_SLUG,
 	getStoryline,
 	PINNED_STORYLINE_DIGESTS,
 	storylineRegistry
@@ -11,18 +12,18 @@ import { describe, expect, it } from 'vitest';
 describe('2026 storyline registry', () => {
 	it('publishes the five storyline slugs in library order', () => {
 		expect(storylineRegistry.map(({ slug }) => slug)).toEqual([
-			'preseason-dh',
-			'preseason-second',
+			'offseason-infield',
+			'opening-day-outfield',
 			'july-run',
-			'deadline-catcher',
-			'october-lineup'
+			'deadline',
+			'wild-card-roster'
 		]);
 		expect(storylineRegistry.map(({ bundle }) => bundle.bundleId)).toEqual([
-			'mlbam-bos-2026-preseason-dh',
-			'mlbam-bos-2026-preseason-second',
+			'mlbam-bos-2026-offseason-infield',
+			'mlbam-bos-2026-opening-day-outfield',
 			'mlbam-bos-2026-july-run',
-			'mlbam-bos-2026-deadline-catcher',
-			'mlbam-bos-2026-october-lineup'
+			'mlbam-bos-2026-deadline',
+			'mlbam-bos-2026-wild-card-roster'
 		]);
 	});
 
@@ -83,8 +84,8 @@ describe('2026 storyline registry', () => {
 	});
 
 	it('scores Casas from his 2025 rate before Opening Day', () => {
-		const storyline = getStoryline('preseason-dh');
-		if (!storyline) throw new Error('preseason-dh storyline missing');
+		const storyline = getStoryline('offseason-infield');
+		if (!storyline) throw new Error('offseason-infield storyline missing');
 		expect(storyline.bundle.assumptions.metricDefinitionId).toBe('mlbam-observed-r-per-pa-2025');
 		const casas = storyline.bundle.dataset.projections.find(
 			({ playerId }) => playerId === 'mlbam-671213'
@@ -120,13 +121,77 @@ describe('2026 storyline registry', () => {
 			getStoryline(slug)?.bundle.dataset.players.map((player) => player.id) ?? [];
 		const rutschman = 'mlbam-668939';
 		const narvaez = 'mlbam-665966';
-		for (const slug of ['preseason-dh', 'preseason-second', 'july-run']) {
+		for (const slug of ['offseason-infield', 'opening-day-outfield', 'july-run']) {
 			expect(ids(slug), slug).not.toContain(rutschman);
 			expect(ids(slug), slug).toContain(narvaez);
 		}
 		// Rutschman arrives in the deadline trade; Narváez leaves in it.
-		expect(ids('deadline-catcher')).toContain(rutschman);
-		expect(ids('october-lineup')).toContain(rutschman);
-		expect(ids('october-lineup')).not.toContain(narvaez);
+		expect(ids('deadline')).toContain(rutschman);
+		expect(ids('wild-card-roster')).toContain(rutschman);
+		expect(ids('wild-card-roster')).not.toContain(narvaez);
+	});
+
+	it('trades Mayer only in the deadline scenario that makes the deal', () => {
+		const deadline = getStoryline('deadline');
+		if (!deadline) throw new Error('deadline storyline missing');
+		const members = (id: string) =>
+			[deadline.bundle.comparison.baseline, ...deadline.bundle.comparison.candidates].find(
+				(scenario) => scenario.id === id
+			)?.memberIds ?? [];
+		expect(members('base')).toContain('mlbam-691785');
+		expect(members('cand-a')).not.toContain('mlbam-691785');
+		expect(members('cand-a')).not.toContain('mlbam-665966');
+		expect(members('cand-b')).toContain('mlbam-691785');
+		// Wong catches until Rutschman arrives; Rutschman never DHs here.
+		for (const scenario of [
+			deadline.bundle.comparison.baseline,
+			...deadline.bundle.comparison.candidates
+		]) {
+			for (const allocation of scenario.allocations) {
+				const dh = allocation.assignments.find(({ order }) => order === 9);
+				expect(dh?.playerId).not.toBe('mlbam-668939');
+			}
+		}
+	});
+
+	it('holds every Wild Card scenario to 14 position players', () => {
+		const wildCard = getStoryline('wild-card-roster');
+		if (!wildCard) throw new Error('wild-card-roster storyline missing');
+		const calculation = calculateComparison(wildCard.bundle);
+		for (const scenario of [
+			wildCard.bundle.comparison.baseline,
+			...wildCard.bundle.comparison.candidates
+		]) {
+			expect(scenario.constraints.rosterSizeMax).toBe(14);
+			expect(scenario.memberIds.length).toBeLessThanOrEqual(14);
+		}
+		expect(
+			calculation.results.every(({ constraints }) => constraints.rosterSize.status === 'passed')
+		).toBe(true);
+		const contreras = 'mlbam-575929';
+		expect(wildCard.bundle.comparison.candidates[1]?.memberIds).not.toContain(contreras);
+	});
+
+	it('keeps Gasper off every Wild Card roster and brings Mead in only for Contreras', () => {
+		// D-49: Gasper hurt his biceps on September 25 and is expected to miss
+		// the series; Mead is candidate B's replacement for Contreras.
+		const wildCard = getStoryline('wild-card-roster');
+		if (!wildCard) throw new Error('wild-card-roster storyline missing');
+		const [base, candA, candB] = [
+			wildCard.bundle.comparison.baseline,
+			...wildCard.bundle.comparison.candidates
+		];
+		const gasper = 'mlbam-681508';
+		const mead = 'mlbam-678554';
+		for (const scenario of [base, candA, candB]) expect(scenario?.memberIds).not.toContain(gasper);
+		expect(base?.memberIds).not.toContain(mead);
+		expect(candA?.memberIds).not.toContain(mead);
+		expect(candB?.memberIds).toContain(mead);
+		expect(candB?.memberIds).not.toContain('mlbam-575929');
+	});
+
+	it('opens `/` on a decision that exists', () => {
+		expect(CURRENT_SLUG).toBe('wild-card-roster');
+		expect(getStoryline(CURRENT_SLUG)).toBeDefined();
 	});
 });

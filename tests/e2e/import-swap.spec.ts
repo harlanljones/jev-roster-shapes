@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { openFirstStoryline } from './storyline';
 
 // DOM events stand in for trusted input; see workspace-journey.spec.ts for why.
-const bundlePath = new URL('../../src/lib/storylines/preseason-dh.json', import.meta.url);
+const bundlePath = new URL('../../src/lib/storylines/offseason-infield.json', import.meta.url);
 
 test('swap exchanges two players in one template and flips the draft to unsaved', async ({
 	page

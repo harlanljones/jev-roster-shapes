@@ -9,9 +9,9 @@
 // between vs-LHP and vs-RHP with 50+ PA on each side (2026 statSplits). The
 // two v1 Stars (elite production) had no such quirk and become Squares.
 // D-44 reapplies the rule to full-season combined rows (September 25):
-// Kiner-Falefa stays a Star; Monasterio's gap narrows to .187 and he becomes
+// Kiner-Falefa stays a Star; Monasterio's gap narrows to .190 and he becomes
 // a Circle. Storyline players added by the season timeline are labeled here
-// under the same rule.
+// under the same rule, including Bregman for the D-48 offseason storyline.
 
 export const SHAPE_RUBRIC_VERSION = 'shape-rubric-v2';
 
@@ -56,7 +56,7 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 	'mlbam-702332': {
 		shape: 'Square',
 		rationale:
-			'Steady everyday single-position regular: .702 vs LHP, .723 vs RHP, no platoon quirk. Observed 0.128028 R/PA, highest among regulars, over 578 PA at third base.'
+			'Steady everyday single-position regular: .697 vs LHP, .718 vs RHP, no platoon quirk. Observed 0.127148 R/PA over 582 PA at third base.'
 	},
 	'mlbam-575929': {
 		shape: 'Square',
@@ -66,34 +66,34 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 	'mlbam-665966': {
 		shape: 'Square',
 		rationale:
-			'Steady single-position catcher: 280 PA at 0.075000 (Boston, then Baltimore after the August 3 trade), .450 vs LHP and .480 vs RHP, no platoon quirk.'
+			'Steady single-position catcher: 283 PA at 0.077739 (Boston, then Baltimore after the August 3 trade), .450 vs LHP and .480 vs RHP, no platoon quirk.'
 	},
 	'mlbam-657136': {
 		shape: 'Square',
-		rationale: 'Steady single-position backup catcher: 0.094421 over 233 PA.'
+		rationale: 'Steady single-position backup catcher: 0.094017 over 234 PA.'
 	},
 	'mlbam-677800': {
 		shape: 'Rectangle',
-		rationale: 'Volume workhorse: team-high 669 PA with Gold Glove right field.'
+		rationale: 'Volume workhorse: team-high 674 PA with Gold Glove right field.'
 	},
 	'mlbam-680776': {
 		shape: 'Rectangle',
-		rationale: 'Volume workhorse: 599 PA across left, center, and DH in the bounce-back season.'
+		rationale: 'Volume workhorse: 603 PA across left, center, and DH in the bounce-back season.'
 	},
 	'mlbam-643396': {
 		shape: 'Star',
 		rationale:
-			'Tough fit: .417 OPS vs LHP (54 PA) against .708 vs RHP (122 PA), a .291 platoon gap. Plays right-handed pitching well, so he needs a partner to fill a slot.'
+			'Tough fit: .417 OPS vs LHP (54 PA) against .701 vs RHP (126 PA), a .284 platoon gap. Plays right-handed pitching well, so he needs a partner to fill a slot.'
 	},
 	'mlbam-655316': {
 		shape: 'Circle',
 		rationale:
-			'Well-rounded utility at 1B/2B/SS: .798 OPS vs LHP (126 PA) and .611 vs RHP (211 PA). The .187 gap on full-season rows sits just under the .200 Star line; on partial Boston rows (September 24) it was .247 and he was a Star.'
+			'Well-rounded utility at 1B/2B/SS: .798 OPS vs LHP (126 PA) and .608 vs RHP (215 PA). The .190 gap on full-season rows sits just under the .200 Star line; on partial Boston rows (September 24) it was .247 and he was a Star.'
 	},
 	'mlbam-701350': {
 		shape: 'Pentagon',
 		rationale:
-			'Young flash at 21: 0.090517 over 232 PA in the first full season — ascent, not foundation.'
+			'Young flash at 21: 0.101266 over 237 PA in the first full season — ascent, not foundation.'
 	},
 	'mlbam-678882': {
 		shape: 'Pentagon',
@@ -131,12 +131,22 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 	'mlbam-681508': {
 		shape: 'Circle',
 		rationale:
-			'Bat-first utility with catcher and first-base starts: .917 OPS vs RHP over 194 PA, .268 vs LHP over only 28 PA, too few to call a platoon Star.'
+			'Bat-first utility with catcher and first-base starts: .902 OPS vs RHP over 197 PA, .268 vs LHP over only 28 PA, too few to call a platoon Star.'
 	},
 	'mlbam-663330': {
 		shape: 'Circle',
 		rationale:
 			'Corner-outfield platoon bat (LF/RF from 2025): .753 OPS vs LHP over 152 PA. Only 23 PA against righties keeps him under the Star line.'
+	},
+	'mlbam-608324': {
+		shape: 'Square',
+		rationale:
+			'Steady single-position third baseman: .850 vs LHP and .782 vs RHP over 697 PA for the Cubs in 2026, no platoon quirk. In this app he is the Boston counterfactual: he signed with Chicago in January.'
+	},
+	'mlbam-678554': {
+		shape: 'Circle',
+		rationale:
+			'Multi-position infielder (1B/2B/3B from 2025) with no platoon quirk: .897 vs LHP and .817 vs RHP over 329 PA, mostly for Washington before a July 29 wrist fracture. The rate is high for a Circle; the sample and the layoff are the caveat.'
 	},
 	'mlbam-671213': {
 		shape: 'Unclassified',

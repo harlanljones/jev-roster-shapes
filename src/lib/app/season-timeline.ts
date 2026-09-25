@@ -6,7 +6,6 @@ import { SEASON_RECORD } from './split-evidence';
 
 /** Calendar events that frame the season but are not storylines themselves. */
 export const SEASON_EVENTS: readonly { date: string; label: string; source: string }[] = [
-	{ date: '2026-03-26', label: 'Opening Day', source: 'MLB schedule' },
 	{
 		date: '2026-04-25',
 		label: 'Cora fired at 10–17',
@@ -15,7 +14,7 @@ export const SEASON_EVENTS: readonly { date: string; label: string; source: stri
 	{ date: '2026-09-21', label: 'Clinched', source: 'NESN, September 22' }
 ];
 
-export const TIMELINE_START = '2026-02-01';
+export const TIMELINE_START = '2026-01-01';
 export const TIMELINE_END = '2026-10-01';
 
 const DAY = 86_400_000;
@@ -25,6 +24,32 @@ const day = (iso: string) => Date.parse(`${iso}T00:00:00Z`) / DAY;
 export function datePosition(iso: string): number {
 	const t = (day(iso) - day(TIMELINE_START)) / (day(TIMELINE_END) - day(TIMELINE_START));
 	return Math.min(1, Math.max(0, t));
+}
+
+/** Today in the viewer's own timezone, as an ISO date. */
+export function todayIso(now: Date = new Date()): string {
+	const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000);
+	return local.toISOString().slice(0, 10);
+}
+
+export interface TodayMarker {
+	date: string;
+	position: number;
+	/** False once the season has moved past the timeline's window. */
+	inRange: boolean;
+}
+
+/**
+ * Where today sits on the timeline. A date after the window is clamped to the
+ * edge and flagged, so a stale timeline says so instead of pretending the
+ * season ended.
+ */
+export function todayMarker(iso: string = todayIso()): TodayMarker {
+	return {
+		date: iso,
+		position: datePosition(iso),
+		inRange: iso >= TIMELINE_START && iso <= TIMELINE_END
+	};
 }
 
 export interface RecordPoint {

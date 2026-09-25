@@ -25,13 +25,13 @@ eligibility is Unclassified — the taxonomy never forces a label.
 
 | Shape | Plain-language definition | 2026 examples | Counterexample (looks close, is not) | Boundary rule |
 | --- | --- | --- | --- | --- |
-| Star | A quirky or tough fit: a hitter who plays one side of the platoon well and the other poorly, so he fills a slot snugly only as half of a platoon. Rule: a gap of at least .200 OPS between vs-LHP and vs-RHP, with 50+ PA on each side (2026 statSplits) | Isiah Kiner-Falefa (.417 vs LHP over 54 PA, .708 vs RHP over 122 PA) | Caleb Durbin (elite 0.128028 R/PA but .702 / .723 splits, no quirk — Square) | A gap under .200, or under 50 PA on either side, is never a Star; production level alone never makes a Star |
-| Square | Steady single-position regular with no platoon quirk; solid everyday piece | Caleb Durbin (0.128028, 578 PA, 3B, .702 / .723); Willson Contreras (0.127580, 533 PA, 1B, .981 / .878); Adley Rutschman (C); Connor Wong (0.094421, C) | Trevor Story (SS-only but the 2026 question is his throws — Octagon) | Multi-position eligibility moves a player to Circle; a .200+ platoon gap moves him to Star |
-| Rectangle | High-PA workhorse (≥550 PA) carrying everyday volume | Wilyer Abreu (669 PA); Jarren Duran (599 PA) | Ceddanne Rafaela (574 PA but the story is the Gold Glove — Pentagon/Octagon judgment call, see below) | Below 550 PA is never a Rectangle |
-| Circle | Well-rounded utility: multi-position eligible, mid rate, no everyday slot, no platoon quirk | Nick Sogard (1B/2B, .804 / .708); Andruw Monasterio (2B/SS/3B, .798 / .611, a .187 gap); Anthony Seigler, Mickey Gasper, Jahmai Jones (multi-position, fewer than 50 PA on one side) | Isiah Kiner-Falefa (2B/SS, but a .291 platoon gap — Star under v2); Marcelo Mayer (multi-position but the story is fragility — Diamond) | Single-position players are never Circles; a .200+ platoon gap moves a Circle to Star |
+| Star | A quirky or tough fit: a hitter who plays one side of the platoon well and the other poorly, so he fills a slot snugly only as half of a platoon. Rule: a gap of at least .200 OPS between vs-LHP and vs-RHP, with 50+ PA on each side (2026 statSplits) | Isiah Kiner-Falefa (.417 vs LHP over 54 PA, .701 vs RHP over 126 PA) | Caleb Durbin (elite 0.127148 R/PA but .697 / .718 splits, no quirk — Square) | A gap under .200, or under 50 PA on either side, is never a Star; production level alone never makes a Star |
+| Square | Steady single-position regular with no platoon quirk; solid everyday piece | Caleb Durbin (0.127148, 582 PA, 3B, .697 / .718); Willson Contreras (0.127580, 533 PA, 1B, .981 / .878); Adley Rutschman (C); Connor Wong (0.094017, C) | Trevor Story (SS-only but the 2026 question is his throws — Octagon) | Multi-position eligibility moves a player to Circle; a .200+ platoon gap moves him to Star |
+| Rectangle | High-PA workhorse (≥550 PA) carrying everyday volume | Wilyer Abreu (674 PA); Jarren Duran (603 PA) | Ceddanne Rafaela (574 PA but the story is the Gold Glove — Pentagon/Octagon judgment call, see below) | Below 550 PA is never a Rectangle |
+| Circle | Well-rounded utility: multi-position eligible, mid rate, no everyday slot, no platoon quirk | Nick Sogard (1B/2B, .793 / .704); Andruw Monasterio (2B/SS/3B, .798 / .608, a .190 gap); Anthony Seigler, Mickey Gasper, Jahmai Jones (multi-position, fewer than 50 PA on one side); Curtis Mead (1B/2B/3B, .897 / .817 over 329 PA, a high rate for a Circle on a sample cut short by a wrist fracture) | Isiah Kiner-Falefa (2B/SS, but a .284 platoon gap — Star under v2); Marcelo Mayer (multi-position but the story is fragility — Diamond) | Single-position players are never Circles; a .200+ platoon gap moves a Circle to Star |
 | Pentagon | Young flash: 25 or under with extra-base/speed electricity and high variance | Roman Anthony (21, first full season); Ceddanne Rafaela (25, Gold Glove, swings at everything) | Jarren Duran (29, established volume — Rectangle) | Over 25, or below 200 PA on a full season, needs a written exception |
 | Octagon | Defensive anchor: the shortstop-grade glove the infield is built around | Trevor Story (SS, club leader; 2025 late-season throw slippage recorded as the limitation, not a disqualifier) | Marcelo Mayer (plus defender but only 236 PA — Diamond) | A player benched for defense in the storyline set cannot be the Octagon |
-| Diamond | High-value but fragile: above-roster-median rate with an injury-limited season (<300 PA) | Marcelo Mayer (0.080508 over 236 PA, 228 for Boston before the deadline trade to San Francisco; never topped 91 pro games before 2026) | Roman Anthony (232 PA but the story is ascent, not fragility — Pentagon) | ≥300 PA is never a Diamond |
+| Diamond | High-value but fragile: above-roster-median rate with an injury-limited season (<300 PA) | Marcelo Mayer (0.080508 over 236 PA, 228 for Boston before the deadline trade to San Francisco; never topped 91 pro games before 2026) | Roman Anthony (237 PA but the story is ascent, not fragility — Pentagon) | ≥300 PA is never a Diamond |
 | Funky | Irregular profile: DH-only (no position ≥10 games) or fringe (<100 PA) bat | Masataka Yoshida (DH-only, most expensive pinch hitter); Nate Eaton (55 PA, no eligibility) | Rob Refsnyder-type platoon bats with real eligibility would be Circles, not Funky | Any ≥10-game position disqualifies Funky (except DH) |
 | Unclassified | Missing inputs: zero PA and no eligible position | Triston Casas (0 PA in 2026, 60-day IL, null rate) | Every other roster player has inputs and takes a label | Never display a rate or shape-based claim for Unclassified |
 
@@ -55,19 +55,27 @@ CF Octagon (accepts Pentagon, Rectangle); DH Funky (accepts Rectangle, Square,
 Star). A piece matching the primary ask is snug, an accepted shape fits, any
 other shape is loose, and Unclassified has no grade.
 
-## Full-season reapplication (D-44, 2026-09-25)
+## Full-season reapplication (D-44, 2026-09-25; refreshed under D-48)
 
 The season timeline reapplied the unchanged v2 rule to the full-season
 combined rows in `src/lib/storylines/season.json` (MLB Stats API, through
-September 24). Kiner-Falefa stays a Star (.291 gap). Monasterio's gap narrowed
-from .247 to .187, so he moves from Star to Circle; the rule did not change,
+September 25). Kiner-Falefa stays a Star (.284 gap). Monasterio's gap narrowed
+from .247 to .190, so he moves from Star to Circle; the rule did not change,
 the sample did. Players the timeline added are labeled under the same rule:
-Rogers Square, Seigler, Gasper, and Jones Circle. Several of them (Mayer,
-Gasper, Jones, Rogers, Seigler) show gaps above .200 on fewer than 50 PA
-against one hand, which the rule treats as noise, not a quirk.
+Rogers and Bregman Square (Bregman's rows are his 2026 season with the Cubs,
+shown as the counterfactual in the offseason storyline), Seigler, Gasper, and
+Jones Circle. Several players (Mayer, Gasper, Jones, Rogers, Seigler) show gaps
+above .200 on fewer than 50 PA against one hand, which the rule treats as
+noise, not a quirk. Rationale numbers follow the checked-in snapshot and are
+refreshed with it.
 
 ## Known judgment calls (recorded, not hidden)
 
+- Curtis Mead (added for the Wild Card storyline, D-49) is a Circle on
+  eligibility and splits, but his 0.148936 R/PA is the highest in the pool and
+  came before a wrist fracture ended his season on July 29; a Diamond reading
+  (high value, fragile) is defensible once his 329 PA are weighed against the
+  layoff.
 - Rafaela could be Rectangle (574 PA) or Octagon (Gold Glove CF); rubric v1
   assigns Pentagon on the "swings at everything, timely hitting, age 25" flash
   reading. A future evaluator pass may move him to Octagon without touching any
@@ -80,6 +88,17 @@ against one hand, which the rule treats as noise, not a quirk.
   ascent-vs-fragility distinction; small input changes near the 200/300 PA
   lines can flip Pentagon/Diamond/Rectangle, which is why shapes stay out of
   the calculation identity.
+
+## The model rubric is a separate artifact
+
+`src/lib/classification/rubric.ts` holds `jev-profile-rubric-v1`: the closed set of
+nine options and their plain-language definitions and boundary rules, in the form the
+Jev request sends them. It is derived from this document's table, and it is *not* the
+analyst labels in `src/lib/shapes/taxonomy.ts` — those are the comparison target and are
+deliberately withheld from every prompt, together with their rationales, so the
+comparison is not circular. The rubric version is part of the classification cache key,
+so rewording a definition re-asks the question instead of reusing an answer. Both
+artifacts are display-layer: neither enters a bundle, a digest, or a result.
 
 ## Glyphs
 

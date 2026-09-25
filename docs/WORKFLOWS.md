@@ -2,9 +2,21 @@
 
 Status: implementation defaults for the local prototype (D-38 through D-40: library-first, five public 2026 retrospective analyses, analyst-labeled shape rubric v1). Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
 
+## 0. Page map
+
+| Route | Screen | Required content |
+| --- | --- | --- |
+| `/` | Season index | Timeline with today's date marked and the record through it, plus one card per decision with its date, baseline, and both deltas |
+| `/scenario/[slug]` | Decision | The case for that decision, the engine's pool fit with its offensive deltas, the hindsight diagrams, and a link to snapshots |
+| `/scenario/[slug]/snapshots` | Snapshots subpage | The Jev prompt and its outputs beside the roster and the engine's best nine |
+| `/player/[id]` | Player | One player's shape, evidence, and boundary note |
+| Workspace | Comparison | Reached from a decision's `Open workspace`, after the public-data acknowledgment |
+
+Every decision has exactly one URL, including the one the index used to render inline. Navigation lives in the shell header (`Decisions · decision · Snapshots`) and marks the current section. Timelines take an optional `today` so the marker is testable without freezing a build, and a date outside the season window is stated rather than clamped silently.
+
 ## 1. First complete journey
 
-An analyst opens the start screen's roster-and-shapes graphic, picks one of the five retrospective analyses, acknowledges its public-data provenance, reviews the event window and source snapshot, edits allocations across baseline and candidates A/B, compares supported results, inspects evidence, and exports a comparison another analyst can replay.
+An analyst opens the season index, picks one of the five dated decisions, acknowledges its public-data provenance, reviews the event window and source snapshot, edits allocations across baseline and candidates A/B, compares supported results, inspects evidence, and exports a comparison another analyst can replay.
 
 Completion means the exported comparison restores its inputs and results, including gaps and unavailable metrics. An acquisition preference is optional; a recommended transaction is outside this workflow.
 
@@ -16,12 +28,15 @@ Use one comparison workspace with these reachable views. They may be panels or r
 
 | View | Required content | Primary action |
 | --- | --- | --- |
-| Library / start | Interactive roster-and-shapes graphic (position lanes, shape glyphs, player detail, table equivalent) plus five retrospective analyses with event windows and source snapshots | Open analysis |
+| Season index | Season timeline with today marked, and one dated card per decision with its baseline and deltas | Open a decision |
+| Decision | Roster case (position cutouts, shape glyphs, player detail, table equivalent), the engine's pool fit with its deltas, coverage and workload transfers, plus the hindsight diagrams | Open the workspace; open snapshots |
 | Assumptions | Horizon, templates, PA budgets, exposure assumptions, limits, provenance | Apply assumptions |
 | Allocation | Baseline/A/B selector, membership, template slots, workloads, diagnostics | Commit allocation edit |
 | Compare | Baseline/A/B columns, coverage, PA transfers, supported metrics, checks | Inspect a result |
 | Evidence | Source, assumptions/judgments, formula and input versions | Return to originating result |
 | Review / export | Exact revision, readiness checks, missing metrics, unchecked rules | Save / export revision |
+| Pool fit | The engine's best nine per pitcher-hand context, its total, what it leaves on the table against the lineup used and against the baseline fit, per-player PA transfers, benched members, required position moves, remaining shortfalls, exclusions, and capacity pressure | Switch the scenario the fit is computed for |
+| Snapshots | The exact request body, the provider's answers with their distributions, model identity, tokens, timing, and estimated cost, beside the roster and the engine fit | Configure a key, acknowledge external processing, classify |
 
 Keep the comparison name, shared assumption revision, snapshot date, active scenario, unsaved status, and readiness summary visible or one navigation action away. Give empty workspaces an explicit load/import action.
 
@@ -112,6 +127,10 @@ Every quantity, warning, and advisory profile exposes its evidence from the plac
 For a scenario delta, expose both operands and the allocation changes that produced them. Evidence may explain assigned PA without making a causal claim about acquisition success.
 
 If classification is enabled later, use visible pending, current, stale, unavailable, and overridden states. Model failure changes that advisory state only. A manual override keeps the original output and records the reason; quantitative results do not depend on the label.
+
+The classification path has its own states, and each one leaves every quantitative result untouched: `not-configured` (no key for this session, so nothing was sent), `awaiting-acknowledgment` (a key is present but the person has not accepted sending evidence to an external provider), `pending`, `current`, `invalid-response` (the body did not match the response contract, so no answer is rendered), `timeout`, `error`, and `overridden`. A provider key is held in memory for the session only; it is never written to a bundle, a saved draft, browser storage, or the repository, so a deployed static demo cannot call the provider unless a visitor supplies their own. Classification runs on explicit request from the snapshots page, never on load and never inside the edit-and-recalculate path.
+
+The prompt states the rubric's own thresholds and the observations they apply to, and instructs the model to do no arithmetic. The analyst's label and rationale are withheld from the prompt, because they are the comparison target. Reported probabilities, confidence, and the abstention answer are model estimates shown as they come back: no threshold is applied anywhere, because SPEC §7 adopts none and no tolerable error rate has been agreed.
 
 ## 9. Save, review, export, restore
 
