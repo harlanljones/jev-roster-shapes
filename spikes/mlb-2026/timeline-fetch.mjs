@@ -161,7 +161,9 @@ await pool([...hitterIds], 4, async (id) => {
 			runs: split.stat.runs ?? 0,
 			games: split.stat.gamesPlayed ?? 0
 		}));
-		if (key.startsWith('from-')) continue;
+		// byDateRange fielding rows carry no position, so dated eligibility
+		// comes from the snapshot's own starting lineups instead.
+		if (window.stats !== 'season') continue;
 		fielding[id][key] = rows(await getJson(statsUrl(id, 'fielding', window))).map((split) => ({
 			team: split.team?.id ?? null,
 			pos: split.position?.abbreviation ?? null,
