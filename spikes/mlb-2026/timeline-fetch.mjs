@@ -148,6 +148,9 @@ function statsUrl(id, group, window) {
 const rows = (data) => data.stats?.[0]?.splits ?? [];
 const hitting = {};
 const fielding = {};
+// Season platoon splits (OPS by pitcher hand) for the display layer only; OPS
+// is not an additive run measure and never enters a bundle (D-42, D-43).
+const splits = {};
 await pool([...hitterIds], 4, async (id) => {
 	hitting[id] = {};
 	fielding[id] = {};
@@ -166,6 +169,17 @@ await pool([...hitterIds], 4, async (id) => {
 			gamesStarted: split.stat.gamesStarted ?? 0
 		}));
 	}
+	const splitRows = rows(
+		await getJson(
+			`${API}/people/${id}/stats?stats=statSplits&group=hitting&season=${SEASON}&sitCodes=vl,vr`
+		)
+	);
+	splits[id] = splitRows.map((split) => ({
+		code: split.split?.code ?? null,
+		team: split.team?.id ?? null,
+		pa: split.stat.plateAppearances ?? 0,
+		ops: split.stat.ops ?? null
+	}));
 });
 
 const sortKeys = (object) =>
@@ -181,7 +195,8 @@ const snapshot = {
 	rosters,
 	people: sortKeys(people),
 	hitting: sortKeys(hitting),
-	fielding: sortKeys(fielding)
+	fielding: sortKeys(fielding),
+	splits: sortKeys(splits)
 };
 const out = join(dirname(fileURLToPath(import.meta.url)), 'timeline-snapshot.json');
 writeFileSync(out, `${JSON.stringify(snapshot, null, '\t')}\n`);
