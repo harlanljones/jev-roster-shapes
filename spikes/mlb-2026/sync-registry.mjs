@@ -19,7 +19,10 @@ for (const slug of slugs) {
 	);
 	const calculation = calculateComparison(bundle);
 	const digest = computeInputDigest(bundle);
-	registry = registry.replace(new RegExp(`('${slug}': ')[0-9a-f]+`), `$1${digest}`);
+	// Prettier drops the quotes on a key that is a plain identifier.
+	const digestPattern = new RegExp(`(\\n\\t'?${slug}'?: ')[0-9a-f]+`);
+	if (!digestPattern.test(registry)) throw new Error(`pinned digest not found: ${slug}`);
+	registry = registry.replace(digestPattern, `$1${digest}`);
 
 	const blockStart = registry.indexOf(`\t\tslug: '${slug}',`);
 	const nextBlock = registry.indexOf('\n\tstoryline({', blockStart + 1);

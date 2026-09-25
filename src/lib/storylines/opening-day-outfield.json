@@ -1,32 +1,32 @@
 {
 	"schemaVersion": "1.0",
-	"bundleId": "mlbam-bos-2026-deadline-catcher",
-	"createdAt": "2026-09-25T07:05:02Z",
+	"bundleId": "mlbam-bos-2026-opening-day-outfield",
+	"createdAt": "2026-09-25T21:54:17Z",
 	"dataClass": "public",
 	"sources": [
 		{
 			"id": "mlb-stats-api-2026",
-			"title": "MLB Stats API — Red Sox season-timeline snapshot, as of 2026-08-02",
+			"title": "MLB Stats API — Red Sox season-timeline snapshot, as of 2026-03-25",
 			"kind": "projection",
-			"effectiveAt": "2026-08-02T00:00:00Z",
-			"note": "Free public endpoints, fetched 2026-09-25T07:05:02Z into spikes/mlb-2026/timeline-snapshot.json. Rates are observed 2026 regular-season totals from 2026-03-01 through 2026-08-02 (what was known on the decision date); for traded players the combined all-teams row is used. Eligibility: >= 10 fielding games at a position in 2025 or >= 10 Boston starts there in 2026 through 2026-08-02 (D-35 rule, adapted), or >= 3 starts there in Boston's starting lineups from 2026-07-20 to 2026-08-02; DH excluded. Boston starts only: a traded player's starts for another club do not count toward the 2026 rule. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
+			"effectiveAt": "2026-03-25T00:00:00Z",
+			"note": "Free public endpoints, fetched 2026-09-25T21:54:17Z into spikes/mlb-2026/timeline-snapshot.json. Rates are observed 2025 regular-season totals (what was known before Opening Day); for traded players the combined all-teams row is used. Eligibility: >= 10 fielding games at a position in 2025 or >= 10 Boston starts there in 2026 through 2026-03-25 (D-35 rule, adapted), or >= 3 starts there in Boston's starting lineups from 2026-03-26 to 2026-04-08; DH excluded. Boston starts only: a traded player's starts for another club do not count toward the 2026 rule. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
 		},
 		{
 			"id": "storyline-assumptions",
 			"title": "Observed batting-order pattern · illustrative 10-game allocation",
 			"kind": "manual",
-			"effectiveAt": "2026-08-02T00:00:00Z",
+			"effectiveAt": "2026-03-25T00:00:00Z",
 			"note": "PA demand is scaled from one observed nine-inning Boston–Pittsburgh game on 2026-08-14: 39 PA across the nine starting slots (5 each for batting orders 1–3; 4 each for orders 4–9). Applied to four left-starter-context games and six right-starter-context games: top three slots receive 20/30 PA per context; remaining slots receive 16/24. L/R exposure is an illustrative 25/75 split assumption, not measured context data. This is not a team planning horizon or forecast. Workload caps remain generous placeholders (O-02). Baseline lineups are the club’s observed starting lineups for the storyline’s window. Source box score: https://www.baseball-almanac.com/box-scores/boxscore.php?boxid=202608140PIT"
 		}
 	],
 	"dataset": {
-		"id": "mlbam-bos-asof-2026-08-02",
-		"revision": 20260802,
+		"id": "mlbam-bos-asof-2026-03-25",
+		"revision": 20260325,
 		"sourceIds": ["mlb-stats-api-2026"],
 		"players": [
 			{
-				"id": "mlbam-657136",
-				"name": "Connor Wong",
+				"id": "mlbam-665966",
+				"name": "Carlos Narváez",
 				"bats": "R",
 				"eligiblePositions": ["C"],
 				"sourceIds": ["mlb-stats-api-2026"]
@@ -39,10 +39,10 @@
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
-				"id": "mlbam-678011",
-				"name": "Anthony Seigler",
-				"bats": "S",
-				"eligiblePositions": ["2B", "3B"],
+				"id": "mlbam-643396",
+				"name": "Isiah Kiner-Falefa",
+				"bats": "R",
+				"eligiblePositions": ["2B", "3B", "SS"],
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
@@ -53,17 +53,17 @@
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
-				"id": "mlbam-655316",
-				"name": "Andruw Monasterio",
+				"id": "mlbam-596115",
+				"name": "Trevor Story",
 				"bats": "R",
-				"eligiblePositions": ["1B", "2B", "SS"],
+				"eligiblePositions": ["SS"],
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
-				"id": "mlbam-680776",
-				"name": "Jarren Duran",
+				"id": "mlbam-701350",
+				"name": "Roman Anthony",
 				"bats": "L",
-				"eligiblePositions": ["LF", "CF"],
+				"eligiblePositions": ["LF", "RF"],
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
@@ -81,136 +81,121 @@
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
+				"id": "mlbam-680776",
+				"name": "Jarren Duran",
+				"bats": "L",
+				"eligiblePositions": ["LF", "CF"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-691785",
+				"name": "Marcelo Mayer",
+				"bats": "L",
+				"eligiblePositions": ["2B", "3B"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
 				"id": "mlbam-807799",
 				"name": "Masataka Yoshida",
 				"bats": "L",
 				"eligiblePositions": [],
 				"sourceIds": ["mlb-stats-api-2026"]
-			},
-			{
-				"id": "mlbam-665966",
-				"name": "Carlos Narváez",
-				"bats": "R",
-				"eligiblePositions": ["C"],
-				"sourceIds": ["mlb-stats-api-2026"]
-			},
-			{
-				"id": "mlbam-668939",
-				"name": "Adley Rutschman",
-				"bats": "S",
-				"eligiblePositions": ["C"],
-				"sourceIds": ["mlb-stats-api-2026"]
-			},
-			{
-				"id": "mlbam-668670",
-				"name": "Jake Rogers",
-				"bats": "R",
-				"eligiblePositions": ["C"],
-				"sourceIds": ["mlb-stats-api-2026"]
 			}
 		],
 		"metricDefinitions": [
 			{
-				"id": "mlbam-observed-r-per-pa-through-2026-08-02",
+				"id": "mlbam-observed-r-per-pa-2025",
 				"unit": "runs_per_PA",
-				"referenceBaseline": "observed MLB regular-season R/PA, 2026 through August 2 (all teams)",
+				"referenceBaseline": "observed MLB regular-season R/PA, 2025 season (all teams)",
 				"sourceId": "mlb-stats-api-2026",
 				"note": "Derived rate R/PA rounded to six decimals per SPEC 5.3; documented conversion, not a published projection. Missing splits remain null."
 			}
 		],
 		"projections": [
 			{
-				"playerId": "mlbam-657136",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.096386",
+				"playerId": "mlbam-665966",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.114350",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
 				"playerId": "mlbam-575929",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.129717",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.124334",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
-				"playerId": "mlbam-678011",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.121212",
+				"playerId": "mlbam-643396",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.098039",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
 				"playerId": "mlbam-702332",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.128866",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.118577",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
-				"playerId": "mlbam-655316",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.117647",
+				"playerId": "mlbam-596115",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.139144",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
-				"playerId": "mlbam-680776",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.106335",
+				"playerId": "mlbam-701350",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.158416",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
 				"playerId": "mlbam-678882",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.126984",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.143101",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
 				"playerId": "mlbam-677800",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.120507",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.127098",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-680776",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.123563",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-691785",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.147059",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
 				"playerId": "mlbam-807799",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.117647",
-				"vsL": null,
-				"vsR": null,
-				"sourceId": "mlb-stats-api-2026"
-			},
-			{
-				"playerId": "mlbam-665966",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.086294",
-				"vsL": null,
-				"vsR": null,
-				"sourceId": "mlb-stats-api-2026"
-			},
-			{
-				"playerId": "mlbam-668939",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.105634",
-				"vsL": null,
-				"vsR": null,
-				"sourceId": "mlb-stats-api-2026"
-			},
-			{
-				"playerId": "mlbam-668670",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
-				"overall": "0.094828",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
+				"overall": "0.078049",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
@@ -223,7 +208,7 @@
 		"authorId": "storyline-adapter",
 		"horizonGames": 10,
 		"offenseMode": "overall",
-		"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-08-02",
+		"metricDefinitionId": "mlbam-observed-r-per-pa-2025",
 		"sourceId": "storyline-assumptions",
 		"templates": [
 			{
@@ -409,11 +394,11 @@
 		]
 	},
 	"comparison": {
-		"id": "cmp-deadline-catcher",
+		"id": "cmp-opening-day-outfield",
 		"revision": 1,
 		"datasetRef": {
-			"id": "mlbam-bos-asof-2026-08-02",
-			"revision": 20260802
+			"id": "mlbam-bos-asof-2026-03-25",
+			"revision": 20260325
 		},
 		"assumptionRef": {
 			"id": "storyline-horizon-10",
@@ -423,18 +408,19 @@
 			"id": "base",
 			"revision": 1,
 			"authorId": "storyline-adapter",
-			"label": "Baseline — Stand pat: Wong catches, Narváez backs up",
+			"label": "Baseline — Opening Day: Anthony in left, Duran at DH, Yoshida on the bench",
 			"memberIds": [
-				"mlbam-657136",
+				"mlbam-665966",
 				"mlbam-575929",
-				"mlbam-678011",
+				"mlbam-643396",
 				"mlbam-702332",
-				"mlbam-655316",
-				"mlbam-680776",
+				"mlbam-596115",
+				"mlbam-701350",
 				"mlbam-678882",
 				"mlbam-677800",
-				"mlbam-807799",
-				"mlbam-665966"
+				"mlbam-680776",
+				"mlbam-691785",
+				"mlbam-807799"
 			],
 			"incomingIds": [],
 			"outgoingIds": [],
@@ -444,7 +430,7 @@
 					"assignments": [
 						{
 							"order": 1,
-							"playerId": "mlbam-657136"
+							"playerId": "mlbam-665966"
 						},
 						{
 							"order": 2,
@@ -452,7 +438,7 @@
 						},
 						{
 							"order": 3,
-							"playerId": "mlbam-678011"
+							"playerId": "mlbam-643396"
 						},
 						{
 							"order": 4,
@@ -460,11 +446,11 @@
 						},
 						{
 							"order": 5,
-							"playerId": "mlbam-655316"
+							"playerId": "mlbam-596115"
 						},
 						{
 							"order": 6,
-							"playerId": "mlbam-680776"
+							"playerId": "mlbam-701350"
 						},
 						{
 							"order": 7,
@@ -476,7 +462,7 @@
 						},
 						{
 							"order": 9,
-							"playerId": "mlbam-807799"
+							"playerId": "mlbam-680776"
 						}
 					]
 				},
@@ -485,7 +471,7 @@
 					"assignments": [
 						{
 							"order": 1,
-							"playerId": "mlbam-657136"
+							"playerId": "mlbam-665966"
 						},
 						{
 							"order": 2,
@@ -493,7 +479,7 @@
 						},
 						{
 							"order": 3,
-							"playerId": "mlbam-678011"
+							"playerId": "mlbam-691785"
 						},
 						{
 							"order": 4,
@@ -501,11 +487,11 @@
 						},
 						{
 							"order": 5,
-							"playerId": "mlbam-655316"
+							"playerId": "mlbam-596115"
 						},
 						{
 							"order": 6,
-							"playerId": "mlbam-680776"
+							"playerId": "mlbam-701350"
 						},
 						{
 							"order": 7,
@@ -517,14 +503,14 @@
 						},
 						{
 							"order": 9,
-							"playerId": "mlbam-807799"
+							"playerId": "mlbam-680776"
 						}
 					]
 				}
 			],
 			"workloadCaps": [
 				{
-					"playerId": "mlbam-657136",
+					"playerId": "mlbam-665966",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
@@ -538,7 +524,7 @@
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-678011",
+					"playerId": "mlbam-643396",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
@@ -552,14 +538,14 @@
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-655316",
+					"playerId": "mlbam-596115",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-680776",
+					"playerId": "mlbam-701350",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
@@ -580,14 +566,21 @@
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-807799",
+					"playerId": "mlbam-680776",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-665966",
+					"playerId": "mlbam-691785",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-807799",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
@@ -610,29 +603,29 @@
 				"id": "cand-a",
 				"revision": 1,
 				"authorId": "storyline-adapter",
-				"label": "A — The trade: Rutschman catches",
+				"label": "A — Yoshida DHs against righties, Duran to left, Anthony sits",
 				"memberIds": [
-					"mlbam-668939",
+					"mlbam-665966",
 					"mlbam-575929",
-					"mlbam-678011",
+					"mlbam-643396",
 					"mlbam-702332",
-					"mlbam-655316",
-					"mlbam-680776",
+					"mlbam-596115",
+					"mlbam-701350",
 					"mlbam-678882",
 					"mlbam-677800",
-					"mlbam-807799",
-					"mlbam-657136",
-					"mlbam-668670"
+					"mlbam-680776",
+					"mlbam-691785",
+					"mlbam-807799"
 				],
-				"incomingIds": ["mlbam-668939", "mlbam-668670"],
-				"outgoingIds": ["mlbam-665966"],
+				"incomingIds": [],
+				"outgoingIds": [],
 				"allocations": [
 					{
 						"templateId": "bos26-vs-left",
 						"assignments": [
 							{
 								"order": 1,
-								"playerId": "mlbam-668939"
+								"playerId": "mlbam-665966"
 							},
 							{
 								"order": 2,
@@ -640,7 +633,7 @@
 							},
 							{
 								"order": 3,
-								"playerId": "mlbam-678011"
+								"playerId": "mlbam-643396"
 							},
 							{
 								"order": 4,
@@ -648,11 +641,11 @@
 							},
 							{
 								"order": 5,
-								"playerId": "mlbam-655316"
+								"playerId": "mlbam-596115"
 							},
 							{
 								"order": 6,
-								"playerId": "mlbam-680776"
+								"playerId": "mlbam-701350"
 							},
 							{
 								"order": 7,
@@ -664,7 +657,7 @@
 							},
 							{
 								"order": 9,
-								"playerId": "mlbam-807799"
+								"playerId": "mlbam-680776"
 							}
 						]
 					},
@@ -673,7 +666,7 @@
 						"assignments": [
 							{
 								"order": 1,
-								"playerId": "mlbam-668939"
+								"playerId": "mlbam-665966"
 							},
 							{
 								"order": 2,
@@ -681,7 +674,7 @@
 							},
 							{
 								"order": 3,
-								"playerId": "mlbam-678011"
+								"playerId": "mlbam-691785"
 							},
 							{
 								"order": 4,
@@ -689,7 +682,7 @@
 							},
 							{
 								"order": 5,
-								"playerId": "mlbam-655316"
+								"playerId": "mlbam-596115"
 							},
 							{
 								"order": 6,
@@ -712,7 +705,7 @@
 				],
 				"workloadCaps": [
 					{
-						"playerId": "mlbam-668939",
+						"playerId": "mlbam-665966",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -726,7 +719,7 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-678011",
+						"playerId": "mlbam-643396",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -740,14 +733,14 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-655316",
+						"playerId": "mlbam-596115",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-680776",
+						"playerId": "mlbam-701350",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -768,21 +761,21 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
+						"playerId": "mlbam-680776",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
+						"playerId": "mlbam-691785",
+						"maxStarts": 10,
+						"maxDefensiveOuts": 300,
+						"maxPA": 200,
+						"sourceId": "storyline-assumptions"
+					},
+					{
 						"playerId": "mlbam-807799",
-						"maxStarts": 10,
-						"maxDefensiveOuts": 300,
-						"maxPA": 200,
-						"sourceId": "storyline-assumptions"
-					},
-					{
-						"playerId": "mlbam-657136",
-						"maxStarts": 10,
-						"maxDefensiveOuts": 300,
-						"maxPA": 200,
-						"sourceId": "storyline-assumptions"
-					},
-					{
-						"playerId": "mlbam-668670",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -804,29 +797,28 @@
 				"id": "cand-b",
 				"revision": 1,
 				"authorId": "storyline-adapter",
-				"label": "B — The trade, with Rutschman at DH",
+				"label": "B — Trade Duran over the winter: Yoshida at DH",
 				"memberIds": [
-					"mlbam-657136",
+					"mlbam-665966",
 					"mlbam-575929",
-					"mlbam-678011",
+					"mlbam-643396",
 					"mlbam-702332",
-					"mlbam-655316",
-					"mlbam-680776",
+					"mlbam-596115",
+					"mlbam-701350",
 					"mlbam-678882",
 					"mlbam-677800",
-					"mlbam-668939",
 					"mlbam-807799",
-					"mlbam-668670"
+					"mlbam-691785"
 				],
-				"incomingIds": ["mlbam-668939", "mlbam-668670"],
-				"outgoingIds": ["mlbam-665966"],
+				"incomingIds": [],
+				"outgoingIds": ["mlbam-680776"],
 				"allocations": [
 					{
 						"templateId": "bos26-vs-left",
 						"assignments": [
 							{
 								"order": 1,
-								"playerId": "mlbam-657136"
+								"playerId": "mlbam-665966"
 							},
 							{
 								"order": 2,
@@ -834,7 +826,7 @@
 							},
 							{
 								"order": 3,
-								"playerId": "mlbam-678011"
+								"playerId": "mlbam-643396"
 							},
 							{
 								"order": 4,
@@ -842,11 +834,11 @@
 							},
 							{
 								"order": 5,
-								"playerId": "mlbam-655316"
+								"playerId": "mlbam-596115"
 							},
 							{
 								"order": 6,
-								"playerId": "mlbam-680776"
+								"playerId": "mlbam-701350"
 							},
 							{
 								"order": 7,
@@ -858,7 +850,7 @@
 							},
 							{
 								"order": 9,
-								"playerId": "mlbam-668939"
+								"playerId": "mlbam-807799"
 							}
 						]
 					},
@@ -867,7 +859,7 @@
 						"assignments": [
 							{
 								"order": 1,
-								"playerId": "mlbam-657136"
+								"playerId": "mlbam-665966"
 							},
 							{
 								"order": 2,
@@ -875,7 +867,7 @@
 							},
 							{
 								"order": 3,
-								"playerId": "mlbam-678011"
+								"playerId": "mlbam-691785"
 							},
 							{
 								"order": 4,
@@ -883,11 +875,11 @@
 							},
 							{
 								"order": 5,
-								"playerId": "mlbam-655316"
+								"playerId": "mlbam-596115"
 							},
 							{
 								"order": 6,
-								"playerId": "mlbam-680776"
+								"playerId": "mlbam-701350"
 							},
 							{
 								"order": 7,
@@ -899,14 +891,14 @@
 							},
 							{
 								"order": 9,
-								"playerId": "mlbam-668939"
+								"playerId": "mlbam-807799"
 							}
 						]
 					}
 				],
 				"workloadCaps": [
 					{
-						"playerId": "mlbam-657136",
+						"playerId": "mlbam-665966",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -920,7 +912,7 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-678011",
+						"playerId": "mlbam-643396",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -934,14 +926,14 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-655316",
+						"playerId": "mlbam-596115",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-680776",
+						"playerId": "mlbam-701350",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -962,13 +954,6 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-668939",
-						"maxStarts": 10,
-						"maxDefensiveOuts": 300,
-						"maxPA": 200,
-						"sourceId": "storyline-assumptions"
-					},
-					{
 						"playerId": "mlbam-807799",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
@@ -976,7 +961,7 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-668670",
+						"playerId": "mlbam-691785",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,

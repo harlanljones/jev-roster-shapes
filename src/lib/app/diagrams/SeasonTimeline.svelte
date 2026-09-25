@@ -27,7 +27,7 @@
 		? `M${x('2026-03-25').toFixed(1)},${y(0).toFixed(1)} ` +
 			series.map((p) => `L${x(p.date).toFixed(1)},${y(p.over).toFixed(1)}`).join(' ')
 		: '';
-	const months = ['02', '03', '04', '05', '06', '07', '08', '09'].map((m) => ({
+	const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09'].map((m) => ({
 		x: x(`2026-${m}-01`),
 		label: new Date(`2026-${m}-01T00:00:00Z`).toLocaleString('en-US', {
 			month: 'short',

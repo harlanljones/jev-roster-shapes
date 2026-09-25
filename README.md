@@ -28,18 +28,18 @@ Each decision compares the lineup Boston actually used (from MLB box scores) aga
 
 | Date | Decision | Baseline | Candidate A | Candidate B |
 | --- | --- | --- | --- | --- |
-| Feb 9 | Second base: Mayer, Kiner-Falefa, or a platoon? | 51.68 runs | 49.23 (−2.45) | 51.56 (−0.13) |
-| Mar 26 | DH lane: Anthony, Yoshida, or Casas? | 51.68 | 48.47 (−3.21) | 47.13 (−4.55) |
+| Jan 14 | Offseason infield: the rebuilt infield, keep Bregman, or Casas at first | 50.70 runs | 50.69 (−0.02) | 46.72 (−3.98) |
+| Mar 26 | Opening Day: Duran DH, Yoshida DH vs righties, or trade Duran | 50.70 | 48.77 (−1.93) | 48.88 (−1.82) |
 | Jul 22 | July run: June regulars or July regulars? | 44.02 | 45.77 (+1.75) | 44.73 (+0.71) |
-| Aug 3 | Deadline C: stand pat, Rutschman at C, or at DH? | 46.09 | 46.55 (+0.46) | 45.60 (−0.48) |
-| Sep 25 | October: latest lineups vs Contreras at 1B or Wong vs lefties | 43.26 | 43.94 (+0.69) | 42.98 (−0.28) |
+| Aug 3 | Deadline: stand pat, the Rutschman and Mayer trades, or Rutschman and keep Mayer | 46.09 | 46.55 (+0.46) | 44.65 (−1.43) |
+| Sep 25 | Wild Card roster (14 position players): carry Contreras, he's ready, or leave him off | 43.22 | 43.85 (+0.63) | 42.68 (−0.54) |
 
-The October pin compares three lineups on shared assumptions; it is not a postseason optimization. The April 25 manager change is marked on the timeline but is not a decision here: it led to coaching and batting-order changes, not roster moves.
+The Wild Card pin compares three rosters under the same 14-position-player limit Boston used in 2025; it is not a postseason optimization. The April 25 manager change is marked on the timeline but is not a decision here: it led to coaching and batting-order changes, not roster moves. Scenario details were checked against 2026 reporting (D-45).
 
 ![Start screen: the roster as a fitted case](docs/images/library-roster-shapes.png)
 ![Workspace: side-by-side capacity bins for baseline, A, B and the tightest fit](docs/images/storyline-comparison.png)
 
-The demo is honest about hindsight. Before Opening Day, the club's own lineup beat both alternatives on 2025 numbers; the July lineup that went 21–4 also scores ahead on what everyone had hit through June. The case shows what the season went on to produce, labeled apart from the engine number. Shapes summarize player profiles. They never change a calculation.
+The demo is honest about hindsight. Before Opening Day, the club's own choices beat every alternative on 2025 numbers, and keeping Bregman scores even with the rebuilt infield because Mayer's small 2025 sample was strong; the July lineup that went 21–4 also scores ahead on what everyone had hit through June. The case shows what the season went on to produce, labeled apart from the engine number. Shapes summarize player profiles. They never change a calculation.
 
 ## Potential applications
 

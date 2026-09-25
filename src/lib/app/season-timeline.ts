@@ -6,7 +6,6 @@ import { SEASON_RECORD } from './split-evidence';
 
 /** Calendar events that frame the season but are not storylines themselves. */
 export const SEASON_EVENTS: readonly { date: string; label: string; source: string }[] = [
-	{ date: '2026-03-26', label: 'Opening Day', source: 'MLB schedule' },
 	{
 		date: '2026-04-25',
 		label: 'Cora fired at 10–17',
@@ -15,7 +14,7 @@ export const SEASON_EVENTS: readonly { date: string; label: string; source: stri
 	{ date: '2026-09-21', label: 'Clinched', source: 'NESN, September 22' }
 ];
 
-export const TIMELINE_START = '2026-02-01';
+export const TIMELINE_START = '2026-01-01';
 export const TIMELINE_END = '2026-10-01';
 
 const DAY = 86_400_000;

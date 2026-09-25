@@ -9,11 +9,11 @@ test('a keyboard-only user tabs, edits, swaps, and inspects evidence', async ({ 
 	await openFirstStoryline(page);
 
 	// Arrow-key tab navigation: Baseline → candidate A.
-	await page.getByRole('tab', { name: /^Baseline — Anthony DH/ }).evaluate((el) => el.focus());
+	await page
+		.getByRole('tab', { name: /^Baseline — The infield Boston built/ })
+		.evaluate((el) => el.focus());
 	await page.keyboard.press('ArrowRight');
-	await expect(page.getByRole('tab', { selected: true })).toContainText(
-		'A — Yoshida DH, Anthony sits'
-	);
+	await expect(page.getByRole('tab', { selected: true })).toContainText('A — Bregman re-signs');
 
 	// Change an assignment with the keyboard: Home then ArrowDown guarantees a
 	// selection change no matter which option started selected.

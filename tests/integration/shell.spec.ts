@@ -11,7 +11,7 @@ test('the production shell opens on the public storyline library with no axe vio
 
 	await expect(page).toHaveTitle(/Roster Shapes/);
 	await expect(page.getByText('Public data', { exact: true })).toBeVisible();
-	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Who takes the DH at-bats?');
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('How do you replace Bregman?');
 	await expect(page.getByRole('navigation', { name: 'Season timeline' })).toBeVisible();
 	// The case (D-43) exposes every lineup piece as a labeled button, and the
 	// same pieces as a table.
@@ -63,11 +63,11 @@ test('the production shell opens on the public storyline library with no axe vio
 });
 
 test('scenario links resolve to addressable storyline pages', async ({ page }) => {
-	await page.goto('/scenario/deadline-catcher');
-	await expect(page).toHaveURL(/\/scenario\/deadline-catcher$/);
-	await expect(page.getByRole('link', { name: /Deadline C/ })).toHaveAttribute(
+	await page.goto('/scenario/deadline');
+	await expect(page).toHaveURL(/\/scenario\/deadline$/);
+	await expect(page.getByRole('link', { name: /^Deadline/ })).toHaveAttribute(
 		'aria-current',
 		'page'
 	);
-	await expect(page.getByRole('heading', { name: /Rutschman at the deadline/ })).toBeVisible();
+	await expect(page.getByRole('heading', { name: /Rutschman in, Mayer out/ })).toBeVisible();
 });

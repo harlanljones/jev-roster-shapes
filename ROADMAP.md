@@ -344,6 +344,33 @@ caps, split rates null (D-42). Event dates come from public reporting. The
 October pin compares three lineups; it does not optimize one (SPEC §3). No team
 data was used.
 
+
+### Season timeline scenarios reworked (D-45, user directive 2026-09-25)
+
+Delivered: the five pins now follow the decisions Boston faced, each checked
+against 2026 reporting: the offseason infield after Bregman left (Jan 14), the
+Opening Day LF/DH logjam (Mar 26), the July run (unchanged), the deadline with
+the Rutschman and Mayer trades combined (Aug 3), and the Wild Card roster under
+a 14-position-player limit with Contreras's hand injury (Sep 25). The fetcher
+adds Bregman; the builder enforces the roster limit and exempts injured players
+from the baseline roster guard.
+
+Observed (2026-09-25, snapshot of 160 games, 86–74):
+
+- `bun spikes/mlb-2026/timeline-build.mjs`: all 15 scenarios feasible, both
+  Wild Card roster checks passed; totals match an independent Decimal hand
+  derivation exactly (offseason-infield 50.70271 / 50.68765 / 46.71816;
+  opening-day-outfield 50.70271 / 48.773902 / 48.88215; july-run 44.0207 /
+  45.77464 / 44.7284; deadline 46.08519 / 46.54759 / 44.65364;
+  wild-card-roster 43.222792 / 43.853352 / 42.679852).
+- `bun run check`: 0 errors, 0 warnings (529 files). `bun run lint`: clean.
+- `bunx vitest run --project server --project integration`: 6 files, 40 tests
+  passed.
+- Client project and `bunx playwright test` with the local Chromium override
+  (uncommitted config copies): 2 and 18 passed, including the axe audits.
+- Limits: rates are observed, not projected; the 2025 rates behind the
+  preseason pins include small samples (Mayer 136 PA, Casas 112 PA); the Wild
+  Card pin compares rosters and is not an October optimization.
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

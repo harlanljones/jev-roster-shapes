@@ -32,6 +32,7 @@ const OBSERVED_MIN_STARTS = 3;
 
 // Named players (MLBAM IDs).
 const P = {
+	bregman: 608324,
 	rutschman: 668939,
 	wong: 657136,
 	narvaez: 665966,
@@ -60,16 +61,24 @@ const same = (l) => ({ L: l, R: l });
 
 // Lineups name the player at each role. `L` and `R` are the two pitcher-hand
 // templates. Baselines are the club's observed lineups (see `observed`).
+// Opening Day (March 26, vs LHP) and the first game against a right-hander
+// (March 28): Kiner-Falefa started at second against the lefty, Mayer against
+// righties; Anthony in left and Duran at DH both days.
 const openingDay = lineup({
 	C: 'narvaez',
 	'1B': 'contreras',
 	'2B': 'mayer',
 	'3B': 'durbin',
 	SS: 'story',
-	LF: 'duran',
+	LF: 'anthony',
 	CF: 'rafaela',
 	RF: 'abreu',
-	DH: 'anthony'
+	DH: 'duran'
+});
+const openingDayLineups = { L: { ...openingDay, '2B': 'ikf' }, R: openingDay };
+const both = (lineups, change) => ({
+	L: { ...lineups.L, ...change },
+	R: { ...lineups.R, ...change }
 });
 const juneRegulars = lineup({
 	C: 'narvaez',
@@ -118,8 +127,8 @@ const latestVsRight = lineup({
 
 const TIMELINE = [
 	{
-		slug: 'preseason-dh',
-		bundleId: 'mlbam-bos-2026-preseason-dh',
+		slug: 'offseason-infield',
+		bundleId: 'mlbam-bos-2026-offseason-infield',
 		asOf: '2026-03-25',
 		rates: 'season-2025',
 		observed: ['2026-03-26', '2026-04-08'],
@@ -127,28 +136,30 @@ const TIMELINE = [
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — Anthony DH, Duran LF (as the season opened)',
-				lineups: same(openingDay),
-				reserves: ['yoshida']
+				label: 'Baseline — The infield Boston built: Contreras, Durbin, Mayer and Kiner-Falefa',
+				lineups: openingDayLineups,
+				reserves: ['monasterio']
 			},
 			{
 				id: 'cand-a',
-				label: 'A — Yoshida DH, Anthony sits',
-				lineups: same({ ...openingDay, DH: 'yoshida' }),
-				reserves: ['anthony']
+				label: 'A — Bregman re-signs: Bregman at third, Durbin at second',
+				lineups: both(openingDayLineups, { '2B': 'durbin', '3B': 'bregman' }),
+				reserves: ['mayer', 'ikf', 'monasterio'],
+				incoming: ['bregman']
 			},
 			{
 				id: 'cand-b',
-				label: 'B — Casas DH, back from the IL',
-				lineups: same({ ...openingDay, DH: 'casas' }),
-				reserves: ['anthony', 'yoshida'],
-				incoming: ['casas']
+				label: 'B — No Contreras trade: Casas at first',
+				lineups: both(openingDayLineups, { '1B': 'casas' }),
+				reserves: ['monasterio'],
+				incoming: ['casas'],
+				outgoing: ['contreras']
 			}
 		]
 	},
 	{
-		slug: 'preseason-second',
-		bundleId: 'mlbam-bos-2026-preseason-second',
+		slug: 'opening-day-outfield',
+		bundleId: 'mlbam-bos-2026-opening-day-outfield',
 		asOf: '2026-03-25',
 		rates: 'season-2025',
 		observed: ['2026-03-26', '2026-04-08'],
@@ -156,21 +167,25 @@ const TIMELINE = [
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — Mayer at second (as the season opened)',
-				lineups: same(openingDay),
-				reserves: ['ikf', 'monasterio']
+				label: 'Baseline — Opening Day: Anthony in left, Duran at DH, Yoshida on the bench',
+				lineups: openingDayLineups,
+				reserves: ['yoshida']
 			},
 			{
 				id: 'cand-a',
-				label: 'A — Kiner-Falefa at second',
-				lineups: same({ ...openingDay, '2B': 'ikf' }),
-				reserves: ['mayer', 'monasterio']
+				label: 'A — Yoshida DHs against righties, Duran to left, Anthony sits',
+				lineups: {
+					L: openingDayLineups.L,
+					R: { ...openingDayLineups.R, LF: 'duran', DH: 'yoshida' }
+				},
+				reserves: []
 			},
 			{
 				id: 'cand-b',
-				label: 'B — Platoon: Monasterio vs LHP, Mayer vs RHP',
-				lineups: { L: { ...openingDay, '2B': 'monasterio' }, R: openingDay },
-				reserves: ['ikf']
+				label: 'B — Trade Duran over the winter: Yoshida at DH',
+				lineups: both(openingDayLineups, { DH: 'yoshida' }),
+				reserves: [],
+				outgoing: ['duran']
 			}
 		]
 	},
@@ -203,54 +218,61 @@ const TIMELINE = [
 		]
 	},
 	{
-		slug: 'deadline-catcher',
-		bundleId: 'mlbam-bos-2026-deadline-catcher',
+		slug: 'deadline',
+		bundleId: 'mlbam-bos-2026-deadline',
 		asOf: '2026-08-02',
 		rates: 'through-2026-08-02',
 		observed: ['2026-07-20', '2026-08-02'],
 		rateLabel: '2026 through August 2',
+		// Mayer was on the injured list at the deadline (last Boston start
+		// June 25), so he is off the API's 40-man list and has no starts in the
+		// window; he was still Boston's to trade or keep.
+		injured: ['mayer'],
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — Stand pat: Wong catches, Narváez backs up',
+				label: 'Baseline — Stand pat: Wong catches, Seigler at second, Mayer stays',
 				lineups: same(deadlineRegulars),
-				reserves: ['narvaez']
+				reserves: ['narvaez', 'mayer']
 			},
 			{
 				id: 'cand-a',
-				label: 'A — The trade: Rutschman catches',
+				label: 'A — The trades: Rutschman in, Narváez and Mayer out',
 				lineups: same({ ...deadlineRegulars, C: 'rutschman' }),
 				reserves: ['wong', 'rogers'],
 				incoming: ['rutschman', 'rogers'],
-				outgoing: ['narvaez']
+				outgoing: ['narvaez', 'mayer']
 			},
 			{
 				id: 'cand-b',
-				label: 'B — The trade, with Rutschman at DH',
-				lineups: same({ ...deadlineRegulars, DH: 'rutschman' }),
-				reserves: ['yoshida', 'rogers'],
+				label: 'B — Rutschman in, keep Mayer at second',
+				lineups: same({ ...deadlineRegulars, C: 'rutschman', '2B': 'mayer' }),
+				reserves: ['wong', 'rogers', 'seigler'],
 				incoming: ['rutschman', 'rogers'],
 				outgoing: ['narvaez']
 			}
 		]
 	},
 	{
-		slug: 'october-lineup',
-		bundleId: 'mlbam-bos-2026-october-lineup',
+		slug: 'wild-card-roster',
+		bundleId: 'mlbam-bos-2026-wild-card-roster',
 		asOf,
 		rates: `through-${asOf}`,
 		observed: ['2026-09-11', asOf],
 		rateLabel: `2026 through ${asOf}`,
+		// Boston's 2025 Wild Card roster carried 14 position players and 12
+		// pitchers; the same limit applies to every scenario here.
+		rosterSizeMax: 14,
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — The latest lineups (Sep 23 vs LHP, Sep 24 vs RHP)',
+				label: 'Baseline — Carry Contreras and wait on his hand: the latest lineups',
 				lineups: { L: latestVsLeft, R: latestVsRight },
 				reserves: ['contreras', 'wong', 'ikf', 'anthony']
 			},
 			{
 				id: 'cand-a',
-				label: 'A — Contreras back at first, Sogard to second',
+				label: 'A — Contreras can swing: back at first, Sogard to second vs RHP',
 				lineups: {
 					L: { ...latestVsLeft, '1B': 'contreras' },
 					R: { ...latestVsRight, '1B': 'contreras', '2B': 'sogard' }
@@ -259,9 +281,13 @@ const TIMELINE = [
 			},
 			{
 				id: 'cand-b',
-				label: 'B — Wong catches lefties, Rutschman DHs',
-				lineups: { L: { ...latestVsLeft, C: 'wong', DH: 'rutschman' }, R: latestVsRight },
-				reserves: ['contreras', 'ikf', 'jones']
+				label: 'B — Leave Contreras off: Gasper at first, Anthony DHs vs RHP',
+				lineups: {
+					L: latestVsLeft,
+					R: { ...latestVsRight, '1B': 'gasper', '2B': 'sogard', DH: 'anthony' }
+				},
+				reserves: ['wong', 'ikf'],
+				outgoing: ['contreras']
 			}
 		]
 	}
@@ -383,7 +409,12 @@ for (const story of TIMELINE) {
 	const fortyMan = snapshot.rosters[story.asOf]?.fortyMan;
 	if (!fortyMan) throw new Error(`snapshot has no roster for ${story.asOf} (${story.slug})`);
 	for (const key of baseMembers) {
-		if (!fortyMan.includes(P[key]) && observedStarts(P[key], ...story.observed).size === 0) {
+		const injured = (story.injured ?? []).includes(key);
+		if (
+			!injured &&
+			!fortyMan.includes(P[key]) &&
+			observedStarts(P[key], ...story.observed).size === 0
+		) {
 			throw new Error(
 				`${story.slug}: ${key} is neither on the ${story.asOf} 40-man roster nor a starter in ${story.observed.join('..')}`
 			);
@@ -449,7 +480,7 @@ for (const story of TIMELINE) {
 				maxPA: 200,
 				sourceId: ASSUMPTION_SOURCE_ID
 			})),
-			constraints: { rosterSizeMax: null, costBudget: null, costs: [] },
+			constraints: { rosterSizeMax: story.rosterSizeMax ?? null, costBudget: null, costs: [] },
 			review: {
 				scope: 'coverage_and_offense',
 				uncheckedTransactionRulesAcknowledgedAt: null,
@@ -545,6 +576,9 @@ for (const story of TIMELINE) {
 		const delta = calc.offenseDeltas.find((d) => d.scenarioId === result.scenarioId)?.runs;
 		if (result.feasibility !== 'feasible') {
 			throw new Error(`${story.slug}/${result.scenarioId} is ${result.feasibility}`);
+		}
+		if (story.rosterSizeMax && result.constraints.rosterSize.status !== 'passed') {
+			throw new Error(`${story.slug}/${result.scenarioId} breaks the roster limit`);
 		}
 		console.log(
 			`${story.slug}/${result.scenarioId}: ${result.feasibility} offense=${result.offense.runs ?? result.offense.status} delta=${delta ?? 'n/a'}`

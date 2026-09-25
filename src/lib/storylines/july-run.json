@@ -1,7 +1,7 @@
 {
 	"schemaVersion": "1.0",
 	"bundleId": "mlbam-bos-2026-july-run",
-	"createdAt": "2026-09-25T07:05:02Z",
+	"createdAt": "2026-09-25T21:54:17Z",
 	"dataClass": "public",
 	"sources": [
 		{
@@ -9,7 +9,7 @@
 			"title": "MLB Stats API — Red Sox season-timeline snapshot, as of 2026-06-30",
 			"kind": "projection",
 			"effectiveAt": "2026-06-30T00:00:00Z",
-			"note": "Free public endpoints, fetched 2026-09-25T07:05:02Z into spikes/mlb-2026/timeline-snapshot.json. Rates are observed 2026 regular-season totals from 2026-03-01 through 2026-06-30 (what was known on the decision date); for traded players the combined all-teams row is used. Eligibility: >= 10 fielding games at a position in 2025 or >= 10 Boston starts there in 2026 through 2026-06-30 (D-35 rule, adapted), or >= 3 starts there in Boston's starting lineups from 2026-06-01 to 2026-07-31; DH excluded. Boston starts only: a traded player's starts for another club do not count toward the 2026 rule. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
+			"note": "Free public endpoints, fetched 2026-09-25T21:54:17Z into spikes/mlb-2026/timeline-snapshot.json. Rates are observed 2026 regular-season totals from 2026-03-01 through 2026-06-30 (what was known on the decision date); for traded players the combined all-teams row is used. Eligibility: >= 10 fielding games at a position in 2025 or >= 10 Boston starts there in 2026 through 2026-06-30 (D-35 rule, adapted), or >= 3 starts there in Boston's starting lineups from 2026-06-01 to 2026-07-31; DH excluded. Boston starts only: a traded player's starts for another club do not count toward the 2026 rule. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
 		},
 		{
 			"id": "storyline-assumptions",
