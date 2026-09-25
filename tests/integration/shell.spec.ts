@@ -11,14 +11,12 @@ test('the production shell opens on the public storyline library with no axe vio
 
 	await expect(page).toHaveTitle(/Roster Shapes/);
 	await expect(page.getByText('Public data', { exact: true })).toBeVisible();
-	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-		'Who carries the lineup without Devers and Bregman?'
-	);
-	await expect(page.getByRole('navigation', { name: 'Choose scenario' })).toBeVisible();
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Who takes the DH at-bats?');
+	await expect(page.getByRole('navigation', { name: 'Season timeline' })).toBeVisible();
 	// The case (D-43) exposes every lineup piece as a labeled button, and the
 	// same pieces as a table.
 	await expect(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
-	await expect(page.getByRole('button', { name: /^C: Adley Rutschman/ })).toBeVisible();
+	await expect(page.getByRole('button', { name: /^C: Carlos Narváez/ })).toBeVisible();
 	await page.getByText('The case as a table').click();
 	await expect(page.locator('.case-table table')).toBeVisible();
 	// The other three diagrams render from the same pool.
@@ -65,11 +63,11 @@ test('the production shell opens on the public storyline library with no axe vio
 });
 
 test('scenario links resolve to addressable storyline pages', async ({ page }) => {
-	await page.goto('/scenario/lefty-hole');
-	await expect(page).toHaveURL(/\/scenario\/lefty-hole$/);
-	await expect(page.getByRole('link', { name: /Lefty hole/ })).toHaveAttribute(
+	await page.goto('/scenario/deadline-catcher');
+	await expect(page).toHaveURL(/\/scenario\/deadline-catcher$/);
+	await expect(page.getByRole('link', { name: /Deadline C/ })).toHaveAttribute(
 		'aria-current',
 		'page'
 	);
-	await expect(page.getByRole('heading', { name: /No Refsnyder, no Romy/ })).toBeVisible();
+	await expect(page.getByRole('heading', { name: /Rutschman at the deadline/ })).toBeVisible();
 });

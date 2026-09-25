@@ -20,22 +20,26 @@ It is a working prototype, not a finished product. It uses public baseball data 
 - Opens evidence for any number: the source value, the assumption behind it, and the formula and version used.
 - Saves drafts and exports self-contained files that another analyst can re-import and replay exactly.
 
-## The demo: five 2026 Red Sox storylines
+## The demo: the 2026 Red Sox season, five decisions
 
-The demo opens on the roster as a fitted case. Each lineup slot is a foam cutout cut to the shape it asks for, and each player is a piece in their profile shape, sized by the runs they actually produced in 2026 and split into a vs-left and a vs-right half colored against the league. Visible foam is friction, an empty cutout is a position nobody on the bench covers, and the same pieces then appear in an interaction map, a capacity bin whose lid is the pool's tightest fit, and slot-by-slot bars. These diagrams are a labeled display layer (D-43); the workspace keeps the pinned engine totals below. Five storylines from real Red Sox roster events follow as retrospective analyses. Their displayed dates are verified event windows or dated anchors, not the later date when public stats were fetched. Each compares a baseline against two candidates over the same illustrative 10-game horizon, using observed 2026 scoring rates (runs per plate appearance through September 20, via the free MLB Stats API).
+The demo opens on a season timeline: Boston's record as games over .500, with five decisions pinned to the dates they were made. Pick a pin and the roster appears as a fitted case. Each lineup slot is a foam cutout cut to the shape it asks for, and each player is a piece in their profile shape, sized by the runs they actually produced in 2026 and split into a vs-left and a vs-right half colored against the league. Visible foam is friction, an empty cutout is a position nobody on the bench covers, and the same pieces then appear in an interaction map, a capacity bin whose lid is the pool's tightest fit, and slot-by-slot bars. These diagrams are a labeled display layer (D-43); the workspace keeps the pinned engine totals below.
 
-| Storyline | Baseline | Candidate A | Candidate B |
-| --- | --- | --- | --- |
-| Who carries the lineup without Devers and Bregman? | 39.13 runs | 38.32 (−0.81) | Unavailable — Casas has no 2026 rate |
-| Four gloves, three spots, one DH | 38.32 | 39.13 (+0.81) | 37.46 (−0.86) |
-| From the worst infield to steady | 38.32 | 39.96 (+1.64) | 39.24 (+0.92) |
-| Narváez's middle ground vs Wong's rebound | 38.32 | 39.05 (+0.73) | 38.33 (+0.01) |
-| No Refsnyder, no Romy: who faces lefties? | 39.13 | 40.77 (+1.64) | 39.58 (+0.45) |
+Each decision compares the lineup Boston actually used (from MLB box scores) against two alternatives over the same illustrative 10-game horizon. The engine scores all three with what was known on the decision date: 2025 runs per plate appearance before Opening Day, 2026 rates through the day before for later pins (D-44). Data comes from the free MLB Stats API.
+
+| Date | Decision | Baseline | Candidate A | Candidate B |
+| --- | --- | --- | --- | --- |
+| Feb 9 | Second base: Mayer, Kiner-Falefa, or a platoon? | 51.68 runs | 49.23 (−2.45) | 51.56 (−0.13) |
+| Mar 26 | DH lane: Anthony, Yoshida, or Casas? | 51.68 | 48.47 (−3.21) | 47.13 (−4.55) |
+| Jul 22 | July run: June regulars or July regulars? | 44.02 | 45.77 (+1.75) | 44.73 (+0.71) |
+| Aug 3 | Deadline C: stand pat, Rutschman at C, or at DH? | 46.09 | 46.55 (+0.46) | 45.60 (−0.48) |
+| Sep 25 | October: latest lineups vs Contreras at 1B or Wong vs lefties | 43.26 | 43.94 (+0.69) | 42.98 (−0.28) |
+
+The October pin compares three lineups on shared assumptions; it is not a postseason optimization. The April 25 manager change is marked on the timeline but is not a decision here: it led to coaching and batting-order changes, not roster moves.
 
 ![Start screen: the roster as a fitted case](docs/images/library-roster-shapes.png)
 ![Workspace: side-by-side capacity bins for baseline, A, B and the tightest fit](docs/images/storyline-comparison.png)
 
-The demo is honest about uncertainty. The injured slugger's hoped-for return shows no offensive total, because he has no 2026 at-bats. The backup catcher out-hit the starter on observed numbers, and the tables say so. Shapes summarize player profiles. They never change a calculation.
+The demo is honest about hindsight. Before Opening Day, the club's own lineup beat both alternatives on 2025 numbers; the July lineup that went 21–4 also scores ahead on what everyone had hit through June. The case shows what the season went on to produce, labeled apart from the engine number. Shapes summarize player profiles. They never change a calculation.
 
 ## Potential applications
 
@@ -105,8 +109,8 @@ Repository layout:
 src/lib/{contracts,storylines,shapes,engine,persistence,ui}/  component sources
 src/lib/app/  landing case, Shape Case model and diagrams, workspace wiring
 src/routes/   single-page shell
-tests/{contracts,storylines,engine,persistence,integration,e2e}/  checks
-spikes/mlb-2026/  2026 storyline bundle builder
+tests/{contracts,storylines,engine,persistence,integration,e2e,fixtures}/  checks
+spikes/mlb-2026/  season snapshot fetcher and storyline bundle builder
 docs/  contracts, decisions, shape rubric, research, example bundle
 reports/prototype/  measured latency evidence
 ```

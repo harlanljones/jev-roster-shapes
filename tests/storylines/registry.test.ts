@@ -11,18 +11,18 @@ import { describe, expect, it } from 'vitest';
 describe('2026 storyline registry', () => {
 	it('publishes the five storyline slugs in library order', () => {
 		expect(storylineRegistry.map(({ slug }) => slug)).toEqual([
-			'power-vacuum',
-			'outfield-logjam',
-			'infield-reset',
-			'catcher-split',
-			'lefty-hole'
+			'preseason-dh',
+			'preseason-second',
+			'july-run',
+			'deadline-catcher',
+			'october-lineup'
 		]);
 		expect(storylineRegistry.map(({ bundle }) => bundle.bundleId)).toEqual([
-			'mlbam-bos-2026-power-vacuum',
-			'mlbam-bos-2026-outfield-logjam',
-			'mlbam-bos-2026-infield-reset',
-			'mlbam-bos-2026-catcher-split',
-			'mlbam-bos-2026-lefty-hole'
+			'mlbam-bos-2026-preseason-dh',
+			'mlbam-bos-2026-preseason-second',
+			'mlbam-bos-2026-july-run',
+			'mlbam-bos-2026-deadline-catcher',
+			'mlbam-bos-2026-october-lineup'
 		]);
 	});
 
@@ -82,14 +82,19 @@ describe('2026 storyline registry', () => {
 		}
 	});
 
-	it('leaves Casas offense unavailable while coverage stays comparable', () => {
-		const storyline = getStoryline('power-vacuum');
-		if (!storyline) throw new Error('power-vacuum storyline missing');
-		const calculation = calculateComparison(storyline.bundle);
-		const casas = calculation.results.find((result) => result.scenarioId === 'cand-b');
-		expect(casas?.offense).toMatchObject({ status: 'unavailable', runs: null });
-		expect(casas?.offense.reasons.some(({ code }) => code === 'MISSING_RATE')).toBe(true);
-		expect(casas?.coverage.every(({ shortfallOuts }) => shortfallOuts === 0)).toBe(true);
+	it('scores Casas from his 2025 rate before Opening Day', () => {
+		const storyline = getStoryline('preseason-dh');
+		if (!storyline) throw new Error('preseason-dh storyline missing');
+		expect(storyline.bundle.assumptions.metricDefinitionId).toBe('mlbam-observed-r-per-pa-2025');
+		const casas = storyline.bundle.dataset.projections.find(
+			({ playerId }) => playerId === 'mlbam-671213'
+		);
+		expect(casas?.overall).not.toBeNull();
+		const result = calculateComparison(storyline.bundle).results.find(
+			({ scenarioId }) => scenarioId === 'cand-b'
+		);
+		expect(result?.offense.status).toBe('available');
+		expect(result?.coverage.every(({ shortfallOuts }) => shortfallOuts === 0)).toBe(true);
 	});
 
 	it('labels every rostered player with a rubric shape without touching results', () => {
@@ -110,11 +115,18 @@ describe('2026 storyline registry', () => {
 		expect(shapeOf('mlbam-671213').shape).toBe('Unclassified');
 	});
 
-	it('does not ship post-deadline players in refreshed scenario data', () => {
-		for (const storyline of storylineRegistry) {
-			const playerIds = storyline.bundle.dataset.players.map((player) => player.id);
-			expect(playerIds).not.toContain('mlbam-691785');
-			expect(playerIds).not.toContain('mlbam-665966');
+	it('keeps each roster to players Boston could use on the decision date', () => {
+		const ids = (slug: string) =>
+			getStoryline(slug)?.bundle.dataset.players.map((player) => player.id) ?? [];
+		const rutschman = 'mlbam-668939';
+		const narvaez = 'mlbam-665966';
+		for (const slug of ['preseason-dh', 'preseason-second', 'july-run']) {
+			expect(ids(slug), slug).not.toContain(rutschman);
+			expect(ids(slug), slug).toContain(narvaez);
 		}
+		// Rutschman arrives in the deadline trade; Narváez leaves in it.
+		expect(ids('deadline-catcher')).toContain(rutschman);
+		expect(ids('october-lineup')).toContain(rutschman);
+		expect(ids('october-lineup')).not.toContain(narvaez);
 	});
 });

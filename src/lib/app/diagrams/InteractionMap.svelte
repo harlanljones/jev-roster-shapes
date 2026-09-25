@@ -41,7 +41,14 @@
 		'mlbam-657136': [370, 625],
 		'mlbam-807799': [600, 580],
 		'mlbam-681987': [770, 625],
-		'mlbam-671213': [925, 590]
+		'mlbam-671213': [925, 590],
+		// Season-timeline additions (D-44).
+		'mlbam-691785': [235, 205],
+		'mlbam-678011': [445, 520],
+		'mlbam-665966': [262, 545],
+		'mlbam-668670': [52, 615],
+		'mlbam-663330': [660, 262],
+		'mlbam-681508': [720, 478]
 	};
 	// Hand-tuned curvature so parallel edges and labels don't stack.
 	const BEND: Record<string, number> = {

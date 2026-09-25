@@ -5,7 +5,7 @@ import {
 	calculateScenario,
 	validateCalculationResult
 } from '../../src/lib/engine';
-import { getStoryline } from '../../src/lib/storylines/registry';
+import { powerVacuumBundle } from '../fixtures/power-vacuum';
 import { validateBundle, type Bundle, type Scenario } from '../../src/lib/contracts';
 
 const CASAS = 'mlbam-671213';
@@ -13,9 +13,7 @@ const ANTHONY = 'mlbam-701350';
 const DURAN = 'mlbam-680776';
 
 function storyBundle(): Bundle {
-	const story = getStoryline('power-vacuum');
-	if (!story) throw new Error('power-vacuum storyline missing');
-	return story.bundle;
+	return powerVacuumBundle;
 }
 
 function copyBundle(): Bundle {
@@ -53,8 +51,8 @@ describe('deterministic calculation engine', () => {
 			'cand-b'
 		]);
 		expect(comparison.results.map(({ offense }) => offense.runs)).toEqual([
-			'41.49604',
-			'40.68372',
+			'44.95712',
+			'44.1448',
 			null
 		]);
 		expect(comparison.results[2]?.offense.status).toBe('unavailable');
@@ -71,13 +69,13 @@ describe('deterministic calculation engine', () => {
 		}
 		const baseline = comparison.evaluations[0];
 		expect(baseline?.paReconciliation).toMatchObject({
-			totalDemandPA: 360,
-			allocatedPA: 360,
+			totalDemandPA: 390,
+			allocatedPA: 390,
 			unallocatedPA: 0,
 			conserved: true
 		});
 		expect(baseline?.result.workload.reduce((total, player) => total + (player.PA ?? 0), 0)).toBe(
-			360
+			390
 		);
 		expect(
 			baseline?.result.coverage.reduce((total, lane) => total + (lane.allocatedOuts ?? 0), 0)
@@ -101,8 +99,8 @@ describe('deterministic calculation engine', () => {
 				.filter(({ position }) => position === 'RF')
 				.reduce((total, lane) => total + (lane.shortfallOuts ?? 0), 0)
 		).toBe(270);
-		expect(reconciliation).toMatchObject({ allocatedPA: 320, unallocatedPA: 40, conserved: true });
-		expect(comparison.results[1]?.offense.runs).toBe('40.68372');
+		expect(reconciliation).toMatchObject({ allocatedPA: 350, unallocatedPA: 40, conserved: true });
+		expect(comparison.results[1]?.offense.runs).toBe('44.1448');
 	});
 
 	it('invalidates simultaneous duplicate and ineligible assignments without authoritative totals', () => {
@@ -172,7 +170,7 @@ describe('deterministic calculation engine', () => {
 		projection(split, ANTHONY).vsL = '0.10';
 		projection(split, ANTHONY).vsR = '0.06';
 		const result = calculateScenario(split, 'cand-a');
-		expect(result.offense.runs).toBe('39.71692');
+		expect(result.offense.runs).toBe('43.178');
 		expect(calculateOffenseDelta(calculateScenario(split, 'base'), result).runs).toBe('-1.77912');
 
 		const changedExposure = copyBundle();
@@ -191,7 +189,7 @@ describe('deterministic calculation engine', () => {
 			if (template.id === 'bos26-vs-left') slot.paByPitcherHand = { L: 8, R: 8, unknown: 0 };
 			else slot.paByPitcherHand = { L: 12, R: 12, unknown: 0 };
 		}
-		expect(calculateScenario(changedExposure, 'cand-a').offense.runs).toBe('40.11692');
+		expect(calculateScenario(changedExposure, 'cand-a').offense.runs).toBe('43.578');
 
 		const unknownExposure = copyBundle();
 		unknownExposure.assumptions.offenseMode = 'split';
@@ -239,7 +237,7 @@ describe('deterministic calculation engine', () => {
 		const negative = copyBundle();
 		projection(negative, ANTHONY).overall = '-0.01';
 		const comparison = calculateComparison(negative);
-		expect(comparison.results[1]?.offense.runs).toBe('36.51692');
+		expect(comparison.results[1]?.offense.runs).toBe('39.978');
 		expect(comparison.offenseDeltas[1]?.runs).toBe('-4.97912');
 	});
 

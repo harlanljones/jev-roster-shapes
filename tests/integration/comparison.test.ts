@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { calculateComparison, calculateScenario } from '../../src/lib/engine';
-import { getStoryline } from '../../src/lib/storylines/registry';
+import { powerVacuumBundle } from '../fixtures/power-vacuum';
 import { MemoryPersistenceStorage, PersistenceRepository } from '../../src/lib/persistence';
 import { buildComparisonViewModel } from '../../src/lib/app/workspace';
-
-const storyline = getStoryline('power-vacuum');
-if (!storyline) throw new Error('power-vacuum storyline missing');
 
 function clone<T>(value: T): T {
 	return structuredClone(value);
@@ -22,7 +19,7 @@ function repository(storage = new MemoryPersistenceStorage()): PersistenceReposi
 
 describe('comparison integration journey', () => {
 	it('calculates, edits, saves, reloads, exports, and reimports one comparison', async () => {
-		const initial = clone(storyline.bundle);
+		const initial = clone(powerVacuumBundle);
 		const initialCalculation = calculateComparison(initial);
 		initial.results = [...initialCalculation.results];
 
@@ -41,7 +38,9 @@ describe('comparison integration journey', () => {
 		const saved = await source.save(edited);
 		expect(saved.status).toBe('saved');
 		expect(saved.record.revisions).toHaveLength(2);
-		expect(saved.current.bundle.comparison.candidates[0]!.revision).toBe(2);
+		expect(saved.current.bundle.comparison.candidates[0]!.revision).toBe(
+			powerVacuumBundle.comparison.candidates[0]!.revision + 1
+		);
 		expect(
 			saved.current.bundle.results.find((result) => result.scenarioId === 'cand-a')?.feasibility
 		).toBe('incomplete');

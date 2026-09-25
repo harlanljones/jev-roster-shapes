@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { openPowerVacuum } from './storyline';
+import { openFirstStoryline } from './storyline';
 
 // Pointer drag-and-drop (D-20, D-33) covers the same Swap/Move commit path as
 // the keyboard forms. Native HTML5 DnD is simulated with dispatched DragEvents
@@ -48,7 +48,7 @@ async function dropOn(page: Page, target: number): Promise<void> {
 test('dragging an assigned row onto an occupied slot swaps with a live preview', async ({
 	page
 }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
 	const card = page.locator('.template-card').first();
 	const selects = page.getByLabel(/assigned player/);
@@ -71,7 +71,7 @@ test('dragging an assigned row onto an occupied slot swaps with a live preview',
 test('dragging an assigned row onto an Unassigned slot moves with a live preview', async ({
 	page
 }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
 	const card = page.locator('.template-card').first();
 	const selects = page.getByLabel(/assigned player/);
@@ -98,7 +98,7 @@ test('dragging an assigned row onto an Unassigned slot moves with a live preview
 });
 
 test('dragging an Unassigned row starts no drag and changes nothing', async ({ page }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
 	const card = page.locator('.template-card').first();
 	const selects = page.getByLabel(/assigned player/);

@@ -20,7 +20,7 @@ const sourceElements = [
 	'ui',
 	'classification'
 ];
-const testElements = [...sourceElements, 'app', 'integration', 'e2e'];
+const testElements = [...sourceElements, 'app', 'integration', 'e2e', 'fixtures'];
 
 const elements = [
 	...sourceElements.map((name) => ({ type: name, pattern: `src/lib/${name}` })),
@@ -49,8 +49,16 @@ const policies = [
 	allow('app', everySourceElement),
 	allow('test-contracts', ['test-contracts', 'contracts', 'storylines', 'shapes']),
 	allow('test-storylines', ['test-storylines', 'storylines', 'contracts', 'engine', 'shapes']),
-	allow('test-engine', ['test-engine', 'engine', 'contracts', 'storylines']),
-	allow('test-persistence', ['test-persistence', 'persistence', 'contracts', 'storylines']),
+	// Frozen engine fixture (D-44): shared by structural tests, depends only on contracts.
+	allow('test-fixtures', ['test-fixtures', 'contracts']),
+	allow('test-engine', ['test-engine', 'engine', 'contracts', 'storylines', 'test-fixtures']),
+	allow('test-persistence', [
+		'test-persistence',
+		'persistence',
+		'contracts',
+		'storylines',
+		'test-fixtures'
+	]),
 	allow('test-ui', ['test-ui', 'ui', 'contracts', 'storylines']),
 	allow('test-classification', [
 		'test-classification',
@@ -59,8 +67,8 @@ const policies = [
 		'storylines'
 	]),
 	allow('test-app', ['test-app', ...everySourceElement]),
-	allow('test-integration', ['test-integration', ...everySourceElement]),
-	allow('test-e2e', ['test-e2e', ...everySourceElement])
+	allow('test-integration', ['test-integration', 'test-fixtures', ...everySourceElement]),
+	allow('test-e2e', ['test-e2e', 'test-fixtures', ...everySourceElement])
 ];
 
 const nodeBuiltins = {

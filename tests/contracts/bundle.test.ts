@@ -9,10 +9,10 @@ import { storylineRegistry } from '../../src/lib/storylines/registry';
 import { describe, expect, it } from 'vitest';
 
 const storylineBundle = storylineRegistry[0]?.bundle;
-if (!storylineBundle) throw new Error('power-vacuum storyline missing');
+if (!storylineBundle) throw new Error('first storyline missing');
 
 describe('v1 bundle contract', () => {
-	it('accepts the power-vacuum storyline input and preserves the public boundary', () => {
+	it('accepts the first storyline input and preserves the public boundary', () => {
 		const result = validateBundle(storylineBundle);
 
 		expect(result.success).toBe(true);

@@ -29,13 +29,14 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Refresh configured 2026 decision pool
+      - name: Refresh the season-timeline snapshot and rebuild the storylines
         env:
           DATA_AS_OF: ${{ github.event_name == 'workflow_dispatch' && inputs.data_as_of || '' }}
-          DATA_REFRESH: '1'
         run: |
-          AS_OF="${DATA_AS_OF:-$(date -u +%F)}"
-          DATA_AS_OF="$AS_OF" DATA_FETCHED_AT="${AS_OF}T00:00:00Z" DATA_REFRESH=1 bun spikes/mlb-2026/build.mjs
+          if [ -z "$DATA_AS_OF" ]; then unset DATA_AS_OF; fi
+          bun spikes/mlb-2026/timeline-fetch.mjs
+          bun spikes/mlb-2026/timeline-build.mjs
+          bunx prettier --write spikes/mlb-2026/timeline-snapshot.json src/lib/storylines/*.json
 
       - name: Sync registry digests and expectations
         run: bun spikes/mlb-2026/sync-registry.mjs
@@ -52,11 +53,13 @@ jobs:
           title: 'data: refresh public roster snapshot'
           commit-message: 'data: refresh public roster snapshot'
           body: |
-            Automated refresh of the common public 2026 decision-pool snapshot.
+            Automated refresh of the 2026 season-timeline snapshot (D-44).
 
             This PR is intentionally reviewable and does not deploy by itself.
-            Review changed roster membership, eligibility, rates, input digests,
-            and hand-derived storyline expectations before merging.
+            Dated storylines keep their decision-date windows; only the
+            season-to-date storyline and the record line should move. Review
+            changed rates, eligibility, input digests, and storyline
+            expectations before merging.
 
             Historical retrospective event metadata is not changed by this job.
           labels: data-refresh

@@ -8,6 +8,10 @@
 // not a star player. The recorded rule is a platoon gap of at least .200 OPS
 // between vs-LHP and vs-RHP with 50+ PA on each side (2026 statSplits). The
 // two v1 Stars (elite production) had no such quirk and become Squares.
+// D-44 reapplies the rule to full-season combined rows (September 25):
+// Kiner-Falefa stays a Star; Monasterio's gap narrows to .187 and he becomes
+// a Circle. Storyline players added by the season timeline are labeled here
+// under the same rule.
 
 export const SHAPE_RUBRIC_VERSION = 'shape-rubric-v2';
 
@@ -52,7 +56,7 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 	'mlbam-702332': {
 		shape: 'Square',
 		rationale:
-			'Steady everyday single-position regular: .727 vs LHP, .725 vs RHP, no platoon quirk. Observed 0.130742 R/PA, highest among regulars, over 566 PA at third base.'
+			'Steady everyday single-position regular: .702 vs LHP, .723 vs RHP, no platoon quirk. Observed 0.128028 R/PA, highest among regulars, over 578 PA at third base.'
 	},
 	'mlbam-575929': {
 		shape: 'Square',
@@ -61,7 +65,8 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 	},
 	'mlbam-665966': {
 		shape: 'Square',
-		rationale: 'Steady everyday catcher: 552 PA at a modest 0.076087 after offseason knee surgery.'
+		rationale:
+			'Steady single-position catcher: 280 PA at 0.075000 (Boston, then Baltimore after the August 3 trade), .450 vs LHP and .480 vs RHP, no platoon quirk.'
 	},
 	'mlbam-657136': {
 		shape: 'Square',
@@ -69,31 +74,31 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 	},
 	'mlbam-677800': {
 		shape: 'Rectangle',
-		rationale: 'Volume workhorse: team-high 657 PA with Gold Glove right field.'
+		rationale: 'Volume workhorse: team-high 669 PA with Gold Glove right field.'
 	},
 	'mlbam-680776': {
 		shape: 'Rectangle',
-		rationale: 'Volume workhorse: 592 PA across left, center, and DH in the bounce-back season.'
+		rationale: 'Volume workhorse: 599 PA across left, center, and DH in the bounce-back season.'
 	},
 	'mlbam-643396': {
 		shape: 'Star',
 		rationale:
-			'Tough fit: .445 OPS vs LHP (51 PA) against .708 vs RHP (122 PA), a .263 platoon gap. Plays right-handed pitching well, so he needs a partner to fill a slot.'
+			'Tough fit: .417 OPS vs LHP (54 PA) against .708 vs RHP (122 PA), a .291 platoon gap. Plays right-handed pitching well, so he needs a partner to fill a slot.'
 	},
 	'mlbam-655316': {
-		shape: 'Star',
+		shape: 'Circle',
 		rationale:
-			'Tough fit: .889 OPS vs LHP (104 PA) against .642 vs RHP (194 PA), a .247 platoon gap. Plays left-handed pitching well, so he needs a partner to fill a slot.'
+			'Well-rounded utility at 1B/2B/SS: .798 OPS vs LHP (126 PA) and .611 vs RHP (211 PA). The .187 gap on full-season rows sits just under the .200 Star line; on partial Boston rows (September 24) it was .247 and he was a Star.'
 	},
 	'mlbam-701350': {
 		shape: 'Pentagon',
 		rationale:
-			'Young flash at 21: 0.094170 over 223 PA in the first full season — ascent, not foundation.'
+			'Young flash at 21: 0.090517 over 232 PA in the first full season — ascent, not foundation.'
 	},
 	'mlbam-678882': {
 		shape: 'Pentagon',
 		rationale:
-			'Young flash at 25: Gold Glove center field with swing-at-everything variance, 0.117750.'
+			'Young flash at 25: Gold Glove center field with swing-at-everything variance, 0.116725.'
 	},
 	'mlbam-596115': {
 		shape: 'Octagon',
@@ -103,7 +108,7 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 	'mlbam-691785': {
 		shape: 'Diamond',
 		rationale:
-			'Fragile value: plus defender at 0.083333 but only 228 PA with a long injury history.'
+			'Fragile value: plus defender with a long injury history; 228 PA for Boston before the deadline trade to San Francisco, 236 PA at 0.080508 in all.'
 	},
 	'mlbam-807799': {
 		shape: 'Funky',
@@ -112,6 +117,26 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 	'mlbam-681987': {
 		shape: 'Funky',
 		rationale: 'Fringe profile: 55 PA with no eligible position; speed off the bench.'
+	},
+	'mlbam-678011': {
+		shape: 'Circle',
+		rationale:
+			'Multi-position utility (2B in 2026, 3B in 2025): 173 PA at 0.121387. His .550 vs LHP and .784 vs RHP would be a Star-sized gap, but 42 PA against lefties is under the 50-PA line.'
+	},
+	'mlbam-668670': {
+		shape: 'Square',
+		rationale:
+			'Single-position backup catcher: 171 PA across four clubs at 0.099415. The .773 vs LHP and .491 vs RHP gap rests on 45 PA against lefties, under the Star line.'
+	},
+	'mlbam-681508': {
+		shape: 'Circle',
+		rationale:
+			'Bat-first utility with catcher and first-base starts: .917 OPS vs RHP over 194 PA, .268 vs LHP over only 28 PA, too few to call a platoon Star.'
+	},
+	'mlbam-663330': {
+		shape: 'Circle',
+		rationale:
+			'Corner-outfield platoon bat (LF/RF from 2025): .753 OPS vs LHP over 152 PA. Only 23 PA against righties keeps him under the Star line.'
 	},
 	'mlbam-671213': {
 		shape: 'Unclassified',

@@ -1,17 +1,19 @@
 import { expect, test } from '@playwright/test';
-import { openPowerVacuum } from './storyline';
+import { openFirstStoryline } from './storyline';
 
 // Literal-keystroke walkthrough for I-07: every interaction below is a real
 // keyboard event (no dispatched DOM events, no pointer). Element focus is set
 // with el.focus() — the keyboard equivalent of tabbing to a control — and all
 // value changes, tab moves, and activations go through page.keyboard.
 test('a keyboard-only user tabs, edits, swaps, and inspects evidence', async ({ page }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 
 	// Arrow-key tab navigation: Baseline → candidate A.
-	await page.getByRole('tab', { name: 'Baseline — Yoshida DH' }).evaluate((el) => el.focus());
+	await page.getByRole('tab', { name: /^Baseline — Anthony DH/ }).evaluate((el) => el.focus());
 	await page.keyboard.press('ArrowRight');
-	await expect(page.getByRole('tab', { selected: true })).toContainText('A — Anthony everyday');
+	await expect(page.getByRole('tab', { selected: true })).toContainText(
+		'A — Yoshida DH, Anthony sits'
+	);
 
 	// Change an assignment with the keyboard: Home then ArrowDown guarantees a
 	// selection change no matter which option started selected.

@@ -5,7 +5,10 @@
 > replaced by the five 2026 storyline tables in D-40 (asserted in
 > `tests/storylines/registry.test.ts`). The calculation cases in §2 below are
 > unchanged in behavior and are re-targeted at the power-vacuum storyline in
-> `tests/engine/calculation.test.ts`. `docs/examples/comparison-v1.json` stays
+> `tests/engine/calculation.test.ts`. Under D-44 (2026-09-25) that storyline is
+> retired from the app and frozen as the test fixture
+> `tests/fixtures/power-vacuum-2026.json`; the five season-timeline tables are
+> asserted in the same registry test. `docs/examples/comparison-v1.json` stays
 > read-only as the historical v1 illustration.
 
 Read when implementing tests, measuring performance, or claiming completion. These are requirements and independently specified expected values, not a record of passing application tests. Record observed results in the report paths assigned by [ROADMAP.md](../ROADMAP.md).

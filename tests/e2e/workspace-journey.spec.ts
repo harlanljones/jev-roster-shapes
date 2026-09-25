@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { expect, test } from '@playwright/test';
-import { openPowerVacuum } from './storyline';
+import { openFirstStoryline } from './storyline';
 
 const require = createRequire(import.meta.url);
 const axeCorePath = require.resolve('axe-core/axe.min.js');
@@ -13,10 +13,12 @@ const axeCorePath = require.resolve('axe-core/axe.min.js');
 // actionability ("stable") checks require. The app receives the same
 // synthetic events a real click would generate.
 test('the analyst opens a storyline, switches scenarios, edits, and saves', async ({ page }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 
-	await page.getByRole('tab', { name: 'B — Casas DH hope' }).dispatchEvent('click');
-	await expect(page.getByRole('tab', { selected: true })).toContainText('B — Casas DH hope');
+	await page.getByRole('tab', { name: /^B — Casas DH/ }).dispatchEvent('click');
+	await expect(page.getByRole('tab', { selected: true })).toContainText(
+		'B — Casas DH, back from the IL'
+	);
 
 	const firstSelect = page.getByLabel(/assigned player/).first();
 	await expect(firstSelect).toBeVisible();
@@ -40,14 +42,14 @@ test('the analyst opens a storyline, switches scenarios, edits, and saves', asyn
 
 	// The saved draft survives a reload: reopening the storyline restores the
 	// saved revision from localStorage instead of the file.
-	await page.goto('/scenario/power-vacuum');
+	await page.goto('/scenario/preseason-dh');
 	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
 	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
 	await expect(page.locator('.storage-pill')).toHaveAttribute('data-state', 'saved');
 });
 
 test('edit-to-render latency stays within the 250ms prototype budget', async ({ page }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 
 	await expect(page.getByLabel(/assigned player/).first()).toBeVisible();
 
@@ -103,7 +105,7 @@ test('edit-to-render latency stays within the 250ms prototype budget', async ({ 
 });
 
 test('the workspace passes a DOM-level axe audit', async ({ page }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 
 	await page.addScriptTag({ path: axeCorePath });
 	// Full axe.run hangs in this environment's headless Chromium (a rule such as

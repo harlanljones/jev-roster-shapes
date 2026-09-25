@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import type { Bundle } from '$lib/contracts';
 	import { calculateComparison } from '$lib/engine';
 	import { storylineRegistry } from '$lib/storylines/registry';
-	import { SHORT_TITLES, TESTED_SCENARIOS } from './case-stories';
+	import { TESTED_SCENARIOS } from './case-stories';
 	import CapacityBin from './diagrams/CapacityBin.svelte';
 	import CaseKey from './diagrams/CaseKey.svelte';
 	import CaseTable from './diagrams/CaseTable.svelte';
 	import Findings from './diagrams/Findings.svelte';
 	import InteractionMap from './diagrams/InteractionMap.svelte';
 	import PieceDetail from './diagrams/PieceDetail.svelte';
+	import SeasonTimeline from './diagrams/SeasonTimeline.svelte';
 	import ShapeCase from './diagrams/ShapeCase.svelte';
 	import SlotBars from './diagrams/SlotBars.svelte';
 	import {
@@ -63,7 +63,12 @@
 		selectedId && pool.has(selectedId) ? selectedId : (lineup['3B'] ?? lineupIds(lineup)[0] ?? null)
 	);
 
-	const edges = $derived(interactionEdges(pool, TESTED_SCENARIOS));
+	const edges = $derived(
+		interactionEdges(
+			pool,
+			TESTED_SCENARIOS.filter((t) => t.story === story.slug)
+		)
+	);
 	const netFind = $derived(interactionFindings(pool, edges));
 	const curBin = $derived(lineupBin(pool, lineup));
 	const bestBin = $derived(tightestBin(pool));
@@ -97,27 +102,16 @@
 </svelte:head>
 
 <div class="library">
-	<nav class="story-nav" aria-label="Choose scenario">
-		{#each storylineRegistry as storyline (storyline.slug)}
-			<a
-				class="story-link"
-				aria-current={storyline.slug === story.slug ? 'page' : undefined}
-				href={storyline.slug === storylineRegistry[0]?.slug
-					? resolve('/')
-					: resolve('/scenario/[slug]', { slug: storyline.slug })}
-			>
-				{SHORT_TITLES[storyline.slug] ?? storyline.slug}
-			</a>
-		{/each}
-	</nav>
+	<SeasonTimeline activeSlug={story.slug} />
 
 	<section class="lead" aria-labelledby="story-title">
 		<div class="lead-main">
 			<h1 id="story-title">{story.title}</h1>
 			<p class="lede">{story.lede}</p>
 			<p class="data-class-banner">
-				<strong>Public data</strong> · observed 2026 values through September 20, not team-approved
-				projections.
+				<strong>Public data</strong> · engine rates are observed R/PA ({story.rateLabel}), what was
+				known on the decision date, not team-approved projections. The case sizes pieces by what the
+				2026 season produced through {SPLIT_SOURCE.asOf}.
 				{story.eventBasis}
 			</p>
 			<div class="scenarios" role="group" aria-label="Scenario in the case">
@@ -207,8 +201,8 @@
 		<div class="tray-main">
 			<h2 id="map-title">How the pieces interact</h2>
 			<p class="lede">
-				The same pieces off the field. Gray lines share a position, red arrows are the swaps the
-				storylines test (thick in this scenario) with the change in actual 2026 runs, green dots
+				The same pieces off the field. Gray lines share a position, red arrows are the swaps this
+				storyline tests (thick in this scenario) with the change in actual 2026 runs, green dots
 				pair players whose real splits complement, and blue dashes lead into the DH lane.
 			</p>
 			<InteractionMap
@@ -319,7 +313,7 @@
 	</section>
 
 	<footer class="sources">
-		Players, eligibility and observed R/PA come from the five checked-in storyline bundles ({story.sourceLabel}).
+		Players, eligibility and observed R/PA come from the five checked-in season-timeline bundles ({story.sourceLabel}).
 		Splits and PA come from {SPLIT_SOURCE.label}, fetched {SPLIT_SOURCE.fetchedAt}. Shapes follow
 		rubric v2, where a Star is a tough fit rather than a star player. Cutout asks, fit grades, and
 		split run estimates are a judgment layer and never change an engine number.
@@ -333,29 +327,6 @@
 		max-width: 88rem;
 		margin: 0 auto;
 		padding: 1.5rem clamp(1rem, 4vw, 3rem) 4rem;
-	}
-	.story-nav {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-	.story-link {
-		display: inline-flex;
-		align-items: center;
-		min-height: 2.75rem;
-		border: 1px solid var(--rule);
-		border-radius: 999px;
-		padding: 0 1rem;
-		color: var(--ink);
-		background: var(--panel);
-		font-size: 0.9rem;
-		font-weight: 600;
-		text-decoration: none;
-	}
-	.story-link[aria-current='page'] {
-		border-color: var(--ink);
-		color: var(--panel);
-		background: var(--ink);
 	}
 	.lead {
 		display: grid;
