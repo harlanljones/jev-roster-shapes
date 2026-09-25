@@ -72,6 +72,12 @@ Each mutation below starts from the golden input unless its row says otherwise. 
 | C-24 | Evaluate an excessive integer/product outside safe calculation bounds | Explicit numeric validation failure; never an imprecise silently rounded result |
 | C-25 | Change baseline membership while leaving candidate records unchanged | Input digest changes; candidate membership revalidated; mismatch surfaced; acknowledgments cleared |
 | C-26 | Duplicate a member cost row or add a nonmember cost row | Invalid cost structure; no double-counted or silently ignored cost |
+| C-27 | Run the pool fit on `preseason-second` baseline (D-45) | Best nine is Narváez C, Monasterio 1B, Rafaela 2B, Mayer 3B, Story SS, Anthony LF, Duran CF, Abreu RF, Contreras DH in both contexts; `52.69416`; `21.077664` + `31.616496`; Δ `1.01105` vs the lineup used; beats a per-slot greedy nine by `0.15986` |
+| C-28 | Run the pool fit on `preseason-dh`, baseline and candidate B | Baseline: the lineup used is already the fit (Δ `0`, no moves, no transfers). Candidate B: the fit benches Casas and restores Anthony at DH — the fit is bounded by each scenario's own membership and never uses a non-member |
+| C-29 | Remove a member's projection row, then remove the only eligible shortstop's | The first reports `MISSING_RATE` exclusion with the total unchanged; the second leaves SS unassigned, returns `incomplete`, suppresses the total and deltas, and reports 108 / 162 outs of shortfall. No zero-filled rate anywhere |
+| C-30 | Lower one member's `maxPA` below what the fit needs but above what the reference lineup uses | The reference stays `available`; the fit is `invalid` with `CAP_EXCEEDED` naming the player, its total and both deltas null. The fit is reported, not silently replaced |
+| C-31 | Reverse `dataset.players` and every `memberIds`, or run the fit twice | Identical discovered lineups and totals; the input digest may differ (C-22) and the analysis version is pinned |
+| C-32 | Select `split` mode on a bundle whose projections have null splits | Every member excluded with `MISSING_RATE`; fit `incomplete` with no total. No fallback to overall rates |
 
 ## 3. Persistence, integration, and UI gates
 
@@ -90,6 +96,9 @@ Each mutation below starts from the golden input unless its row says otherwise. 
 | I-11 | Import an already-used bundle ID with different content | Conflict surfaced; existing data preserved until explicit new-revision resolution |
 | I-12 | Render empty and unknown data | `0`, `Unavailable`, `Unassigned`, and `Unknown limit` remain distinguishable without color |
 | I-13 | Change shared exposure or dataset after all scenarios were acknowledged | All scenario revisions advance, acknowledgments clear, and results recompute; former ready state is retained only in history |
+| I-14 | Open `/`, a decision page, and `/scenario/[slug]/snapshots`; then set a key, acknowledge, and classify one player with a stubbed provider | Index shows the timeline with today's date and one card per decision; the decision page shows the engine pool fit beside the case; the snapshots page shows the exact request, and after the call a validated answer with its distribution, model identity, tokens, timing, and estimated cost. Engine numbers on that page are byte-identical before and after the answer (I-10) |
+| I-15 | Repeat I-14 with no key, with a declined acknowledgment, with HTTP 401, and with a response that names a label outside the rubric | `not-configured` / `awaiting-acknowledgment` / `error` / `invalid-response` with reasons; no answer is rendered, no request is sent without a key or an acknowledgment, and the roster analysis is unchanged in all four cases |
+| I-16 | Keyboard-only: reach the index, a decision, and the snapshots subpage, and read the request body and answer table | Same content by keyboard, focus visible, skip link first, no keyboard trap in the scrollable request body |
 
 The prototype completion report must link each mandatory case to test output or a recorded manual exercise. Unimplemented optional classification uses `not applicable — disabled`, not a fabricated outage pass. Any materially wrong numerical result blocks completion.
 

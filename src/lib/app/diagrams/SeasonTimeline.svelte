@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { storylineRegistry } from '$lib/storylines/registry';
 	import {
 		SEASON_EVENTS,
 		TIMELINE_END,
 		datePosition,
 		recordSeries,
-		timelinePins
+		timelinePins,
+		todayMarker
 	} from '../season-timeline';
 
 	// The season as a line of games over .500, with each storyline pinned to
-	// the date its decision was made (D-44). The pins are links; the SVG is a
-	// labeled picture of the same list, so the list is the text equivalent.
-	let { activeSlug }: { activeSlug: string } = $props();
+	// the date its decision was made (D-44) and today marked on the same axis
+	// (D-46). The pins are links; the SVG is a labeled picture of the same list,
+	// so the list is the text equivalent.
+	let { activeSlug, today }: { activeSlug?: string; today?: string } = $props();
 
 	const W = 1000;
 	const H = 170;
@@ -35,18 +36,34 @@
 		})
 	}));
 	const pins = timelinePins(series).sort((a, b) => a.date.localeCompare(b.date));
-	const firstSlug = storylineRegistry[0]?.slug;
-	const href = (slug: string) =>
-		slug === firstSlug ? resolve('/') : resolve('/scenario/[slug]', { slug });
+	const marker = $derived(todayMarker(today));
+	const href = (slug: string) => resolve('/scenario/[slug]', { slug });
 	const longDate = (iso: string) =>
 		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
 			month: 'long',
 			day: 'numeric',
 			timeZone: 'UTC'
 		});
-	const summary = last
-		? `Boston's 2026 record by date, ${last.wins}–${last.losses} through ${longDate(last.date)}, from ${Math.min(...series.map((p) => p.over))} to +${Math.max(...series.map((p) => p.over))} games over .500, with ${pins.length} storyline dates marked.`
-		: 'Boston 2026 record unavailable.';
+	const todayRecord = $derived.by(() => {
+		let found: (typeof series)[number] | null = null;
+		for (const point of series) {
+			if (point.date > marker.date) break;
+			found = point;
+		}
+		return found;
+	});
+	const summary = $derived(
+		[
+			`Boston's 2026 record by date, ${last ? `${last.wins}–${last.losses} through ${longDate(last.date)}` : 'unavailable'}`,
+			`with ${pins.length} storyline dates marked`,
+			`and today, ${longDate(marker.date)}, ${
+				todayRecord ? `${todayRecord.wins}–${todayRecord.losses}` : 'before the first game'
+			}`,
+			marker.inRange ? '' : 'past the end of this timeline window'
+		]
+			.filter(Boolean)
+			.join(', ')
+	);
 </script>
 
 <nav class="timeline" aria-label="Season timeline">
@@ -64,6 +81,15 @@
 			</line>
 		{/each}
 		<path class="record" d={path} />
+		<g class="today">
+			<line x1={x(marker.date)} x2={x(marker.date)} y1="6" y2={bottom + 8} />
+			<text x={Math.min(x(marker.date) + 5, W - 96)} y="12">today</text>
+			<title>
+				Today is {longDate(marker.date)}{todayRecord
+					? `; Boston is ${todayRecord.wins}–${todayRecord.losses}`
+					: ', before the first game'}
+			</title>
+		</g>
 		{#each pins as pin, i (pin.slug)}
 			<g class="pin" class:active={pin.slug === activeSlug}>
 				<line x1={x(pin.date)} x2={x(pin.date)} y1="18" y2={bottom + 8} />
@@ -87,6 +113,13 @@
 			</li>
 		{/each}
 	</ol>
+	<p class="today-note">
+		Today is <b>{longDate(marker.date)}</b>{todayRecord
+			? ` · Boston ${todayRecord.wins}–${todayRecord.losses} on the timeline`
+			: ' · before the first game of the season'}{marker.inRange
+			? ''
+			: ' · outside the February–October window this timeline covers'}
+	</p>
 	<p class="events">
 		{#each SEASON_EVENTS as e, i (e.date)}{i ? ' · ' : ''}<span>{longDate(e.date)}: {e.label}</span
 			>{/each}
@@ -157,6 +190,26 @@
 	}
 	.pin.active text {
 		fill: var(--panel);
+	}
+	.today line {
+		stroke: var(--marker);
+		stroke-width: 1.5;
+		stroke-dasharray: 5 3;
+		vector-effect: non-scaling-stroke;
+	}
+	.today text {
+		fill: var(--marker);
+		font: 600 11px var(--mono);
+		letter-spacing: 0.04em;
+	}
+	.today-note {
+		margin: 0;
+		color: var(--ink-soft);
+		font: 400 0.78rem var(--mono);
+	}
+	.today-note b {
+		color: var(--marker);
+		font-weight: 600;
 	}
 	.pins {
 		display: grid;

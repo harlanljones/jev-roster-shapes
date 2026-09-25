@@ -996,6 +996,30 @@ function prepareBundle(bundle: Bundle): { inputDigest: string; validationIssues:
 	return { inputDigest: computeInputDigest(validation.data), validationIssues: validation.issues };
 }
 
+/**
+ * Evaluate a scenario record that is not stored in the bundle, against the same
+ * arithmetic and the same checks a stored scenario gets (D-45). Used by the
+ * pool-fit analysis, which discovers a lineup and then asks the engine to judge
+ * it rather than trusting its own search. `path` names the draft in issues so a
+ * diagnostic points at the analysis, not at a stored scenario.
+ */
+export function evaluateScenarioDraft(
+	bundle: Bundle,
+	scenario: Scenario,
+	options: { path: string; scenarioIndex?: number }
+): ScenarioEvaluation {
+	const prepared = prepareBundle(bundle);
+	const context: ScenarioContext = {
+		scenario,
+		scenarioPath: options.path,
+		scenarioIndex: options.scenarioIndex ?? -1,
+		validationIssues: prepared.validationIssues.filter(
+			(issue) => !issue.path.startsWith('/comparison/') && !issue.path.startsWith('/results/')
+		)
+	};
+	return calculateScenarioWithValidation(bundle, context, prepared.inputDigest);
+}
+
 export function calculateScenario(
 	bundle: Bundle,
 	scenarioOrId: Scenario | string

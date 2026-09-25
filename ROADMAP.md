@@ -1,6 +1,6 @@
 # Development handoff roadmap
 
-**Status:** RS-01 through RS-07 complete (RS-06 marked "complete, initial" integration; RS-07 validation gates pass with recorded limitations), followed by the library-first revision (D-38 through D-40). The local prototype is a runnable SvelteKit app with a strict v1 bundle validator, pinned storyline registry, deterministic engine, versioned persistence, a roster-and-shapes start screen opening five 2026 public comparisons, a wired comparison workspace, and passing Playwright e2e journeys with a measured edit-to-render p95. No team data, pilot staffing, provider approval, or deployment is implied.
+**Status:** RS-01 through RS-07 complete (RS-06 marked "complete, initial" integration; RS-07 validation gates pass with recorded limitations), followed by the library-first revision (D-38 through D-40) and the season timeline (D-44). The local prototype is a runnable SvelteKit app with a strict v1 bundle validator, pinned storyline registry, deterministic engine, an engine-owned pool fit (`pool-fit-analysis-v1`), versioned persistence, a season index marking today, one page per dated decision, a Jev snapshots subpage behind a provider interface, a wired comparison workspace, and passing Playwright e2e journeys with a measured edit-to-render p95. No team data, pilot staffing, provider approval, or deployment is implied.
 
 ## Outcome and boundaries
 
@@ -299,6 +299,111 @@ the rubric v2 Star rule are analyst judgments (O-03 stays open). The
 workspace case and bins follow each scenario's busiest pitcher-hand template.
 The interaction map's fixed node positions cover the 15-player storyline pool;
 other pools fall back to a simple grid. No team data was used.
+
+### Engine pool fit, page map, and Jev snapshots (D-45, D-46, D-47 — user directive 2026-09-25)
+
+Delivered, in three parts recorded in `docs/DECISIONS.md`:
+
+**D-45, the pool's tightest fit is now an engine analysis.** `src/lib/engine/pool-fit.ts`
+(`pool-fit-analysis-v1`) searches each scenario's own membership for the
+highest-contribution nine, one lineup per template, by exact bitmask DP over the
+bundle's dated metric in integer millionths, and hands the discovered assignment to the
+unchanged scenario calculation path through a new `evaluateScenarioDraft(bundle,
+scenario, { path })` export in `src/lib/engine/calculation.ts`. Eligibility, duplicate,
+cap, coverage, PA-reconciliation, feasibility, and offense therefore stay one
+implementation. Reported per scenario: both context lineups with per-slot PA and runs,
+the engine total, `deltaVsReference` (what the lineup used leaves on the table),
+`deltaVsBaseline`, per-player PA transfers, benched members with their forgone runs,
+required position moves per context, remaining coverage shortfalls, exclusions with a
+reason, and members at a capacity limit. A member with no usable rate is excluded and
+listed, never scored as zero; an uncoverable slot stays uncovered and suppresses the
+total; a cap the fit cannot meet is reported `invalid` with the offending cap rather
+than searched past. Ties resolve to the lexicographically smallest slot-by-slot player-ID
+vector. The D-43 display-layer fit remains the hindsight lid on the case's bin and bars
+and is now labeled hindsight wherever it appears. UI: `EngineFit.svelte` on the decision
+page, a comparison table across the three scenarios, and the workspace's fourth bin,
+which is now the engine's lineup. No bundle, digest, pinned expectation, or calculation
+result changed; `schemaVersion`, `deterministic-engine-v1`, and all five digests are
+untouched.
+
+**D-46, the page map is explicit.** `/` is the season index: the timeline with today's
+date marked on the axis and in text (with a stated out-of-window case), plus one card
+per decision with its date, baseline, and both deltas. `/scenario/[slug]` is the
+decision, including the one `/` used to render inline, so no page has two URLs and no
+decision is reachable only through in-page state. `/scenario/[slug]/snapshots` is the
+new subpage. The shell header is a real `nav` (`Decisions · decision · Snapshots`) that
+marks the current section. `SeasonTimeline` and `DecisionsPage` take an optional `today`
+so the marker is testable without freezing a build. The workspace is still reached from a
+decision's `Open workspace` after the D-36 acknowledgment.
+
+**D-47, Jev is a live call behind a provider interface.** `src/lib/classification/`
+implements the documented TypeSafe contract (`POST /v1/systemone`, Bearer auth,
+`{ state, model, questions }` → `{ model, answers, usage }`, reviewed at
+docs.typesafe.ai on 2026-09-25): a frozen versioned rubric (`jev-profile-rubric-v1`),
+a deterministic prompt builder that supplies each observation explicitly and forbids
+arithmetic, a Zod-validated response contract, a cache keyed by request digest + rubric +
+prompt + provider, and recorded model identity, tokens, timing, estimated cost, and
+status. Statuses are `not-configured`, `awaiting-acknowledgment`, `pending`, `current`,
+`invalid-response`, `timeout`, `error`, `overridden`; no confidence threshold is applied
+anywhere, because SPEC §7 adopts none and O-07 has not set one. The key is held in
+memory for the session only, never written to a bundle, draft, storage, or the
+repository, so the deployed static demo cannot call the provider without one, and nothing
+is sent until a person acknowledges external processing. The analyst's label and
+rationale are withheld from the prompt because they are the comparison target. The
+snapshots page shows the roster, the engine's best nine per context, the exact request
+body, and the answers with their distributions.
+
+Observed (2026-09-25, this worktree on Bun 1.4.2, Node 26, Chromium 153 via
+Playwright 1.63, production static build):
+
+- `bun run check`: 0 errors, 0 warnings. `bun run lint`: Prettier and ESLint clean.
+- `bunx vitest run --project server --project integration`: 8 files, 69 tests passed,
+  including 11 new pool-fit cases and 20 new classification cases.
+- `bunx vitest run --project client`: 3 files, 7 tests passed, including the new
+  DecisionsPage and SnapshotsPage component tests. The browser project **does** run in
+  this environment, unlike the base commit's note.
+- `bunx playwright test`: 27 passed (23 prior, rewritten index and gate journeys, 4 new
+  snapshots journeys, 1 new keyboard journey, 3 new full-axe audits of `/`, a decision
+  page, and the snapshots subpage).
+- Pool fit cost in the workspace edit path: p50 5.65 ms, p95 12.34 ms, max 18.31 ms over
+  40 runs on `preseason-dh` in Node, on top of `calculateComparison` at p95 1.77 ms —
+  against the proposed 250 ms budget. The e2e latency journey re-ran within budget; its
+  rewrite of `reports/prototype/edit-latency.json` was restored, so the RS-07
+  single-worker reference is unchanged.
+- `git diff --check`: clean.
+
+Hand-derived expectations now asserted in `tests/engine/pool-fit.test.ts`: on
+`preseason-second` the baseline fit is 52.69416 runs (50 × (0.114350 + 0.140741 +
+0.143101) + 40 × (0.147059 + 0.139144 + 0.158416 + 0.123563 + 0.127098 + 0.124334)),
+which is 1.01105 above the lineup Boston used and 0.15986 above a per-slot greedy nine —
+a difference large enough to fail a greedy implementation. On `preseason-dh` the
+baseline fit equals the lineup used exactly (Δ 0, no moves, no transfers), because Duran
+and Anthony tie inside the 40-PA weight class and the tie-break keeps Boston's own
+assignment. Across all five storylines the per-context totals sum exactly to the engine
+total.
+
+Limitations:
+
+- The fit maximizes one dated rate. It has no platoon term (the bundles carry no split
+  rates, D-42), no defense, no age, and no recommendation language; both contexts return
+  the same nine wherever the templates weight slots in the same proportion, and the page
+  says so rather than implying a platoon advantage.
+- Capacity limits are applied after the search, so a fit that needs more workload than a
+  cap allows is reported infeasible with the offending cap rather than replaced by the
+  next-best feasible nine.
+- The hindsight diagrams and the engine fit can disagree by design: one sizes pieces
+  from what the season produced, the other picks a lineup from what was known on the
+  decision date. Both are labeled, and neither feeds the other.
+- The classification path is unverified against a real account: the response contract
+  comes from the vendor's published API, not from a live call, and the cost figure is an
+  estimate at a published list price. No calibration, error, latency, or cost claim is
+  made. The transparent rule-based baseline SPEC §7 requires is still unbuilt (RS-09).
+- A live call needs a visitor-supplied key, so the deployed demo shows the
+  `not-configured` state and the exact request instead of an answer.
+- The historical pin's retrospective event metadata and the five pinned digests are
+  unchanged; a daily refresh still moves the season-to-date October pin, the record line,
+  and the case's season totals.
+- No team data was used, and O-04, O-07, and RS-08 remain open.
 
 ### Season timeline storylines (D-44, user directive 2026-09-25)
 

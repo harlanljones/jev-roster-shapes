@@ -81,6 +81,17 @@ against one hand, which the rule treats as noise, not a quirk.
   lines can flip Pentagon/Diamond/Rectangle, which is why shapes stay out of
   the calculation identity.
 
+## The model rubric is a separate artifact
+
+`src/lib/classification/rubric.ts` holds `jev-profile-rubric-v1`: the closed set of
+nine options and their plain-language definitions and boundary rules, in the form the
+Jev request sends them. It is derived from this document's table, and it is *not* the
+analyst labels in `src/lib/shapes/taxonomy.ts` — those are the comparison target and are
+deliberately withheld from every prompt, together with their rationales, so the
+comparison is not circular. The rubric version is part of the classification cache key,
+so rewording a definition re-asks the question instead of reusing an answer. Both
+artifacts are display-layer: neither enters a bundle, a digest, or a result.
+
 ## Glyphs
 
 Every shape is drawn at the same area for the same radius

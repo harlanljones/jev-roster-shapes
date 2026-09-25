@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { Bundle } from '$lib/contracts';
-	import { calculateComparison } from '$lib/engine';
+	import { calculateComparison, calculatePoolFit, poolFitFor } from '$lib/engine';
 	import { storylineRegistry } from '$lib/storylines/registry';
 	import { TESTED_SCENARIOS } from './case-stories';
 	import CapacityBin from './diagrams/CapacityBin.svelte';
 	import CaseKey from './diagrams/CaseKey.svelte';
 	import CaseTable from './diagrams/CaseTable.svelte';
+	import EngineFit from './diagrams/EngineFit.svelte';
 	import Findings from './diagrams/Findings.svelte';
 	import InteractionMap from './diagrams/InteractionMap.svelte';
 	import PieceDetail from './diagrams/PieceDetail.svelte';
@@ -52,6 +54,8 @@
 	);
 	const pool = $derived(buildPool(bundle));
 	const calc = $derived(calculateComparison(bundle));
+	const analysis = $derived(calculatePoolFit(bundle));
+	const engineFit = $derived(poolFitFor(analysis, scenario.id));
 	const baseLineup = $derived(scenarioLineup(bundle, bundle.comparison.baseline));
 	const lineup = $derived(scenarioLineup(bundle, scenario));
 	const view = $derived(caseView(pool, lineup, baseLineup));
@@ -82,8 +86,21 @@
 	const runs = (v: number | null) => (v == null ? 'runs unavailable' : `${v.toFixed(1)} runs`);
 	const delta = (v: number | null) =>
 		v == null ? 'Δ unavailable' : `Δ ${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(1)}`;
+	/** Engine totals are exact decimal strings, so they are not pre-rounded. */
+	const engineDelta = (v: string | null) =>
+		v == null
+			? 'Δ unavailable'
+			: `Δ ${Number(v) >= 0 ? '+' : '−'}${Math.abs(Number(v)).toFixed(3)}`;
 	const binStats = (b: { fill: number; gaps: number; headroom: number }) =>
 		`${Math.round(b.fill)}% filled · ${Math.round(b.gaps)}% gaps · ${Math.round(b.headroom)}% headroom`;
+	const nameOf = (playerId: string) => pool.get(playerId)?.name ?? playerId;
+	const longDate = (iso: string) =>
+		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric',
+			timeZone: 'UTC'
+		});
 
 	function pickScenario(id: string): void {
 		picks[story.slug] = id;
@@ -197,6 +214,53 @@
 		</details>
 	</section>
 
+	<section class="block" aria-labelledby="engine-heading">
+		<div class="block-head">
+			<h2 id="engine-heading">What the roster could have done instead</h2>
+			<a class="snapshots-link" href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}
+				>Snapshots: the Jev prompt and its answers →</a
+			>
+		</div>
+		<p class="lede">
+			The engine searches each scenario's own roster for the best nine it can field — one lineup per
+			pitcher-hand context — and then judges that lineup with the same feasibility, coverage, and
+			capacity rules as any other scenario. Everything below is dated evidence: rates known on {longDate(
+				story.eventDate
+			)}, not hindsight.
+		</p>
+		<table class="fit-comparison">
+			<caption>
+				Pool fit against the lineup each scenario used, over the same illustrative ten-game horizon
+			</caption>
+			<thead>
+				<tr>
+					<th scope="col">Scenario</th>
+					<th scope="col">Lineup used</th>
+					<th scope="col">Pool's best nine</th>
+					<th scope="col">Left on the table</th>
+					<th scope="col">Best fit overall</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each analysis.fits as row (row.scenarioId)}
+					<tr>
+						<th scope="row">{row.label}</th>
+						<td
+							>{analysis.references.find((r) => r.scenarioId === row.scenarioId)?.runs ??
+								'unavailable'}</td
+						>
+						<td>{row.runs ?? 'unavailable'}</td>
+						<td>{engineDelta(row.deltaVsReference?.runs ?? null)}</td>
+						<td>{analysis.best?.scenarioId === row.scenarioId ? 'highest available fit' : ''}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+		{#if engineFit}
+			<EngineFit fit={engineFit} {nameOf} label="Pool fit for {scenario.label}" />
+		{/if}
+	</section>
+
 	<section class="tray" aria-labelledby="map-title">
 		<div class="tray-main">
 			<h2 id="map-title">How the pieces interact</h2>
@@ -230,9 +294,10 @@
 		<div class="tray-main">
 			<h2 id="bin-title">What's left off</h2>
 			<p class="lede">
-				The roster as a bin. Each lineup slot is one piece, dropped in by gravity, biggest first.
-				Empty space is whatever the shapes don't cover: gaps where outlines don't nest, and headroom
-				above the pile. The lid is where the pool's tightest fit tops out.
+				The roster as a bin, sized by what the 2026 season actually produced — a hindsight display
+				layer, kept apart from the engine's fit above. Each lineup slot is one piece, dropped in by
+				gravity, biggest first. Empty space is whatever the shapes don't cover: gaps where outlines
+				don't nest, and headroom above the pile. The lid is where the hindsight best nine tops out.
 			</p>
 			<div class="bins">
 				<figure>
@@ -248,13 +313,13 @@
 				</figure>
 				<figure>
 					<figcaption>
-						<h3>Tightest fit, platoons and position moves</h3>
+						<h3>Hindsight best nine, platoons and position moves</h3>
 						<span>{binStats(bestBin)} · {runs(bestBin.runs)}</span>
 					</figcaption>
 					<CapacityBin
 						{pool}
 						bin={bestBin}
-						label="The pool's tightest fit packed into the bin: {binStats(bestBin)}"
+						label="The hindsight best nine packed into the bin: {binStats(bestBin)}"
 					/>
 				</figure>
 			</div>
@@ -284,12 +349,12 @@
 				px={barPx}
 				label="{scenario.label} slot by slot: {Math.round(curBars.pct)}% of the container filled"
 			/>
-			<h3 class="bars-title">Tightest fit · {Math.round(bestBars.pct)}% filled</h3>
+			<h3 class="bars-title">Hindsight best nine · {Math.round(bestBars.pct)}% filled</h3>
 			<SlotBars
 				{pool}
 				bars={bestBars}
 				px={barPx}
-				label="The pool's tightest fit slot by slot: {Math.round(bestBars.pct)}% filled"
+				label="The hindsight best nine slot by slot: {Math.round(bestBars.pct)}% filled"
 			/>
 		</div>
 		<Findings
@@ -316,7 +381,9 @@
 		Players, eligibility and observed R/PA come from the five checked-in season-timeline bundles ({story.sourceLabel}).
 		Splits and PA come from {SPLIT_SOURCE.label}, fetched {SPLIT_SOURCE.fetchedAt}. Shapes follow
 		rubric v2, where a Star is a tough fit rather than a star player. Cutout asks, fit grades, and
-		split run estimates are a judgment layer and never change an engine number.
+		split run estimates are a judgment layer and never change an engine number. The engine's pool
+		fit above uses the bundle's dated metric only, and the hindsight diagrams below and after it use
+		the season's actual production, which is why the two can disagree.
 	</footer>
 </div>
 
@@ -465,6 +532,47 @@
 	.block {
 		display: grid;
 		gap: 1.25rem;
+	}
+	.block-head {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+		align-items: baseline;
+		justify-content: space-between;
+	}
+	.snapshots-link {
+		color: var(--marker);
+		font: 500 0.8rem var(--mono);
+		text-decoration: none;
+	}
+	.snapshots-link:hover {
+		text-decoration: underline;
+	}
+	.fit-comparison {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+	}
+	.fit-comparison caption {
+		margin-bottom: 0.4rem;
+		color: var(--ink-soft);
+		font-size: 0.8rem;
+		text-align: left;
+	}
+	.fit-comparison th,
+	.fit-comparison td {
+		border-bottom: 1px solid var(--rule);
+		padding: 0.4rem 0.5rem;
+		text-align: left;
+	}
+	.fit-comparison thead th {
+		color: var(--ink-soft);
+		font: 500 0.7rem var(--mono);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+	}
+	.fit-comparison td {
+		font-family: var(--mono);
 	}
 	.table-toggle {
 		border: 1px solid var(--rule);
