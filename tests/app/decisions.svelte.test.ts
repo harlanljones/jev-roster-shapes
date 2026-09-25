@@ -13,19 +13,19 @@ describe('DecisionsPage', () => {
 			.element(page.getByRole('heading', { level: 1 }))
 			.toHaveTextContent('Five roster decisions on one season timeline');
 		await expect
-			.element(page.getByText(/Today is September 25 · Boston 85–74 on the timeline/))
+			.element(page.getByText(/Today is September 25 · Boston 86–74 on the timeline/))
 			.toBeVisible();
 		await expect
-			.element(page.getByRole('img', { name: /today, September 25, 85–74/ }))
+			.element(page.getByRole('img', { name: /today, September 25, 86–74/ }))
 			.toBeVisible();
 
 		const links = page.getByRole('link');
 		await expect
-			.element(links.filter({ hasText: 'Who takes the DH at-bats?' }))
-			.toHaveAttribute('href', '/scenario/preseason-dh');
+			.element(links.filter({ hasText: 'How do you replace Bregman?' }))
+			.toHaveAttribute('href', '/scenario/offseason-infield');
 		await expect
-			.element(links.filter({ hasText: 'The lineup going into October' }))
-			.toHaveAttribute('href', '/scenario/october-lineup');
+			.element(links.filter({ hasText: 'Who plays first against the Yankees?' }))
+			.toHaveAttribute('href', '/scenario/wild-card-roster');
 		// Five timeline pins plus five decision cards, and nothing else links out.
 		expect(
 			page.getByRole('navigation', { name: 'Season timeline' }).getByRole('link').elements()
@@ -37,11 +37,11 @@ describe('DecisionsPage', () => {
 		await render(DecisionsPage, { props: { today: '2026-11-02' } });
 
 		await expect
-			.element(page.getByText(/outside the February–October window this timeline covers/))
+			.element(page.getByText(/outside the January–October window this timeline covers/))
 			.toBeVisible();
 		// The timeline uses the same date the lede does, not the viewer's today.
 		await expect
-			.element(page.getByText(/Today is November 2 · Boston 85–74 on the timeline/))
+			.element(page.getByText(/Today is November 2 · Boston 86–74 on the timeline/))
 			.toBeVisible();
 		expect.element(page.getByRole('img', { name: /past the end of this timeline window/ }));
 	});

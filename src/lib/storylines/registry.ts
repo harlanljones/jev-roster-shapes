@@ -59,11 +59,11 @@ const SNAPSHOT_LABEL =
 	'MLB Stats API season-timeline snapshot (spikes/mlb-2026/timeline-snapshot.json)';
 
 export const PINNED_STORYLINE_DIGESTS = {
-	'offseason-infield': 'f25dd4d047d26f2ad9aecfb6fbc2e293ca693e9f938779bd8da3e3c1a3f58cd0',
-	'opening-day-outfield': 'dc680022ae521951aaa0cd71c73021da8ac95c8a840cec79797b31b54b7ffcfe',
-	'july-run': '530e9755537a0edb4f950f3593a6b4f6dbcd388a261645f2f355a48814484e3e',
-	deadline: '1df6997dedf52d6a10545676559e46abf4c343ef075186364abc65fce8889c3f',
-	'wild-card-roster': 'dd8a64b62cd45605129d5aa7d4e52cef770f3e8571a6b6681c07601ef9c72a2a'
+	'offseason-infield': '957bd1d74783ad090654f0870b45427e67f00cf598c8c20bddc20404c52a9cd2',
+	'opening-day-outfield': '7dac7fe96dc0a741649dee4af9b25a618a5c414de81b6bd9bf51e8bf48c820b3',
+	'july-run': 'fb76f60edd973acc7ee57a4739fdb34e4dd5cb3f7a6b535357a7f2137a387023',
+	deadline: '87d0445040c1bb982df47945da50f884ef9e865723140d30b483a0796a1f5aec',
+	'wild-card-roster': '49d6184fda7902ccf1be48ba5dff2d2b47e90970a754335bff86e06dde0676ad'
 } as const;
 
 export const storylineRegistry: readonly Storyline[] = [
@@ -186,28 +186,28 @@ export const storylineRegistry: readonly Storyline[] = [
 	storyline({
 		slug: 'wild-card-roster',
 		short: 'Wild Card',
-		title: 'Who makes the Wild Card roster?',
-		lede: 'Boston clinched on September 21. Willson Contreras was hit on the hand by a pitch on September 18 and still could not swing a week later. Last October the club carried 14 position players. Carry Contreras and wait, or give his spot away? Gasper, Jones, Duran, Sogard, Story, and Monasterio are all competing for the at-bats.',
+		title: 'Who plays first against the Yankees?',
+		lede: 'Boston opens the Wild Card Series at Yankee Stadium on September 29: Cam Schlittler (RHP) in Game 1, Max Fried (LHP) in Game 2, Gerrit Cole or Carlos Rodón if it goes three. Willson Contreras, hit on the hand on September 17, still could not swing on September 25. The same day Mickey Gasper, the backup at first, hurt his biceps and is expected to miss the series. Curtis Mead is taking batting practice off a broken wrist and is not ruled out. With 14 spots for position players, as last October, who plays first?',
 		eventDate: '2026-09-25',
 		rateLabel: '2026 season to date',
 		date: 'September 25, 2026',
 		retrospective: false,
 		eventBasis:
-			'Contreras injury from Boston.com, September 25; the 2025 Wild Card roster (14 position players, 12 pitchers) from the club’s press release; clinch date from NESN. Every scenario is held to 14 position players. Baselines are Boston’s latest lineups against a left-hander (September 23) and a right-hander (September 24). This compares three rosters on shared assumptions; it is not a postseason optimization.',
+			'News as of September 25: Contreras (Boston.com), Gasper out for the series with a biceps injury (RotoWire, 98.5 The Sports Hub), Rafaela back after a clean MRI (MLB.com), Mead not ruled out (SI, citing the Boston Globe), Yoshida out with a hamstring strain since August (RotoWire). Yankees probables from Heavy, citing Aaron Boone. The 2025 Wild Card roster (14 position players, 12 pitchers) is from the club’s press release. Every scenario is held to 14 position players; with Gasper out, each carries 13. Lineups are Boston’s latest against each hand with Rafaela in center and Anthony taking Gasper’s DH at-bats against righties. Mead’s rate comes from his 329 PA before the injury, mostly with Washington. This compares three rosters on shared assumptions; it is not a postseason optimization.',
 		sourceLabel: SNAPSHOT_LABEL,
 		json: wildCardRosterJson,
 		expected: [
-			{ scenarioId: 'base', offenseRuns: '43.222792', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '42.670486', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '43.853352',
-				offenseDelta: '0.63056',
+				offenseRuns: '43.356696',
+				offenseDelta: '0.68621',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '42.679852',
-				offenseDelta: '-0.54294',
+				offenseRuns: '44.424496',
+				offenseDelta: '1.75401',
 				feasibility: 'feasible'
 			}
 		]

@@ -49,7 +49,7 @@
 
 <div class="index">
 	<header class="lead">
-		<p class="eyebrow">February 9 → September 25, 2026 · five dated decisions</p>
+		<p class="eyebrow">January 14 → September 25, 2026 · five dated decisions</p>
 		<h1>Five roster decisions on one season timeline</h1>
 		<p class="lede">
 			Boston's 2026 season as games over .500, with each decision pinned to the day it was made.

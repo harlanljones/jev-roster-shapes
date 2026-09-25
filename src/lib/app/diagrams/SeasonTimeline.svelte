@@ -118,7 +118,7 @@
 			? ` · Boston ${todayRecord.wins}–${todayRecord.losses} on the timeline`
 			: ' · before the first game of the season'}{marker.inRange
 			? ''
-			: ' · outside the February–October window this timeline covers'}
+			: ' · outside the January–October window this timeline covers'}
 	</p>
 	<p class="events">
 		{#each SEASON_EVENTS as e, i (e.date)}{i ? ' · ' : ''}<span>{longDate(e.date)}: {e.label}</span

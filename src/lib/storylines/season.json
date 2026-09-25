@@ -1,7 +1,7 @@
 {
 	"source": "MLB Stats API (statsapi.mlb.com), free public endpoints; MLBAM copyright applies",
 	"asOf": "2026-09-25",
-	"fetchedAt": "2026-09-25T21:54:17Z",
+	"fetchedAt": "2026-09-25T23:22:14Z",
 	"record": [
 		{
 			"date": "2026-03-26",
@@ -982,7 +982,7 @@
 		},
 		"mlbam-596115": {
 			"name": "Trevor Story",
-			"pa": 259,
+			"pa": 262,
 			"runs": 24,
 			"split": {
 				"vL": {
@@ -1012,7 +1012,7 @@
 		},
 		"mlbam-643396": {
 			"name": "Isiah Kiner-Falefa",
-			"pa": 180,
+			"pa": 182,
 			"runs": 22,
 			"split": {
 				"vL": {
@@ -1027,7 +1027,7 @@
 		},
 		"mlbam-655316": {
 			"name": "Andruw Monasterio",
-			"pa": 341,
+			"pa": 343,
 			"runs": 35,
 			"split": {
 				"vL": {
@@ -1042,7 +1042,7 @@
 		},
 		"mlbam-657136": {
 			"name": "Connor Wong",
-			"pa": 234,
+			"pa": 236,
 			"runs": 22,
 			"split": {
 				"vL": {
@@ -1057,7 +1057,7 @@
 		},
 		"mlbam-663330": {
 			"name": "Jahmai Jones",
-			"pa": 176,
+			"pa": 178,
 			"runs": 19,
 			"split": {
 				"vL": {
@@ -1072,7 +1072,7 @@
 		},
 		"mlbam-665966": {
 			"name": "Carlos Narváez",
-			"pa": 283,
+			"pa": 285,
 			"runs": 22,
 			"split": {
 				"vL": {
@@ -1080,8 +1080,8 @@
 					"ops": ".450"
 				},
 				"vR": {
-					"pa": 203,
-					"ops": ".480"
+					"pa": 208,
+					"ops": ".474"
 				}
 			}
 		},
@@ -1123,7 +1123,7 @@
 		},
 		"mlbam-677800": {
 			"name": "Wilyer Abreu",
-			"pa": 674,
+			"pa": 676,
 			"runs": 81,
 			"split": {
 				"vL": {
@@ -1151,6 +1151,21 @@
 				}
 			}
 		},
+		"mlbam-678554": {
+			"name": "Curtis Mead",
+			"pa": 329,
+			"runs": 49,
+			"split": {
+				"vL": {
+					"pa": 141,
+					"ops": ".897"
+				},
+				"vR": {
+					"pa": 188,
+					"ops": ".815"
+				}
+			}
+		},
 		"mlbam-678882": {
 			"name": "Ceddanne Rafaela",
 			"pa": 574,
@@ -1168,7 +1183,7 @@
 		},
 		"mlbam-680776": {
 			"name": "Jarren Duran",
-			"pa": 603,
+			"pa": 605,
 			"runs": 66,
 			"split": {
 				"vL": {
@@ -1181,24 +1196,9 @@
 				}
 			}
 		},
-		"mlbam-681508": {
-			"name": "Mickey Gasper",
-			"pa": 225,
-			"runs": 26,
-			"split": {
-				"vL": {
-					"pa": 28,
-					"ops": ".268"
-				},
-				"vR": {
-					"pa": 197,
-					"ops": ".902"
-				}
-			}
-		},
 		"mlbam-686765": {
 			"name": "Nick Sogard",
-			"pa": 269,
+			"pa": 271,
 			"runs": 28,
 			"split": {
 				"vL": {
@@ -1228,7 +1228,7 @@
 		},
 		"mlbam-701350": {
 			"name": "Roman Anthony",
-			"pa": 237,
+			"pa": 239,
 			"runs": 24,
 			"split": {
 				"vL": {

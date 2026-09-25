@@ -8,7 +8,7 @@ import { getStoryline } from '../../src/lib/storylines/registry';
 // invents nothing. A call only happens after a person supplies a key and
 // acknowledges external processing.
 describe('SnapshotsPage', () => {
-	const story = getStoryline('preseason-dh')!;
+	const story = getStoryline('offseason-infield')!;
 
 	it('shows the prompt, the roster, and the engine fit with no provider configured', async () => {
 		await render(SnapshotsPage, { props: { story } });
@@ -21,19 +21,21 @@ describe('SnapshotsPage', () => {
 		await expect.element(page.getByText(/No answers yet/)).toBeVisible();
 
 		await expect.element(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
-		await expect.element(page.getByText(/^Engine total 51\.68311 runs/)).toBeVisible();
-		await expect.element(page.getByText(/0 against the lineup this scenario used/)).toBeVisible();
+		await expect.element(page.getByText(/^Engine total 52\.69416 runs/)).toBeVisible();
+		await expect
+			.element(page.getByText(/\+1\.991 against the lineup this scenario used/))
+			.toBeVisible();
 		await expect.element(page.getByText('Request body, exactly as it would be sent')).toBeVisible();
 	});
 
 	it('keeps the engine fit as the scenario changes and never calls the provider on its own', async () => {
 		await render(SnapshotsPage, { props: { story } });
 
-		await page.getByRole('button', { name: /Casas DH/ }).click();
-		await expect.element(page.getByText(/^Engine total 51\.68311 runs/)).toBeVisible();
-		// Candidate B's lineup gives up 4.55092 runs; the sign is shown, not implied.
+		await page.getByRole('button', { name: /No Contreras trade/ }).click();
+		await expect.element(page.getByText(/^Engine total 52\.50346 runs/)).toBeVisible();
+		// Candidate B's lineup gives up 5.7853 runs; the sign is shown, not implied.
 		await expect
-			.element(page.getByText(/\+4\.551 against the lineup this scenario used/))
+			.element(page.getByText(/\+5\.785 against the lineup this scenario used/))
 			.toBeVisible();
 		// Still nothing asked, and the roster analysis follows the scenario.
 		await expect.element(page.getByText(/No answers yet/)).toBeVisible();

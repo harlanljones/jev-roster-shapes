@@ -143,6 +143,11 @@ export const PLAYER_SHAPES: Readonly<Record<string, ShapeAssignment>> = {
 		rationale:
 			'Steady single-position third baseman: .850 vs LHP and .782 vs RHP over 697 PA for the Cubs in 2026, no platoon quirk. In this app he is the Boston counterfactual: he signed with Chicago in January.'
 	},
+	'mlbam-678554': {
+		shape: 'Circle',
+		rationale:
+			'Multi-position infielder (1B/2B/3B from 2025) with no platoon quirk: .897 vs LHP and .817 vs RHP over 329 PA, mostly for Washington before a July 29 wrist fracture. The rate is high for a Circle; the sample and the layoff are the caveat.'
+	},
 	'mlbam-671213': {
 		shape: 'Unclassified',
 		rationale:

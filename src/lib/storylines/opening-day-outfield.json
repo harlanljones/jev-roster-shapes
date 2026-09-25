@@ -1,7 +1,7 @@
 {
 	"schemaVersion": "1.0",
 	"bundleId": "mlbam-bos-2026-opening-day-outfield",
-	"createdAt": "2026-09-25T21:54:17Z",
+	"createdAt": "2026-09-25T23:22:14Z",
 	"dataClass": "public",
 	"sources": [
 		{
@@ -9,7 +9,7 @@
 			"title": "MLB Stats API — Red Sox season-timeline snapshot, as of 2026-03-25",
 			"kind": "projection",
 			"effectiveAt": "2026-03-25T00:00:00Z",
-			"note": "Free public endpoints, fetched 2026-09-25T21:54:17Z into spikes/mlb-2026/timeline-snapshot.json. Rates are observed 2025 regular-season totals (what was known before Opening Day); for traded players the combined all-teams row is used. Eligibility: >= 10 fielding games at a position in 2025 or >= 10 Boston starts there in 2026 through 2026-03-25 (D-35 rule, adapted), or >= 3 starts there in Boston's starting lineups from 2026-03-26 to 2026-04-08; DH excluded. Boston starts only: a traded player's starts for another club do not count toward the 2026 rule. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
+			"note": "Free public endpoints, fetched 2026-09-25T23:22:14Z into spikes/mlb-2026/timeline-snapshot.json. Rates are observed 2025 regular-season totals (what was known before Opening Day); for traded players the combined all-teams row is used. Eligibility: >= 10 fielding games at a position in 2025 or >= 10 Boston starts there in 2026 through 2026-03-25 (D-35 rule, adapted), or >= 3 starts there in Boston's starting lineups from 2026-03-26 to 2026-04-08; DH excluded. Boston starts only: a traded player's starts for another club do not count toward the 2026 rule. Use of page content acknowledges the MLBAM copyright notice. Rates are observed R/PA, not forward projections; splits unavailable."
 		},
 		{
 			"id": "storyline-assumptions",

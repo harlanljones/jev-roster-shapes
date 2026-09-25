@@ -476,6 +476,28 @@ Observed (2026-09-25, snapshot of 160 games, 86–74):
 - Limits: rates are observed, not projected; the 2025 rates behind the
   preseason pins include small samples (Mayer 136 PA, Casas 112 PA); the Wild
   Card pin compares rosters and is not an October optimization.
+### Wild Card news, `/` redirect, and PR #6 merged in (D-49, user directive 2026-09-25)
+
+Delivered: `/` opens on the Wild Card decision and the season index moved to
+`/decisions`. The Wild Card storyline carries the September 25 news (Gasper out,
+Contreras unable to swing, Rafaela back, Mead not ruled out, Yoshida out) and
+the Yankees' expected starters. PR #6 is merged into this branch; its pool-fit
+hand derivations run on frozen D-44 fixtures.
+
+Observed (2026-09-25, snapshot fetched 23:22Z, 160 games, 86–74):
+
+- `bun spikes/mlb-2026/timeline-build.mjs`: all 15 scenarios feasible; the
+  Wild Card totals 42.670486 / 43.356696 / 44.424496 match the independent
+  Decimal hand derivation, and the other four pins are unchanged.
+- `bun run check`: 0 errors, 0 warnings (556 files). `bun run lint`: clean.
+- `bunx vitest run --project server --project integration`: 8 files, 73 tests
+  passed.
+- Client project and `bunx playwright test` with the local Chromium override
+  (uncommitted config copies): 7 and 29 passed, including the full axe scans
+  of `/`, `/decisions`, a decision page, and its snapshots.
+- Limits: Mead's rate is from 329 PA before a July 29 fracture; the news is as
+  of September 25 and the roster may change before September 29.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

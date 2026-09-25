@@ -52,7 +52,8 @@ const P = {
 	duran: 680776,
 	yoshida: 807799,
 	gasper: 681508,
-	jones: 663330
+	jones: 663330,
+	mead: 678554
 };
 
 const asOf = snapshot.asOf;
@@ -102,7 +103,11 @@ const deadlineRegulars = lineup({
 	RF: 'abreu',
 	DH: 'yoshida'
 });
-const latestVsLeft = lineup({
+// The Wild Card lineups (D-49): Boston's latest lineups against each hand with
+// Gasper (biceps, expected to miss the series) and Yoshida (hamstring) out and
+// Rafaela back in center. Against lefties they match the September 22–23
+// starts; against righties Anthony takes the DH at-bats Gasper had.
+const wildCardVsLeft = lineup({
 	C: 'rutschman',
 	'1B': 'sogard',
 	'2B': 'monasterio',
@@ -113,7 +118,7 @@ const latestVsLeft = lineup({
 	RF: 'abreu',
 	DH: 'jones'
 });
-const latestVsRight = lineup({
+const wildCardVsRight = lineup({
 	C: 'rutschman',
 	'1B': 'sogard',
 	'2B': 'ikf',
@@ -122,7 +127,7 @@ const latestVsRight = lineup({
 	LF: 'duran',
 	CF: 'rafaela',
 	RF: 'abreu',
-	DH: 'gasper'
+	DH: 'anthony'
 });
 
 const TIMELINE = [
@@ -261,32 +266,34 @@ const TIMELINE = [
 		observed: ['2026-09-11', asOf],
 		rateLabel: `2026 through ${asOf}`,
 		// Boston's 2025 Wild Card roster carried 14 position players and 12
-		// pitchers; the same limit applies to every scenario here.
+		// pitchers; the same limit applies to every scenario here. Gasper is
+		// hurt and off every roster, so the baseline leaves one spot open.
 		rosterSizeMax: 14,
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — Carry Contreras and wait on his hand: the latest lineups',
-				lineups: { L: latestVsLeft, R: latestVsRight },
-				reserves: ['contreras', 'wong', 'ikf', 'anthony']
+				label: 'Baseline — Contreras can’t swing: carry him, Sogard plays first',
+				lineups: { L: wildCardVsLeft, R: wildCardVsRight },
+				reserves: ['contreras', 'wong', 'ikf', 'duran']
 			},
 			{
 				id: 'cand-a',
 				label: 'A — Contreras can swing: back at first, Sogard to second vs RHP',
 				lineups: {
-					L: { ...latestVsLeft, '1B': 'contreras' },
-					R: { ...latestVsRight, '1B': 'contreras', '2B': 'sogard' }
+					L: { ...wildCardVsLeft, '1B': 'contreras' },
+					R: { ...wildCardVsRight, '1B': 'contreras', '2B': 'sogard' }
 				},
-				reserves: ['wong', 'ikf', 'anthony']
+				reserves: ['wong', 'ikf', 'duran']
 			},
 			{
 				id: 'cand-b',
-				label: 'B — Leave Contreras off: Gasper at first, Anthony DHs vs RHP',
+				label: 'B — Mead for Contreras: Mead at first, Sogard to second vs RHP',
 				lineups: {
-					L: latestVsLeft,
-					R: { ...latestVsRight, '1B': 'gasper', '2B': 'sogard', DH: 'anthony' }
+					L: { ...wildCardVsLeft, '1B': 'mead' },
+					R: { ...wildCardVsRight, '1B': 'mead', '2B': 'sogard' }
 				},
-				reserves: ['wong', 'ikf'],
+				reserves: ['wong', 'ikf', 'duran'],
+				incoming: ['mead'],
 				outgoing: ['contreras']
 			}
 		]

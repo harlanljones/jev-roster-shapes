@@ -28,7 +28,7 @@ eligibility is Unclassified — the taxonomy never forces a label.
 | Star | A quirky or tough fit: a hitter who plays one side of the platoon well and the other poorly, so he fills a slot snugly only as half of a platoon. Rule: a gap of at least .200 OPS between vs-LHP and vs-RHP, with 50+ PA on each side (2026 statSplits) | Isiah Kiner-Falefa (.417 vs LHP over 54 PA, .701 vs RHP over 126 PA) | Caleb Durbin (elite 0.127148 R/PA but .697 / .718 splits, no quirk — Square) | A gap under .200, or under 50 PA on either side, is never a Star; production level alone never makes a Star |
 | Square | Steady single-position regular with no platoon quirk; solid everyday piece | Caleb Durbin (0.127148, 582 PA, 3B, .697 / .718); Willson Contreras (0.127580, 533 PA, 1B, .981 / .878); Adley Rutschman (C); Connor Wong (0.094017, C) | Trevor Story (SS-only but the 2026 question is his throws — Octagon) | Multi-position eligibility moves a player to Circle; a .200+ platoon gap moves him to Star |
 | Rectangle | High-PA workhorse (≥550 PA) carrying everyday volume | Wilyer Abreu (674 PA); Jarren Duran (603 PA) | Ceddanne Rafaela (574 PA but the story is the Gold Glove — Pentagon/Octagon judgment call, see below) | Below 550 PA is never a Rectangle |
-| Circle | Well-rounded utility: multi-position eligible, mid rate, no everyday slot, no platoon quirk | Nick Sogard (1B/2B, .793 / .704); Andruw Monasterio (2B/SS/3B, .798 / .608, a .190 gap); Anthony Seigler, Mickey Gasper, Jahmai Jones (multi-position, fewer than 50 PA on one side) | Isiah Kiner-Falefa (2B/SS, but a .284 platoon gap — Star under v2); Marcelo Mayer (multi-position but the story is fragility — Diamond) | Single-position players are never Circles; a .200+ platoon gap moves a Circle to Star |
+| Circle | Well-rounded utility: multi-position eligible, mid rate, no everyday slot, no platoon quirk | Nick Sogard (1B/2B, .793 / .704); Andruw Monasterio (2B/SS/3B, .798 / .608, a .190 gap); Anthony Seigler, Mickey Gasper, Jahmai Jones (multi-position, fewer than 50 PA on one side); Curtis Mead (1B/2B/3B, .897 / .817 over 329 PA, a high rate for a Circle on a sample cut short by a wrist fracture) | Isiah Kiner-Falefa (2B/SS, but a .284 platoon gap — Star under v2); Marcelo Mayer (multi-position but the story is fragility — Diamond) | Single-position players are never Circles; a .200+ platoon gap moves a Circle to Star |
 | Pentagon | Young flash: 25 or under with extra-base/speed electricity and high variance | Roman Anthony (21, first full season); Ceddanne Rafaela (25, Gold Glove, swings at everything) | Jarren Duran (29, established volume — Rectangle) | Over 25, or below 200 PA on a full season, needs a written exception |
 | Octagon | Defensive anchor: the shortstop-grade glove the infield is built around | Trevor Story (SS, club leader; 2025 late-season throw slippage recorded as the limitation, not a disqualifier) | Marcelo Mayer (plus defender but only 236 PA — Diamond) | A player benched for defense in the storyline set cannot be the Octagon |
 | Diamond | High-value but fragile: above-roster-median rate with an injury-limited season (<300 PA) | Marcelo Mayer (0.080508 over 236 PA, 228 for Boston before the deadline trade to San Francisco; never topped 91 pro games before 2026) | Roman Anthony (237 PA but the story is ascent, not fragility — Pentagon) | ≥300 PA is never a Diamond |
@@ -71,6 +71,11 @@ refreshed with it.
 
 ## Known judgment calls (recorded, not hidden)
 
+- Curtis Mead (added for the Wild Card storyline, D-49) is a Circle on
+  eligibility and splits, but his 0.148936 R/PA is the highest in the pool and
+  came before a wrist fracture ended his season on July 29; a Diamond reading
+  (high value, fragile) is defensible once his 329 PA are weighed against the
+  layoff.
 - Rafaela could be Rectangle (574 PA) or Octagon (Gold Glove CF); rubric v1
   assigns Pentagon on the "swings at everything, timely hitting, age 25" flash
   reading. A future evaluator pass may move him to Octagon without touching any

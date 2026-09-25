@@ -60,7 +60,7 @@ async function acknowledge(page: Page): Promise<void> {
 	});
 }
 
-async function openSnapshots(page: Page, slug = 'preseason-dh'): Promise<void> {
+async function openSnapshots(page: Page, slug = 'offseason-infield'): Promise<void> {
 	await page.goto(`/scenario/${slug}/snapshots`);
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Snapshots');
 }
@@ -92,11 +92,13 @@ test('the snapshots page shows the prompt, the roster, and the engine fit with n
 	await expect(fitTable).toContainText('Left-starter context');
 	await expect(fitTable).toContainText('Right-starter context');
 	await expect(fitTable).toContainText('Roman Anthony');
-	await expect(page.locator('.fit-note')).toContainText('Engine total 51.68311 runs');
-	await expect(page.locator('.fit-note')).toContainText('0 against the lineup this scenario used');
+	await expect(page.locator('.fit-note')).toContainText('Engine total 52.69416 runs');
+	await expect(page.locator('.fit-note')).toContainText(
+		'+1.991 against the lineup this scenario used'
+	);
 
 	// The decision's own numbers are the workspace's, and stay there.
-	await expect(page.getByRole('link', { name: /Who takes the DH at-bats/ })).toBeVisible();
+	await expect(page.getByRole('link', { name: /How do you replace Bregman/ })).toBeVisible();
 });
 
 test('a live answer is shown, validated, and leaves every engine number alone', async ({
@@ -145,7 +147,7 @@ test('a provider failure is visible and changes nothing else', async ({ page }) 
 	await expect(page.locator('.answers')).toContainText('HTTP 401');
 	// No answer, and the roster analysis is untouched.
 	await expect(page.locator('.answers')).toContainText('unavailable');
-	await expect(page.locator('.fit-note')).toContainText('51.68311');
+	await expect(page.locator('.fit-note')).toContainText('52.69416');
 });
 
 test('an invalid response is reported instead of being shown as an answer', async ({ page }) => {

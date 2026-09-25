@@ -76,7 +76,7 @@ test('a keyboard-only user tabs, edits, swaps, and inspects evidence', async ({ 
 test('a keyboard-only user reaches a decision, its snapshots, and the prompt', async ({ page }) => {
 	// The skip link comes first, then the shell nav. Focus starts in the
 	// document, not the first control, so move it into the page first.
-	await page.goto('/');
+	await page.goto('/decisions');
 	await page.locator('body').evaluate((el) => el.focus());
 	await page.keyboard.press('Tab');
 	await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
@@ -86,17 +86,17 @@ test('a keyboard-only user reaches a decision, its snapshots, and the prompt', a
 	await expect(page.getByRole('link', { name: 'Decisions' })).toBeFocused();
 
 	// Open a decision card by keyboard.
-	const card = page.getByRole('link', { name: 'Who takes the DH at-bats?' });
+	const card = page.getByRole('link', { name: 'How do you replace Bregman?' });
 	await card.evaluate((el) => el.focus());
 	await page.keyboard.press('Enter');
-	await expect(page).toHaveURL(/\/scenario\/preseason-dh$/);
+	await expect(page).toHaveURL(/\/scenario\/offseason-infield$/);
 	await expect(page.getByRole('region', { name: /Pool fit for/ })).toBeVisible();
 
 	// Follow the nav to the snapshots subpage.
 	const nav = page.getByRole('navigation', { name: 'Sections' });
 	await nav.getByRole('link', { name: 'Snapshots' }).evaluate((el) => el.focus());
 	await page.keyboard.press('Enter');
-	await expect(page).toHaveURL(/\/scenario\/preseason-dh\/snapshots$/);
+	await expect(page).toHaveURL(/\/scenario\/offseason-infield\/snapshots$/);
 
 	// The request body is a native disclosure: focusable, operable with Enter.
 	const toggle = page.getByText('Request body, exactly as it would be sent');

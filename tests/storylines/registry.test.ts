@@ -2,6 +2,7 @@ import { computeInputDigest, validateBundle } from '../../src/lib/contracts';
 import { calculateComparison } from '../../src/lib/engine';
 import { shapeOf } from '../../src/lib/shapes/taxonomy';
 import {
+	CURRENT_SLUG,
 	getStoryline,
 	PINNED_STORYLINE_DIGESTS,
 	storylineRegistry
@@ -169,5 +170,28 @@ describe('2026 storyline registry', () => {
 		).toBe(true);
 		const contreras = 'mlbam-575929';
 		expect(wildCard.bundle.comparison.candidates[1]?.memberIds).not.toContain(contreras);
+	});
+
+	it('keeps Gasper off every Wild Card roster and brings Mead in only for Contreras', () => {
+		// D-49: Gasper hurt his biceps on September 25 and is expected to miss
+		// the series; Mead is candidate B's replacement for Contreras.
+		const wildCard = getStoryline('wild-card-roster');
+		if (!wildCard) throw new Error('wild-card-roster storyline missing');
+		const [base, candA, candB] = [
+			wildCard.bundle.comparison.baseline,
+			...wildCard.bundle.comparison.candidates
+		];
+		const gasper = 'mlbam-681508';
+		const mead = 'mlbam-678554';
+		for (const scenario of [base, candA, candB]) expect(scenario?.memberIds).not.toContain(gasper);
+		expect(base?.memberIds).not.toContain(mead);
+		expect(candA?.memberIds).not.toContain(mead);
+		expect(candB?.memberIds).toContain(mead);
+		expect(candB?.memberIds).not.toContain('mlbam-575929');
+	});
+
+	it('opens `/` on a decision that exists', () => {
+		expect(CURRENT_SLUG).toBe('wild-card-roster');
+		expect(getStoryline(CURRENT_SLUG)).toBeDefined();
 	});
 });

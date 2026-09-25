@@ -4,12 +4,26 @@ import { expect, test } from '@playwright/test';
 const require = createRequire(import.meta.url);
 const axeCorePath = require.resolve('axe-core/axe.min.js');
 
-// D-46: `/` is the season index, every decision is its own page, and the
-// snapshots subpage hangs off the decision it explains.
+// D-46: the season index lists every decision, each decision is its own page,
+// and the snapshots subpage hangs off the decision it explains. D-49: `/` opens
+// on the current decision and the index lives at `/decisions`.
+test('`/` opens on the Wild Card decision', async ({ page }) => {
+	await page.goto('/');
+	await expect(page).toHaveURL(/\/scenario\/wild-card-roster$/);
+	await expect(page.getByRole('heading', { level: 1 })).toContainText(
+		'Who plays first against the Yankees?'
+	);
+	await expect(
+		page
+			.getByRole('navigation', { name: 'Season timeline' })
+			.getByRole('link', { name: /Wild Card/ })
+	).toHaveAttribute('aria-current', 'page');
+});
+
 test('the index opens on the timeline with today marked and one card per decision', async ({
 	page
 }) => {
-	await page.goto('/');
+	await page.goto('/decisions');
 
 	await expect(page).toHaveTitle(/Roster Shapes/);
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Five roster decisions');
@@ -25,14 +39,13 @@ test('the index opens on the timeline with today marked and one card per decisio
 	await expect(page.locator('.today-note')).toContainText(`Today is ${longToday}`);
 	await expect(page.getByRole('img', { name: /today, / })).toBeVisible();
 	// One card per decision, each an addressable page.
-	await expect(page.getByRole('link', { name: 'Who takes the DH at-bats?' })).toHaveAttribute(
+	await expect(page.getByRole('link', { name: 'How do you replace Bregman?' })).toHaveAttribute(
 		'href',
-		'/scenario/preseason-dh'
+		'/scenario/offseason-infield'
 	);
-	await expect(page.getByRole('link', { name: 'The lineup going into October' })).toHaveAttribute(
-		'href',
-		'/scenario/october-lineup'
-	);
+	await expect(
+		page.getByRole('link', { name: 'Who plays first against the Yankees?' })
+	).toHaveAttribute('href', '/scenario/wild-card-roster');
 
 	// DOM-level audit (see workspace-journey.spec.ts for why the rule set is
 	// pinned instead of running every axe rule).
@@ -73,10 +86,10 @@ test('the index opens on the timeline with today marked and one card per decisio
 test('a decision page shows the case, the engine pool fit, and a way to its snapshots', async ({
 	page
 }) => {
-	await page.goto('/scenario/preseason-second');
+	await page.goto('/scenario/offseason-infield');
 
 	await expect(page.getByRole('heading', { level: 1 })).toContainText(
-		'Who plays second, and who faces lefties?'
+		'How do you replace Bregman?'
 	);
 	// The case (D-43) exposes every lineup piece as a labeled button.
 	await expect(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
@@ -89,31 +102,31 @@ test('a decision page shows the case, the engine pool fit, and a way to its snap
 	const fit = page.getByRole('region', { name: /Pool fit for/ });
 	await expect(fit).toBeVisible();
 	await expect(fit.getByText('52.69416', { exact: false }).first()).toBeVisible();
-	await expect(fit).toContainText('Δ +1.011');
+	await expect(fit).toContainText('Δ +1.991');
 	await expect(page.getByRole('columnheader', { name: 'Left on the table' })).toBeVisible();
 
 	await expect(
 		page.getByRole('link', { name: /Snapshots: the Jev prompt and its answers/ })
-	).toHaveAttribute('href', '/scenario/preseason-second/snapshots');
+	).toHaveAttribute('href', '/scenario/offseason-infield/snapshots');
 });
 
 test('the shell nav names the sections and marks the current one', async ({ page }) => {
-	await page.goto('/scenario/deadline-catcher');
-	await expect(page).toHaveURL(/\/scenario\/deadline-catcher$/);
+	await page.goto('/scenario/deadline');
+	await expect(page).toHaveURL(/\/scenario\/deadline$/);
 
 	const nav = page.getByRole('navigation', { name: 'Sections' });
-	await expect(nav.getByRole('link', { name: 'Decisions' })).toHaveAttribute('href', '/');
-	await expect(nav.getByRole('link', { name: 'Deadline C', exact: true })).toHaveAttribute(
+	await expect(nav.getByRole('link', { name: 'Decisions' })).toHaveAttribute('href', '/decisions');
+	await expect(nav.getByRole('link', { name: 'Deadline', exact: true })).toHaveAttribute(
 		'aria-current',
 		'page'
 	);
 	await expect(nav.getByRole('link', { name: 'Snapshots' })).toHaveAttribute(
 		'href',
-		'/scenario/deadline-catcher/snapshots'
+		'/scenario/deadline/snapshots'
 	);
 	// The timeline pin for this decision is current too, and the other four are not.
 	const pins = page.getByRole('navigation', { name: 'Season timeline' });
-	await expect(pins.getByRole('link', { name: /Deadline C/ })).toHaveAttribute(
+	await expect(pins.getByRole('link', { name: /Deadline/ })).toHaveAttribute(
 		'aria-current',
 		'page'
 	);

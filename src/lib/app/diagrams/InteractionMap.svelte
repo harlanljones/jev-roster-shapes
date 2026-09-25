@@ -50,7 +50,9 @@
 		'mlbam-663330': [660, 262],
 		'mlbam-681508': [720, 478],
 		// D-48: Bregman, the offseason counterfactual.
-		'mlbam-608324': [58, 292]
+		'mlbam-608324': [58, 292],
+		// D-49: Mead, the Wild Card first-base option.
+		'mlbam-678554': [505, 150]
 	};
 	// Hand-tuned curvature so parallel edges and labels don't stack.
 	const BEND: Record<string, number> = {

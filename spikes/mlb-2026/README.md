@@ -55,7 +55,7 @@ offseason-infield     50.70271 | A 50.68765 (−0.01506)  | B 46.71816 (−3.984
 opening-day-outfield  50.70271 | A 48.773902 (−1.928808)| B 48.88215 (−1.82056)
 july-run              44.0207  | A 45.77464 (+1.75394)  | B 44.7284  (+0.7077)
 deadline              46.08519 | A 46.54759 (+0.4624)   | B 44.65364 (−1.43155)
-wild-card-roster      43.222792| A 43.853352 (+0.63056) | B 42.679852 (−0.54294)
+wild-card-roster      42.670486| A 43.356696 (+0.68621) | B 44.424496 (+1.75401)
 ```
 
 Every scenario is feasible; readiness is false only for the missing

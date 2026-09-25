@@ -42,11 +42,14 @@ describe('Shape Case model (display layer, D-43)', () => {
 		const fit = tightestFit(pool);
 		expect(fit.L.DH).toBe('mlbam-608324'); // Bregman vs LHP
 		expect(fit.R['3B']).toBe('mlbam-608324'); // Bregman at third vs RHP
-		expect(fit.R.DH).toBe('mlbam-680776'); // Duran vs RHP
+		// Rafaela (67 runs) and Duran (66) both cover center; with the
+		// September 25 refresh the fit puts Duran in center and Rafaela at DH.
+		expect(fit.R.CF).toBe('mlbam-680776'); // Duran in center vs RHP
+		expect(fit.R.DH).toBe('mlbam-678882'); // Rafaela vs RHP
 		const bin = tightestBin(pool);
 		expect(bin.runs?.toFixed(2)).toBe('526.71');
 		expect(bin.overflows).toBe(false);
-		expect(Math.round(bin.fill)).toBe(61);
+		expect(Math.round(bin.fill)).toBe(69);
 		expect(Math.round(bin.gaps + bin.headroom + bin.fill)).toBe(100);
 	});
 
