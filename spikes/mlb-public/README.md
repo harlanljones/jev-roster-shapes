@@ -3,8 +3,8 @@
 The 2025 bundle this spike produced (`redsox-observed-2025.json`) was removed
 from the app and test surface with the synthetic golden fixture; the script
 and this note are retained as the historical record. The live successor is
-`spikes/mlb-2026/build.mjs`, which builds the five 2026 storyline bundles the
-library opens.
+`spikes/mlb-2026/timeline-build.mjs` (D-44), which builds the five dated 2026
+storyline bundles the library opens.
 
 Builds one static `public`-class v1 bundle from freely fetchable 2025 data and
 proves the frozen validator and deterministic engine accept real-shaped public

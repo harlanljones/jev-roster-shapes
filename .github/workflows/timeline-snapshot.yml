@@ -1,0 +1,57 @@
+# Season-timeline snapshot (D-44). Runs the dated MLB Stats API fetcher and
+# commits the raw snapshot back to the branch that triggered it, so the
+# timeline bundles rebuild offline from reviewable evidence. Runs when the
+# fetcher changes on a non-main branch, or by hand with an optional as-of date.
+name: Fetch season-timeline snapshot
+
+on:
+  push:
+    branches-ignore: [main]
+    paths: [spikes/mlb-2026/timeline-fetch.mjs]
+  workflow_dispatch:
+    inputs:
+      data_as_of:
+        description: 'Last date to include (YYYY-MM-DD); blank uses today (UTC)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: timeline-snapshot-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Fetch dated snapshot
+        env:
+          DATA_AS_OF: ${{ inputs.data_as_of }}
+        run: |
+          if [ -z "$DATA_AS_OF" ]; then unset DATA_AS_OF; fi
+          bun spikes/mlb-2026/timeline-fetch.mjs
+          bunx prettier --write spikes/mlb-2026/timeline-snapshot.json
+
+      - name: Commit snapshot to this branch
+        run: |
+          if git diff --quiet -- spikes/mlb-2026/timeline-snapshot.json && git ls-files --error-unmatch spikes/mlb-2026/timeline-snapshot.json >/dev/null 2>&1; then
+            echo "snapshot unchanged"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add spikes/mlb-2026/timeline-snapshot.json
+          git commit -m "data: fetch season-timeline snapshot"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

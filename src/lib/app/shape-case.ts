@@ -1,8 +1,8 @@
 // Shape Case model (D-43): the roster as a fitted case, its interaction map,
 // its capacity bin, and its slot-by-slot bars. Ported from the "Red Sox Shape
 // Case" concept artifact. Everything here is a display and judgment layer:
-// piece sizes use actual 2026 production (split-evidence PA × the bundle's
-// observed R/PA), cutout asks and fit grades are a proposed rubric, and split
+// piece sizes use actual 2026 production (season-to-date PA × season R/PA,
+// while the engine scores each storyline with what was known on its date), cutout asks and fit grades are a proposed rubric, and split
 // run estimates scale R/PA by split OPS. None of it enters a bundle, a digest,
 // or the engine, and the workspace's pinned run totals stay the engine's.
 import type { Bundle, Scenario } from '$lib/contracts';
@@ -14,6 +14,7 @@ import {
 	LEAGUE_RUNS_PER_PA,
 	PLAYER_SPLITS,
 	SAVANT_SPAN,
+	SEASON_TOTALS,
 	type PlayerSplit
 } from './split-evidence';
 
@@ -29,13 +30,17 @@ export interface CasePlayer {
 	last: string;
 	bats: string;
 	elig: readonly string[];
+	/** 2026 season-to-date R/PA: sizes the piece (display layer). */
 	rate: number | null;
+	/** 2026 season-to-date R/PA as text, six decimals. */
+	seasonRateText: string | null;
+	/** The bundle's R/PA, known on the storyline's decision date (engine input). */
 	rateText: string | null;
 	shape: ShapeLabel;
 	rationale: string;
 	split: PlayerSplit | null;
 	pa: { L: number; R: number };
-	/** Actual 2026 runs produced: actual PA × observed R/PA, or null when missing. */
+	/** Actual 2026 runs produced: actual PA × season R/PA, or null when missing. */
 	runs: number | null;
 }
 
@@ -62,9 +67,12 @@ export function buildPool(bundle: Bundle): Pool {
 	const pool = new Map<string, CasePlayer>();
 	for (const player of bundle.dataset.players) {
 		const rateText = rates.get(player.id) ?? null;
-		const rate = rateText == null ? null : Number(rateText);
+		const total = SEASON_TOTALS[player.id] ?? null;
+		const rate = total ? total.runs / total.pa : null;
 		const split = PLAYER_SPLITS[player.id] ?? null;
-		const k = split?.seasonPa ? split.seasonPa / (split.vL.pa + split.vR.pa) : 1;
+		// Split rows can trail the season total by a game; scale both sides
+		// to the season PA in the same proportion.
+		const k = split && total ? total.pa / (split.vL.pa + split.vR.pa) : 1;
 		const pa = split ? { L: split.vL.pa * k, R: split.vR.pa * k } : { L: 0, R: 0 };
 		const label = shapeOf(player.id);
 		pool.set(player.id, {
@@ -74,6 +82,7 @@ export function buildPool(bundle: Bundle): Pool {
 			bats: player.bats,
 			elig: player.eligiblePositions,
 			rate,
+			seasonRateText: rate == null ? null : rate.toFixed(6),
 			rateText,
 			shape: label.shape,
 			rationale: label.rationale,
@@ -472,7 +481,9 @@ export function interactionEdges(pool: Pool, tested: readonly TestedScenario[]):
 		const delta = runs == null || baseRuns == null ? null : runs - baseRuns;
 		ins.forEach((inn, k) => {
 			const o = outs[k];
-			if (!o) return;
+			// Each storyline has its own dated pool; skip swaps whose players
+			// are not in this one.
+			if (!o || !pool.has(inn) || !pool.has(o)) return;
 			const key = [inn, o].sort().join('|');
 			const edge = swaps.get(key) ?? { a: o, b: inn, tests: [] };
 			edge.tests.push({ inn, out: o, delta, story: t.story, scenarioId: t.scenarioId });

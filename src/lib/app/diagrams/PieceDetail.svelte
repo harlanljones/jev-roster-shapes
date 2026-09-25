@@ -43,8 +43,10 @@
 			<dd>{p.bats}</dd>
 			<dt>Eligible</dt>
 			<dd>{p.elig.length ? p.elig.join(' · ') : 'none'}</dd>
-			<dt>Observed R/PA</dt>
+			<dt>R/PA known then</dt>
 			<dd>{p.rateText ?? 'unavailable'}</dd>
+			<dt>2026 season R/PA</dt>
+			<dd>{p.seasonRateText ?? 'no 2026 PA'}</dd>
 			<dt>Split OPS</dt>
 			<dd>{splitText(p)}</dd>
 			<dt>Platoon fit</dt>
@@ -65,7 +67,7 @@
 						p.pa.R
 					)} vs RHP){:else}unavailable{/if}
 			</dd>
-			<dt>Runs (PA × rate)</dt>
+			<dt>2026 runs (PA × season rate)</dt>
 			<dd>{p.runs == null ? 'unavailable' : p.runs.toFixed(1)}</dd>
 		</dl>
 		<p class="rubric"><span class="layer">Rubric note.</span> {p.rationale}</p>

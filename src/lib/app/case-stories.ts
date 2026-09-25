@@ -1,16 +1,8 @@
-// Storyline context for the Shape Case diagrams (D-43): short names for the
-// storyline tabs, and every candidate lineup the storylines test, which the
+// Storyline context for the Shape Case diagrams (D-43, D-44): short names for
+// the timeline pins, and every candidate lineup the storylines test, which the
 // interaction map draws as swap arrows.
 import { storylineRegistry } from '$lib/storylines/registry';
 import { scenarioLineup, type TestedScenario } from './shape-case';
-
-export const SHORT_TITLES: Readonly<Record<string, string>> = {
-	'power-vacuum': 'Power vacuum',
-	'outfield-logjam': 'Outfield logjam',
-	'infield-reset': 'Infield reset',
-	'catcher-split': 'Catcher split',
-	'lefty-hole': 'Lefty hole'
-};
 
 export const TESTED_SCENARIOS: readonly TestedScenario[] = storylineRegistry.flatMap((story) => {
 	const baseLineup = scenarioLineup(story.bundle, story.bundle.comparison.baseline);

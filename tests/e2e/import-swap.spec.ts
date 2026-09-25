@@ -1,14 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-import { openPowerVacuum } from './storyline';
+import { openFirstStoryline } from './storyline';
 
 // DOM events stand in for trusted input; see workspace-journey.spec.ts for why.
-const bundlePath = new URL('../../src/lib/storylines/power-vacuum.json', import.meta.url);
+const bundlePath = new URL('../../src/lib/storylines/preseason-dh.json', import.meta.url);
 
 test('swap exchanges two players in one template and flips the draft to unsaved', async ({
 	page
 }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 	const selects = page.getByLabel(/assigned player/);
 	await expect(selects.first()).toBeVisible();
 	const before = await selects.evaluateAll((els) =>
@@ -32,7 +32,7 @@ test('swap exchanges two players in one template and flips the draft to unsaved'
 test('importing a valid bundle activates it; a malformed one leaves the workspace intact', async ({
 	page
 }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 	const input = page.locator('input[type="file"]');
 	const heading = page.getByRole('heading', { level: 1 });
 	const originalName = await heading.textContent();
@@ -58,7 +58,7 @@ test('importing a valid bundle activates it; a malformed one leaves the workspac
 test('importing a changed bundle under a saved ID offers replace-as-new-revision', async ({
 	page
 }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 
 	// Save the storyline bundle first so the edited re-import hits the duplicate-ID path.
 	await page.getByRole('button', { name: 'Save draft' }).dispatchEvent('click');
@@ -93,7 +93,7 @@ test('importing a changed bundle under a saved ID offers replace-as-new-revision
 test('move relocates one player into an unassigned slot and shows a live preview', async ({
 	page
 }) => {
-	await openPowerVacuum(page);
+	await openFirstStoryline(page);
 	const selects = page.getByLabel(/assigned player/);
 	await expect(selects.first()).toBeVisible();
 

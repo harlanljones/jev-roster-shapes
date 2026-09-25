@@ -35,7 +35,7 @@
 				<th scope="col">Fit</th>
 				<th scope="col">Bats</th>
 				<th scope="col">Eligible</th>
-				<th scope="col" class="n">R/PA</th>
+				<th scope="col" class="n">2026 R/PA</th>
 				<th scope="col" class="n">2026 PA</th>
 				<th scope="col" class="n">Runs</th>
 			</tr>
@@ -49,7 +49,7 @@
 					<td>{fit}</td>
 					<td>{p.bats}</td>
 					<td>{p.elig.join('/') || '—'}</td>
-					<td class="n">{p.rateText ?? 'unavailable'}</td>
+					<td class="n">{p.seasonRateText ?? 'unavailable'}</td>
 					<td class="n">{p.split ? Math.round(p.pa.L + p.pa.R) : 'unavailable'}</td>
 					<td class="n">{p.runs == null ? 'unavailable' : p.runs.toFixed(1)}</td>
 				</tr>

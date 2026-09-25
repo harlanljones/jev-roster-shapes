@@ -13,8 +13,13 @@ describe('LibraryPage', () => {
 
 		await expect
 			.element(page.getByRole('heading', { level: 1 }))
-			.toHaveTextContent('Who carries the lineup without Devers and Bregman?');
-		await expect.element(page.getByRole('navigation', { name: 'Choose scenario' })).toBeVisible();
+			.toHaveTextContent('Who takes the DH at-bats?');
+		const timeline = page.getByRole('navigation', { name: 'Season timeline' });
+		await expect.element(timeline).toBeVisible();
+		await expect
+			.element(timeline.getByRole('link', { name: /DH lane/ }))
+			.toHaveAttribute('aria-current', 'page');
+		expect(timeline.getByRole('link').elements()).toHaveLength(5);
 		await expect.element(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
 		await expect.element(page.getByText('Public data', { exact: true })).toBeVisible();
 
@@ -22,13 +27,13 @@ describe('LibraryPage', () => {
 		await page.getByRole('button', { name: 'Open public scenario' }).click();
 		expect(onOpen).toHaveBeenCalledTimes(1);
 		expect(onOpen.mock.calls[0]?.[0]).toMatchObject({
-			bundleId: 'mlbam-bos-2026-power-vacuum'
+			bundleId: 'mlbam-bos-2026-preseason-dh'
 		});
 	});
 
 	it('keeps browsing when the acknowledgment is declined', async () => {
 		const onOpen = vi.fn();
-		await render(LibraryPage, { props: { onOpen, activeSlug: 'lefty-hole' } });
+		await render(LibraryPage, { props: { onOpen, activeSlug: 'october-lineup' } });
 
 		await page.getByRole('button', { name: 'Open workspace' }).click();
 		await expect.element(page.getByRole('button', { name: 'Open public scenario' })).toBeVisible();

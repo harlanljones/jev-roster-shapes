@@ -1,0 +1,1254 @@
+{
+	"source": "MLB Stats API (statsapi.mlb.com), free public endpoints; MLBAM copyright applies",
+	"asOf": "2026-09-25",
+	"fetchedAt": "2026-09-25T07:05:02Z",
+	"record": [
+		{
+			"date": "2026-03-26",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-03-28",
+			"win": false,
+			"runs": 5,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-03-29",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-03-30",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-03-31",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 9
+		},
+		{
+			"date": "2026-04-01",
+			"win": false,
+			"runs": 4,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-04-03",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-04-04",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-04-05",
+			"win": false,
+			"runs": 6,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-04-06",
+			"win": false,
+			"runs": 6,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-04-07",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-04-08",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-04-10",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-04-11",
+			"win": true,
+			"runs": 7,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-04-12",
+			"win": true,
+			"runs": 9,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-04-13",
+			"win": false,
+			"runs": 6,
+			"oppRuns": 13
+		},
+		{
+			"date": "2026-04-14",
+			"win": false,
+			"runs": 0,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-04-15",
+			"win": true,
+			"runs": 9,
+			"oppRuns": 5
+		},
+		{
+			"date": "2026-04-17",
+			"win": true,
+			"runs": 1,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-04-18",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-04-19",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-04-20",
+			"win": true,
+			"runs": 8,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-04-21",
+			"win": false,
+			"runs": 0,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-04-22",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-04-23",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-04-24",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 10
+		},
+		{
+			"date": "2026-04-25",
+			"win": true,
+			"runs": 17,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-04-26",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-04-27",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-04-28",
+			"win": false,
+			"runs": 0,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-04-29",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-05-01",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-05-02",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-05-03",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-05-04",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-05-05",
+			"win": true,
+			"runs": 10,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-05-06",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-05-07",
+			"win": false,
+			"runs": 4,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-05-08",
+			"win": true,
+			"runs": 2,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-05-10",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-05-12",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-05-13",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-05-14",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-05-15",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-05-16",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-05-17",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-05-18",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-05-19",
+			"win": true,
+			"runs": 7,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-05-20",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-05-22",
+			"win": false,
+			"runs": 6,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-05-23",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-05-24",
+			"win": false,
+			"runs": 5,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-05-26",
+			"win": false,
+			"runs": 6,
+			"oppRuns": 7
+		},
+		{
+			"date": "2026-05-27",
+			"win": true,
+			"runs": 8,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-05-28",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 10
+		},
+		{
+			"date": "2026-05-29",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-05-30",
+			"win": true,
+			"runs": 9,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-05-31",
+			"win": true,
+			"runs": 9,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-06-02",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-06-03",
+			"win": true,
+			"runs": 8,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-06-04",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-06-05",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-06-07",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-06-08",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-06-09",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-06-10",
+			"win": false,
+			"runs": 5,
+			"oppRuns": 7
+		},
+		{
+			"date": "2026-06-12",
+			"win": true,
+			"runs": 10,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-06-13",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-06-14",
+			"win": false,
+			"runs": 4,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-06-16",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-06-17",
+			"win": false,
+			"runs": 0,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-06-18",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-06-19",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-06-20",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-06-21",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-06-22",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-06-23",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-06-24",
+			"win": false,
+			"runs": 6,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-06-25",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-06-26",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-06-27",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-06-28",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-06-29",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-06-30",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-07-01",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 10
+		},
+		{
+			"date": "2026-07-03",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-07-04",
+			"win": true,
+			"runs": 8,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-07-05",
+			"win": true,
+			"runs": 7,
+			"oppRuns": 5
+		},
+		{
+			"date": "2026-07-07",
+			"win": true,
+			"runs": 8,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-07-08",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-07-09",
+			"win": true,
+			"runs": 2,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-07-10",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-07-11",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-07-12",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-07-17",
+			"win": true,
+			"runs": 10,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-07-17",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-07-18",
+			"win": true,
+			"runs": 7,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-07-19",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-07-20",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 5
+		},
+		{
+			"date": "2026-07-22",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-07-22",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 5
+		},
+		{
+			"date": "2026-07-24",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-07-25",
+			"win": false,
+			"runs": 0,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-07-26",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-07-27",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-07-28",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-07-29",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-07-30",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-07-31",
+			"win": true,
+			"runs": 9,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-08-01",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-08-02",
+			"win": true,
+			"runs": 8,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-08-04",
+			"win": true,
+			"runs": 14,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-08-05",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-08-06",
+			"win": true,
+			"runs": 12,
+			"oppRuns": 11
+		},
+		{
+			"date": "2026-08-07",
+			"win": true,
+			"runs": 13,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-08-08",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 7
+		},
+		{
+			"date": "2026-08-09",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-08-10",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-08-11",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 5
+		},
+		{
+			"date": "2026-08-12",
+			"win": false,
+			"runs": 4,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-08-13",
+			"win": true,
+			"runs": 7,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-08-14",
+			"win": false,
+			"runs": 4,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-08-15",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-08-16",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-08-17",
+			"win": true,
+			"runs": 11,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-08-18",
+			"win": true,
+			"runs": 9,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-08-19",
+			"win": false,
+			"runs": 6,
+			"oppRuns": 7
+		},
+		{
+			"date": "2026-08-21",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-08-22",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-08-23",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-08-24",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-08-25",
+			"win": true,
+			"runs": 7,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-08-26",
+			"win": false,
+			"runs": 0,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-08-28",
+			"win": false,
+			"runs": 0,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-08-29",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-08-29",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 9
+		},
+		{
+			"date": "2026-08-30",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 16
+		},
+		{
+			"date": "2026-08-31",
+			"win": true,
+			"runs": 9,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-09-01",
+			"win": false,
+			"runs": 6,
+			"oppRuns": 9
+		},
+		{
+			"date": "2026-09-02",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 8
+		},
+		{
+			"date": "2026-09-03",
+			"win": true,
+			"runs": 6,
+			"oppRuns": 5
+		},
+		{
+			"date": "2026-09-04",
+			"win": true,
+			"runs": 1,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-09-05",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-09-06",
+			"win": true,
+			"runs": 3,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-09-07",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-09-08",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-09-09",
+			"win": false,
+			"runs": 4,
+			"oppRuns": 6
+		},
+		{
+			"date": "2026-09-11",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-09-12",
+			"win": true,
+			"runs": 5,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-09-13",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 1
+		},
+		{
+			"date": "2026-09-15",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 4
+		},
+		{
+			"date": "2026-09-16",
+			"win": false,
+			"runs": 3,
+			"oppRuns": 7
+		},
+		{
+			"date": "2026-09-17",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-09-18",
+			"win": true,
+			"runs": 4,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-09-19",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 2
+		},
+		{
+			"date": "2026-09-20",
+			"win": false,
+			"runs": 1,
+			"oppRuns": 5
+		},
+		{
+			"date": "2026-09-22",
+			"win": false,
+			"runs": 2,
+			"oppRuns": 3
+		},
+		{
+			"date": "2026-09-23",
+			"win": true,
+			"runs": 1,
+			"oppRuns": 0
+		},
+		{
+			"date": "2026-09-24",
+			"win": false,
+			"runs": 0,
+			"oppRuns": 1
+		}
+	],
+	"players": {
+		"mlbam-575929": {
+			"name": "Willson Contreras",
+			"pa": 533,
+			"runs": 68,
+			"split": {
+				"vL": {
+					"pa": 144,
+					"ops": ".981"
+				},
+				"vR": {
+					"pa": 389,
+					"ops": ".878"
+				}
+			}
+		},
+		"mlbam-596115": {
+			"name": "Trevor Story",
+			"pa": 259,
+			"runs": 24,
+			"split": {
+				"vL": {
+					"pa": 72,
+					"ops": ".654"
+				},
+				"vR": {
+					"pa": 187,
+					"ops": ".618"
+				}
+			}
+		},
+		"mlbam-643396": {
+			"name": "Isiah Kiner-Falefa",
+			"pa": 176,
+			"runs": 21,
+			"split": {
+				"vL": {
+					"pa": 54,
+					"ops": ".417"
+				},
+				"vR": {
+					"pa": 122,
+					"ops": ".708"
+				}
+			}
+		},
+		"mlbam-655316": {
+			"name": "Andruw Monasterio",
+			"pa": 337,
+			"runs": 35,
+			"split": {
+				"vL": {
+					"pa": 126,
+					"ops": ".798"
+				},
+				"vR": {
+					"pa": 211,
+					"ops": ".611"
+				}
+			}
+		},
+		"mlbam-657136": {
+			"name": "Connor Wong",
+			"pa": 233,
+			"runs": 22,
+			"split": {
+				"vL": {
+					"pa": 69,
+					"ops": ".732"
+				},
+				"vR": {
+					"pa": 164,
+					"ops": ".624"
+				}
+			}
+		},
+		"mlbam-663330": {
+			"name": "Jahmai Jones",
+			"pa": 175,
+			"runs": 19,
+			"split": {
+				"vL": {
+					"pa": 152,
+					"ops": ".753"
+				},
+				"vR": {
+					"pa": 23,
+					"ops": ".260"
+				}
+			}
+		},
+		"mlbam-665966": {
+			"name": "Carlos Narváez",
+			"pa": 280,
+			"runs": 21,
+			"split": {
+				"vL": {
+					"pa": 77,
+					"ops": ".450"
+				},
+				"vR": {
+					"pa": 203,
+					"ops": ".480"
+				}
+			}
+		},
+		"mlbam-668670": {
+			"name": "Jake Rogers",
+			"pa": 171,
+			"runs": 17,
+			"split": {
+				"vL": {
+					"pa": 45,
+					"ops": ".773"
+				},
+				"vR": {
+					"pa": 126,
+					"ops": ".491"
+				}
+			}
+		},
+		"mlbam-668939": {
+			"name": "Adley Rutschman",
+			"pa": 403,
+			"runs": 43,
+			"split": {
+				"vL": {
+					"pa": 139,
+					"ops": ".604"
+				},
+				"vR": {
+					"pa": 264,
+					"ops": ".793"
+				}
+			}
+		},
+		"mlbam-671213": {
+			"name": "Triston Casas",
+			"pa": 0,
+			"runs": 0,
+			"split": null
+		},
+		"mlbam-677800": {
+			"name": "Wilyer Abreu",
+			"pa": 669,
+			"runs": 81,
+			"split": {
+				"vL": {
+					"pa": 210,
+					"ops": ".862"
+				},
+				"vR": {
+					"pa": 459,
+					"ops": ".744"
+				}
+			}
+		},
+		"mlbam-678011": {
+			"name": "Anthony Seigler",
+			"pa": 173,
+			"runs": 21,
+			"split": {
+				"vL": {
+					"pa": 42,
+					"ops": ".550"
+				},
+				"vR": {
+					"pa": 131,
+					"ops": ".784"
+				}
+			}
+		},
+		"mlbam-678882": {
+			"name": "Ceddanne Rafaela",
+			"pa": 574,
+			"runs": 67,
+			"split": {
+				"vL": {
+					"pa": 152,
+					"ops": ".808"
+				},
+				"vR": {
+					"pa": 422,
+					"ops": ".743"
+				}
+			}
+		},
+		"mlbam-680776": {
+			"name": "Jarren Duran",
+			"pa": 599,
+			"runs": 66,
+			"split": {
+				"vL": {
+					"pa": 137,
+					"ops": ".626"
+				},
+				"vR": {
+					"pa": 462,
+					"ops": ".629"
+				}
+			}
+		},
+		"mlbam-681508": {
+			"name": "Mickey Gasper",
+			"pa": 222,
+			"runs": 26,
+			"split": {
+				"vL": {
+					"pa": 28,
+					"ops": ".268"
+				},
+				"vR": {
+					"pa": 194,
+					"ops": ".917"
+				}
+			}
+		},
+		"mlbam-686765": {
+			"name": "Nick Sogard",
+			"pa": 265,
+			"runs": 28,
+			"split": {
+				"vL": {
+					"pa": 67,
+					"ops": ".804"
+				},
+				"vR": {
+					"pa": 198,
+					"ops": ".708"
+				}
+			}
+		},
+		"mlbam-691785": {
+			"name": "Marcelo Mayer",
+			"pa": 236,
+			"runs": 19,
+			"split": {
+				"vL": {
+					"pa": 20,
+					"ops": "1.339"
+				},
+				"vR": {
+					"pa": 216,
+					"ops": ".514"
+				}
+			}
+		},
+		"mlbam-701350": {
+			"name": "Roman Anthony",
+			"pa": 232,
+			"runs": 21,
+			"split": {
+				"vL": {
+					"pa": 77,
+					"ops": ".592"
+				},
+				"vR": {
+					"pa": 155,
+					"ops": ".757"
+				}
+			}
+		},
+		"mlbam-702332": {
+			"name": "Caleb Durbin",
+			"pa": 578,
+			"runs": 74,
+			"split": {
+				"vL": {
+					"pa": 160,
+					"ops": ".702"
+				},
+				"vR": {
+					"pa": 418,
+					"ops": ".723"
+				}
+			}
+		},
+		"mlbam-807799": {
+			"name": "Masataka Yoshida",
+			"pa": 297,
+			"runs": 34,
+			"split": {
+				"vL": {
+					"pa": 30,
+					"ops": ".774"
+				},
+				"vR": {
+					"pa": 267,
+					"ops": ".743"
+				}
+			}
+		}
+	}
+}

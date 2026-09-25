@@ -300,6 +300,50 @@ workspace case and bins follow each scenario's busiest pitcher-hand template.
 The interaction map's fixed node positions cover the 15-player storyline pool;
 other pools fall back to a simple grid. No team data was used.
 
+### Season timeline storylines (D-44, user directive 2026-09-25)
+
+Delivered: the five D-40 storylines are replaced by five dated decisions on a
+2026 season timeline (preseason DH, preseason second base, the July run, the
+deadline catcher trade, the October lineup). The landing page leads with the
+timeline: Boston's record as games over .500, one pin per decision, and three
+dated events (Opening Day, the April 25 manager change, the September 21
+clinch). Each bundle is built offline from a checked-in MLB Stats API snapshot
+(`spikes/mlb-2026/timeline-fetch.mjs` in GitHub Actions, then
+`timeline-build.mjs`) and scored with rates known on its decision date; the
+Shape Case shows full-season actuals, labeled apart. The retired power-vacuum
+bundle is frozen as `tests/fixtures/power-vacuum-2026.json` for structural
+tests, and its stale expectations (which failed on the base commit) were
+re-derived by hand.
+
+Observed (2026-09-25, snapshot of 159 games, 85–74):
+
+- `bun spikes/mlb-2026/timeline-build.mjs`: all 15 scenarios feasible; totals
+  match an independent Decimal hand derivation exactly (preseason-dh
+  51.68311 / 48.46843 / 47.13219; preseason-second 51.68311 / 49.23211 /
+  51.55675; july-run 44.0207 / 45.77464 / 44.7284; deadline-catcher 46.08519 /
+  46.54759 / 45.60467; october-lineup 43.255052 / 43.941312 / 42.979536).
+  Rerunning it after adding the baseline roster guard wrote byte-identical
+  bundles.
+- Frozen fixture hand derivation: 44.95712 / 44.1448 / unavailable, split
+  43.178 (Δ −1.77912), changed exposure 43.578, negative rate 39.978
+  (Δ −4.97912). These replace the pre-D-42 values that failed on the base
+  commit.
+- `bun run check`: 0 errors, 0 warnings (529 files). `bun run lint`: clean.
+- `bunx vitest run --project server --project integration`: 6 files, 38 tests
+  passed.
+- Client project and `bunx playwright test` with the local Chromium override
+  (uncommitted config copies): 2 and 18 passed. The edit-to-render p95 was
+  73.3ms over 9 samples, within the 250ms budget;
+  `reports/prototype/edit-latency.json` was left at its earlier record.
+- Full axe run (`@axe-core/playwright`, all rules) on `/` and the four
+  `/scenario/[slug]` pages: no violations.
+- `git diff --cached --check`: clean.
+
+Limitations: observed-not-projected rates, illustrative horizon, placeholder
+caps, split rates null (D-42). Event dates come from public reporting. The
+October pin compares three lineups; it does not optimize one (SPEC §3). No team
+data was used.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

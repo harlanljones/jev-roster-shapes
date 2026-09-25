@@ -4,7 +4,7 @@ import {
 	type Bundle,
 	type CalculationResult
 } from '../../src/lib/contracts';
-import { getStoryline } from '../../src/lib/storylines/registry';
+import { powerVacuumBundle } from '../fixtures/power-vacuum';
 import {
 	MemoryPersistenceStorage,
 	PersistenceImportError,
@@ -13,11 +13,9 @@ import {
 } from '../../src/lib/persistence';
 import { describe, expect, it } from 'vitest';
 
-// Structural test bundle: the power-vacuum storyline stands in for the
-// removed golden fixture wherever persistence needs a valid v1 bundle.
-const story = getStoryline('power-vacuum');
-if (!story) throw new Error('power-vacuum storyline missing');
-const storyBundle = story.bundle;
+// Structural test bundle: the frozen power-vacuum fixture stands in wherever
+// persistence needs a valid v1 bundle.
+const storyBundle = powerVacuumBundle;
 
 function clone<T>(value: T): T {
 	return structuredClone(value);
