@@ -71,7 +71,7 @@ test('a keyboard-only user tabs, edits, swaps, and inspects evidence', async ({ 
 	expect(returnedFocus).toContain('Inspect template source');
 });
 
-// I-16: the index, a decision, and the snapshots subpage are reachable and
+// I-16: the index, a decision's board, and the snapshots subpage are reachable and
 // readable by keyboard alone, including the collapsible request body.
 test('a keyboard-only user reaches a decision, its snapshots, and the prompt', async ({ page }) => {
 	// The skip link comes first, then the shell nav. Focus starts in the
@@ -90,10 +90,10 @@ test('a keyboard-only user reaches a decision, its snapshots, and the prompt', a
 	await card.evaluate((el) => el.focus());
 	await page.keyboard.press('Enter');
 	await expect(page).toHaveURL(/\/scenario\/offseason-infield$/);
-	await expect(page.getByRole('region', { name: /Pool fit for/ })).toBeVisible();
+	await expect(page.getByRole('group', { name: /Roster board for/ })).toBeVisible();
 
-	// Follow the nav to the snapshots subpage.
-	const nav = page.getByRole('navigation', { name: 'Sections' });
+	// Follow the decision's diagram nav to the snapshots subpage.
+	const nav = page.getByRole('navigation', { name: 'Decision diagrams' });
 	await nav.getByRole('link', { name: 'Snapshots' }).evaluate((el) => el.focus());
 	await page.keyboard.press('Enter');
 	await expect(page).toHaveURL(/\/scenario\/offseason-infield\/snapshots$/);

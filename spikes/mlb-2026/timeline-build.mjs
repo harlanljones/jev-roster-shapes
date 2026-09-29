@@ -53,7 +53,8 @@ const P = {
 	yoshida: 807799,
 	gasper: 681508,
 	jones: 663330,
-	mead: 678554
+	mead: 678554,
+	eaton: 681987
 };
 
 const asOf = snapshot.asOf;
@@ -103,13 +104,14 @@ const deadlineRegulars = lineup({
 	RF: 'abreu',
 	DH: 'yoshida'
 });
-// The Wild Card lineups (D-49): Boston's latest lineups against each hand with
-// Gasper (biceps, expected to miss the series) and Yoshida (hamstring) out and
-// Rafaela back in center. Against lefties they match the September 22–23
-// starts; against righties Anthony takes the DH at-bats Gasper had.
+// The Wild Card lineups (D-49, updated September 29): with Contreras cleared
+// to return at first base, Tracy's plan for Game 1 against Schlittler (RHP) is
+// the lineup reported that day: Anthony at DH, Duran in left, Sogard at
+// second. Against Fried (LHP) Contreras takes first from Sogard in the
+// September 22–23 lineup, with Monasterio at second and Jones at DH.
 const wildCardVsLeft = lineup({
 	C: 'rutschman',
-	'1B': 'sogard',
+	'1B': 'contreras',
 	'2B': 'monasterio',
 	'3B': 'durbin',
 	SS: 'story',
@@ -120,8 +122,8 @@ const wildCardVsLeft = lineup({
 });
 const wildCardVsRight = lineup({
 	C: 'rutschman',
-	'1B': 'sogard',
-	'2B': 'ikf',
+	'1B': 'contreras',
+	'2B': 'sogard',
 	'3B': 'durbin',
 	SS: 'story',
 	LF: 'duran',
@@ -129,6 +131,10 @@ const wildCardVsRight = lineup({
 	RF: 'abreu',
 	DH: 'anthony'
 });
+// If Contreras cannot swing after all: the September 25 lineups, Sogard at
+// first and Kiner-Falefa at second against righties.
+const noContrerasVsLeft = { ...wildCardVsLeft, '1B': 'sogard' };
+const noContrerasVsRight = { ...wildCardVsRight, '1B': 'sogard', '2B': 'ikf' };
 
 const TIMELINE = [
 	{
@@ -266,35 +272,32 @@ const TIMELINE = [
 		observed: ['2026-09-11', asOf],
 		rateLabel: `2026 through ${asOf}`,
 		// Boston's 2025 Wild Card roster carried 14 position players and 12
-		// pitchers; the same limit applies to every scenario here. Gasper is
-		// hurt and off every roster, so the baseline leaves one spot open.
+		// pitchers; the same limit applies to every scenario here. Gasper is on
+		// the injured list and Mead did not travel (September 27), so neither is
+		// on any roster; Eaton takes the last spot as the extra outfielder.
 		rosterSizeMax: 14,
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — Contreras can’t swing: carry him, Sogard plays first',
+				label: 'Baseline — Contreras back at first, Sogard to second vs RHP',
 				lineups: { L: wildCardVsLeft, R: wildCardVsRight },
-				reserves: ['contreras', 'wong', 'ikf', 'duran']
+				reserves: ['wong', 'ikf', 'eaton']
 			},
 			{
 				id: 'cand-a',
-				label: 'A — Contreras can swing: back at first, Sogard to second vs RHP',
+				label: 'A — Contreras only DHs: Sogard at first, Duran sits vs RHP',
 				lineups: {
-					L: { ...wildCardVsLeft, '1B': 'contreras' },
-					R: { ...wildCardVsRight, '1B': 'contreras', '2B': 'sogard' }
+					// Against the lefty this is the September 27 finale lineup.
+					L: { ...wildCardVsLeft, '1B': 'monasterio', '2B': 'sogard', DH: 'contreras' },
+					R: { ...noContrerasVsRight, LF: 'anthony', DH: 'contreras' }
 				},
-				reserves: ['wong', 'ikf', 'duran']
+				reserves: ['wong', 'eaton', 'duran', 'jones']
 			},
 			{
 				id: 'cand-b',
-				label: 'B — Mead for Contreras: Mead at first, Sogard to second vs RHP',
-				lineups: {
-					L: { ...wildCardVsLeft, '1B': 'mead' },
-					R: { ...wildCardVsRight, '1B': 'mead', '2B': 'sogard' }
-				},
-				reserves: ['wong', 'ikf', 'duran'],
-				incoming: ['mead'],
-				outgoing: ['contreras']
+				label: 'B — Contreras can’t swing: carry him, Sogard plays first',
+				lineups: { L: noContrerasVsLeft, R: noContrerasVsRight },
+				reserves: ['contreras', 'wong', 'eaton']
 			}
 		]
 	}

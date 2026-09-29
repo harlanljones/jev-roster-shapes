@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	benchTray,
 	buildPool,
 	caseView,
 	complements,
@@ -30,26 +31,27 @@ describe('Shape Case model (display layer, D-43)', () => {
 	it('sums actual 2026 runs for each scenario and suppresses the one with Casas', () => {
 		// Baseline vs RHP: Narváez 22, Contreras 68, Mayer 19, Durbin 74, Story 24,
 		// Anthony 24, Rafaela 67, Abreu 81, Duran 66. A swaps Mayer for Bregman's
-		// 89 with the Cubs (Durbin to second).
+		// 92 with the Cubs through September 27 (Durbin to second).
 		expect(lineups.map((l) => lineupRuns(pool, l)?.toFixed(2) ?? null)).toEqual([
 			'445.00',
-			'515.00',
+			'518.00',
 			null
 		]);
 	});
 
 	it('finds the tightest fit against each hand and packs it to the lid', () => {
 		const fit = tightestFit(pool);
+		// With the regular season complete (September 27 refresh), Bregman is the
+		// DH against both hands and Durbin keeps third.
 		expect(fit.L.DH).toBe('mlbam-608324'); // Bregman vs LHP
-		expect(fit.R['3B']).toBe('mlbam-608324'); // Bregman at third vs RHP
-		// Rafaela (67 runs) and Duran (66) both cover center; with the
-		// September 25 refresh the fit puts Duran in center and Rafaela at DH.
-		expect(fit.R.CF).toBe('mlbam-680776'); // Duran in center vs RHP
-		expect(fit.R.DH).toBe('mlbam-678882'); // Rafaela vs RHP
+		expect(fit.R.DH).toBe('mlbam-608324'); // Bregman vs RHP
+		expect(fit.R['3B']).toBe('mlbam-702332'); // Durbin at third vs RHP
+		expect(fit.R.CF).toBe('mlbam-678882'); // Rafaela in center vs RHP
+		expect(fit.R.LF).toBe('mlbam-680776'); // Duran in left vs RHP
 		const bin = tightestBin(pool);
-		expect(bin.runs?.toFixed(2)).toBe('526.71');
+		expect(bin.runs?.toFixed(2)).toBe('529.86');
 		expect(bin.overflows).toBe(false);
-		expect(Math.round(bin.fill)).toBe(69);
+		expect(Math.round(bin.fill)).toBe(64);
 		expect(Math.round(bin.gaps + bin.headroom + bin.fill)).toBe(100);
 	});
 
@@ -59,6 +61,26 @@ describe('Shape Case model (display layer, D-43)', () => {
 			expect(bin.overflows).toBe(false);
 			expect(bin.fill).toBeLessThan(tightestBin(pool).fill + 0.001);
 		}
+	});
+
+	it('puts everyone off the field in the tray at the board scale (D-50)', () => {
+		const tray = benchTray(pool, lineups[0]!);
+		const on = new Set(Object.values(lineups[0]!));
+		expect(tray.pieces.map((p) => p.id).sort()).toEqual(
+			[...pool.keys()].filter((id) => !on.has(id)).sort()
+		);
+		// Casas is off the field with no 2026 PA, so the tray total is suppressed.
+		expect(tray.pieces.some((p) => p.id === 'mlbam-671213' && p.runs == null)).toBe(true);
+		expect(tray.runs).toBeNull();
+		// Same runs-to-area scale as the board: a bench piece matches its own
+		// one-player slot piece on the board.
+		const abreuBench = benchTray(pool, { ...lineups[0]!, RF: null }).pieces.find(
+			(p) => p.id === 'mlbam-677800'
+		)!;
+		const abreuSlot = lineupBin(pool, lineups[0]!).pieces.find((p) => p.role === 'RF')!;
+		expect(abreuSlot.idR).toBe('mlbam-677800');
+		expect(abreuBench.r).toBeCloseTo(abreuSlot.r, 9);
+		expect(tray.height).toBeGreaterThan(0);
 	});
 
 	it('suppresses a lineup total when a starter has no data', () => {

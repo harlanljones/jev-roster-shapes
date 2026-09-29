@@ -83,31 +83,70 @@ test('the index opens on the timeline with today marked and one card per decisio
 	expect(audit.violations).toEqual([]);
 });
 
-test('a decision page shows the case, the engine pool fit, and a way to its snapshots', async ({
-	page
-}) => {
+test('a decision page centers on the board and links to its diagram subpages', async ({ page }) => {
 	await page.goto('/scenario/offseason-infield');
 
 	await expect(page.getByRole('heading', { level: 1 })).toContainText(
 		'How do you replace Bregman?'
 	);
-	// The case (D-43) exposes every lineup piece as a labeled button.
-	await expect(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
+	// D-50: one diagram, the board, with every piece a labeled button.
+	const board = page.getByRole('group', { name: /Roster board for Baseline/ });
+	await expect(board).toBeVisible();
+	await expect(board.getByRole('button', { name: /^C: Carlos Narváez/ })).toBeVisible();
+	await expect(board.getByRole('button', { name: /^Off the field: Triston Casas/ })).toBeVisible();
+	const readout = page.getByRole('definition').first();
+	await expect(readout).toContainText('445.0 runs');
+	// The supplementary diagrams moved to subpages.
+	await expect(page.getByRole('group', { name: /Roster case for/ })).toHaveCount(0);
+	await expect(page.getByRole('region', { name: /Pool fit for/ })).toHaveCount(0);
+	const diagrams = page.getByRole('navigation', { name: 'Decision diagrams' });
+	await expect(diagrams.getByRole('link', { name: 'Board' })).toHaveAttribute(
+		'aria-current',
+		'page'
+	);
+	await expect(diagrams.getByRole('link', { name: 'Snapshots' })).toHaveAttribute(
+		'href',
+		'/scenario/offseason-infield/snapshots'
+	);
+
+	// Picking a scenario puts it in the query, and the subpage links carry it.
+	await page.getByRole('button', { name: /^A — / }).dispatchEvent('click');
+	await expect(page).toHaveURL(/\?scenario=/);
+	await expect(page.getByRole('group', { name: /Roster board for A — / })).toBeVisible();
+	const engineHref = await diagrams.getByRole('link', { name: 'Engine fit' }).getAttribute('href');
+	expect(engineHref).toMatch(/^\/scenario\/offseason-infield\/engine\?scenario=/);
+});
+
+test("each diagram subpage draws its diagram for the board's scenario", async ({ page }) => {
+	await page.goto('/scenario/offseason-infield/case');
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('The fitted case');
+	await expect(page.getByRole('group', { name: /Roster case for Baseline/ })).toBeVisible();
 	await expect(page.getByRole('button', { name: /^C: Carlos Narváez/ })).toBeVisible();
-	await expect(
-		page.getByRole('img', { name: /hindsight best nine packed into the bin/ })
-	).toBeVisible();
 
 	// The engine's pool fit, with the hand-derived baseline numbers.
-	const fit = page.getByRole('region', { name: /Pool fit for/ });
+	await page.goto('/scenario/offseason-infield/engine');
+	const fit = page.getByRole('region', { name: /Pool fit for Baseline/ });
 	await expect(fit).toBeVisible();
 	await expect(fit.getByText('52.69416', { exact: false }).first()).toBeVisible();
 	await expect(fit).toContainText('Δ +1.991');
 	await expect(page.getByRole('columnheader', { name: 'Left on the table' })).toBeVisible();
 
+	await page.goto('/scenario/offseason-infield/slots');
 	await expect(
-		page.getByRole('link', { name: /Snapshots: the Jev prompt and its answers/ })
-	).toHaveAttribute('href', '/scenario/offseason-infield/snapshots');
+		page.getByRole('img', { name: /hindsight best nine packed into the bin/ })
+	).toBeVisible();
+
+	await page.goto('/scenario/offseason-infield/interactions');
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('How the pieces interact');
+	await expect(
+		page.getByRole('navigation', { name: 'Decision diagrams' }).getByRole('link', {
+			name: 'Interactions'
+		})
+	).toHaveAttribute('aria-current', 'page');
+
+	// An unknown scenario id falls back to the baseline instead of failing.
+	await page.goto('/scenario/offseason-infield/engine?scenario=nope');
+	await expect(page.getByRole('region', { name: /Pool fit for Baseline/ })).toBeVisible();
 });
 
 test('the shell nav names the sections and marks the current one', async ({ page }) => {
@@ -120,10 +159,12 @@ test('the shell nav names the sections and marks the current one', async ({ page
 		'aria-current',
 		'page'
 	);
-	await expect(nav.getByRole('link', { name: 'Snapshots' })).toHaveAttribute(
-		'href',
-		'/scenario/deadline/snapshots'
-	);
+	await expect(nav.getByRole('link', { name: 'Snapshots' })).toHaveCount(0);
+	await expect(
+		page.getByRole('navigation', { name: 'Decision diagrams' }).getByRole('link', {
+			name: 'Snapshots'
+		})
+	).toHaveAttribute('href', '/scenario/deadline/snapshots');
 	// The timeline pin for this decision is current too, and the other four are not.
 	const pins = page.getByRole('navigation', { name: 'Season timeline' });
 	await expect(pins.getByRole('link', { name: /Deadline/ })).toHaveAttribute(

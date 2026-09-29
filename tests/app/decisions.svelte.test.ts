@@ -13,10 +13,10 @@ describe('DecisionsPage', () => {
 			.element(page.getByRole('heading', { level: 1 }))
 			.toHaveTextContent('Five roster decisions on one season timeline');
 		await expect
-			.element(page.getByText(/Today is September 25 · Boston 86–74 on the timeline/))
+			.element(page.getByText(/Today is September 25 · Boston 87–74 on the timeline/))
 			.toBeVisible();
 		await expect
-			.element(page.getByRole('img', { name: /today, September 25, 86–74/ }))
+			.element(page.getByRole('img', { name: /today, September 25, 87–74/ }))
 			.toBeVisible();
 
 		const links = page.getByRole('link');
@@ -41,7 +41,7 @@ describe('DecisionsPage', () => {
 			.toBeVisible();
 		// The timeline uses the same date the lede does, not the viewer's today.
 		await expect
-			.element(page.getByText(/Today is November 2 · Boston 86–74 on the timeline/))
+			.element(page.getByText(/Today is November 2 · Boston 87–75 on the timeline/))
 			.toBeVisible();
 		expect.element(page.getByRole('img', { name: /past the end of this timeline window/ }));
 	});

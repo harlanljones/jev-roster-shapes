@@ -11,6 +11,7 @@
 		type JevRecord
 	} from '$lib/classification';
 	import type { Storyline } from '$lib/storylines/registry';
+	import DecisionNav from './DecisionNav.svelte';
 	import { evidenceFor, provenanceNote } from './classification-evidence';
 	import CaseKey from './diagrams/CaseKey.svelte';
 	import PieceDetail from './diagrams/PieceDetail.svelte';
@@ -134,8 +135,11 @@
 <div class="snapshots">
 	<header class="lead">
 		<div>
-			<a class="back" href={resolve('/scenario/[slug]', { slug: story.slug })}>← {story.title}</a>
+			<a class="back" href={resolve('/scenario/[slug]', { slug: story.slug })}
+				>← Board: {story.title}</a
+			>
 			<h1>Snapshots: the prompt and its answers</h1>
+			<DecisionNav slug={story.slug} current="snapshots" />
 			<p class="lede">
 				What the Jev rubric is asked about each player on this roster, the exact request that would
 				go out, and what came back — beside the case those answers describe. The prompt is frozen

@@ -731,8 +731,8 @@ function slotPiece(
  * column at a time and drops until some column touches the pile, so points and
  * curves settle into neighbors' notches. Biggest pieces first.
  */
-function pack(pool: Pool, pieces: BinPiece[]): { top: number; under: number } {
-	const sky = new Array<number>(BIN_W).fill(0);
+function pack(pool: Pool, pieces: BinPiece[], width = BIN_W): { top: number; under: number } {
+	const sky = new Array<number>(width).fill(0);
 	const ordered = [...pieces].sort((a, b) => b.area - a.area || (a.role < b.role ? -1 : 1));
 	for (const pc of ordered) {
 		const L = Math.ceil(pc.box.left);
@@ -750,7 +750,7 @@ function pack(pool: Pool, pieces: BinPiece[]): { top: number; under: number } {
 			profile.push(span ? { low: -span[1] - 1, high: -span[0] + 1 } : null);
 		}
 		let best: { x: number; Y: number } | null = null;
-		for (let x = 0; x + w <= BIN_W; x++) {
+		for (let x = 0; x + w <= width; x++) {
 			let Y = -Infinity;
 			for (let j = 0; j < w; j++) {
 				const col = profile[j];
@@ -840,6 +840,40 @@ export function tightestBin(pool: Pool): BinResult {
 	return binWith(pool, fit.L, fit.R, binScale(pool));
 }
 
+// ---------- off the field: the bench tray beside the board (D-50) ----------
+export const TRAY_W = 300;
+
+/** A bench piece: `role` is only the sizing placeholder; `id` is the player. */
+export interface TrayPiece extends BinPiece {
+	id: string;
+}
+
+export interface TrayResult {
+	pieces: TrayPiece[];
+	/** Actual 2026 runs of everyone off the field, or null when any is missing. */
+	runs: number | null;
+	/** Height of the pile, so the tray can grow to hold it. */
+	height: number;
+}
+
+/**
+ * Everyone this lineup leaves off the field, packed by the same gravity rule
+ * and at the same runs-to-area scale as the board, so a bench piece reads at
+ * the size it would take up on the field.
+ */
+export function benchTray(pool: Pool, lineup: Lineup): TrayResult {
+	const on = new Set(lineupIds(lineup));
+	const scale = binScale(pool);
+	const off = [...pool.keys()].filter((id) => !on.has(id));
+	const pieces = off.map((id) => slotPiece(pool, 'DH', id, id, scale));
+	const pile = pack(pool, pieces, TRAY_W);
+	return {
+		pieces: pieces.map((pc, i) => ({ ...pc, id: off[i]! })),
+		runs: pieces.some((p) => p.runs == null) ? null : pieces.reduce((s, p) => s + p.runs!, 0),
+		height: pieces.length ? pile.top : 0
+	};
+}
+
 // ---------- slot by slot: bars by lineup slot and batting side ----------
 /** Full band = .150 R/PA in every actual PA. */
 export const CAP_RATE = 0.15;
@@ -904,7 +938,7 @@ export function binFindings(
 	return [
 		[
 			{
-				lead: `This lineup fills ${Math.round(cur.fill)}% of the bin.`,
+				lead: `This lineup fills ${Math.round(cur.fill)}% of the board.`,
 				text: `${Math.round(cur.gaps)}% is lost in gaps where shapes don't nest, and ${Math.round(cur.headroom)}% is headroom: value no one on the field supplies.`
 			},
 			{
@@ -923,7 +957,7 @@ export function binFindings(
 		[
 			{
 				lead: 'The tightest fit reaches the lid',
-				text: `${more == null ? '' : `(about ${more.toFixed(1)} runs more than this lineup) `}using platoons and position moves. Even so, ${Math.round(best.gaps)}% of the bin is gaps between shapes.`
+				text: `${more == null ? '' : `(about ${more.toFixed(1)} runs more than this lineup) `}using platoons and position moves. Even so, ${Math.round(best.gaps)}% of the board is gaps between shapes.`
 			},
 			{
 				lead: 'Squares and rectangles sit flush',

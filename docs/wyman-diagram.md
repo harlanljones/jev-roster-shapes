@@ -45,6 +45,17 @@ The best rosters are like well-oiled machines. They maximize "square" and "hexag
 2. **Surround with Hexagons:** Place playmakers next to your squares to maximize passing.
 3. **Minimize Gaps:** Avoid putting too many "pentagons" or "circles" together, as they create empty space and compatibility issues.
 
+## In this app (D-50)
+
+Each decision page centers on one Wyman-style board, drawn from 2026 Red Sox data rather than the basketball examples above:
+
+- **The box** is the most this roster pool could field in hindsight: the tightest fit, with platoons and position moves, packed until it reaches the lid.
+- **The pieces** are the scenario's nine lineup slots, sized by actual 2026 runs and dropped in by gravity. Left and right halves are the player's split against left- and right-handed pitching.
+- **Empty space** is literal: gaps where outlines don't nest, and headroom between the top of the pile and the lid. Headroom is value the lineup leaves off.
+- **Off the field** is an open tray beside the board with everyone the lineup leaves out, at the same scale.
+
+The shapes follow the repository's rubric v2 ([Shape taxonomy](SHAPE_TAXONOMY.md)), not the four roles above. In particular, a Star is a player with quirks who is hard to fit, not a star player. The fitted case, the engine's pool fit, the interaction map, and the slot bars are subpages behind the board.
+
 ## Next (optional)
 
 This conceptual view is great for the big picture. A natural follow-on is a simple checklist for a GM to evaluate a player's shape before adding them to their roster.
