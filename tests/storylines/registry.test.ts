@@ -168,26 +168,35 @@ describe('2026 storyline registry', () => {
 		expect(
 			calculation.results.every(({ constraints }) => constraints.rosterSize.status === 'passed')
 		).toBe(true);
-		const contreras = 'mlbam-575929';
-		expect(wildCard.bundle.comparison.candidates[1]?.memberIds).not.toContain(contreras);
 	});
 
-	it('keeps Gasper off every Wild Card roster and brings Mead in only for Contreras', () => {
-		// D-49: Gasper hurt his biceps on September 25 and is expected to miss
-		// the series; Mead is candidate B's replacement for Contreras.
+	it('keeps Gasper and Mead off every Wild Card roster and puts Contreras where the news does', () => {
+		// September 29 update: Gasper is on the injured list and Mead did not
+		// travel. Contreras plays first in the baseline, only DHs in A, and is
+		// carried without a lineup spot in B.
 		const wildCard = getStoryline('wild-card-roster');
 		if (!wildCard) throw new Error('wild-card-roster storyline missing');
-		const [base, candA, candB] = [
+		const scenarios = [
 			wildCard.bundle.comparison.baseline,
 			...wildCard.bundle.comparison.candidates
 		];
-		const gasper = 'mlbam-681508';
-		const mead = 'mlbam-678554';
-		for (const scenario of [base, candA, candB]) expect(scenario?.memberIds).not.toContain(gasper);
-		expect(base?.memberIds).not.toContain(mead);
-		expect(candA?.memberIds).not.toContain(mead);
-		expect(candB?.memberIds).toContain(mead);
-		expect(candB?.memberIds).not.toContain('mlbam-575929');
+		const contreras = 'mlbam-575929';
+		for (const scenario of scenarios) {
+			expect(scenario.memberIds).not.toContain('mlbam-681508'); // Gasper
+			expect(scenario.memberIds).not.toContain('mlbam-678554'); // Mead
+			expect(scenario.memberIds).toContain(contreras);
+			expect(scenario.memberIds).toHaveLength(14);
+		}
+		const roleOf = (scenarioIndex: number) =>
+			scenarios[scenarioIndex]!.allocations.flatMap((allocation) =>
+				allocation.assignments
+					.filter(({ playerId }) => playerId === contreras)
+					.map(({ order }) => order)
+			);
+		// Slot orders follow the template: 2 is first base, 9 the DH.
+		expect(new Set(roleOf(0))).toEqual(new Set([2]));
+		expect(new Set(roleOf(1))).toEqual(new Set([9]));
+		expect(roleOf(2)).toEqual([]);
 	});
 
 	it('opens `/` on a decision that exists', () => {
