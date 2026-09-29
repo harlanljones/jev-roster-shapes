@@ -3,11 +3,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { render } from 'vitest-browser-svelte';
 import LibraryPage from '../../src/lib/app/LibraryPage.svelte';
 
-// D-40, D-43: the web servers open on the case for the first storyline.
+// D-40, D-43, D-50: a decision opens on its one diagram, the board.
 // Opening the workspace asks for the D-36 public acknowledgment, then hands
 // the bundle over.
 describe('LibraryPage', () => {
-	it('paints the case and opens a storyline after acknowledgment', async () => {
+	it('paints the board and opens a storyline after acknowledgment', async () => {
 		const onOpen = vi.fn();
 		await render(LibraryPage, { props: { onOpen } });
 
@@ -20,7 +20,7 @@ describe('LibraryPage', () => {
 			.element(timeline.getByRole('link', { name: /Offseason IF/ }))
 			.toHaveAttribute('aria-current', 'page');
 		expect(timeline.getByRole('link').elements()).toHaveLength(5);
-		await expect.element(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
+		await expect.element(page.getByRole('group', { name: /Roster board for/ })).toBeVisible();
 		await expect.element(page.getByText('Public data', { exact: true })).toBeVisible();
 
 		await page.getByRole('button', { name: 'Open workspace' }).click();

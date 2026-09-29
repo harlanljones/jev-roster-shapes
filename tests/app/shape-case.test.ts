@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+	benchTray,
 	buildPool,
 	caseView,
 	complements,
@@ -59,6 +60,26 @@ describe('Shape Case model (display layer, D-43)', () => {
 			expect(bin.overflows).toBe(false);
 			expect(bin.fill).toBeLessThan(tightestBin(pool).fill + 0.001);
 		}
+	});
+
+	it('puts everyone off the field in the tray at the board scale (D-50)', () => {
+		const tray = benchTray(pool, lineups[0]!);
+		const on = new Set(Object.values(lineups[0]!));
+		expect(tray.pieces.map((p) => p.id).sort()).toEqual(
+			[...pool.keys()].filter((id) => !on.has(id)).sort()
+		);
+		// Casas is off the field with no 2026 PA, so the tray total is suppressed.
+		expect(tray.pieces.some((p) => p.id === 'mlbam-671213' && p.runs == null)).toBe(true);
+		expect(tray.runs).toBeNull();
+		// Same runs-to-area scale as the board: a bench piece matches its own
+		// one-player slot piece on the board.
+		const abreuBench = benchTray(pool, { ...lineups[0]!, RF: null }).pieces.find(
+			(p) => p.id === 'mlbam-677800'
+		)!;
+		const abreuSlot = lineupBin(pool, lineups[0]!).pieces.find((p) => p.role === 'RF')!;
+		expect(abreuSlot.idR).toBe('mlbam-677800');
+		expect(abreuBench.r).toBeCloseTo(abreuSlot.r, 9);
+		expect(tray.height).toBeGreaterThan(0);
 	});
 
 	it('suppresses a lineup total when a starter has no data', () => {

@@ -12,11 +12,12 @@
 
 	let { children }: { children: Snippet } = $props();
 
-	// D-46: the shell names where you are. `snapshots` is a subpage of the
-	// decision it explains, so the nav only offers it when a decision is open.
+	// D-46: the shell names where you are. D-50: the board and its diagram
+	// subpages (snapshots among them) are listed by the decision's own nav, so
+	// the shell keeps two levels: the index and the open decision.
 	const slug = $derived(page.params.slug ?? null);
 	const story = $derived(slug ? getStoryline(slug) : undefined);
-	const onSnapshots = $derived(page.route.id === '/scenario/[slug]/snapshots');
+	const onBoard = $derived(page.route.id === '/scenario/[slug]');
 	const decisionHref = $derived(story ? resolve('/scenario/[slug]', { slug: story.slug }) : null);
 </script>
 
@@ -27,14 +28,8 @@
 	<nav class="shell-nav" aria-label="Sections">
 		<a href={resolve('/decisions')} aria-current={slug ? undefined : 'page'}>Decisions</a>
 		{#if story && decisionHref}
-			<a href={decisionHref} aria-current={onSnapshots ? undefined : 'page'}>
+			<a href={decisionHref} aria-current={onBoard ? 'page' : undefined}>
 				{story.short}
-			</a>
-			<a
-				href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}
-				aria-current={onSnapshots ? 'page' : undefined}
-			>
-				Snapshots
 			</a>
 		{/if}
 	</nav>

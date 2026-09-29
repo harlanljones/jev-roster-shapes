@@ -26,7 +26,11 @@ test('the workspace passes the full axe rule set', async ({ page }) => {
 const PAGES = [
 	['the season index', '/decisions'],
 	['the Wild Card decision `/` opens on', '/'],
-	['a decision page with the engine pool fit', '/scenario/offseason-infield'],
+	['a decision board', '/scenario/offseason-infield'],
+	['the fitted case subpage', '/scenario/offseason-infield/case'],
+	['the engine pool fit subpage', '/scenario/offseason-infield/engine'],
+	['the interactions subpage', '/scenario/offseason-infield/interactions'],
+	['the slot by slot subpage', '/scenario/offseason-infield/slots'],
 	['the snapshots subpage', '/scenario/offseason-infield/snapshots']
 ] as const;
 

@@ -7,12 +7,16 @@ Status: implementation defaults for the local prototype (D-38 through D-40: libr
 | Route | Screen | Required content |
 | --- | --- | --- |
 | `/` | Season index | Timeline with today's date marked and the record through it, plus one card per decision with its date, baseline, and both deltas |
-| `/scenario/[slug]` | Decision | The case for that decision, the engine's pool fit with its offensive deltas, the hindsight diagrams, and a link to snapshots |
+| `/scenario/[slug]` | Decision board | One diagram (D-50): the scenario's lineup packed under the pool's best, the players left off the field beside it, its readout and findings, and cards to the subpages |
+| `/scenario/[slug]/case` | Case subpage | The fitted case, its findings, and its table equivalent |
+| `/scenario/[slug]/engine` | Engine subpage | The engine's pool fit per scenario with its offensive deltas |
+| `/scenario/[slug]/interactions` | Interactions subpage | The interaction map and its findings |
+| `/scenario/[slug]/slots` | Slot-by-slot subpage | This lineup and the hindsight best nine packed side by side, and the slot bars |
 | `/scenario/[slug]/snapshots` | Snapshots subpage | The Jev prompt and its outputs beside the roster and the engine's best nine |
 | `/player/[id]` | Player | One player's shape, evidence, and boundary note |
 | Workspace | Comparison | Reached from a decision's `Open workspace`, after the public-data acknowledgment |
 
-Every decision has exactly one URL, including the one the index used to render inline. Navigation lives in the shell header (`Decisions · decision · Snapshots`) and marks the current section. Timelines take an optional `today` so the marker is testable without freezing a build, and a date outside the season window is stated rather than clamped silently.
+Every decision has exactly one URL, including the one the index used to render inline. Navigation lives in the shell header (`Decisions · decision`) and, inside a decision, in its `Decision diagrams` nav (Board, Case, Engine fit, Interactions, Slot by slot, Snapshots); both mark the current page. The board and its diagram subpages share the scenario pick through `?scenario=<id>`, falling back to the baseline when it is missing or unknown. Timelines take an optional `today` so the marker is testable without freezing a build, and a date outside the season window is stated rather than clamped silently.
 
 ## 1. First complete journey
 
@@ -29,7 +33,7 @@ Use one comparison workspace with these reachable views. They may be panels or r
 | View | Required content | Primary action |
 | --- | --- | --- |
 | Season index | Season timeline with today marked, and one dated card per decision with its baseline and deltas | Open a decision |
-| Decision | Roster case (position cutouts, shape glyphs, player detail, table equivalent), the engine's pool fit with its deltas, coverage and workload transfers, plus the hindsight diagrams | Open the workspace; open snapshots |
+| Decision | The board (lineup pieces under the pool's best, players off the field, readout, findings) with player detail; the case, engine pool fit, interaction map, and slot bars on its subpages | Pick a scenario; open the workspace; open a subpage |
 | Assumptions | Horizon, templates, PA budgets, exposure assumptions, limits, provenance | Apply assumptions |
 | Allocation | Baseline/A/B selector, membership, template slots, workloads, diagnostics | Commit allocation edit |
 | Compare | Baseline/A/B columns, coverage, PA transfers, supported metrics, checks | Inspect a result |

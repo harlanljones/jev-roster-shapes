@@ -56,10 +56,13 @@ third-party font requests.
 
 ## Components
 
+- `diagrams/WymanBoard`: a decision's one diagram (D-50): the lineup packed
+  under the pool's best, headroom marked, and the off-the-field tray beside it.
 - `diagrams/ShapeCase`: the case (1000×980 viewBox), selectable pieces with
   labeled buttons, bench tray, empty cutouts.
 - `diagrams/InteractionMap`: fixed-position pool map with layer toggles.
-- `diagrams/CapacityBin`: one lineup packed into the pool's bin.
+- `diagrams/CapacityBin`: one lineup packed into the pool's bin (slot-by-slot
+  subpage).
 - `diagrams/SlotBars`: bars by slot and pitcher hand with league lines.
 - `diagrams/Piece`: the shared piece (split halves, tabs, missing state).
 - `diagrams/PieceDetail`: the tag on the selected piece.
