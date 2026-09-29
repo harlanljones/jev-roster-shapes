@@ -120,6 +120,7 @@ hand-derived scenario expectations before merge.
 | [Decisions](docs/DECISIONS.md) | Adopted defaults (D-01–D-41) and open dependencies |
 | [Shape taxonomy](docs/SHAPE_TAXONOMY.md) | Analyst-labeled 8-shape rubric v2 for the Shape Case diagrams |
 | [Design](DESIGN.md) | Visual system: the case metaphor, tokens, type, and diagram components |
+| [Wyman Diagram conceptual guide](docs/wyman-diagram.md) | Conceptual roster-fit metaphor and shape roles |
 
 Repository layout:
 
