@@ -27,3 +27,6 @@ tests/**/__screenshots__
 
 # Subagent worktrees
 .worktrees
+
+# Hermes project-skill links are per-machine (created by ./dev)
+.hermes/

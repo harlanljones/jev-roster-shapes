@@ -1,0 +1,183 @@
+#!/usr/bin/env bash
+# dev — primary entrypoint for development on the jev-roster-shapes repo under Hermes.
+#
+# Usage:
+#   ./dev              launch an interactive Hermes session (jev-roster-shapes profile)
+#   ./dev -z "prompt"  one-shot query (args pass straight through to hermes)
+#   ./dev setup        bootstrap only: profile, project skills, trust
+#   ./dev doctor       verify the environment without launching
+#
+# Idempotent: safe to run repeatedly. Never modifies ~/.hermes (default
+# profile) — everything happens under the `jev-roster-shapes` profile or this repo.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROFILE="jev-roster-shapes"
+
+cd "$REPO_ROOT"
+
+if ! command -v hermes >/dev/null 2>&1; then
+  echo "error: hermes not on PATH (install: curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash)" >&2
+  exit 1
+fi
+
+profile_exists() {
+  hermes profile list 2>/dev/null | grep -qE "^[│┃ ]*${PROFILE}( |$|…)" || \
+    [ -d "$HOME/.hermes/profiles/${PROFILE}" ]
+}
+
+# Skills disabled in the jev-roster-shapes profile — everything not relevant to
+# this repo. Kept here so a fresh machine can rebuild the profile exactly.
+build_disabled_list() {
+  cat <<'JSON'
+["1password","SQLite","agent-reach","ai-image-generation","airtable","animate","animate-expo","animation-vocabulary","apple-design","archify","architecture-diagram","arxiv","ascii-video","ask-sonner","baoyu-infographic","blocked-page-recovery","box","chezmoi-dotfiles","claude-code","claude-design","codex","company-brain-demo","competitor-news-monitor","computer-use","design-md","docker-nextjs","dockerize-web-app","document-to-action-items","docx","dogfood","editor","email-inbox-triage","emil-design-eng","find-animation-opportunities","flyai","gif-search","google-workspace","grounded-citations","hermes-agent-skill-authoring","hermes-repo-devsetup","hermes-repo-profiles","himalaya","humanizer","impeccable","improve-animations","inspecting-hermes-desktop-dom","llm-wiki","manim-video","maps","market-competitor-research","meeting-action-items","nextjs-docker-env","node-inspect-debugger","notion","obsidian","omarchy-app","omarchy-hyprland-config","omarchy-plugins","opencode","p5js","pdf","pick-ui-library","popular-web-designs","powerpoint","product-price-monitor","profile-site","python-debugpy","ratatui-tui","repo-scaffold","review-animations","rust","scrollcraft","sdlc-review","shell-portability","songsee","songwriting-and-ai-music","spring-boot-react-fullstack","supabase","supabase-postgres-best-practices","teams-meeting-pipeline","typesafe-ai","vercel-env-secrets","watch","weekly-review-planning","write-swift","xlsx","xurl","youtube-content"]
+JSON
+}
+
+ensure_profile() {
+  if profile_exists; then
+    return 0
+  fi
+  echo "[dev] creating '${PROFILE}' profile (cloned from default)..."
+  hermes profile create "$PROFILE" --clone \
+    --description "jev-roster-shapes repo dev: SvelteKit+Bun position-player comparison prototype — lean skill set" >/dev/null
+}
+
+ensure_skill_prune() {
+  # Already configured? Count stored entries vs the heredoc list (a stored
+  # JSON array is printed as YAML '- name' lines by config get).
+  local stored want
+  stored="$(hermes --profile "$PROFILE" config get skills.disabled 2>/dev/null | grep -cE '^[[:space:]]*- ' || true)"
+  want="$(build_disabled_list | jq 'length')"
+  if [ "${stored:-0}" -eq "${want:-0}" ] && [ "${want:-0}" -gt 0 ]; then
+    return 0
+  fi
+  echo "[dev] pruning irrelevant skills from '${PROFILE}' profile..."
+  hermes --profile "$PROFILE" config set skills.disabled "$(build_disabled_list)" >/dev/null 2>&1 || true
+}
+
+ensure_hooks() {
+  local configured
+  configured="$(hermes --profile "$PROFILE" config get hooks.pre_tool_call 2>/dev/null || true)"
+  if printf '%s' "$configured" | grep -q 'jev-roster-shapes-git-guard'; then
+    return 0
+  fi
+  echo "[dev] registering hook scripts in '${PROFILE}' profile..."
+  hermes --profile "$PROFILE" config set hooks.pre_tool_call \
+    '[{"matcher":"terminal|execute_code","command":"~/.hermes/agent-hooks/jev-roster-shapes-git-guard.sh","timeout":10,"fail_closed":true}]' --force >/dev/null
+  hermes --profile "$PROFILE" config set hooks.post_tool_call \
+    '[{"matcher":"write_file|patch","command":"~/.hermes/agent-hooks/jev-roster-shapes-formatter.sh","timeout":15},{"matcher":"terminal","command":"~/.hermes/agent-hooks/jev-roster-shapes-evidence.sh","timeout":10}]' --force >/dev/null
+  hermes --profile "$PROFILE" config set hooks.pre_llm_call \
+    '[{"command":"~/.hermes/agent-hooks/jev-roster-shapes-inject-git-status.sh","timeout":5}]' --force >/dev/null
+}
+
+ensure_project_skills() {
+  local missing=0
+  # software-development/ category
+  local -a sd=(test-driven-development systematic-debugging requesting-code-review \
+               simplify-code spike grill-me subagent-driven-development \
+               codebase-inspection github)
+  # other category dirs
+  local -a cats=(hermes-agent:autonomous-ai-agents)
+  # root-level skills
+  local -a root_lv=(jev-tooling unlazy)
+  mkdir -p .hermes/skills
+  local s t
+  for s in "${sd[@]}"; do
+    [ -e ".hermes/skills/$s/SKILL.md" ] || { ln -sfn "$HOME/.hermes/skills/software-development/$s" ".hermes/skills/$s"; missing=1; }
+  done
+  for pair in "${cats[@]}"; do
+    s="${pair%%:*}"; t="${pair##*:}"
+    [ -e ".hermes/skills/$s/SKILL.md" ] || { ln -sfn "$HOME/.hermes/skills/$t/$s" ".hermes/skills/$s"; missing=1; }
+  done
+  for s in "${root_lv[@]}"; do
+    [ -e ".hermes/skills/$s/SKILL.md" ] || { ln -sfn "$HOME/.hermes/skills/$s" ".hermes/skills/$s"; missing=1; }
+  done
+  # Broken links (e.g. skill moved between category dirs) — repair from anywhere.
+  for s in "${sd[@]}" "${cats[@]%%:*}" "${root_lv[@]}"; do
+    if [ -L ".hermes/skills/$s" ] && [ ! -e ".hermes/skills/$s/SKILL.md" ]; then
+      t="$(find "$HOME/.hermes/skills" -maxdepth 2 -type d -name "$s" 2>/dev/null | head -1)"
+      [ -n "$t" ] && ln -sfn "$t" ".hermes/skills/$s"
+    fi
+  done
+  [ "$missing" -eq 1 ] && echo "[dev] bootstrapped .hermes/skills project links"
+  return 0
+}
+
+ensure_trust() {
+  # Trust is stored per-profile; capture-then-match (early pipe exit under
+  # pipefail would false-fail on the already-trusted path).
+  local out
+  out="$(hermes --profile "$PROFILE" skills trust . 2>&1 || true)"
+  if printf '%s' "$out" | grep -q "Already trusted"; then
+    return 0
+  fi
+  echo "[dev] trusted repo for project skills"
+  return 0
+}
+
+doctor() {
+  local fail=0
+  if profile_exists; then
+    echo "ok: profile '${PROFILE}' exists"
+  else
+    echo "MISSING: profile '${PROFILE}'"; fail=1
+  fi
+  if [ -d .hermes/skills ]; then
+    local broken=0
+    for d in .hermes/skills/*/; do
+      [ -e "${d}SKILL.md" ] || { echo "BROKEN: ${d}"; broken=1; fail=1; }
+    done
+    [ "$broken" -eq 0 ] && echo "ok: project skills links ($(find .hermes/skills -maxdepth 1 -mindepth 1 | wc -l | tr -d ' ') skills)"
+  else
+    echo "MISSING: .hermes/skills"; fail=1
+  fi
+  local count
+  count="$(hermes --profile "$PROFILE" skills trust . 2>&1 | grep -oE '[0-9]+ project skill' | grep -oE '^[0-9]+' || true)"
+  echo "ok: ${count:-0} project skill(s) load in this repo"
+  local dcount
+  dcount="$(hermes --profile "$PROFILE" config get skills.disabled 2>/dev/null | grep -cE '^[[:space:]]*- ' || true)"
+  echo "ok: $dcount disabled skill(s) in profile"
+  if hermes --profile "$PROFILE" config get hooks.pre_tool_call 2>/dev/null | grep -q 'git-guard'; then
+    echo "ok: git-guard hook configured"
+  else
+    echo "MISSING: git-guard hook (profile config)"; fail=1
+  fi
+  local h
+  for h in jev-roster-shapes-git-guard.sh jev-roster-shapes-evidence.sh jev-roster-shapes-formatter.sh jev-roster-shapes-inject-git-status.sh; do
+    [ -x "$HOME/.hermes/agent-hooks/$h" ] || { echo "MISSING: hook script $h"; fail=1; }
+  done
+  [ "${fail:-0}" -eq 0 ] && echo "ok: all hook scripts executable"
+  if command -v bun >/dev/null 2>&1; then
+    echo "ok: bun ($(bun --version))"
+  else
+    echo "MISSING: bun (https://bun.sh)"; fail=1
+  fi
+  [ -d node_modules ] && echo "ok: node_modules present" || echo "hint: run 'bun install'"
+  echo "note: hook allowlist is per-profile — first session start may prompt, or run: hermes --profile $PROFILE --accept-hooks (once)"
+  return "$fail"
+}
+
+case "${1:-}" in
+  setup)
+    ensure_profile
+    ensure_skill_prune
+    ensure_hooks
+    ensure_project_skills
+    ensure_trust
+    echo "[dev] setup complete"
+    ;;
+  doctor)
+    ensure_profile 2>/dev/null || true
+    doctor || exit 1
+    ;;
+  *)
+    ensure_profile
+    ensure_skill_prune
+    ensure_hooks
+    ensure_project_skills
+    ensure_trust
+    exec hermes --profile "$PROFILE" "$@"
+    ;;
+esac

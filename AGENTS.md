@@ -34,6 +34,22 @@ When development work is delegated by the user or orchestrator:
 3. Integrate in dependency order and rerun relevant cross-component checks. A component passing in isolation does not close its integration gate.
 4. Report task status, outcome delivered, validation evidence, and remaining blockers. Include correctness, reproducibility, reliability, performance, data handling, and model cost evidence when affected; keep pilot usefulness claims separate.
 
+## Operating manual (verified commands)
+
+- Stack: SvelteKit + Bun + TypeScript; vitest for unit tests, Playwright for e2e, prettier + eslint for format/lint.
+- `bun run test` — vitest run (81 tests across 11 files as of 2026-10-01, green).
+- `bun run check` — svelte-kit sync + svelte-check with `--fail-on-warnings` (0 errors / 0 warnings as of 2026-10-01).
+- `bun run lint` — `prettier --check . && eslint .` (green as of 2026-10-01).
+- `bun run build` — vite build. `bun run test:e2e` — Playwright (chromium via `bun run setup:browsers`).
+- `bun run verify` — check + lint + test + build + e2e; run before closing a milestone chunk.
+- `./dev` — repo-local Hermes profile entrypoint (see `.hermes.md`); `./dev setup` bootstraps, `./dev doctor` verifies.
+- Commits follow Conventional Commits (`type(scope): subject`) — enforced machine-wide by the commit-msg hook.
+
+### Layout
+
+- `SPEC.md`, `ROADMAP.md` — product scope and milestones; `docs/` — domain/calculations, data contract, workflows, acceptance, decisions.
+- `src/` application code, `tests/` and `*.test.ts` vitest suites, `spikes/` throwaway experiments, `reports/` generated evidence.
+
 <!-- codebase-memory-mcp:start -->
 # Codebase Memory
 
