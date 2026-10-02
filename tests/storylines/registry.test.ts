@@ -10,20 +10,26 @@ import {
 import { describe, expect, it } from 'vitest';
 
 describe('2026 storyline registry', () => {
-	it('publishes the five storyline slugs in library order', () => {
+	it('publishes the eight storyline slugs in library order', () => {
 		expect(storylineRegistry.map(({ slug }) => slug)).toEqual([
 			'offseason-infield',
 			'opening-day-outfield',
 			'july-run',
 			'deadline',
-			'wild-card-roster'
+			'wild-card-roster',
+			'winter-infield',
+			'winter-duran',
+			'winter-bat'
 		]);
 		expect(storylineRegistry.map(({ bundle }) => bundle.bundleId)).toEqual([
 			'mlbam-bos-2026-offseason-infield',
 			'mlbam-bos-2026-opening-day-outfield',
 			'mlbam-bos-2026-july-run',
 			'mlbam-bos-2026-deadline',
-			'mlbam-bos-2026-wild-card-roster'
+			'mlbam-bos-2026-wild-card-roster',
+			'mlbam-bos-2026-winter-infield',
+			'mlbam-bos-2026-winter-duran',
+			'mlbam-bos-2026-winter-bat'
 		]);
 	});
 

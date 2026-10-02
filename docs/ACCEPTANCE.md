@@ -10,6 +10,7 @@
 > `tests/fixtures/power-vacuum-2026.json`; the five season-timeline tables are
 > asserted in the same registry test. `docs/examples/comparison-v1.json` stays
 > read-only as the historical v1 illustration.
+> Status note (D-52, 2026-10-01): the golden set is now the eight storyline bundles in `src/lib/storylines/`, and the three winter tables are asserted in the same registry test.
 
 Read when implementing tests, measuring performance, or claiming completion. These are requirements and independently specified expected values, not a record of passing application tests. Record observed results in the report paths assigned by [ROADMAP.md](../ROADMAP.md).
 

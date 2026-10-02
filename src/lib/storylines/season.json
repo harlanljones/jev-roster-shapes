@@ -1,7 +1,7 @@
 {
 	"source": "MLB Stats API (statsapi.mlb.com), free public endpoints; MLBAM copyright applies",
 	"asOf": "2026-09-27",
-	"fetchedAt": "2026-09-29T08:32:13Z",
+	"fetchedAt": "2026-10-01T21:32:15Z",
 	"record": [
 		{
 			"date": "2026-03-26",
@@ -1082,6 +1082,21 @@
 				}
 			}
 		},
+		"mlbam-664040": {
+			"name": "Brandon Lowe",
+			"pa": 656,
+			"runs": 94,
+			"split": {
+				"vL": {
+					"pa": 211,
+					"ops": ".648"
+				},
+				"vR": {
+					"pa": 445,
+					"ops": ".910"
+				}
+			}
+		},
 		"mlbam-665966": {
 			"name": "Carlos Narváez",
 			"pa": 285,
@@ -1094,6 +1109,21 @@
 				"vR": {
 					"pa": 208,
 					"ops": ".474"
+				}
+			}
+		},
+		"mlbam-668227": {
+			"name": "Randy Arozarena",
+			"pa": 670,
+			"runs": 113,
+			"split": {
+				"vL": {
+					"pa": 198,
+					"ops": ".954"
+				},
+				"vR": {
+					"pa": 472,
+					"ops": ".827"
 				}
 			}
 		},
@@ -1163,6 +1193,21 @@
 				}
 			}
 		},
+		"mlbam-678554": {
+			"name": "Curtis Mead",
+			"pa": 329,
+			"runs": 49,
+			"split": {
+				"vL": {
+					"pa": 141,
+					"ops": ".897"
+				},
+				"vR": {
+					"pa": 188,
+					"ops": ".815"
+				}
+			}
+		},
 		"mlbam-678882": {
 			"name": "Ceddanne Rafaela",
 			"pa": 576,
@@ -1170,7 +1215,7 @@
 			"split": {
 				"vL": {
 					"pa": 154,
-					"ops": ".811"
+					"ops": ".824"
 				},
 				"vR": {
 					"pa": 422,
@@ -1190,6 +1235,21 @@
 				"vR": {
 					"pa": 467,
 					"ops": ".633"
+				}
+			}
+		},
+		"mlbam-681508": {
+			"name": "Mickey Gasper",
+			"pa": 225,
+			"runs": 26,
+			"split": {
+				"vL": {
+					"pa": 28,
+					"ops": ".268"
+				},
+				"vR": {
+					"pa": 197,
+					"ops": ".902"
 				}
 			}
 		},

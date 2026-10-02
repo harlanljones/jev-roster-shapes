@@ -22,9 +22,9 @@ It is a working prototype, not a finished product. It uses public baseball data 
 - Opens evidence for any number: the source value, the assumption behind it, and the formula and version used.
 - Saves drafts and exports self-contained files that another analyst can re-import and replay exactly.
 
-## The demo: the 2026 Red Sox season, five decisions
+## The demo: the 2026 Red Sox season, eight decisions
 
-The demo opens on the current decision, the Wild Card roster (D-49). The season index at `/decisions` shows Boston's record as games over .500, with today marked on the axis and five decisions pinned to the dates they were made. Pick a decision and the roster appears as a fitted case. Each lineup slot is a foam cutout cut to the shape it asks for, and each player is a piece in their profile shape, sized by the runs they actually produced in 2026 and split into a vs-left and a vs-right half colored against the league. Visible foam is friction, an empty cutout is a position nobody on the bench covers, and the same pieces then appear in an interaction map, a capacity bin whose lid is the hindsight best nine, and slot-by-slot bars. Those diagrams are a labeled display layer (D-43).
+The demo opens on the current decision, the Wild Card roster (D-49). The season index at `/decisions` shows Boston's record as games over .500, with today marked on the axis and eight decisions pinned to the dates they were made; the axis now runs through Opening Day 2027 with the off-season shaded. Pick a decision and the roster appears as a fitted case. Each lineup slot is a foam cutout cut to the shape it asks for, and each player is a piece in their profile shape, sized by the runs they actually produced in 2026 and split into a vs-left and a vs-right half colored against the league. Visible foam is friction, an empty cutout is a position nobody on the bench covers, and the same pieces then appear in an interaction map, a capacity bin whose lid is the hindsight best nine, and slot-by-slot bars. Those diagrams are a labeled display layer (D-43).
 
 The engine answers a different question from the diagrams. For each scenario it searches that scenario's own roster for the best nine it can field — one lineup per pitcher-hand context — and then judges that lineup with the same feasibility, coverage, and capacity rules as any other scenario (D-45). The result is a pool fit: its total, how many runs the lineup actually used leaves on the table, who gains and loses plate appearances, who ends up on the bench, which position moves it requires, and what it still cannot cover. It is bounded by the roster the comparison really has, so a candidate's fit may field an incoming player and the baseline's may not, and a member with no rate is excluded and listed rather than scored as zero.
 
@@ -34,7 +34,10 @@ The engine answers a different question from the diagrams. For each scenario it 
 | Mar 26 Opening Day | 50.70 | 51.68 | +0.980 |
 | Jul 22 July run | 44.02 | 45.77 | +1.754 |
 | Aug 3 deadline | 46.09 | 46.16 | +0.077 |
-| Sep 25 Wild Card | 42.67 | 45.03 | +2.360 |
+| Sep 27 Wild Card | 43.29 | 45.32 | +2.033 |
+| Oct 1 2027 infield | 43.29 | 45.90 | +2.610 |
+| Oct 1 trade Duran | 43.29 | 45.90 | +2.610 |
+| Oct 1 add a bat | 43.29 | 45.90 | +2.610 |
 
 Each decision compares the lineup Boston actually used (from MLB box scores) against two alternatives over the same illustrative 10-game horizon. The engine scores all three with what was known on the decision date: 2025 runs per plate appearance before Opening Day, 2026 rates through the day before for later pins (D-44). Data comes from the free MLB Stats API.
 
@@ -50,9 +53,12 @@ Nothing on that page is a claim. The rubric is analyst-derived and has no evalua
 | Mar 26 | Opening Day: Duran DH, Yoshida DH vs righties, or trade Duran | 50.70 | 48.77 (−1.93) | 48.88 (−1.82) |
 | Jul 22 | July run: June regulars or July regulars? | 44.02 | 45.77 (+1.75) | 44.73 (+0.71) |
 | Aug 3 | Deadline: stand pat, the Rutschman and Mayer trades, or Rutschman and keep Mayer | 46.09 | 46.55 (+0.46) | 44.65 (−1.43) |
-| Sep 25 | Wild Card vs the Yankees (14 position players, Gasper out): Sogard at first while Contreras can't swing, Contreras healthy, or Mead in for Contreras | 42.67 | 43.36 (+0.69) | 44.42 (+1.75) |
+| Sep 27 | Who plays first against the Yankees (14 position players, Gasper on the injured list, Mead not travelling for Game 1): the Game 1 lineup with Contreras at first, Contreras at DH only, or the September 25 plan with him carried but not playing | 43.29 | 43.51 (+0.22) | 42.80 (−0.49) |
+| Oct 1 | Who plays short and second in 2027?: Mead at second every day with Story staying at short, or Story off shortstop with Monasterio at short and Mead at second | 43.29 | 45.58 (+2.29) | 46.00 (+2.71) |
+| Oct 1 | Trade Jarren Duran?: trade him and play Anthony in left with Yoshida at DH, or keep him and play him against left-handers too | 43.29 | 43.43 (+0.14) | 43.26 (−0.03) |
+| Oct 1 | Spend on a bat from outside?: sign Arozarena for left field, or sign Lowe at second with Monasterio still there against left-handers | 43.29 | 45.66 (+2.37) | 44.45 (+1.16) |
 
-The Wild Card pin compares three rosters under the same 14-position-player limit Boston used in 2025, with the September 25 injury news (D-49); it is not a postseason optimization. Mead's rate comes from 329 PA before his July 29 wrist fracture, so candidate B is the most uncertain number on the page. The April 25 manager change is marked on the timeline but is not a decision here: it led to coaching and batting-order changes, not roster moves. Scenario details were checked against 2026 reporting (D-48).
+The Wild Card pin compares three rosters under the same 14-position-player limit Boston used in 2025, with the September 27–29 news (D-51): Contreras back as the DH in the September 27 finale and expected at first for Game 1, Mickey Gasper on the injured list, and Curtis Mead not travelling for Game 1. It is not a postseason optimization. The three winter pins are dated October 1 because no club decision had been announced that day: they are scored on 2026 regular-season rates through September 27, exactly what Boston knew then, and they carry reporting's questions rather than an answer (ESPN, NBC Sports Boston, Feinsand). Franklin Arias is named in the short-and-second pin but left out of the numbers because he has no major-league plate appearance to score him from. The April 25 manager change is marked on the timeline but is not a decision here: it led to coaching and batting-order changes, not roster moves. Scenario details were checked against 2026 reporting (D-48).
 
 ![Start screen: the roster as a fitted case](docs/images/library-roster-shapes.png)
 ![Workspace: side-by-side capacity bins for baseline, A, B and the engine's best nine](docs/images/storyline-comparison.png)
@@ -134,7 +140,7 @@ docs/  contracts, decisions, shape rubric, research, example bundle
 reports/prototype/  measured latency evidence
 ```
 
-Measured: edit-to-render p95 of **8.8 ms** against the proposed 250 ms budget on the reference setup (`reports/prototype/edit-latency.json`); the pool fit adds about 12 ms of engine work to the same path. Verified by 77 unit/integration tests and 27 end-to-end journeys.
+Measured: edit-to-render p95 of **9.6 ms** against the proposed 250 ms budget on the reference setup (`reports/prototype/edit-latency.json`); the pool fit adds about 12 ms of engine work to the same path. Verified by 87 unit/integration tests and 34 end-to-end journeys.
 
 ## Data and limits
 

@@ -19,7 +19,7 @@ describe('LibraryPage', () => {
 		await expect
 			.element(timeline.getByRole('link', { name: /Offseason IF/ }))
 			.toHaveAttribute('aria-current', 'page');
-		expect(timeline.getByRole('link').elements()).toHaveLength(5);
+		expect(timeline.getByRole('link').elements()).toHaveLength(8);
 		await expect.element(page.getByRole('group', { name: /Roster board for/ })).toBeVisible();
 		await expect.element(page.getByText('Public data', { exact: true })).toBeVisible();
 

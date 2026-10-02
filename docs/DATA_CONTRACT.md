@@ -5,8 +5,9 @@
 > the five 2026 storyline bundles in `src/lib/storylines/`; the
 > `docs/examples/comparison-v1.json` golden file below is retained read-only
 > as the historical v1 illustration, not a loaded fixture.
+> Status note (D-52, 2026-10-01): the golden set is now the eight storyline bundles in `src/lib/storylines/`.
 
-Read before writing the importer, domain types, persistence, export, or provider adapter. This is the normative JSON boundary for the local prototype. Implement a machine-readable validator as the first domain work package; the five storyline bundles in `src/lib/storylines/` are the golden positive examples ([examples/comparison-v1.json](examples/comparison-v1.json) is retained read-only as the historical v1 illustration).
+Read before writing the importer, domain types, persistence, export, or provider adapter. This is the normative JSON boundary for the local prototype. Implement a machine-readable validator as the first domain work package; the eight storyline bundles in `src/lib/storylines/` are the golden positive examples ([examples/comparison-v1.json](examples/comparison-v1.json) is retained read-only as the historical v1 illustration).
 
 ## 1. Common conventions
 

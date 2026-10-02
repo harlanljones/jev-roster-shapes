@@ -401,8 +401,9 @@ Limitations:
 - A live call needs a visitor-supplied key, so the deployed demo shows the
   `not-configured` state and the exact request instead of an answer.
 - The historical pin's retrospective event metadata and the five pinned digests are
-  unchanged; a daily refresh still moves the season-to-date October pin, the record line,
-  and the case's season totals.
+  unchanged; a daily refresh still moves the record line and the case's season
+  totals. (Superseded in part by D-52: the season-to-date October pin is frozen
+  to the regular-season close, and the library carries eight pinned digests.)
 - No team data was used, and O-04, O-07, and RS-08 remain open.
 
 ### Season timeline storylines (D-44, user directive 2026-09-25)
@@ -497,6 +498,59 @@ Observed (2026-09-25, snapshot fetched 23:22Z, 160 games, 86–74):
   of `/`, `/decisions`, a decision page, and its snapshots.
 - Limits: Mead's rate is from 329 PA before a July 29 fracture; the news is as
   of September 25 and the roster may change before September 29.
+
+### Winter pins, frozen dates, and an axis to 2027 (D-52, user directive 2026-10-01)
+
+Delivered: the library goes from five dated decisions to eight. Three winter
+pins are added, all dated 2026-10-01 and scored on regular-season rates
+through September 27: `winter-infield` ("Who plays short and second in 2027?"),
+`winter-duran` ("Trade Jarren Duran?"), and `winter-bat` ("Spend on a bat from
+outside?"), with Randy Arozarena (668227) and Brandon Lowe (664040) fetched
+into the snapshot as free-agent candidates only. The snapshot was refetched
+with `DATA_AS_OF=2026-09-27` (the regular-season close), and the fetcher's
+decision dates and roster dates are now fixed (`ROSTER_DATES`,
+`FIXED_WINDOWS`, the `through-2026-09-27` key) so a later refresh cannot drop
+a pin's window; every date-range stats row requests `gameType=R` so October
+cannot pull postseason games into a regular-season rate. The Wild Card pin is
+pinned to `SEASON_END` instead of the moving `snapshot.asOf`.
+`src/lib/app/season-timeline.ts` sets `TIMELINE_END` to 2027-03-25 and adds
+five sourced events (Tracy gets the job 2026-09-22, swept out of the Wild Card
+Series 2026-09-30, free agency opens 2026-11-06, CBA expires 2026-12-01,
+Opening Day 2027); `SeasonTimeline.svelte` shades the off-season band, keys
+month labels by `YYYY-MM`, and offsets overlapping pin circles through the new
+pure helper `pinCircleXs` (the date line stays at the pin's true x, only the
+circle moves). `CURRENT_SLUG` stays `wild-card-roster`. README, the spike
+README, WORKFLOWS, DATA_CONTRACT, ACCEPTANCE, and DECISIONS D-52 carry the new
+count and numbers.
+
+Observed (2026-10-01, snapshot refetched with `DATA_AS_OF=2026-09-27`, 162
+games, 87–75):
+
+- `bun spikes/mlb-2026/timeline-build.mjs`: every scenario feasible. Totals
+  (base / A / B): offseason-infield 50.70271 / 50.68765 / 46.71816;
+  opening-day-outfield 50.70271 / 48.773902 / 48.88215; july-run 44.0207 /
+  45.77464 / 44.7284; deadline 46.08519 / 46.54759 / 44.65364;
+  wild-card-roster 43.289994 / 43.51009 / 42.799194; winter-infield
+  43.289994 / 45.578704 / 46.004264; winter-duran 43.289994 / 43.432194 /
+  43.25889; winter-bat 43.289994 / 45.66305 / 44.447994. Every new total and
+  delta matched an independent Decimal hand derivation (Σ slot PA × R/PA), and
+  the three winter baselines are byte-identical to the Wild Card Game 1
+  lineup allocations.
+- Refetch drift: zero `players` movement in the existing rows; only `fetchedAt`
+  and one display-only Rafaela OPS correction in `splits` changed.
+- `bun run test`: 12 files, 87 tests. `bun run check`: 0 errors, 0 warnings.
+  `bun run lint`: clean.
+- `bun run test:e2e`: 34 passed, including the full axe audits.
+- `hermes verify --json`: ok true, readiness HTTP 200.
+
+Limitations: no club decision had been announced for any of the three winter
+pins as of October 1, so they price reporting's questions rather than a choice
+the club has made, and the rates are observed, not projected. Franklin Arias
+is named in the `winter-infield` lede but excluded from its numbers: he has no
+major-league plate appearance, and scoring him would need minor-league rates
+and a new eligibility rule. The 2027-03-25 window assumes the December 1 CBA
+expiry produces no lockout delay. The README screenshots still show the
+five-pin start screen.
 
 ## Measures and review cadence
 

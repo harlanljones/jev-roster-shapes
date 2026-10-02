@@ -1,4 +1,4 @@
-// 2026 season-timeline storyline library (D-44, revised by D-48). Five `public`-class v1
+// 2026 season-timeline storyline library (D-44, revised by D-48). Eight `public`-class v1
 // bundles built offline by spikes/mlb-2026/timeline-build.mjs from the
 // checked-in MLB Stats API snapshot. Each storyline sits on a date in the
 // season and scores its options with what was known that day. Each bundle is
@@ -9,6 +9,9 @@ import julyRunJson from './july-run.json';
 import offseasonInfieldJson from './offseason-infield.json';
 import openingDayOutfieldJson from './opening-day-outfield.json';
 import wildCardRosterJson from './wild-card-roster.json';
+import winterBatJson from './winter-bat.json';
+import winterDuranJson from './winter-duran.json';
+import winterInfieldJson from './winter-infield.json';
 import { computeInputDigest, parseBundle, type Bundle } from '../contracts';
 
 export interface StorylineExpectation {
@@ -59,11 +62,14 @@ const SNAPSHOT_LABEL =
 	'MLB Stats API season-timeline snapshot (spikes/mlb-2026/timeline-snapshot.json)';
 
 export const PINNED_STORYLINE_DIGESTS = {
-	'offseason-infield': 'fb37cb527a636e7b4ca0edbf0e62326570ef5385c33214e05e30f56c420b6b0e',
-	'opening-day-outfield': '672880262e11d8c19a8acabc7d3dd0f6c903bbff790e047e55b611f65eabe263',
-	'july-run': 'b3858ce8b3ab18d42b2ab93fabd7cff85a7cb3f56e9c476e3dc905fa1377cf39',
-	deadline: 'eb0ad03bcb9b9301556acdaff5bf515d8c1528467535abd78c7e6ec5de0c0065',
-	'wild-card-roster': '722754326238ef0ff5d28927664cda632ebe4d029aee3f0183112166a9126531'
+	'offseason-infield': '32e8dce45c5f977a338461ad4fbfb4a5e60409e988d0f50898b766bee4a68b88',
+	'opening-day-outfield': 'ce833eb7ae38bf1771edeec7a07d1fff215dfbd0a62d28196d8263e8e11974f2',
+	'july-run': '3e79ffc987bb0b3b5eb4be6b79b26d09181fb152a74d416f70a4cfa6335c51e4',
+	deadline: '3988b634032b5f688eaef961b4eb94826ee7a6cd8e525dce6011098b056c5fa0',
+	'wild-card-roster': '0735a7cc5f9c3266f2c6d524f543ebc03db0de978537781597ebfa6a0957f977',
+	'winter-infield': '7c9850fa03e8c1c96d6b7fcc1b74f15daa88f67fc4c976663f541ec5ccceb2e6',
+	'winter-duran': 'ac80e008bc5dcb27f2e6146b701420c4f21f532cbb85454bf2e7368fb9dd8464',
+	'winter-bat': '4e868e18a163f100b6f8145a450dc799ca3d58b78d31e2ca2db0dda5c26c2d19'
 } as const;
 
 export const storylineRegistry: readonly Storyline[] = [
@@ -187,13 +193,13 @@ export const storylineRegistry: readonly Storyline[] = [
 		slug: 'wild-card-roster',
 		short: 'Wild Card',
 		title: 'Who plays first against the Yankees?',
-		lede: 'Boston finished 87–75 and opens the Wild Card Series at Yankee Stadium on September 29: Cam Schlittler (RHP) in Game 1, Max Fried (LHP) in Game 2, Gerrit Cole or Carlos Rodón if it goes three. Willson Contreras, hit on the hand on September 17, came back as the DH in the September 27 finale, and Chad Tracy plans to return him to first base if he checks out. Mickey Gasper is on the injured list and Curtis Mead did not travel. With 14 spots for position players, who plays first: Contreras, Contreras at DH only, or nobody but Sogard?',
+		lede: 'Boston finished 87–75 and opens the Wild Card Series at Yankee Stadium on September 29: Payton Tolle (LHP) starts Game 1 against Cam Schlittler, Sonny Gray takes Game 2 against Max Fried, and Ranger Suárez is behind them if it goes three. Willson Contreras, hit on the hand on September 17, came back as the DH in the September 27 finale, and Chad Tracy plans to return him to first base if he checks out. Mickey Gasper is on the injured list and Curtis Mead did not travel. With 14 spots for position players, who plays first: Contreras, Contreras at DH only, or nobody but Sogard?',
 		eventDate: '2026-09-27',
 		rateLabel: '2026 regular season',
 		date: 'September 27–29, 2026',
 		retrospective: false,
 		eventBasis:
-			'News as of September 29: Contreras back as DH on September 27 and expected to play first in Game 1 (MLB.com; Tracy via Yahoo Sports), Gasper placed on the injured list (Boston Sports Journal), Mead not traveling to New York (Yahoo Sports, Heavy), Tolle vs Schlittler in Game 1 and Fried in Game 2 (ESPN, MLB.com). The baseline against righties is the Game 1 lineup MLB.com reported before first pitch; against lefties Contreras replaces Sogard at first in the September 22–23 lineup. A is the September 27 finale against the lefty, with Contreras at DH and Anthony in left against righties. B is the September 25 plan without him. Every scenario carries 14 position players, with Nate Eaton as the extra outfielder. Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a postseason optimization.',
+			'News as of September 29: Contreras back as DH on September 27 and expected to play first in Game 1 (MLB.com; Tracy via Yahoo Sports), Gasper placed on the injured list (Boston Sports Journal), Mead not traveling to New York (Yahoo Sports, Heavy), Tolle vs Schlittler in Game 1, Gray vs Fried in Game 2, and Suárez lined up behind them if it goes three (ESPN and MLB.com, September 28, when Tracy announced the rotation; New York had named Schlittler, Fried and Cole). The baseline against righties is the Game 1 lineup MLB.com reported before first pitch; against lefties Contreras replaces Sogard at first in the September 22–23 lineup. A is the September 27 finale against the lefty, with Contreras at DH and Anthony in left against righties. B is the September 25 plan without him. Every scenario carries 14 position players, with Nate Eaton as the extra outfielder. Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a postseason optimization.',
 		sourceLabel: SNAPSHOT_LABEL,
 		json: wildCardRosterJson,
 		expected: [
@@ -211,10 +217,98 @@ export const storylineRegistry: readonly Storyline[] = [
 				feasibility: 'feasible'
 			}
 		]
+	}),
+	storyline({
+		slug: 'winter-infield',
+		short: '2027 infield',
+		title: 'Who plays short and second in 2027?',
+		lede: 'Boston started six players at shortstop and seven at second in 2026 and finished with Trevor Story at short and Nick Sogard or Andruw Monasterio at second. ESPN says those positions will probably be resolved in 2027 with Franklin Arias and Curtis Mead — and Arias has never taken a major-league plate appearance, so he cannot be scored from this data. The pin therefore compares only what Boston already has rates for: keep Story at short and hand second base to Mead, or move Story off shortstop as well?',
+		eventDate: '2026-10-01',
+		rateLabel: '2026 regular season',
+		date: 'October 1, 2026 → spring training 2027',
+		retrospective: false,
+		eventBasis:
+			'No club decision had been announced as of October 1, 2026. ESPN (Schoenfield, October 1): the positions will probably be resolved in 2027 with Franklin Arias and Curtis Mead, and Story still has a year on his contract but has no reason to play ahead of Arias. NBC Sports Boston (October 1): Story and Duran are the top trade candidates and Arias is ready to take the shortstop job. SI: the internal version is Arias at short, Mead at second and Story at DH, with Story owed $25 million for 2027. Arias is not on the 40-man roster and has no major-league stats (MLB Stats API, people/808265), so every scenario here uses only the four infielders with 2026 rates: Story, Mead, Monasterio and Sogard, with Seigler behind them; Isiah Kiner-Falefa, who also played second, is a free agent (ESPN, October 1). Baseline is the September shape: Story at short, Sogard at second against right-handers and Monasterio against left-handers. A hands second base to Mead, the player the club acquired to play it there (The Athletic, July 27). B moves Story off shortstop too, the internal stand-in for the answer reporting gives. Rates are regular-season R/PA through September 27, what Boston knows all winter. This compares three rosters on shared assumptions; it is not a projection of 2027.',
+		sourceLabel: SNAPSHOT_LABEL,
+		json: winterInfieldJson,
+		expected: [
+			{ scenarioId: 'base', offenseRuns: '43.289994', offenseDelta: '0', feasibility: 'feasible' },
+			{
+				scenarioId: 'cand-a',
+				offenseRuns: '45.578704',
+				offenseDelta: '2.28871',
+				feasibility: 'feasible'
+			},
+			{
+				scenarioId: 'cand-b',
+				offenseRuns: '46.004264',
+				offenseDelta: '2.71427',
+				feasibility: 'feasible'
+			}
+		]
+	}),
+	storyline({
+		slug: 'winter-duran',
+		short: 'Trade Duran',
+		title: 'Trade Jarren Duran?',
+		lede: 'Jarren Duran hit .207/.266/.361 in 2026 and is fourth on the depth chart behind Roman Anthony, Ceddanne Rafaela and Wilyer Abreu — while Boston still controls him through 2028 and has never traded him. Does he still have a role here: move him and play the other three every day, or keep him and play him against left-handers too?',
+		eventDate: '2026-10-01',
+		rateLabel: '2026 regular season',
+		date: 'October 1, 2026 → winter meetings, December 7–10, 2026',
+		retrospective: false,
+		eventBasis:
+			'No trade had been announced as of October 1, 2026. Feinsand (MLB.com, September): with Anthony, Rafaela and Abreu on the roster Duran has no clear-cut role, and Boston would have to settle for a lesser return; he makes $7.7 million and is controllable through 2028 (MLB Trade Rumors). ESPN (October 1): his trade value took a nosedive but two years of control will still find a taker, and he is clearly fourth on the depth chart. Sporting News (October 2026) and NBC Sports Boston (October 1) both put him at the top of the trade list. Baseline is the September shape: Duran in left against right-handers only, with Anthony in left and Jones at DH against left-handers. A trades him and plays Anthony in left with Yoshida at DH. B keeps him and plays him against left-handers too — the club did not do that once in October (he sat Game 2 against Max Fried with Nate Eaton in left; Rotowire via CBS Sports, September 30). Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of a trade return.',
+		sourceLabel: SNAPSHOT_LABEL,
+		json: winterDuranJson,
+		expected: [
+			{ scenarioId: 'base', offenseRuns: '43.289994', offenseDelta: '0', feasibility: 'feasible' },
+			{
+				scenarioId: 'cand-a',
+				offenseRuns: '43.432194',
+				offenseDelta: '0.1422',
+				feasibility: 'feasible'
+			},
+			{
+				scenarioId: 'cand-b',
+				offenseRuns: '43.25889',
+				offenseDelta: '-0.031104',
+				feasibility: 'feasible'
+			}
+		]
+	}),
+	storyline({
+		slug: 'winter-bat',
+		short: 'Add a bat',
+		title: 'Spend on a bat from outside?',
+		lede: 'Upgrading the lineup is the No. 1 job this winter (NBC Sports Boston), and the top hitters on the market are Seattle outfielder Randy Arozarena, Chicago outfielder Seiya Suzuki and Pittsburgh second baseman Brandon Lowe. This pin prices two of them against the roster Boston has: Arozarena in left, or Lowe at second base, each taking the spot of the player who held it in September.',
+		eventDate: '2026-10-01',
+		rateLabel: '2026 regular season',
+		date: 'October 1, 2026 → free agency opens November 6, 2026',
+		retrospective: false,
+		eventBasis:
+			'No signing had been announced as of October 1, 2026. NBC Sports Boston (October 1): Arozarena, Suzuki and Lowe are the top three hitters set to hit free agency, and if Boston will not spend on one of them it should turn to the trade market. Bleacher Report (September 30): Arozarena is among the best fits for Boston and is a right-handed bat, while Suzuki would have to accept left field. Yahoo (off-season outlook, September 30): expect Suzuki to be connected to Boston, and Lowe, who hit 35 home runs for Pittsburgh in 2026, would fit. Lowe cannot hit left-handed pitching (.223/.270/.378 against lefties in 2026, RotoWire), so B keeps Monasterio at second against left-handers. Arozarena (670 PA, 113 R) and Lowe (656 PA, 94 R) were fetched into the snapshot for these two candidates only; eligibility comes from 2025 fielding (Arozarena 158 games in left, Lowe 121 at second). Trading Wilyer Abreu or extending Adley Rutschman (about $20 million a year is the reported ask) are separate questions that move no roster spot here. Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of 2027.',
+		sourceLabel: SNAPSHOT_LABEL,
+		json: winterBatJson,
+		expected: [
+			{ scenarioId: 'base', offenseRuns: '43.289994', offenseDelta: '0', feasibility: 'feasible' },
+			{
+				scenarioId: 'cand-a',
+				offenseRuns: '45.66305',
+				offenseDelta: '2.373056',
+				feasibility: 'feasible'
+			},
+			{
+				scenarioId: 'cand-b',
+				offenseRuns: '44.447994',
+				offenseDelta: '1.158',
+				feasibility: 'feasible'
+			}
+		]
 	})
 ];
 
-/** The decision `/` opens on (D-49): the latest pin, the Wild Card roster. */
+/** The decision `/` opens on (D-49): the Wild Card roster, kept there even
+ * though the winter pins (D-52) are dated later — the season's pivotal choice. */
 export const CURRENT_SLUG = 'wild-card-roster';
 
 export function getStoryline(slug: string): Storyline | undefined {

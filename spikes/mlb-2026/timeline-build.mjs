@@ -33,6 +33,8 @@ const OBSERVED_MIN_STARTS = 3;
 // Named players (MLBAM IDs).
 const P = {
 	bregman: 608324,
+	arozarena: 668227,
+	lowe: 664040,
 	rutschman: 668939,
 	wong: 657136,
 	narvaez: 665966,
@@ -58,6 +60,9 @@ const P = {
 };
 
 const asOf = snapshot.asOf;
+// The Wild Card pin is anchored to the last day of the regular season so a
+// later daily refresh cannot drag its "regular season" rates past it.
+const SEASON_END = '2026-09-27';
 const lineup = (entries) => entries;
 const same = (l) => ({ L: l, R: l });
 
@@ -135,6 +140,33 @@ const wildCardVsRight = lineup({
 // first and Kiner-Falefa at second against righties.
 const noContrerasVsLeft = { ...wildCardVsLeft, '1B': 'sogard' };
 const noContrerasVsRight = { ...wildCardVsRight, '1B': 'sogard', '2B': 'ikf' };
+
+// The club as it finished 2026: the reported Wild Card Game 1 lineup against
+// right-handers, and the September 22–23 shape against left-handers. Shared by
+// the three off-season pins (D-52), which are scored through September 27.
+const winterVsRight = lineup({
+	C: 'rutschman',
+	'1B': 'contreras',
+	'2B': 'sogard',
+	'3B': 'durbin',
+	SS: 'story',
+	LF: 'duran',
+	CF: 'rafaela',
+	RF: 'abreu',
+	DH: 'anthony'
+});
+const winterVsLeft = lineup({
+	C: 'rutschman',
+	'1B': 'contreras',
+	'2B': 'monasterio',
+	'3B': 'durbin',
+	SS: 'story',
+	LF: 'anthony',
+	CF: 'rafaela',
+	RF: 'abreu',
+	DH: 'jones'
+});
+const winterReserves = ['wong', 'gasper', 'yoshida', 'eaton', 'seigler'];
 
 const TIMELINE = [
 	{
@@ -267,10 +299,10 @@ const TIMELINE = [
 	{
 		slug: 'wild-card-roster',
 		bundleId: 'mlbam-bos-2026-wild-card-roster',
-		asOf,
-		rates: `through-${asOf}`,
-		observed: ['2026-09-11', asOf],
-		rateLabel: `2026 through ${asOf}`,
+		asOf: SEASON_END,
+		rates: `through-${SEASON_END}`,
+		observed: ['2026-09-11', SEASON_END],
+		rateLabel: `2026 through ${SEASON_END}`,
 		// Boston's 2025 Wild Card roster carried 14 position players and 12
 		// pitchers; the same limit applies to every scenario here. Gasper is on
 		// the injured list and Mead did not travel (September 27), so neither is
@@ -298,6 +330,117 @@ const TIMELINE = [
 				label: 'B — Contreras can’t swing: carry him, Sogard plays first',
 				lineups: { L: noContrerasVsLeft, R: noContrerasVsRight },
 				reserves: ['contreras', 'wong', 'eaton']
+			}
+		]
+	},
+	{
+		slug: 'winter-infield',
+		bundleId: 'mlbam-bos-2026-winter-infield',
+		asOf: SEASON_END,
+		rates: 'through-2026-09-27',
+		observed: ['2026-08-03', SEASON_END],
+		rateLabel: '2026 through 2026-09-27',
+		scenarios: [
+			{
+				id: 'base',
+				label: 'Baseline — The September shape: Story at short, Sogard or Monasterio at second',
+				lineups: { L: winterVsLeft, R: winterVsRight },
+				reserves: winterReserves
+			},
+			{
+				id: 'cand-a',
+				label: 'A — Mead at second every day, Story stays at short',
+				lineups: {
+					L: { ...winterVsLeft, '2B': 'mead' },
+					R: { ...winterVsRight, '2B': 'mead' }
+				},
+				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler', 'monasterio'],
+				outgoing: ['sogard'],
+				incoming: ['mead']
+			},
+			{
+				id: 'cand-b',
+				label: 'B — Story off shortstop: Monasterio at short, Mead at second',
+				lineups: {
+					L: { ...winterVsLeft, '2B': 'mead', SS: 'monasterio' },
+					R: { ...winterVsRight, '2B': 'mead', SS: 'monasterio' }
+				},
+				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler', 'sogard'],
+				outgoing: ['story'],
+				incoming: ['mead']
+			}
+		]
+	},
+	{
+		slug: 'winter-duran',
+		bundleId: 'mlbam-bos-2026-winter-duran',
+		asOf: SEASON_END,
+		rates: 'through-2026-09-27',
+		observed: ['2026-08-03', SEASON_END],
+		rateLabel: '2026 through 2026-09-27',
+		scenarios: [
+			{
+				id: 'base',
+				label: 'Baseline — The September shape: Duran in left against right-handers only',
+				lineups: { L: winterVsLeft, R: winterVsRight },
+				reserves: winterReserves
+			},
+			{
+				id: 'cand-a',
+				label: 'A — Trade him: Anthony in left, Yoshida at DH',
+				lineups: {
+					L: winterVsLeft,
+					R: { ...winterVsRight, LF: 'anthony', DH: 'yoshida' }
+				},
+				reserves: ['wong', 'gasper', 'eaton', 'seigler'],
+				outgoing: ['duran'],
+				incoming: []
+			},
+			{
+				id: 'cand-b',
+				label: 'B — Keep him: play him against left-handers too',
+				lineups: {
+					L: { ...winterVsLeft, LF: 'duran', DH: 'anthony' },
+					R: winterVsRight
+				},
+				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler', 'jones'],
+				outgoing: [],
+				incoming: []
+			}
+		]
+	},
+	{
+		slug: 'winter-bat',
+		bundleId: 'mlbam-bos-2026-winter-bat',
+		asOf: SEASON_END,
+		rates: 'through-2026-09-27',
+		observed: ['2026-08-03', SEASON_END],
+		rateLabel: '2026 through 2026-09-27',
+		scenarios: [
+			{
+				id: 'base',
+				label: 'Baseline — The September shape: Duran in left against right-handers only',
+				lineups: { L: winterVsLeft, R: winterVsRight },
+				reserves: winterReserves
+			},
+			{
+				id: 'cand-a',
+				label: 'A — Sign Arozarena for left field',
+				lineups: {
+					L: { ...winterVsLeft, LF: 'arozarena', DH: 'anthony' },
+					R: { ...winterVsRight, LF: 'arozarena' }
+				},
+				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler', 'jones'],
+				outgoing: ['duran'],
+				incoming: ['arozarena']
+			},
+			{
+				id: 'cand-b',
+				label: 'B — Sign Lowe for second base',
+				lineups: { L: winterVsLeft, R: { ...winterVsRight, '2B': 'lowe' } },
+				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler'],
+				outgoing: ['sogard'],
+				incoming: ['lowe']
 			}
 		]
 	}

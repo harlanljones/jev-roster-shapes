@@ -1,6 +1,6 @@
 # Interaction contract
 
-Status: implementation defaults for the local prototype (D-38 through D-40: library-first, five public 2026 retrospective analyses, analyst-labeled shape rubric v1). Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
+Status: implementation defaults for the local prototype (D-38 through D-40: library-first, eight public 2026 analyses, analyst-labeled shape rubric v1). Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
 
 ## 0. Page map
 
@@ -20,7 +20,7 @@ Every decision has exactly one URL, including the one the index used to render i
 
 ## 1. First complete journey
 
-An analyst opens the season index, picks one of the five dated decisions, acknowledges its public-data provenance, reviews the event window and source snapshot, edits allocations across baseline and candidates A/B, compares supported results, inspects evidence, and exports a comparison another analyst can replay.
+An analyst opens the season index, picks one of the eight dated decisions, acknowledges its public-data provenance, reviews the event window and source snapshot, edits allocations across baseline and candidates A/B, compares supported results, inspects evidence, and exports a comparison another analyst can replay.
 
 Completion means the exported comparison restores its inputs and results, including gaps and unavailable metrics. An acquisition preference is optional; a recommended transaction is outside this workflow.
 

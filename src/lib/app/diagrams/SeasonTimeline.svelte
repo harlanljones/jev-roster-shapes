@@ -4,6 +4,7 @@
 		SEASON_EVENTS,
 		TIMELINE_END,
 		datePosition,
+		pinCircleXs,
 		recordSeries,
 		timelinePins,
 		todayMarker
@@ -28,14 +29,29 @@
 		? `M${x('2026-03-25').toFixed(1)},${y(0).toFixed(1)} ` +
 			series.map((p) => `L${x(p.date).toFixed(1)},${y(p.over).toFixed(1)}`).join(' ')
 		: '';
-	const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09'].map((m) => ({
-		x: x(`2026-${m}-01`),
-		label: new Date(`2026-${m}-01T00:00:00Z`).toLocaleString('en-US', {
-			month: 'short',
-			timeZone: 'UTC'
-		})
-	}));
+	// January 2026 → March 2027, the whole window. The key is the YYYY-MM
+	// because the short labels repeat once the axis crosses into 2027 and
+	// Svelte's each keys must be unique; the label itself is unchanged.
+	const months = Array.from({ length: 15 }, (_, i) => {
+		const date = new Date(Date.UTC(2026, i, 1));
+		const iso = date.toISOString().slice(0, 10);
+		return {
+			key: iso.slice(0, 7),
+			x: x(iso),
+			label: date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' })
+		};
+	});
 	const pins = timelinePins(series).sort((a, b) => a.date.localeCompare(b.date));
+	// Pins within days of each other would stack their circles on top of one
+	// another, so only the circle moves inside a cluster; the date line stays
+	// on the pin's true date and a connector joins the two.
+	const circles = pinCircleXs(pins, W);
+	const drawn = pins.map((pin, i) => ({
+		pin,
+		num: i + 1,
+		lineX: x(pin.date),
+		circleX: circles[i] ?? x(pin.date)
+	}));
 	const marker = $derived(todayMarker(today));
 	const href = (slug: string) => resolve('/scenario/[slug]', { slug });
 	const longDate = (iso: string) =>
@@ -68,8 +84,25 @@
 
 <nav class="timeline" aria-label="Season timeline">
 	<svg viewBox="0 0 {W} {H}" role="img" aria-label={summary}>
-		<rect class="preseason" x="0" y={top - 8} width={x('2026-03-26')} height={bottom - top + 16} />
-		{#each months as m (m.label)}
+		<rect
+			class="preseason"
+			x="0"
+			y={top - 8}
+			width={x('2026-03-26')}
+			height={bottom - top + 16}
+			role="img"
+			aria-label="Spring training, March 26 to April 8"
+		/>
+		<rect
+			class="preseason"
+			x={x('2026-09-28')}
+			y={top - 8}
+			width={x(TIMELINE_END) - x('2026-09-28')}
+			height={bottom - top + 16}
+			role="img"
+			aria-label="Off season, September 28, 2026 to March 25, 2027"
+		/>
+		{#each months as m (m.key)}
 			<line class="month" x1={m.x} x2={m.x} y1={top - 8} y2={bottom + 8} />
 			<text class="month-label" x={m.x + 4} y={H - 8}>{m.label}</text>
 		{/each}
@@ -81,6 +114,18 @@
 			</line>
 		{/each}
 		<path class="record" d={path} />
+		{#each drawn as item (item.pin.slug)}
+			<g class="pin" class:active={item.pin.slug === activeSlug}>
+				<line x1={item.lineX} x2={item.lineX} y1="18" y2={bottom + 8} />
+				{#if item.circleX !== item.lineX}
+					<line x1={item.lineX} x2={item.circleX} y1="27" y2="27" />
+				{/if}
+				<circle cx={item.circleX} cy="14" r="11" />
+				<text x={item.circleX} y="18.5">{item.num}</text>
+			</g>
+		{/each}
+		<!-- Drawn last: extending the window put today inside the busiest week
+		     of the axis, and the pin circles would otherwise bury its label. -->
 		<g class="today">
 			<line x1={x(marker.date)} x2={x(marker.date)} y1="6" y2={bottom + 8} />
 			<text x={Math.min(x(marker.date) + 5, W - 96)} y="12">today</text>
@@ -90,13 +135,6 @@
 					: ', before the first game'}
 			</title>
 		</g>
-		{#each pins as pin, i (pin.slug)}
-			<g class="pin" class:active={pin.slug === activeSlug}>
-				<line x1={x(pin.date)} x2={x(pin.date)} y1="18" y2={bottom + 8} />
-				<circle cx={x(pin.date)} cy="14" r="11" />
-				<text x={x(pin.date)} y="18.5">{i + 1}</text>
-			</g>
-		{/each}
 	</svg>
 	<ol class="pins">
 		{#each pins as pin, i (pin.slug)}
@@ -118,7 +156,7 @@
 			? ` · Boston ${todayRecord.wins}–${todayRecord.losses} on the timeline`
 			: ' · before the first game of the season'}{marker.inRange
 			? ''
-			: ' · outside the January–October window this timeline covers'}
+			: ' · outside the January 2026 to March 2027 window this timeline covers'}
 	</p>
 	<p class="events">
 		{#each SEASON_EVENTS as e, i (e.date)}{i ? ' · ' : ''}<span>{longDate(e.date)}: {e.label}</span

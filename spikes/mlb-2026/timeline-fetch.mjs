@@ -18,19 +18,34 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(END_DATE))
 const FETCHED_AT = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
 const API = 'https://statsapi.mlb.com/api/v1';
 
-// Dated rosters: the day before Opening Day, entering July, the day before the
-// deadline trades, and the snapshot day.
-const ROSTER_DATES = ['2026-03-25', '2026-06-30', '2026-08-02', END_DATE];
+// Dated rosters: the fixed decision dates (the day before Opening Day,
+// entering July, the day before the deadline trades, the regular-season
+// close) plus the snapshot day. Deduplicated so a refresh whose END_DATE
+// lands on a decision date does not fetch it twice.
+const ROSTER_DATES = [
+	...new Set(['2026-03-25', '2026-06-30', '2026-08-02', '2026-09-27', END_DATE])
+];
 
 // Hitting and fielding windows. `through-*` windows are what was known on a
 // decision date; `from-*` windows are what happened afterward.
-const WINDOWS = {
+// Fixed windows: every dated pin keeps its own decision window across
+// refreshes, so a later DATA_AS_OF can never drop or rewrite one.
+const FIXED_WINDOWS = {
 	'season-2025': { stats: 'season', season: 2025 },
 	'through-2026-06-30': { start: SEASON_START, end: '2026-06-30' },
 	'through-2026-08-02': { start: SEASON_START, end: '2026-08-02' },
-	[`through-${END_DATE}`]: { start: SEASON_START, end: END_DATE },
+	'through-2026-09-27': { start: SEASON_START, end: '2026-09-27' }
+};
+// Moving windows: they end on the snapshot day. The `through-${END_DATE}`
+// key is added only when it does not collide with a fixed window, so when
+// END_DATE === '2026-09-27' the two cannot silently clobber each other.
+const WINDOWS = {
+	...FIXED_WINDOWS,
 	'from-2026-07-01': { start: '2026-07-01', end: END_DATE },
-	'from-2026-08-03': { start: '2026-08-03', end: END_DATE }
+	'from-2026-08-03': { start: '2026-08-03', end: END_DATE },
+	...(Object.prototype.hasOwnProperty.call(FIXED_WINDOWS, `through-${END_DATE}`)
+		? {}
+		: { [`through-${END_DATE}`]: { start: SEASON_START, end: END_DATE } })
 };
 
 // Players the storylines name even if they never start a game in the window.
@@ -41,7 +56,10 @@ const NAMED = {
 	narvaez: 665966,
 	mayer: 691785,
 	rogers: 668670,
-	rutschman: 668939
+	rutschman: 668939,
+	// Free agents the off-season pins name (Randy Arozarena, Brandon Lowe).
+	arozarena: 668227,
+	lowe: 664040
 };
 
 async function getJson(url, attempt = 0) {
@@ -145,7 +163,10 @@ function statsUrl(id, group, window) {
 	if (window.stats === 'season') {
 		return `${API}/people/${id}/stats?stats=season&season=${window.season}&group=${group}`;
 	}
-	return `${API}/people/${id}/stats?stats=byDateRange&season=${SEASON}&group=${group}&startDate=${window.start}&endDate=${window.end}`;
+	// `gameType=R` keeps date-range rows regular-season only; without it a
+	// window extending into October would pull playoff games into a pin that
+	// is scored on regular-season rates.
+	return `${API}/people/${id}/stats?stats=byDateRange&season=${SEASON}&group=${group}&startDate=${window.start}&endDate=${window.end}&gameType=R`;
 }
 const rows = (data) => data.stats?.[0]?.splits ?? [];
 const hitting = {};

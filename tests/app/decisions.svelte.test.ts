@@ -18,6 +18,11 @@ describe('DecisionsPage', () => {
 		await expect
 			.element(page.getByRole('img', { name: /today, September 25, 87–74/ }))
 			.toBeVisible();
+		// The stretch of axis after the last game is shaded and named like the
+		// spring training stretch before it.
+		await expect
+			.element(page.getByRole('img', { name: 'Off season, September 28, 2026 to March 25, 2027' }))
+			.toBeVisible();
 
 		const links = page.getByRole('link');
 		await expect
@@ -26,22 +31,23 @@ describe('DecisionsPage', () => {
 		await expect
 			.element(links.filter({ hasText: 'Who plays first against the Yankees?' }))
 			.toHaveAttribute('href', '/scenario/wild-card-roster');
-		// Five timeline pins plus five decision cards, and nothing else links out.
+		// Eight timeline pins plus eight decision cards, and nothing else links out.
 		expect(
 			page.getByRole('navigation', { name: 'Season timeline' }).getByRole('link').elements()
-		).toHaveLength(5);
-		expect(links.elements()).toHaveLength(10);
+		).toHaveLength(8);
+		expect(links.elements()).toHaveLength(16);
 	});
 
 	it('says so when today falls outside the season window', async () => {
-		await render(DecisionsPage, { props: { today: '2026-11-02' } });
+		// The window now runs to Opening Day 2027, so anything after it is past.
+		await render(DecisionsPage, { props: { today: '2027-04-05' } });
 
 		await expect
-			.element(page.getByText(/outside the January–October window this timeline covers/))
+			.element(page.getByText(/outside the January 2026 to March 2027 window this timeline covers/))
 			.toBeVisible();
 		// The timeline uses the same date the lede does, not the viewer's today.
 		await expect
-			.element(page.getByText(/Today is November 2 · Boston 87–75 on the timeline/))
+			.element(page.getByText(/Today is April 5 · Boston 87–75 on the timeline/))
 			.toBeVisible();
 		expect.element(page.getByRole('img', { name: /past the end of this timeline window/ }));
 	});

@@ -3,7 +3,7 @@
 	"team": 111,
 	"season": 2026,
 	"asOf": "2026-09-27",
-	"fetchedAt": "2026-09-29T08:32:13Z",
+	"fetchedAt": "2026-10-01T21:32:15Z",
 	"windows": {
 		"season-2025": {
 			"stats": "season",
@@ -9815,6 +9815,12 @@
 			"throws": "R",
 			"primary": "P"
 		},
+		"664040": {
+			"name": "Brandon Lowe",
+			"bats": "L",
+			"throws": "R",
+			"primary": "2B"
+		},
 		"664285": {
 			"name": "Framber Valdez",
 			"bats": "R",
@@ -9844,6 +9850,12 @@
 			"bats": "R",
 			"throws": "R",
 			"primary": "P"
+		},
+		"668227": {
+			"name": "Randy Arozarena",
+			"bats": "R",
+			"throws": "R",
+			"primary": "LF"
 		},
 		"668670": {
 			"name": "Jake Rogers",
@@ -11136,6 +11148,86 @@
 			],
 			"from-2026-08-03": []
 		},
+		"664040": {
+			"season-2025": [
+				{
+					"team": 139,
+					"pa": 553,
+					"runs": 79,
+					"games": 134
+				}
+			],
+			"through-2026-06-30": [
+				{
+					"team": 134,
+					"pa": 351,
+					"runs": 51,
+					"games": 79
+				},
+				{
+					"team": 134,
+					"pa": 351,
+					"runs": 51,
+					"games": 79
+				}
+			],
+			"through-2026-08-02": [
+				{
+					"team": 134,
+					"pa": 463,
+					"runs": 68,
+					"games": 104
+				},
+				{
+					"team": 134,
+					"pa": 463,
+					"runs": 68,
+					"games": 104
+				}
+			],
+			"through-2026-09-27": [
+				{
+					"team": 134,
+					"pa": 656,
+					"runs": 94,
+					"games": 150
+				},
+				{
+					"team": 134,
+					"pa": 656,
+					"runs": 94,
+					"games": 150
+				}
+			],
+			"from-2026-07-01": [
+				{
+					"team": 134,
+					"pa": 305,
+					"runs": 43,
+					"games": 71
+				},
+				{
+					"team": 134,
+					"pa": 305,
+					"runs": 43,
+					"games": 71
+				}
+			],
+			"from-2026-08-03": [
+				{
+					"team": 134,
+					"pa": 193,
+					"runs": 26,
+					"games": 46
+				},
+				{
+					"team": 134,
+					"pa": 193,
+					"runs": 26,
+					"games": 46
+				}
+			]
+		},
 		"665966": {
 			"season-2025": [
 				{
@@ -11225,6 +11317,86 @@
 					"pa": 88,
 					"runs": 5,
 					"games": 33
+				}
+			]
+		},
+		"668227": {
+			"season-2025": [
+				{
+					"team": 136,
+					"pa": 709,
+					"runs": 95,
+					"games": 160
+				}
+			],
+			"through-2026-06-30": [
+				{
+					"team": 136,
+					"pa": 335,
+					"runs": 51,
+					"games": 79
+				},
+				{
+					"team": 136,
+					"pa": 335,
+					"runs": 51,
+					"games": 79
+				}
+			],
+			"through-2026-08-02": [
+				{
+					"team": 136,
+					"pa": 450,
+					"runs": 72,
+					"games": 105
+				},
+				{
+					"team": 136,
+					"pa": 450,
+					"runs": 72,
+					"games": 105
+				}
+			],
+			"through-2026-09-27": [
+				{
+					"team": 136,
+					"pa": 670,
+					"runs": 113,
+					"games": 154
+				},
+				{
+					"team": 136,
+					"pa": 670,
+					"runs": 113,
+					"games": 154
+				}
+			],
+			"from-2026-07-01": [
+				{
+					"team": 136,
+					"pa": 335,
+					"runs": 62,
+					"games": 75
+				},
+				{
+					"team": 136,
+					"pa": 335,
+					"runs": 62,
+					"games": 75
+				}
+			],
+			"from-2026-08-03": [
+				{
+					"team": 136,
+					"pa": 220,
+					"runs": 41,
+					"games": 49
+				},
+				{
+					"team": 136,
+					"pa": 220,
+					"runs": 41,
+					"games": 49
 				}
 			]
 		},
@@ -12859,6 +13031,28 @@
 				}
 			]
 		},
+		"664040": {
+			"season-2025": [
+				{
+					"team": 139,
+					"pos": "1B",
+					"games": 3,
+					"gamesStarted": 2
+				},
+				{
+					"team": 139,
+					"pos": "2B",
+					"games": 121,
+					"gamesStarted": 117
+				},
+				{
+					"team": 139,
+					"pos": "DH",
+					"games": 9,
+					"gamesStarted": 9
+				}
+			]
+		},
 		"665966": {
 			"season-2025": [
 				{
@@ -12872,6 +13066,22 @@
 					"pos": "DH",
 					"games": 2,
 					"gamesStarted": 1
+				}
+			]
+		},
+		"668227": {
+			"season-2025": [
+				{
+					"team": 136,
+					"pos": "LF",
+					"games": 158,
+					"gamesStarted": 158
+				},
+				{
+					"team": 136,
+					"pos": "DH",
+					"games": 2,
+					"gamesStarted": 2
 				}
 			]
 		},
@@ -13485,6 +13695,20 @@
 				"ops": ".517"
 			}
 		],
+		"664040": [
+			{
+				"code": "vl",
+				"team": 134,
+				"pa": 211,
+				"ops": ".648"
+			},
+			{
+				"code": "vr",
+				"team": 134,
+				"pa": 445,
+				"ops": ".910"
+			}
+		],
 		"665966": [
 			{
 				"code": "vl",
@@ -13521,6 +13745,20 @@
 				"team": null,
 				"pa": 208,
 				"ops": ".474"
+			}
+		],
+		"668227": [
+			{
+				"code": "vl",
+				"team": 136,
+				"pa": 198,
+				"ops": ".954"
+			},
+			{
+				"code": "vr",
+				"team": 136,
+				"pa": 472,
+				"ops": ".827"
 			}
 		],
 		"668670": [
@@ -13683,7 +13921,7 @@
 				"code": "vl",
 				"team": 111,
 				"pa": 154,
-				"ops": ".811"
+				"ops": ".824"
 			},
 			{
 				"code": "vr",
