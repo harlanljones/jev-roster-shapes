@@ -16,7 +16,7 @@ test('a decision card asks for acknowledgment, then opens with public labels', a
 	// D-46: the index lists every decision (at `/decisions` since D-49), and
 	// the acknowledgment lives on the decision's own page.
 	await page.goto('/decisions');
-	await expect(page.getByRole('heading', { level: 1 })).toContainText('Five roster decisions');
+	await expect(page.getByRole('heading', { level: 1 })).toContainText('Eight roster decisions');
 	await page.getByRole('link', { name: 'How do you replace Bregman?' }).dispatchEvent('click');
 	await expect(page).toHaveURL(/\/scenario\/offseason-infield$/);
 	await expect(page.getByRole('button', { name: 'Open workspace' })).toBeVisible();

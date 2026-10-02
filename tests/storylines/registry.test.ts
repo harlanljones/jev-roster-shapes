@@ -205,6 +205,20 @@ describe('2026 storyline registry', () => {
 		expect(roleOf(2)).toEqual([]);
 	});
 
+	it('anchors winter decisions to their offseason milestones', () => {
+		const dates = Object.fromEntries(
+			storylineRegistry
+				.filter(({ slug }) => slug.startsWith('winter-'))
+				.map(({ slug, eventDate }) => [slug, eventDate])
+		);
+
+		expect(dates).toEqual({
+			'winter-infield': '2026-10-01',
+			'winter-duran': '2026-12-07',
+			'winter-bat': '2026-11-06'
+		});
+	});
+
 	it('opens `/` on a decision that exists', () => {
 		expect(CURRENT_SLUG).toBe('wild-card-roster');
 		expect(getStoryline(CURRENT_SLUG)).toBeDefined();

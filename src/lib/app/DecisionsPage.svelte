@@ -4,7 +4,7 @@
 	import SeasonTimeline from './diagrams/SeasonTimeline.svelte';
 	import { recordSeries, todayMarker } from './season-timeline';
 
-	// The season index (D-46): `/` is the timeline and the five dated decisions,
+	// The season index (D-46): `/` is the timeline and the eight dated decisions,
 	// and nothing else. Each decision owns `/scenario/[slug]`, including the one
 	// this page used to render inline, so no page has two URLs.
 	let { today }: { today?: string } = $props();
@@ -43,18 +43,18 @@
 	<title>Roster Shapes · The 2026 Red Sox season</title>
 	<meta
 		name="description"
-		content="Five dated roster decisions from the 2026 Red Sox season on one timeline, each with its case, engine numbers, and data snapshot."
+		content="Eight roster decisions and milestones from the 2026 Red Sox season on one timeline, each with its case, engine numbers, and data snapshot."
 	/>
 </svelte:head>
 
 <div class="index">
 	<header class="lead">
-		<p class="eyebrow">January 14 → September 25, 2026 · five dated decisions</p>
-		<h1>Five roster decisions on one season timeline</h1>
+		<p class="eyebrow">January 14, 2026 → December 7, 2026 · eight decision milestones</p>
+		<h1>Eight roster decisions on one season timeline</h1>
 		<p class="lede">
-			Boston's 2026 season as games over .500, with each decision pinned to the day it was made.
-			Today is <b>{longDate(marker.date)}</b>. Pick a decision to open its case: the roster as a
-			fitted set of shapes, the engine's own numbers for the lineup used against the two
+			Boston's 2026 season as games over .500, with each decision pinned to its event or decision
+			milestone. Today is <b>{longDate(marker.date)}</b>. Pick a decision to open its case: the
+			roster as a fitted set of shapes, the engine's own numbers for the lineup used against the two
 			alternatives, and the best lineup that roster could have produced.
 		</p>
 	</header>
@@ -105,9 +105,10 @@
 			{/each}
 		</ol>
 		<p class="note">
-			Every number above is an observed public R/PA through that decision's own date, not a
-			projection. The engine's totals, the pool's tightest fit, and the coverage and workload checks
-			live on each decision's page, with the Jev prompt and its answers one click away under
+			Every number above uses observed public R/PA through the applicable as-of date. The offseason
+			milestones retain rates through the 2026 regular-season close (September 27); none are
+			projections. The engine's totals, the pool's tightest fit, and the coverage and workload
+			checks live on each decision's page, with the Jev prompt and its answers one click away under
 			Snapshots.
 		</p>
 	</section>

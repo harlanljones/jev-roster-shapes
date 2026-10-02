@@ -26,18 +26,23 @@ test('the index opens on the timeline with today marked and one card per decisio
 	await page.goto('/decisions');
 
 	await expect(page).toHaveTitle(/Roster Shapes/);
-	await expect(page.getByRole('heading', { level: 1 })).toContainText('Five roster decisions');
+	await expect(page.getByRole('heading', { level: 1 })).toContainText('Eight roster decisions');
 	const timeline = page.getByRole('navigation', { name: 'Season timeline' });
 	await expect(timeline).toBeVisible();
 	// Today's date is on the timeline, both in the text equivalent and the SVG.
 	const today = new Date();
 	const longToday = today.toLocaleDateString('en-US', {
 		month: 'long',
-		day: 'numeric',
-		timeZone: 'UTC'
+		day: 'numeric'
 	});
 	await expect(page.locator('.today-note')).toContainText(`Today is ${longToday}`);
 	await expect(page.getByRole('img', { name: /today, / })).toBeVisible();
+
+	const decisionDates = page.locator('.decisions .when');
+	await expect(decisionDates.nth(5)).toHaveText('October 1 · 87–75');
+	await expect(decisionDates.nth(6)).toHaveText('November 6 · 87–75');
+	await expect(decisionDates.nth(7)).toHaveText('December 7 · 87–75');
+
 	// One card per decision, each an addressable page.
 	await expect(page.getByRole('link', { name: 'How do you replace Bregman?' })).toHaveAttribute(
 		'href',

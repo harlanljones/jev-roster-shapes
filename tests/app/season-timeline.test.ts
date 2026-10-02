@@ -18,12 +18,6 @@ const pin = (date: string, slug = date): TimelinePin => ({
 	record: null
 });
 
-/** Distances between neighbouring circles once sorted left to right. */
-const gaps = (xs: number[]): number[] => {
-	const sorted = [...xs].sort((a, b) => a - b);
-	return sorted.slice(1).map((value, i) => value - (sorted[i] ?? Number.NaN));
-};
-
 // The axis runs New Year 2026 to Opening Day 2027, so the off-season is part
 // of the window instead of the day after it.
 describe('timeline window', () => {
@@ -66,29 +60,28 @@ describe('season events', () => {
 });
 
 describe('pin circle placement', () => {
-	it('spreads a same-week cluster so the numbers never overlap', () => {
-		// Four pins inside five days: the Wild Card roster and the three winter
-		// decisions the index draws on top of it.
+	it('separates the Wild Card and October 1 pins without shifting later milestones', () => {
 		const cluster = [
 			pin('2026-09-27', 'wild-card-roster'),
 			pin('2026-10-01', 'winter-infield'),
-			pin('2026-10-01', 'winter-duran'),
-			pin('2026-10-01', 'winter-bat')
+			pin('2026-11-06', 'winter-bat'),
+			pin('2026-12-07', 'winter-duran')
 		];
 		const xs = pinCircleXs(cluster, 1000);
 
 		expect(xs).toHaveLength(4);
 		expect(new Set(xs).size).toBe(4);
-		for (const gap of gaps(xs)) {
-			expect(gap).toBeCloseTo(PIN_CLUSTER_GAP, 5);
-		}
-		// The group is spread around its earliest pin, which stays the anchor.
+		expect((xs[1] ?? Number.NaN) - (xs[0] ?? Number.NaN)).toBeCloseTo(PIN_CLUSTER_GAP, 5);
 		expect(xs[0] ?? Number.NaN).toBeCloseTo(
-			datePosition('2026-09-27') * 1000 - 1.5 * PIN_CLUSTER_GAP,
+			datePosition('2026-09-27') * 1000 - PIN_CLUSTER_GAP / 2,
 			5
 		);
-		// Input order is preserved, so each circle still maps to its own pin.
-		expect(xs).toEqual([...xs].sort((a, b) => a - b));
+		expect(xs[1] ?? Number.NaN).toBeCloseTo(
+			datePosition('2026-09-27') * 1000 + PIN_CLUSTER_GAP / 2,
+			5
+		);
+		expect(xs[2] ?? Number.NaN).toBe(datePosition('2026-11-06') * 1000);
+		expect(xs[3] ?? Number.NaN).toBe(datePosition('2026-12-07') * 1000);
 	});
 
 	it('leaves a pin that stands alone exactly on its own date', () => {

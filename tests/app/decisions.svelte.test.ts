@@ -11,7 +11,7 @@ describe('DecisionsPage', () => {
 
 		await expect
 			.element(page.getByRole('heading', { level: 1 }))
-			.toHaveTextContent('Five roster decisions on one season timeline');
+			.toHaveTextContent('Eight roster decisions on one season timeline');
 		await expect
 			.element(page.getByText(/Today is September 25 · Boston 87–74 on the timeline/))
 			.toBeVisible();
