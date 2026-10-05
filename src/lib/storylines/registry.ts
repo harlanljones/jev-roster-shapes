@@ -62,14 +62,14 @@ const SNAPSHOT_LABEL =
 	'MLB Stats API season-timeline snapshot (spikes/mlb-2026/timeline-snapshot.json)';
 
 export const PINNED_STORYLINE_DIGESTS = {
-	'offseason-infield': '32e8dce45c5f977a338461ad4fbfb4a5e60409e988d0f50898b766bee4a68b88',
-	'opening-day-outfield': 'ce833eb7ae38bf1771edeec7a07d1fff215dfbd0a62d28196d8263e8e11974f2',
-	'july-run': '3e79ffc987bb0b3b5eb4be6b79b26d09181fb152a74d416f70a4cfa6335c51e4',
-	deadline: '3988b634032b5f688eaef961b4eb94826ee7a6cd8e525dce6011098b056c5fa0',
-	'wild-card-roster': '0735a7cc5f9c3266f2c6d524f543ebc03db0de978537781597ebfa6a0957f977',
-	'winter-infield': '7c9850fa03e8c1c96d6b7fcc1b74f15daa88f67fc4c976663f541ec5ccceb2e6',
-	'winter-duran': 'ac80e008bc5dcb27f2e6146b701420c4f21f532cbb85454bf2e7368fb9dd8464',
-	'winter-bat': '4e868e18a163f100b6f8145a450dc799ca3d58b78d31e2ca2db0dda5c26c2d19'
+	'offseason-infield': '3b0b69932d910fefa8a63273be94506d496add79dc8314c09d38d17cf9666ab8',
+	'opening-day-outfield': '7e96e96954a35388a20ca7640e1948c96b3db96b47b4a0d5de140e66101e58f8',
+	'july-run': 'cf29f8278630dbf208561b39e777a54f437f74bb7766e372e33ae1191d81dbfc',
+	deadline: 'bd83313608ffa81df21f725e11ee438f3b0a3dfd7c0ecba0e678f24185467ecb',
+	'wild-card-roster': '774479a8728cde337b22c737e9f4c44dfa2feceb1f7d13b37a18121cd7ebdbe8',
+	'winter-infield': '214cce216a893acf14a8057877ae99d966b35b16db9abcb203b4865fbfb48b08',
+	'winter-duran': '7590dda69b9965db6906b09edf9846b23688f6e18395a1e5b4b2d5ba52f42e47',
+	'winter-bat': 'e50eb01bb7963818010912b8a902c1fa07d66792e9a84da8a6f51a1683d6b2cc'
 } as const;
 
 export const storylineRegistry: readonly Storyline[] = [
