@@ -20,12 +20,15 @@ const sourceElements = [
 	'ui',
 	'classification'
 ];
-const testElements = [...sourceElements, 'app', 'integration', 'e2e', 'fixtures'];
+const testElements = [...sourceElements, 'app', 'integration', 'e2e', 'fixtures', 'spikes'];
 
 const elements = [
 	...sourceElements.map((name) => ({ type: name, pattern: `src/lib/${name}` })),
 	{ type: 'app', pattern: 'src/lib/app' },
 	{ type: 'app', pattern: 'src/routes' },
+	// Spike scripts and their pure helpers live outside src/lib on purpose (D-44);
+	// only their tests reach into them.
+	{ type: 'spike-timeline', pattern: 'spikes/mlb-2026' },
 	...testElements.map((name) => ({ type: `test-${name}`, pattern: `tests/${name}` }))
 ];
 
@@ -68,7 +71,10 @@ const policies = [
 	]),
 	allow('test-app', ['test-app', ...everySourceElement]),
 	allow('test-integration', ['test-integration', 'test-fixtures', ...everySourceElement]),
-	allow('test-e2e', ['test-e2e', 'test-fixtures', ...everySourceElement])
+	allow('test-e2e', ['test-e2e', 'test-fixtures', ...everySourceElement]),
+	// Spike-pipeline tests exercise the snapshot planner only; they stay away
+	// from the app's own components.
+	allow('test-spikes', ['test-spikes', 'spike-timeline'])
 ];
 
 const nodeBuiltins = {

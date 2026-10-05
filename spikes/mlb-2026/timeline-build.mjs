@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 
 import { calculateComparison } from '../../src/lib/engine/calculation.ts';
 import { computeInputDigest, parseBundle } from '../../src/lib/contracts/bundle.ts';
+import { seasonAsOf as seasonAsOfClamp } from './lib/timeline-plan.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const snapshot = JSON.parse(readFileSync(join(here, 'timeline-snapshot.json'), 'utf8'));
@@ -59,7 +60,11 @@ const P = {
 	eaton: 681987
 };
 
-const asOf = snapshot.asOf;
+// The season display follows the snapshot day in-season and clamps to the
+// regular-season close once October games can no longer change a
+// regular-season rate, so its label never claims data its rows do not have
+// (D-54).
+const seasonAsOf = seasonAsOfClamp(snapshot.asOf);
 // The Wild Card pin is anchored to the last day of the regular season so a
 // later daily refresh cannot drag its "regular season" rates past it.
 const SEASON_END = '2026-09-27';
@@ -749,7 +754,7 @@ const seasonPlayers = {};
 for (const mlbam of [...new Set(TIMELINE.flatMap((story) => story.playerIds))].sort(
 	(a, b) => a - b
 )) {
-	const total = hittingTotal(mlbam, `through-${asOf}`);
+	const total = hittingTotal(mlbam, `through-${seasonAsOf}`);
 	const rows = snapshot.splits[String(mlbam)] ?? [];
 	const side = (code) => {
 		const matching = rows.filter((row) => row.code === code);
@@ -768,7 +773,7 @@ for (const mlbam of [...new Set(TIMELINE.flatMap((story) => story.playerIds))].s
 }
 const season = {
 	source: snapshot.source,
-	asOf,
+	asOf: seasonAsOf,
 	fetchedAt: snapshot.fetchedAt,
 	record: snapshot.games.map((game) => ({
 		date: game.date,
@@ -779,4 +784,6 @@ const season = {
 	players: seasonPlayers
 };
 writeFileSync(join(outDir, 'season.json'), `${JSON.stringify(season, null, '\t')}\n`);
-console.log(`wrote ${TIMELINE.length} storyline bundles and season.json from the ${asOf} snapshot`);
+console.log(
+	`wrote ${TIMELINE.length} storyline bundles and season.json from the ${seasonAsOf} snapshot`
+);

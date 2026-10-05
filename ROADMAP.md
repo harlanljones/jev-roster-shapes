@@ -552,6 +552,43 @@ and a new eligibility rule. The 2027-03-25 window assumes the December 1 CBA
 expiry produces no lockout delay. The README screenshots still show the
 five-pin start screen.
 
+### Quiet daily refresh: write only on material change (D-54, user directive 2026-10-05)
+
+Delivered: `spikes/mlb-2026/lib/timeline-plan.mjs` now owns the shared
+snapshot facts (`SEASON_END`, `windowPlan`, `rosterPlan`, `seasonAsOf`,
+`shouldWrite`) that the fetcher and builder must agree on. The fetcher drops
+the unread moving windows (`from-2026-07-01`, `from-2026-08-03`), the
+snapshot-day roster block, and the post-season snapshot-day hitting window,
+and writes `timeline-snapshot.json` only when consumed content changes: a
+metadata-only refetch (fresh `fetchedAt`/`asOf` over identical content) keeps
+the checked-in values, so the bundles, their pinned digests, and `season.json`
+stay byte-identical and the daily workflow produces no pull request. The
+season display reads `through-${seasonAsOf}` — the snapshot day in-season, the
+regular-season close after it — so its label matches its rows. The workflow
+file is unchanged (`create-pull-request` already no-ops on a zero diff).
+`eslint.config.js` registers `tests/spikes` and the spike lib as boundary
+elements. Merging PR #10 (timestamps-only refresh churn) was reviewed and
+verified safe first: no rate, eligibility, assignment, or expectation changed.
+
+Observed (2026-10-05): two consecutive `bun spikes/mlb-2026/timeline-build.mjs`
++ prettier passes from the merged snapshot left all eight bundles and
+`registry.ts` byte-identical (the working-tree diff is code + tests + one line:
+`season.json.asOf` 2026-10-05 → 2026-09-27). `bun run verify`: svelte-check
+0 errors 0 warnings; lint clean; vitest 13 files / 100 tests passed (12 new
+`tests/spikes/timeline-plan.test.ts` cases: seasonAsOf clamp, window/roster
+plans, materiality); production build ok; Playwright 34 passed including the
+full axe audits.
+
+Limitations: in-season refreshes still write when the snapshot-day window
+rolls over (the moving `through-${END_DATE}` key changes daily, including
+off-days), so the no-op guarantee is an off-season guarantee. The snapshot's
+one-time shrink (removing the `from-*` sections already checked in) can only
+be produced by a real fetch — the sandbox proxy blocks statsapi, so it lands
+with the first scheduled run or `workflow_dispatch`, carrying that fetch's
+`fetchedAt`/`asOf` and its registry re-pin. Until the first post-merge run,
+the no-op behavior is proven by unit tests and an offline rebuild, not by a
+scheduled run.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

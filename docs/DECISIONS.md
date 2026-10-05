@@ -90,6 +90,8 @@ The user adopted these in an interactive design review before RS-01. Each entry 
 
 | D-53 | **Anchor offseason pins at distinct, sourced milestones instead of giving every question the date it first appeared in reporting.** D-52(c) is superseded for the winter pins: keep `winter-infield` on October 1 (the reporting date), pin `winter-bat` to November 6 (free agency opens), and pin `winter-duran` to December 7 (Winter Meetings open). The Oct 1 reporting windows and regular-season rates through Sep 27 remain unchanged; future milestone pins are timeline anchors, not claims that Boston made a transaction or settled a role on those dates. | UI owner + data integrator (`src/lib/storylines`, `src/lib/app`) | Harlan noted the three offseason decision dates should not all be October 1. Use already sourced calendar milestones rather than inventing dates; preserve the Oct 1 reporting basis and frozen input snapshot. | Keep Oct 1 for all three (overlapping pins despite distinct decision milestones); invent transaction dates or treat an anchor as a confirmed club decision (unsupported). |
 
+| D-54 | **The daily refresh writes only on material change: a metadata-only refetch no longer rewrites the snapshot, the bundles, or the pinned digests.** Merging PR #10 showed every bundle diff was `createdAt`/`note` timestamps with eight registry digests re-pinned to match and +490 snapshot lines of unread moving windows. `spikes/mlb-2026/lib/timeline-plan.mjs` now owns the shared facts: `SEASON_END`, `windowPlan` (fixed decision windows only once the snapshot day passes 2026-09-27, and the unread `from-2026-07-01`/`from-2026-08-03` "afterward" windows are dropped — they were silently absorbing postseason PA), `rosterPlan` (the four decision dates; the snapshot-day roster block is gone), `seasonAsOf` (clamps the season display to `SEASON_END`), and `shouldWrite` (the materiality rule: compare canonical content ignoring `asOf`/`fetchedAt`; identical content writes nothing, so bundles, digests, and `season.json` stay byte-identical and `create-pull-request` produces no PR). The season display reads `through-${seasonAsOf}` instead of the moving snapshot day, so its label can no longer claim October dates while its rows end September 27; in-season behavior is unchanged. The workflow is untouched — it already no-ops on a zero diff. Verified: two consecutive offline `timeline-build.mjs` + prettier passes leave all eight bundles and `registry.ts` byte-identical; the only data diff is `season.json.asOf` → 2026-09-27. Tests: `tests/spikes/timeline-plan.test.ts` (12 tests, server project). First real-world proof: the first post-merge scheduled run produces no pull request. | Data integrator (`spikes/mlb-2026`, `tests/spikes`, `eslint.config.js`) | Harlan chose "merge PR #10, then kill the refresh noise": pinned digests exist to detect content change, and a timestamp-only rebuild defeats them while growing the snapshot ~500 lines per day. | No-op detection in the workflow via git-diff on normalized JSON (churn still flows through fetch/build in every review); pausing the cron in the offseason (manual re-enable next spring, and it would miss MLB corrections to past games); keeping `from-*` with a `gameType=R` guard (the data feeds nothing, and its "afterward" semantics would actually want postseason, not exclude it). |
+
 ## Open decisions
 
 Owner roles are responsibilities to assign, not named commitments. `TBD` is an unresolved external fact, not permission to fabricate a default for the real pilot.
@@ -111,9 +113,14 @@ The common public 2026 decision-pool snapshot is refreshed daily by
 `.github/workflows/refresh-public-data.yml`. The job re-fetches the season
 snapshot (`timeline-fetch.mjs`), rebuilds the storyline bundles offline
 (`timeline-build.mjs`, D-44/D-48), and opens a pull request when generated bundles
-change. Dated pins keep their decision-date windows, so they move only when MLB
-revises a past game; the season-to-date Wild Card pin, the record line, and the
-case's season totals move daily. The job does not change retrospective event
+change. Since D-54 a refetch writes the snapshot only when consumed content
+changes: a metadata-only refetch (fresh `fetchedAt`/`asOf` over identical
+content) writes nothing, so the bundles, their pinned digests, and
+`season.json` stay byte-identical and the job produces no pull request. Dated
+pins keep their decision-date windows, so they move only when MLB revises a
+past game; the record line and the case's season totals follow the snapshot
+day in-season and freeze at the regular-season close (D-54). The job does not
+change retrospective event
 metadata or deploy directly; it syncs the registry's pinned digests and
 expectations inside the PR, and a reviewer must reconcile changed eligibility,
 rates, input digests, and hand-derived storyline expectations before merging.

@@ -5,9 +5,10 @@
 // offline and reproducibly from checked-in evidence.
 // Run: bun spikes/mlb-2026/timeline-fetch.mjs
 // Output: spikes/mlb-2026/timeline-snapshot.json
-import { writeFileSync } from 'node:fs';
+import { writeFileSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { rosterPlan, shouldWrite, windowPlan } from './lib/timeline-plan.mjs';
 
 const TEAM = 111;
 const SEASON = 2026;
@@ -18,35 +19,13 @@ if (!/^\d{4}-\d{2}-\d{2}$/.test(END_DATE))
 const FETCHED_AT = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
 const API = 'https://statsapi.mlb.com/api/v1';
 
-// Dated rosters: the fixed decision dates (the day before Opening Day,
-// entering July, the day before the deadline trades, the regular-season
-// close) plus the snapshot day. Deduplicated so a refresh whose END_DATE
-// lands on a decision date does not fetch it twice.
-const ROSTER_DATES = [
-	...new Set(['2026-03-25', '2026-06-30', '2026-08-02', '2026-09-27', END_DATE])
-];
-
-// Hitting and fielding windows. `through-*` windows are what was known on a
-// decision date; `from-*` windows are what happened afterward.
-// Fixed windows: every dated pin keeps its own decision window across
-// refreshes, so a later DATA_AS_OF can never drop or rewrite one.
-const FIXED_WINDOWS = {
-	'season-2025': { stats: 'season', season: 2025 },
-	'through-2026-06-30': { start: SEASON_START, end: '2026-06-30' },
-	'through-2026-08-02': { start: SEASON_START, end: '2026-08-02' },
-	'through-2026-09-27': { start: SEASON_START, end: '2026-09-27' }
-};
-// Moving windows: they end on the snapshot day. The `through-${END_DATE}`
-// key is added only when it does not collide with a fixed window, so when
-// END_DATE === '2026-09-27' the two cannot silently clobber each other.
-const WINDOWS = {
-	...FIXED_WINDOWS,
-	'from-2026-07-01': { start: '2026-07-01', end: END_DATE },
-	'from-2026-08-03': { start: '2026-08-03', end: END_DATE },
-	...(Object.prototype.hasOwnProperty.call(FIXED_WINDOWS, `through-${END_DATE}`)
-		? {}
-		: { [`through-${END_DATE}`]: { start: SEASON_START, end: END_DATE } })
-};
+// Dated rosters and fetch windows come from the shared plan (D-54): only the
+// decision dates and windows the pins actually read. The snapshot day itself
+// stopped being a fetch target once D-52 froze the dated pins, and the
+// unread "afterward" (`from-*`) windows are gone — a fetch past the
+// regular-season close is metadata-only unless a consumed row changes.
+const ROSTER_DATES = rosterPlan();
+const WINDOWS = windowPlan(END_DATE);
 
 // Players the storylines name even if they never start a game in the window.
 const NAMED = {
@@ -209,12 +188,11 @@ await pool([...hitterIds], 4, async (id) => {
 
 const sortKeys = (object) =>
 	Object.fromEntries(Object.entries(object).sort(([a], [b]) => Number(a) - Number(b)));
-const snapshot = {
+// Consumed content only; asOf/fetchedAt are attached below, on a write.
+const content = {
 	source: 'MLB Stats API (statsapi.mlb.com), free public endpoints; MLBAM copyright applies',
 	team: TEAM,
 	season: SEASON,
-	asOf: END_DATE,
-	fetchedAt: FETCHED_AT,
 	windows: WINDOWS,
 	games,
 	rosters,
@@ -224,8 +202,21 @@ const snapshot = {
 	splits: sortKeys(splits)
 };
 const out = join(dirname(fileURLToPath(import.meta.url)), 'timeline-snapshot.json');
-writeFileSync(out, `${JSON.stringify(snapshot, null, '\t')}\n`);
-const wins = games.filter((game) => game.win).length;
-console.log(
-	`games=${games.length} record=${wins}-${games.length - wins} hitters=${hitterIds.size} pitchers=${pitcherIds.size} -> ${out}`
-);
+let existing = null;
+try {
+	existing = JSON.parse(readFileSync(out, 'utf8'));
+} catch {
+	// No checked-in snapshot yet, or an unparseable one: write fresh.
+}
+if (!shouldWrite(existing, content)) {
+	console.log(
+		`no material change since ${existing.fetchedAt} (as of ${existing.asOf}); snapshot left untouched`
+	);
+} else {
+	const snapshot = { ...content, asOf: END_DATE, fetchedAt: FETCHED_AT };
+	writeFileSync(out, `${JSON.stringify(snapshot, null, '	')}\n`);
+	const wins = games.filter((game) => game.win).length;
+	console.log(
+		`games=${games.length} record=${wins}-${games.length - wins} hitters=${hitterIds.size} pitchers=${pitcherIds.size} -> ${out}`
+	);
+}
