@@ -86,8 +86,10 @@ test('the snapshots page shows the prompt, the roster, and the engine fit with n
 	await expect(body).toContainText('"Star"');
 	await expect(body).toContainText('Do not estimate plate appearances');
 
-	// The roster beside it: the case, and the engine's best nine per context.
-	await expect(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
+	// The roster beside it (D-57): by criterion, and the engine's best nine per context.
+	await expect(
+		page.getByRole('list', { name: /Roster by profile criterion, placed by Rule baseline/ })
+	).toBeVisible();
 	const fitTable = page.getByRole('table', { name: /The engine's best nine/ });
 	await expect(fitTable).toContainText('Left-starter context');
 	await expect(fitTable).toContainText('Right-starter context');

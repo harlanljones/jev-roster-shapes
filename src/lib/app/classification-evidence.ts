@@ -9,9 +9,17 @@
 //   • anything the sources do not supply, so a missing value stays missing
 //     instead of becoming a plausible number.
 import type { Bundle } from '$lib/contracts';
-import type { ProfileEvidence } from '$lib/classification';
+import {
+	classifyBaseline,
+	medianRateOf,
+	toRuleEvidence,
+	type BaselineResult,
+	type ProfileEvidence
+} from '$lib/classification';
+import { PLAYER_SHAPES } from '$lib/shapes/taxonomy';
+import season from '$lib/storylines/season.json';
 import type { Storyline } from '$lib/storylines/registry';
-import type { CasePlayer } from './shape-case';
+import type { CasePlayer, Pool } from './shape-case';
 import { SPLIT_SOURCE } from './split-evidence';
 
 const METRIC_LABELS: Readonly<Record<string, string>> = {
@@ -51,4 +59,36 @@ export function evidenceFor(bundle: Bundle, player: CasePlayer, note: string): P
 			: null,
 		notes: note
 	};
+}
+
+const seasonRateOf = (playerId: string): number | null => {
+	const row = (season.players as Record<string, { pa: number; runs: number } | undefined>)[
+		playerId
+	];
+	return row && row.pa > 0 ? row.runs / row.pa : null;
+};
+
+/**
+ * The rule baseline's Diamond cut (D-55): the median 2026 season rate of the
+ * labeled players, from the checked-in season evidence. All inputs are static,
+ * so it is one stable number on every decision.
+ */
+export const LABELED_MEDIAN_RATE = medianRateOf(
+	Object.keys(PLAYER_SHAPES).map((id) => seasonRateOf(id))
+);
+
+/** The rule baseline for every player in the pool, over the same evidence a request carries. */
+export function baselineFor(
+	bundle: Bundle,
+	pool: Pool,
+	note: string
+): ReadonlyMap<string, BaselineResult> {
+	return new Map(
+		[...pool.values()].map((player) => [
+			player.id,
+			classifyBaseline(toRuleEvidence(evidenceFor(bundle, player, note)), {
+				medianRate: LABELED_MEDIAN_RATE
+			})
+		])
+	);
 }

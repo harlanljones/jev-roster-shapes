@@ -12,19 +12,29 @@
 		classifyBaseline,
 		classifyProfile,
 		createHttpJevProvider,
-		medianRateOf,
 		toRuleEvidence,
 		type BaselineResult,
 		type JevRecord
 	} from '$lib/classification';
-	import season from '$lib/storylines/season.json';
 	import type { Storyline } from '$lib/storylines/registry';
 	import DecisionNav from './DecisionNav.svelte';
-	import { evidenceFor, provenanceNote } from './classification-evidence';
-	import CaseKey from './diagrams/CaseKey.svelte';
+	import { LABELED_MEDIAN_RATE, evidenceFor, provenanceNote } from './classification-evidence';
+	import JevCall from './diagrams/JevCall.svelte';
 	import PieceDetail from './diagrams/PieceDetail.svelte';
-	import ShapeCase from './diagrams/ShapeCase.svelte';
-	import { buildPool, caseView, grade, lineupIds, scenarioLineup, type Role } from './shape-case';
+	import RosterDiagram from './diagrams/RosterDiagram.svelte';
+	import { sourceLabels } from './jev-call';
+	import { jevRecordFor, rememberJev } from './jev-session.svelte';
+	import {
+		benchTray,
+		buildPool,
+		caseView,
+		grade,
+		lineupBin,
+		lineupIds,
+		locksOf,
+		scenarioLineup,
+		type Role
+	} from './shape-case';
 
 	// Snapshots (D-46, D-47, D-55): the exact prompt the Jev rubric would be
 	// asked, what came back, and the transparent rule-based baseline applied to
@@ -55,7 +65,6 @@
 	let apiKey = $state('');
 	let acknowledged = $state(false);
 	let pending = $state<string | null>(null);
-	let records = $state<Record<string, JevRecord>>({});
 	let lastError = $state<string | null>(null);
 
 	const provider = $derived(
@@ -66,20 +75,28 @@
 		const player = pool.get(playerId);
 		return player ? evidenceFor(bundle, player, note) : null;
 	};
+	// Answers live in the session store (D-57), so the decision board shows a
+	// call made here without asking again.
+	const requestOf = (playerId: string) => {
+		const evidence = evidenceOf(playerId);
+		return evidence ? buildProfileRequest(evidence, DEFAULT_JEV_MODEL) : null;
+	};
+	const records = $derived(
+		Object.fromEntries(
+			[...pool.keys()]
+				.map((id) => {
+					const request = requestOf(id);
+					return [id, request ? jevRecordFor(request) : null] as const;
+				})
+				.filter((entry): entry is readonly [string, JevRecord] => entry[1] !== null)
+		)
+	);
 	// The rule baseline (D-55): the recorded rubric rules applied
 	// deterministically over the same evidence the provider request carries.
-	// The Diamond cut is the median 2026 season rate of the labeled players,
-	// computed from the checked-in season evidence, so it is one stable number
-	// on every decision. The baseline reads only numeric and eligibility
-	// fields, and nothing here can change a calculation. All three inputs are
-	// static, so the cut is computed once instead of per render.
-	const seasonRateOf = (playerId: string): number | null => {
-		const row = (season.players as Record<string, { pa: number; runs: number } | undefined>)[
-			playerId
-		];
-		return row && row.pa > 0 ? row.runs / row.pa : null;
-	};
-	const medianRate = medianRateOf(Object.keys(PLAYER_SHAPES).map((id) => seasonRateOf(id)));
+	// The Diamond cut is the median 2026 season rate of the labeled players
+	// (one stable number on every decision). The baseline reads only numeric
+	// and eligibility fields, and nothing here can change a calculation.
+	const medianRate = LABELED_MEDIAN_RATE;
 	const baselineRows = $derived(
 		[...pool.keys()].map((id) => {
 			const evidence = evidenceOf(id);
@@ -103,6 +120,24 @@
 		if (!row.analyst) return 'no analyst label';
 		return row.result.label === row.analyst ? 'match' : 'mismatch';
 	};
+	const locks = $derived(locksOf(scenario));
+	const board = $derived(lineupBin(pool, lineup, locks));
+	const tray = $derived(benchTray(pool, lineup, locks));
+	const labels = $derived(
+		new Map(
+			baselineRows.map((row) => [
+				row.id,
+				sourceLabels(records[row.id] ?? null, row.result, pool.get(row.id)?.shape ?? 'Unclassified')
+			])
+		)
+	);
+	const thin = $derived(
+		new Set(
+			Object.entries(records)
+				.filter(([, record]) => (record.answer?.evidenceSufficient ?? 1) < 0.5)
+				.map(([id]) => id)
+		)
+	);
 	const request = $derived(
 		active ? buildProfileRequest(evidenceOf(active)!, DEFAULT_JEV_MODEL) : null
 	);
@@ -118,7 +153,7 @@
 				acknowledged,
 				model: DEFAULT_JEV_MODEL
 			});
-			records = { ...records, [playerId]: record };
+			rememberJev(record);
 		} catch (error) {
 			lastError = error instanceof Error ? error.message : 'the request failed';
 		} finally {
@@ -223,17 +258,21 @@
 	<div class="split">
 		<section class="roster" aria-labelledby="roster-heading">
 			<h2 id="roster-heading">The roster these answers are about</h2>
-			<ShapeCase
+			<RosterDiagram
 				{pool}
-				{view}
+				bin={board}
+				{tray}
+				{labels}
+				{thin}
 				selected={active}
 				onSelect={(id: string) => (selected = id)}
-				label="Roster case for {scenario.label}: nine position cutouts and a bench tray"
+				label="Roster board for {scenario.label}: the lineup packed under the pool's best, and the players left off the field"
+				mode="lanes"
+				source="rule"
 			/>
 			{#if active}
 				<PieceDetail {pool} playerId={active} role={view.roleOf.get(active)} />
 			{/if}
-			<CaseKey />
 			<table class="fit-table">
 				<caption>
 					The engine's best nine for {scenario.label}, per pitcher-hand context
@@ -363,6 +402,17 @@
 				{/if}
 			</p>
 
+			{#if active && request}
+				<JevCall
+					name={names.get(active) ?? active}
+					{request}
+					record={records[active] ?? null}
+					compare={{
+						baseline: baselineRows.find((row) => row.id === active)?.result ?? null,
+						analyst: pool.get(active)?.shape ?? null
+					}}
+				/>
+			{/if}
 			<details class="request-toggle">
 				<summary>Request body, exactly as it would be sent</summary>
 				<pre>{requestJson}</pre>
@@ -384,58 +434,60 @@
 				agreement to report. Every number on the decision page is unaffected either way.
 			</p>
 		{:else}
-			<table class="answers">
-				<caption>
-					Validated provider answers against the analyst label. Agreement measures rubric alignment,
-					not baseball truth.
-				</caption>
-				<thead>
-					<tr>
-						<th scope="col">Player</th>
-						<th scope="col">Model label</th>
-						<th scope="col">Confidence</th>
-						<th scope="col">Evidence sufficient</th>
-						<th scope="col">Analyst label</th>
-						<th scope="col">Top options</th>
-						<th scope="col">Status</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each answered as entry (entry.id)}
+			<div class="table-scroll">
+				<table class="answers">
+					<caption>
+						Validated provider answers against the analyst label. Agreement measures rubric
+						alignment, not baseball truth.
+					</caption>
+					<thead>
 						<tr>
-							<th scope="row">{names.get(entry.id)}</th>
-							<td>{entry.record.answer?.label ?? '—'}</td>
-							<td>
-								{entry.record.answer ? entry.record.answer.confidence.toFixed(2) : 'unavailable'}
-							</td>
-							<td>
-								{entry.record.answer
-									? entry.record.answer.evidenceSufficient.toFixed(2)
-									: 'unavailable'}
-							</td>
-							<td>{shapeOf(entry.id).shape}</td>
-							<td class="options">
-								{#each topOptions(entry.record) as [label, probability] (label)}
-									<span class="option">
-										{label}
-										{probability.toFixed(2)}
-									</span>
-								{/each}
-							</td>
-							<td>
-								{statusText(entry.record)}
-								{#if entry.record.issues.length > 0}
-									<small>
-										{entry.record.issues.map(({ code }) => code).join(', ')}: {entry.record.issues
-											.map(({ message }) => message)
-											.join('; ')}
-									</small>
-								{/if}
-							</td>
+							<th scope="col">Player</th>
+							<th scope="col">Model label</th>
+							<th scope="col">Confidence</th>
+							<th scope="col">Evidence sufficient</th>
+							<th scope="col">Analyst label</th>
+							<th scope="col">Top options</th>
+							<th scope="col">Status</th>
 						</tr>
-					{/each}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{#each answered as entry (entry.id)}
+							<tr>
+								<th scope="row">{names.get(entry.id)}</th>
+								<td>{entry.record.answer?.label ?? '—'}</td>
+								<td>
+									{entry.record.answer ? entry.record.answer.confidence.toFixed(2) : 'unavailable'}
+								</td>
+								<td>
+									{entry.record.answer
+										? entry.record.answer.evidenceSufficient.toFixed(2)
+										: 'unavailable'}
+								</td>
+								<td>{shapeOf(entry.id).shape}</td>
+								<td class="options">
+									{#each topOptions(entry.record) as [label, probability] (label)}
+										<span class="option">
+											{label}
+											{probability.toFixed(2)}
+										</span>
+									{/each}
+								</td>
+								<td>
+									{statusText(entry.record)}
+									{#if entry.record.issues.length > 0}
+										<small>
+											{entry.record.issues.map(({ code }) => code).join(', ')}: {entry.record.issues
+												.map(({ message }) => message)
+												.join('; ')}
+										</small>
+									{/if}
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 			<p class="cost">
 				{answered.length} answered · {agreement} matching the analyst label · {usage.input} input tokens
 				· {usage.output} output tokens · model {answered[0]?.record.model ?? 'unknown'} ·
@@ -459,41 +511,43 @@
 			Version {RULE_BASELINE_VERSION}. Every rule that fires is shown; the documented precedence
 			picks one label. It is advisory and never changes a calculation.
 		</p>
-		<table class="answers">
-			<caption>
-				Baseline labels against the analyst label for this roster. Agreement measures rubric
-				alignment, not baseball truth.
-			</caption>
-			<thead>
-				<tr>
-					<th scope="col">Player</th>
-					<th scope="col">Analyst label</th>
-					<th scope="col">Baseline label</th>
-					<th scope="col">Rules fired</th>
-					<th scope="col">Outcome</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each baselineRows as row (row.id)}
+		<div class="table-scroll">
+			<table class="answers">
+				<caption>
+					Baseline labels against the analyst label for this roster. Agreement measures rubric
+					alignment, not baseball truth.
+				</caption>
+				<thead>
 					<tr>
-						<th scope="row">{names.get(row.id)}</th>
-						<td>{row.analyst ?? '—'}</td>
-						<td>
-							{row.result?.label ?? '—'}
-							{#if row.result?.abstained}
-								<small>{row.result.reason}</small>
-							{/if}
-						</td>
-						<td class="options">
-							{#each row.result?.firedRules ?? [] as fired (fired)}
-								<span class="option">{fired}</span>
-							{/each}
-						</td>
-						<td>{baselineOutcome(row)}</td>
+						<th scope="col">Player</th>
+						<th scope="col">Analyst label</th>
+						<th scope="col">Baseline label</th>
+						<th scope="col">Rules fired</th>
+						<th scope="col">Outcome</th>
 					</tr>
-				{/each}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					{#each baselineRows as row (row.id)}
+						<tr>
+							<th scope="row">{names.get(row.id)}</th>
+							<td>{row.analyst ?? '—'}</td>
+							<td>
+								{row.result?.label ?? '—'}
+								{#if row.result?.abstained}
+									<small>{row.result.reason}</small>
+								{/if}
+							</td>
+							<td class="options">
+								{#each row.result?.firedRules ?? [] as fired (fired)}
+									<span class="option">{fired}</span>
+								{/each}
+							</td>
+							<td>{baselineOutcome(row)}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
 		<p class="cost">
 			{baselineSummary.matched} of {baselineSummary.compared} labeled players matched ·
 			{baselineSummary.abstained} abstained ({(baselineSummary.abstentionCoverage * 100).toFixed(
@@ -593,6 +647,14 @@
 	.scenario[aria-pressed='true'] {
 		border-color: var(--ink);
 		box-shadow: inset 0 0 0 1px var(--ink);
+	}
+	.snapshots > *,
+	.split > * {
+		min-width: 0;
+	}
+	.table-scroll {
+		max-width: 100%;
+		overflow-x: auto;
 	}
 	.split {
 		display: grid;

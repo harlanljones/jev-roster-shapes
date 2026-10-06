@@ -58,6 +58,12 @@ third-party font requests.
 
 - `diagrams/WymanBoard`: a decision's one diagram (D-50): the lineup packed
   under the pool's best, headroom marked, and the off-the-field tray beside it.
+- `diagrams/RosterDiagram`: the roster as a primary component (D-57): Packed
+  (the WymanBoard, optional disagreement rings) or By criterion
+  (`CriteriaLanes`, placed by Jev, the rule baseline, or the analyst).
+- `diagrams/JevCall`: one player's Jev call (D-57): state, then each question's
+  type, instructions and criteria, with J/R/A marks and probabilities only
+  when a validated answer exists.
 - `diagrams/ShapeCase`: the case (1000×980 viewBox), selectable pieces with
   labeled buttons, bench tray, empty cutouts.
 - `diagrams/InteractionMap`: fixed-position pool map with layer toggles.

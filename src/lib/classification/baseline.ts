@@ -108,6 +108,24 @@ export const UNEVALUABLE_LABELS: ReadonlyArray<{ label: ProfileLabel; reason: st
 ];
 
 /**
+ * Each recorded rule in one line, built from the same thresholds the
+ * predicates use, so the UI can show the rule beside its criterion without
+ * restating a number that could drift. Pentagon and Octagon say why the
+ * baseline abstains on them.
+ */
+export const RULE_SUMMARIES: Readonly<Record<ProfileLabel, string>> = {
+	Square: `1 position · ${SQUARE_MIN_PA}+ PA · split gap under .${STAR_GAP * 1000}`,
+	Rectangle: `${RECTANGLE_MIN_PA}+ PA at 1+ positions`,
+	Circle: `2+ positions · ${CIRCLE_MIN_PA}–${CIRCLE_MAX_PA - 1} PA · split gap under .${STAR_GAP * 1000}`,
+	Pentagon: 'not evaluable: no age or power/speed in the sources',
+	Octagon: 'not evaluable: no defensive runs in the sources',
+	Diamond: `rate above the median · ${DIAMOND_MIN_PA}–${DIAMOND_MAX_PA - 1} PA`,
+	Star: `split gap .${STAR_GAP * 1000}+ OPS · ${STAR_MIN_SIDE_PA}+ PA each side`,
+	Funky: `no fielding position, or under ${FUNKY_MAX_PA} PA`,
+	Unclassified: '0 PA and no position'
+};
+
+/**
  * The documented precedence (D-55): when several recorded rules fire, the
  * first label in this order wins and `firedRules` keeps the whole trace
  * visible. Pentagon and Octagon sit between Diamond and Funky in spirit but

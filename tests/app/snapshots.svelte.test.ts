@@ -20,7 +20,18 @@ describe('SnapshotsPage', () => {
 		await expect.element(page.getByRole('button', { name: 'Classify this player' })).toBeDisabled();
 		await expect.element(page.getByText(/No answers yet/)).toBeVisible();
 
-		await expect.element(page.getByRole('group', { name: /Roster case for/ })).toBeVisible();
+		// D-57: the roster diagram opens by criterion, placed by the rule baseline,
+		// beside the Jev call with its questions and no invented answer.
+		await expect
+			.element(
+				page.getByRole('list', { name: /Roster by profile criterion, placed by Rule baseline/ })
+			)
+			.toBeVisible();
+		const call = page.getByRole('article', { name: /^Jev call for / });
+		await expect.element(call.getByText('not requested')).toBeVisible();
+		await expect.element(call.getByText('evidence_sufficient')).toBeVisible();
+		await expect.element(call.getByText(/^Which single profile label/)).toBeVisible();
+		await expect.element(call.getByText('No answer yet.')).toBeVisible();
 		await expect.element(page.getByText(/^Engine total 52\.69416 runs/)).toBeVisible();
 		await expect
 			.element(page.getByText(/\+1\.991 against the lineup this scenario used/))
@@ -56,5 +67,23 @@ describe('SnapshotsPage', () => {
 			.element(page.getByText(/Recorded interpretations \(D-55\): a Square "full workload"/))
 			.toBeVisible();
 		await expect.element(page.getByText(/no held-out split at this sample size/)).toBeVisible();
+	});
+});
+
+describe('SnapshotsPage diagram modes', () => {
+	const story = getStoryline('wild-card-roster')!;
+
+	it('switches the roster diagram between lanes and the packed board, with Jev disabled until answered', async () => {
+		await render(SnapshotsPage, { props: { story } });
+
+		await expect.element(page.getByRole('button', { name: 'Jev', exact: true })).toBeDisabled();
+		await page.getByRole('button', { name: 'Analyst', exact: true }).click();
+		await expect.element(page.getByRole('list', { name: /placed by Analyst/ })).toBeVisible();
+		await page.getByRole('button', { name: 'Packed' }).click();
+		await expect.element(page.getByRole('group', { name: /^Roster board for/ })).toBeVisible();
+		await page.getByRole('button', { name: 'Mark disagreements' }).click();
+		await expect
+			.element(page.getByText(/Red ring: Jev, the rule baseline, and the analyst disagree/))
+			.toBeVisible();
 	});
 });

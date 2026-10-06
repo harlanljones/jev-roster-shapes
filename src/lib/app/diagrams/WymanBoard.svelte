@@ -25,7 +25,8 @@
 		tray,
 		selected,
 		onSelect,
-		label
+		label,
+		ringed = new Set<string>()
 	}: {
 		pool: Pool;
 		bin: BinResult;
@@ -33,6 +34,8 @@
 		selected: string | null;
 		onSelect: (playerId: string) => void;
 		label: string;
+		/** Players to ring in red: the sources disagree on their shape (D-57). */
+		ringed?: ReadonlySet<string>;
 	} = $props();
 
 	const uid = $props.id();
@@ -186,6 +189,9 @@
 					clip-path="url(#{uid}-{key}-{side})"
 				/>
 			{/each}
+			{#if id != null && ringed.has(id)}
+				<path class="ring" d={shapePath(shapeFor(id), cx, cy, pc.r)} />
+			{/if}
 			<line
 				x1={cx}
 				y1={cy - pc.box.top + 4}
@@ -246,6 +252,13 @@
 		stroke: var(--ink);
 		stroke-width: 3;
 		stroke-dasharray: none;
+	}
+	.ring {
+		fill: none;
+		stroke: var(--accent);
+		stroke-width: 2.5;
+		stroke-dasharray: 6 4;
+		pointer-events: none;
 	}
 	.piece:focus-visible .body {
 		stroke: var(--marker);
