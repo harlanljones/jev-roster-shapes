@@ -1,15 +1,23 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { calculatePoolFit, poolFitFor } from '$lib/engine';
-	import { shapeOf } from '$lib/shapes/taxonomy';
+	import { PLAYER_SHAPES, shapeOf, type ShapeLabel } from '$lib/shapes/taxonomy';
 	import {
 		DEFAULT_JEV_MODEL,
 		PROFILE_LABELS,
+		RULE_BASELINE_VERSION,
+		UNEVALUABLE_LABELS,
+		baselineAgreement,
 		buildProfileRequest,
+		classifyBaseline,
 		classifyProfile,
 		createHttpJevProvider,
+		medianRateOf,
+		toRuleEvidence,
+		type BaselineResult,
 		type JevRecord
 	} from '$lib/classification';
+	import season from '$lib/storylines/season.json';
 	import type { Storyline } from '$lib/storylines/registry';
 	import DecisionNav from './DecisionNav.svelte';
 	import { evidenceFor, provenanceNote } from './classification-evidence';
@@ -18,10 +26,11 @@
 	import ShapeCase from './diagrams/ShapeCase.svelte';
 	import { buildPool, caseView, grade, lineupIds, scenarioLineup, type Role } from './shape-case';
 
-	// Snapshots (D-46, D-47): the exact prompt the Jev rubric would be asked, and
-	// what came back, next to the roster it describes. Nothing here can change a
-	// calculation: the classification is advisory, opt-in, and its state is
-	// separate from every engine number on the decision page.
+	// Snapshots (D-46, D-47, D-55): the exact prompt the Jev rubric would be
+	// asked, what came back, and the transparent rule-based baseline applied to
+	// the same evidence — next to the roster they describe. Nothing here can
+	// change a calculation: the classification layer is advisory, opt-in, and
+	// its state is separate from every engine number on the decision page.
 	let { story }: { story: Storyline } = $props();
 
 	const bundle = $derived(story.bundle);
@@ -56,6 +65,43 @@
 	const evidenceOf = (playerId: string) => {
 		const player = pool.get(playerId);
 		return player ? evidenceFor(bundle, player, note) : null;
+	};
+	// The rule baseline (D-55): the recorded rubric rules applied
+	// deterministically over the same evidence the provider request carries.
+	// The Diamond cut is the median 2026 season rate of the labeled players,
+	// computed from the checked-in season evidence, so it is one stable number
+	// on every decision. The baseline reads only numeric and eligibility
+	// fields, and nothing here can change a calculation. All three inputs are
+	// static, so the cut is computed once instead of per render.
+	const seasonRateOf = (playerId: string): number | null => {
+		const row = (season.players as Record<string, { pa: number; runs: number } | undefined>)[
+			playerId
+		];
+		return row && row.pa > 0 ? row.runs / row.pa : null;
+	};
+	const medianRate = medianRateOf(Object.keys(PLAYER_SHAPES).map((id) => seasonRateOf(id)));
+	const baselineRows = $derived(
+		[...pool.keys()].map((id) => {
+			const evidence = evidenceOf(id);
+			const result = evidence ? classifyBaseline(toRuleEvidence(evidence), { medianRate }) : null;
+			return { id, result, analyst: PLAYER_SHAPES[id]?.shape ?? null };
+		})
+	);
+	const baselineSummary = $derived(
+		baselineAgreement(
+			baselineRows.map(({ result }) => result).filter((r): r is BaselineResult => r !== null),
+			Object.fromEntries(
+				baselineRows
+					.filter(({ analyst }) => analyst !== null)
+					.map(({ id, analyst }) => [id, analyst]) as [string, ShapeLabel][]
+			)
+		)
+	);
+	const baselineOutcome = (row: (typeof baselineRows)[number]): string => {
+		if (!row.result) return 'no evidence on this roster';
+		if (row.result.abstained) return 'abstained';
+		if (!row.analyst) return 'no analyst label';
+		return row.result.label === row.analyst ? 'match' : 'mismatch';
 	};
 	const request = $derived(
 		active ? buildProfileRequest(evidenceOf(active)!, DEFAULT_JEV_MODEL) : null
@@ -128,7 +174,7 @@
 	<title>Snapshots · {story.short} · Roster Shapes</title>
 	<meta
 		name="description"
-		content="The Jev profile prompt and its answers for the {story.title} roster, next to the case it describes."
+		content="The Jev profile prompt, its answers, and the transparent rule baseline for the {story.title} roster, next to the case they describe."
 	/>
 </svelte:head>
 
@@ -399,11 +445,75 @@
 			<p class="limits">
 				No confidence threshold is applied: SPEC §7 does not adopt the original 0.80 and 0.65
 				cutoffs, and O-07 has not set tolerable error, so the numbers are reported as model
-				estimates. The transparent rule-based baseline SPEC §7 asks for is not built; this table
-				compares against the analyst label only, and the analyst rationale is deliberately kept out
-				of the prompt.
+				estimates. The analyst rationale is deliberately kept out of the prompt, and the rule
+				baseline below never sees it either.
 			</p>
 		{/if}
+	</section>
+
+	<section class="baseline" aria-labelledby="baseline-heading">
+		<h2 id="baseline-heading">Rule baseline</h2>
+		<p class="state">
+			The transparent baseline SPEC §7 compares against: the recorded rubric rules applied as
+			deterministic predicates over the same evidence the prompt carries — no provider, no model.
+			Version {RULE_BASELINE_VERSION}. Every rule that fires is shown; the documented precedence
+			picks one label. It is advisory and never changes a calculation.
+		</p>
+		<table class="answers">
+			<caption>
+				Baseline labels against the analyst label for this roster. Agreement measures rubric
+				alignment, not baseball truth.
+			</caption>
+			<thead>
+				<tr>
+					<th scope="col">Player</th>
+					<th scope="col">Analyst label</th>
+					<th scope="col">Baseline label</th>
+					<th scope="col">Rules fired</th>
+					<th scope="col">Outcome</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each baselineRows as row (row.id)}
+					<tr>
+						<th scope="row">{names.get(row.id)}</th>
+						<td>{row.analyst ?? '—'}</td>
+						<td>
+							{row.result?.label ?? '—'}
+							{#if row.result?.abstained}
+								<small>{row.result.reason}</small>
+							{/if}
+						</td>
+						<td class="options">
+							{#each row.result?.firedRules ?? [] as fired (fired)}
+								<span class="option">{fired}</span>
+							{/each}
+						</td>
+						<td>{baselineOutcome(row)}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+		<p class="cost">
+			{baselineSummary.matched} of {baselineSummary.compared} labeled players matched ·
+			{baselineSummary.abstained} abstained ({(baselineSummary.abstentionCoverage * 100).toFixed(
+				0
+			)}%) · Diamond cut: median 2026 season R/PA {medianRate === null
+				? 'unavailable'
+				: medianRate.toFixed(6)}
+			of the labeled players
+		</p>
+		<p class="limits">
+			Recorded interpretations (D-55): a Square "full workload" is 300+ plate appearances and "no
+			large split gap" is under the Star rule's .200 OPS; Circle reads "no everyday slot" as
+			multi-position eligibility under Rectangle volume; Diamond's rate is above the median of the
+			labeled players' 2026 season rates, and under 100 plate appearances the fringe rule governs
+			instead. Pre-2026 storylines supply a 2025-dated rate against that 2026 cut — each row's rate
+			label names the vintage. Pentagon and Octagon are never mechanically evaluable from these
+			sources — {UNEVALUABLE_LABELS.map(({ label }) => label).join(' and ')} therefore have no baseline
+			coverage. SPEC §7 deviations, recorded in D-55: no held-out split at this sample size with fixed
+			rules, and Brier and reliability scores need probabilistic outputs, so they wait for the Jev evaluation.
+		</p>
 	</section>
 </div>
 
@@ -492,12 +602,14 @@
 	}
 	.roster,
 	.prompt,
-	.outputs {
+	.outputs,
+	.baseline {
 		display: grid;
 		gap: 1rem;
 	}
 	.prompt,
-	.outputs {
+	.outputs,
+	.baseline {
 		border: 1px solid var(--rule);
 		border-radius: 12px;
 		padding: 1.25rem;

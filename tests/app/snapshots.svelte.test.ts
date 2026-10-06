@@ -41,4 +41,20 @@ describe('SnapshotsPage', () => {
 		await expect.element(page.getByText(/No answers yet/)).toBeVisible();
 		await expect.element(page.getByText(/2 benched/)).toBeVisible();
 	});
+
+	it('shows the rule baseline with fired rules and the pool summary without a provider', async () => {
+		await render(SnapshotsPage, { props: { story } });
+
+		await expect.element(page.getByRole('heading', { name: 'Rule baseline' })).toBeVisible();
+		await expect.element(page.getByText(/Version rule-baseline-v1/)).toBeVisible();
+		await expect
+			.element(page.getByRole('table', { name: /Baseline labels against the analyst label/ }))
+			.toBeVisible();
+		await expect.element(page.getByText(/of \d+ labeled players matched/)).toBeVisible();
+		await expect.element(page.getByText(/Diamond cut: median 2026 season R\/PA/)).toBeVisible();
+		await expect
+			.element(page.getByText(/Recorded interpretations \(D-55\): a Square "full workload"/))
+			.toBeVisible();
+		await expect.element(page.getByText(/no held-out split at this sample size/)).toBeVisible();
+	});
 });

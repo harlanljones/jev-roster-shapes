@@ -123,8 +123,8 @@ test('a live answer is shown, validated, and leaves every engine number alone', 
 	await expect(answers).toContainText('0.64');
 	await expect(answers).toContainText('0.82');
 	await expect(answers).toContainText('current · jev-1.13.0');
-	await expect(page.locator('.cost')).toContainText('412 input tokens');
-	await expect(page.locator('.cost')).toContainText('0.000017');
+	await expect(page.locator('.outputs .cost')).toContainText('412 input tokens');
+	await expect(page.locator('.outputs .cost')).toContainText('0.000017');
 	// The request really went to the documented endpoint, once.
 	expect(
 		await page.evaluate(() => (window as never as { jevStubCalls: () => number }).jevStubCalls())
@@ -142,11 +142,11 @@ test('a provider failure is visible and changes nothing else', async ({ page }) 
 	await acknowledge(page);
 	await page.getByRole('button', { name: 'Classify this player' }).dispatchEvent('click');
 
-	await expect(page.locator('.answers')).toBeVisible();
-	await expect(page.locator('.answers')).toContainText('UNAUTHORIZED');
-	await expect(page.locator('.answers')).toContainText('HTTP 401');
+	await expect(page.locator('.outputs .answers')).toBeVisible();
+	await expect(page.locator('.outputs .answers')).toContainText('UNAUTHORIZED');
+	await expect(page.locator('.outputs .answers')).toContainText('HTTP 401');
 	// No answer, and the roster analysis is untouched.
-	await expect(page.locator('.answers')).toContainText('unavailable');
+	await expect(page.locator('.outputs .answers')).toContainText('unavailable');
 	await expect(page.locator('.fit-note')).toContainText('52.69416');
 });
 
@@ -166,12 +166,12 @@ test('an invalid response is reported instead of being shown as an answer', asyn
 	await acknowledge(page);
 	await page.getByRole('button', { name: 'Classify this player' }).dispatchEvent('click');
 
-	await expect(page.locator('.answers')).toContainText('invalid-response');
-	await expect(page.locator('.answers')).toContainText('UNKNOWN_CHOICE');
-	await expect(page.locator('.answers')).toContainText('MISSING_PROBABILITY');
+	await expect(page.locator('.outputs .answers')).toContainText('invalid-response');
+	await expect(page.locator('.outputs .answers')).toContainText('UNKNOWN_CHOICE');
+	await expect(page.locator('.outputs .answers')).toContainText('MISSING_PROBABILITY');
 	// The label the provider invented is quoted in the reason but never rendered
 	// as an answer: the model-label cell stays empty.
-	const row = page.locator('.answers tbody tr').first();
+	const row = page.locator('.outputs .answers tbody tr').first();
 	await expect(row.locator('td').first()).toHaveText('—');
 	await expect(row.locator('td').nth(2)).toHaveText('unavailable');
 });

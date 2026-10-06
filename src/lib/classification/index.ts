@@ -1,3 +1,4 @@
+export * from './baseline';
 export * from './prompt';
 export * from './provider';
 export * from './rubric';

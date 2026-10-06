@@ -589,6 +589,43 @@ with the first scheduled run or `workflow_dispatch`, carrying that fetch's
 the no-op behavior is proven by unit tests and an offline rebuild, not by a
 scheduled run.
 
+### Rule-based baseline beside the Jev prompt (D-55, user directive 2026-10-05)
+
+Delivered: `src/lib/classification/baseline.ts` applies the frozen profile rubric's recorded
+rules as deterministic predicates over the same evidence the provider request carries
+(`toRuleEvidence` narrows away the analyst notes, name, handedness, and age, so the comparison
+cannot leak its own labels). The documented `BASELINE_PRECEDENCE` picks one label when several
+rules fire and `firedRules` keeps the whole trace visible; recorded interpretations (Square
+300+ PA and gap under the Star .200 bound, Circle as the multi-position fallback under
+Rectangle volume, Diamond floored at the 100-PA fringe cutoff with its median cut taken once
+over the labeled players' 2026 season rates from the checked-in `season.json`) are shown in
+the UI. Pentagon and Octagon abstain by design — age, electricity, and defensive-run evidence
+is not in the sources — and the abstention is reported as coverage. The snapshots subpage
+gains a Rule baseline panel: per-player analyst label vs baseline label with fired rules and
+outcome, plus the pool summary (matched counts, abstention share, Diamond cut). The old
+"the transparent rule-based baseline is not built" note is gone. No bundle, digest, or
+calculation changes; the classification layer stays out of the engine (D-47).
+
+Observed (2026-10-05): on the offseason-infield pool the baseline matched 6 of 13 labeled
+players, abstained once (Triston Casas: no split evidence), and produced honest mismatches on
+the analyst's Pentagon/Octagon labels (Story, Anthony, Rafaela) and one volume-vs-steadiness
+split (Bregman: analyst Square, baseline Rectangle with both rules fired); Diamond cut
+0.109525. `bun run check`: 0 errors 0 warnings; `bun run lint`: clean; `bun run test`:
+14 files / 116 tests (15 new server cases in `tests/classification/baseline.test.ts`, the
+snapshots component test extended); production build and Playwright e2e green.
+Follow-up fix (2026-10-06): the new baseline panel reused the `.answers` and
+`.cost` classes, so three `snapshots.spec.ts` journeys failed strict-mode
+locator resolution; scoped those locators to `.outputs` (test-only change).
+`bun run test:e2e`: 34 passed, including the full axe audits.
+
+Limitations: the baseline judges only what the evidence carries — Pentagon and Octagon have no
+coverage by design until the sources supply birthdate and defensive-run data (a deliberate
+future fetch change, not an oversight); the Diamond median cut is computed from the labeled
+players' season rates, so a player's verdict follows the decision's dated evidence while the
+cut itself stays fixed; agreement with the analyst labels measures rubric alignment, not
+baseball truth (O-03 stays open), and the Brier/reliability half of SPEC §7 waits for the Jev
+evaluation with probabilistic outputs.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.
