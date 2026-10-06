@@ -2,16 +2,21 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import type { Bundle } from '$lib/contracts';
+	import { DEFAULT_JEV_MODEL, buildProfileRequest } from '$lib/classification';
 	import { calculateComparison, calculatePoolFit, poolFitFor } from '$lib/engine';
 	import { storylineRegistry } from '$lib/storylines/registry';
 	import DecisionNav from './DecisionNav.svelte';
+	import { baselineFor, evidenceFor, provenanceNote } from './classification-evidence';
 	import ScenarioPicker from './ScenarioPicker.svelte';
 	import { DIAGRAMS, pickScenario } from './decision';
 	import CaseKey from './diagrams/CaseKey.svelte';
 	import Findings from './diagrams/Findings.svelte';
+	import JevCall from './diagrams/JevCall.svelte';
 	import PieceDetail from './diagrams/PieceDetail.svelte';
 	import SeasonTimeline from './diagrams/SeasonTimeline.svelte';
-	import WymanBoard from './diagrams/WymanBoard.svelte';
+	import RosterDiagram from './diagrams/RosterDiagram.svelte';
+	import { sourceLabels } from './jev-call';
+	import { jevRecordFor } from './jev-session.svelte';
 	import {
 		benchTray,
 		binFindings,
@@ -26,7 +31,8 @@
 	import { SPLIT_SOURCE } from './split-evidence';
 
 	// The decision page centers on one diagram (D-50, after the Wyman Diagram
-	// guide): the board. The scenario's nine pieces pack into a board whose lid
+	// guide): the board, now side by side with the Jev call for the selected
+	// piece (D-57, layout A); both are primary components. The scenario's nine pieces pack into a board whose lid
 	// is the most this pool can field, and everyone left off sits in the tray
 	// beside it. The case, the engine's pool fit, the interaction map, and the
 	// slot bars are supplementary subpages that share the scenario pick.
@@ -62,6 +68,37 @@
 	const best = $derived(tightestBin(pool, locks));
 	const tray = $derived(benchTray(pool, lineup, locks));
 	const reads = $derived(binFindings(pool, lineup, board, best, locks));
+
+	// The Jev call for each player: the exact request, any answer already in
+	// this session, and the rule baseline over the same evidence (D-57).
+	const note = $derived(provenanceNote(story));
+	const baselines = $derived(baselineFor(bundle, pool, note));
+	const requests = $derived(
+		new Map(
+			[...pool.values()].map((player) => [
+				player.id,
+				buildProfileRequest(evidenceFor(bundle, player, note), DEFAULT_JEV_MODEL)
+			])
+		)
+	);
+	const records = $derived(
+		new Map([...requests].map(([id, request]) => [id, jevRecordFor(request)]))
+	);
+	const labels = $derived(
+		new Map(
+			[...pool.values()].map((player) => [
+				player.id,
+				sourceLabels(records.get(player.id) ?? null, baselines.get(player.id) ?? null, player.shape)
+			])
+		)
+	);
+	const thin = $derived(
+		new Set(
+			[...records]
+				.filter(([, record]) => (record?.answer?.evidenceSufficient ?? 1) < 0.5)
+				.map(([id]) => id)
+		)
+	);
 	const leftOff = $derived(board.runs == null || best.runs == null ? null : best.runs - board.runs);
 
 	const runs = (v: number | null) => (v == null ? 'runs unavailable' : `${v.toFixed(1)} runs`);
@@ -100,65 +137,87 @@
 			<p class="lede">{story.lede}</p>
 			<DecisionNav slug={story.slug} current="board" scenarioId={isBaseline ? null : scenario.id} />
 			<ScenarioPicker {bundle} {pool} current={scenario} />
-			<WymanBoard
-				{pool}
-				bin={board}
-				{tray}
-				{selected}
-				onSelect={(id: string) => (selectedId = id)}
-				label="Roster board for {scenario.label}: the lineup packed under the pool's best, and the players left off the field"
-			/>
-			<dl class="readout" aria-label="Board readout">
-				<div>
-					<dt>On the field</dt>
-					<dd>{runs(board.runs)}</dd>
-				</div>
-				<div>
-					<dt>Filled · gaps · headroom</dt>
-					<dd>
-						{Math.round(board.fill)}% · {Math.round(board.gaps)}% · {Math.round(board.headroom)}%
-					</dd>
-				</div>
-				<div>
-					<dt>Left off vs the pool's best</dt>
-					<dd>{runs(leftOff)}</dd>
-				</div>
-				<div>
-					<dt>Off the field</dt>
-					<dd>{runs(tray.runs)}</dd>
-				</div>
-			</dl>
-			<p class="stamp">
-				<span>Board numbers: actual 2026 through {SPLIT_SOURCE.asOf} (display layer)</span>
-				<span
-					>Pinned 10-game engine total <b>{pinned ?? 'unavailable'}</b> runs (the workspace number)</span
-				>
-			</p>
 		</div>
-		<aside class="lead-side" aria-label="Selected piece and actions">
-			{#if selected}
-				<PieceDetail {pool} playerId={selected} role={view.roleOf.get(selected)} />
-			{/if}
-			<button class="primary-button" type="button" onclick={() => (pendingOpen = true)}
-				>Open workspace</button
-			>
-			{#if pendingOpen}
-				<div class="ack-box" role="group" aria-label="Public data acknowledgment">
-					<p>
-						This scenario uses observed public values, not team-approved projections. Open it for
-						local review?
-					</p>
-					<div class="ack-actions">
-						<button class="primary-button" type="button" onclick={openWorkspace}
-							>Open public scenario</button
-						><button class="secondary-button" type="button" onclick={() => (pendingOpen = false)}
-							>Keep browsing</button
-						>
+		<div class="pair">
+			<div class="pair-col">
+				<RosterDiagram
+					{pool}
+					bin={board}
+					{tray}
+					{labels}
+					{thin}
+					{selected}
+					onSelect={(id: string) => (selectedId = id)}
+					label="Roster board for {scenario.label}: the lineup packed under the pool's best, and the players left off the field"
+				/>
+				<dl class="readout" aria-label="Board readout">
+					<div>
+						<dt>On the field</dt>
+						<dd>{runs(board.runs)}</dd>
 					</div>
-				</div>
-			{/if}
-			<CaseKey compact />
-		</aside>
+					<div>
+						<dt>Filled · gaps · headroom</dt>
+						<dd>
+							{Math.round(board.fill)}% · {Math.round(board.gaps)}% · {Math.round(board.headroom)}%
+						</dd>
+					</div>
+					<div>
+						<dt>Left off vs the pool's best</dt>
+						<dd>{runs(leftOff)}</dd>
+					</div>
+					<div>
+						<dt>Off the field</dt>
+						<dd>{runs(tray.runs)}</dd>
+					</div>
+				</dl>
+				<p class="stamp">
+					<span>Board numbers: actual 2026 through {SPLIT_SOURCE.asOf} (display layer)</span>
+					<span
+						>Pinned 10-game engine total <b>{pinned ?? 'unavailable'}</b> runs (the workspace number)</span
+					>
+				</p>
+				{#if selected}
+					<PieceDetail {pool} playerId={selected} role={view.roleOf.get(selected)} />
+				{/if}
+			</div>
+			<aside class="pair-col" aria-label="Jev call and actions">
+				{#if selected && requests.get(selected)}
+					<JevCall
+						name={pool.get(selected)?.name ?? selected}
+						request={requests.get(selected)!}
+						record={records.get(selected) ?? null}
+						compare={{
+							baseline: baselines.get(selected) ?? null,
+							analyst: pool.get(selected)?.shape ?? null
+						}}
+					/>
+				{/if}
+				<p class="call-note">
+					Answers appear here after a call on <a
+						href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}>Snapshots</a
+					>, for this browser session only.
+				</p>
+				<button class="primary-button" type="button" onclick={() => (pendingOpen = true)}
+					>Open workspace</button
+				>
+				{#if pendingOpen}
+					<div class="ack-box" role="group" aria-label="Public data acknowledgment">
+						<p>
+							This scenario uses observed public values, not team-approved projections. Open it for
+							local review?
+						</p>
+						<div class="ack-actions">
+							<button class="primary-button" type="button" onclick={openWorkspace}
+								>Open public scenario</button
+							><button class="secondary-button" type="button" onclick={() => (pendingOpen = false)}
+								>Keep browsing</button
+							>
+						</div>
+					</div>
+				{/if}
+				<CaseKey compact />
+			</aside>
+		</div>
 	</section>
 
 	<section class="block" aria-labelledby="board-reads">
@@ -230,14 +289,28 @@
 	}
 	.lead {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 24rem;
-		gap: 2.5rem;
-		align-items: start;
+		gap: 1.25rem;
 	}
 	.lead-main,
-	.lead-side {
+	.pair-col {
 		display: grid;
 		gap: 1.25rem;
+		align-content: start;
+		min-width: 0;
+	}
+	.pair {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+	.call-note {
+		margin: 0;
+		color: var(--ink-soft);
+		font-size: 0.8rem;
+	}
+	.call-note a {
+		color: var(--marker);
 	}
 	h1 {
 		margin: 0;
@@ -310,10 +383,6 @@
 	.stamp b {
 		color: var(--ink);
 		font-weight: 600;
-	}
-	.lead-side {
-		position: sticky;
-		top: 1rem;
 	}
 	.primary-button,
 	.secondary-button {
@@ -402,11 +471,8 @@
 		line-height: 1.6;
 	}
 	@media (max-width: 1100px) {
-		.lead {
+		.pair {
 			grid-template-columns: 1fr;
-		}
-		.lead-side {
-			position: static;
 		}
 	}
 </style>

@@ -1,0 +1,1777 @@
+<!doctype html>
+<html lang="en">
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Jev Call Directions</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;600&family=Saira+Stencil+One&display=swap"
+	/>
+	<style>
+		/* Layout: the app's steel magnet board. Two components, RosterDiagram and JevCall, are built once and
+   composed three ways; each layout gives both full size. Single light world by choice (DESIGN.md: no dark theme). */
+		:root {
+			color-scheme: light;
+			--board: #dde3e8;
+			--grid: rgba(30, 79, 168, 0.07);
+			--panel: #fbfcfd;
+			--ink: #16202a;
+			--ink-soft: #4a5663;
+			--rule: #c5ced6;
+			--marker: #1e4fa8;
+			--accent: #c8323a;
+			--snug: #23794a;
+			--fits: #8a5e0e;
+			--loose: #b3261e;
+			--wash: #eef1f4;
+			--display: 'Saira Stencil One', 'Arial Black', Impact, sans-serif;
+			--body: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+			--mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+		}
+		* {
+			box-sizing: border-box;
+		}
+		body {
+			margin: 0;
+			background: var(--board);
+			background-image:
+				linear-gradient(var(--grid) 1px, transparent 1px),
+				linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+			background-size: 32px 32px;
+			color: var(--ink);
+			font: 15px/1.55 var(--body);
+		}
+		.page {
+			max-width: 1280px;
+			margin: 0 auto;
+			padding: 40px 20px 80px;
+			display: grid;
+			gap: 56px;
+		}
+		h1,
+		h2,
+		h3 {
+			font-family: var(--display);
+			font-weight: 400;
+			letter-spacing: 0.01em;
+			text-wrap: balance;
+			margin: 0;
+			line-height: 1.08;
+		}
+		h1 {
+			font-size: clamp(34px, 5vw, 56px);
+		}
+		h2 {
+			font-size: clamp(26px, 3.4vw, 36px);
+		}
+		h3 {
+			font-size: 19px;
+		}
+		p {
+			margin: 0;
+			max-width: 68ch;
+		}
+		code,
+		.mono {
+			font-family: var(--mono);
+			font-size: 0.9em;
+		}
+		.lede {
+			display: grid;
+			gap: 16px;
+		}
+		.lede p {
+			color: var(--ink-soft);
+			font-size: 16px;
+		}
+		.lede strong {
+			color: var(--ink);
+		}
+		.tag-illus {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			font: 500 11px/1 var(--mono);
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--fits);
+			border: 1px solid currentColor;
+			padding: 5px 8px;
+			border-radius: 3px;
+			background: var(--panel);
+		}
+		.jump {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+		}
+		.jump a {
+			font: 500 13px/1 var(--mono);
+			color: var(--ink);
+			text-decoration: none;
+			background: var(--panel);
+			border: 1px solid var(--rule);
+			padding: 12px 14px;
+			border-radius: 999px;
+			min-height: 44px;
+			display: inline-flex;
+			align-items: center;
+		}
+		.jump a:hover {
+			border-color: var(--ink);
+		}
+		a:focus-visible,
+		button:focus-visible,
+		summary:focus-visible,
+		[tabindex]:focus-visible {
+			outline: 3px solid var(--marker);
+			outline-offset: 2px;
+		}
+
+		/* anatomy + component spec */
+		.two {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			gap: 24px;
+			align-items: start;
+		}
+		pre.req {
+			margin: 0;
+			background: var(--panel);
+			border: 1px solid var(--rule);
+			border-radius: 6px;
+			padding: 18px;
+			font: 12.5px/1.6 var(--mono);
+			overflow-x: auto;
+			color: var(--ink-soft);
+		}
+		pre.req b {
+			color: var(--ink);
+			font-weight: 600;
+		}
+		pre.req .k1 {
+			color: var(--marker);
+			font-weight: 600;
+		}
+		pre.req .k2 {
+			color: var(--accent);
+			font-weight: 600;
+		}
+		.terms {
+			display: grid;
+			gap: 0;
+			margin: 0;
+		}
+		.term {
+			display: grid;
+			grid-template-columns: 112px minmax(0, 1fr);
+			gap: 12px;
+			padding-block: 10px;
+			border-top: 1px solid var(--rule);
+		}
+		.term dt {
+			font: 600 12px/1.4 var(--mono);
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+		}
+		.term dd {
+			margin: 0;
+			color: var(--ink-soft);
+			font-size: 14px;
+		}
+		.spec {
+			background: var(--panel);
+			border: 1px solid var(--rule);
+			border-radius: 6px;
+			padding: 16px 18px;
+			display: grid;
+			gap: 10px;
+		}
+		.spec h3 {
+			font-family: var(--mono);
+			font-weight: 600;
+			font-size: 16px;
+		}
+		.spec p {
+			color: var(--ink-soft);
+			font-size: 14px;
+		}
+		.props {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 13px;
+		}
+		.props td {
+			padding: 6px 0;
+			border-top: 1px solid var(--rule);
+			vertical-align: top;
+		}
+		.props td:first-child {
+			font: 600 12px/1.5 var(--mono);
+			white-space: nowrap;
+			padding-right: 14px;
+		}
+		.props td:last-child {
+			color: var(--ink-soft);
+		}
+
+		/* layout sections */
+		.dir {
+			display: grid;
+			gap: 18px;
+			scroll-margin-top: 20px;
+		}
+		.dir-head {
+			display: grid;
+			gap: 8px;
+		}
+		.dir-head .letter {
+			font: 600 12px/1 var(--mono);
+			letter-spacing: 0.08em;
+			color: var(--marker);
+		}
+		.dir-head p {
+			color: var(--ink-soft);
+		}
+		.scroller {
+			overflow-x: auto;
+			border-radius: 8px;
+			box-shadow:
+				0 1px 0 var(--rule),
+				0 10px 30px rgba(22, 32, 42, 0.1);
+		}
+		.frame {
+			min-width: 1160px;
+			background: var(--board);
+			background-image: inherit;
+			border: 1px solid var(--rule);
+			border-radius: 8px;
+			overflow: hidden;
+		}
+		.appbar {
+			display: flex;
+			align-items: center;
+			gap: 18px;
+			padding: 12px 20px;
+			background: var(--panel);
+			border-bottom: 1px solid var(--rule);
+			font: 500 11px/1 var(--mono);
+			color: var(--ink-soft);
+			letter-spacing: 0.04em;
+		}
+		.appbar .wm {
+			font: 400 17px/1 var(--display);
+			color: var(--ink);
+			letter-spacing: 0.02em;
+		}
+		.appbar .pill {
+			background: var(--ink);
+			color: var(--panel);
+			padding: 6px 9px;
+			border-radius: 4px;
+		}
+		.appbar .sp {
+			margin-left: auto;
+		}
+		.screen {
+			padding: 22px;
+			display: grid;
+			gap: 18px;
+		}
+		.split-ab {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			gap: 18px;
+			align-items: start;
+		}
+		.split-c {
+			display: grid;
+			grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+			gap: 18px;
+			align-items: start;
+		}
+		.tradeoffs {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			gap: 16px;
+		}
+		.tradeoffs div {
+			background: var(--panel);
+			border: 1px solid var(--rule);
+			border-radius: 6px;
+			padding: 14px 16px;
+		}
+		.tradeoffs h4 {
+			margin: 0 0 6px;
+			font: 600 12px/1.3 var(--mono);
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+		}
+		.tradeoffs .good h4 {
+			color: var(--snug);
+		}
+		.tradeoffs .cost h4 {
+			color: var(--loose);
+		}
+		.tradeoffs ul {
+			margin: 0;
+			padding-left: 18px;
+			color: var(--ink-soft);
+			font-size: 14px;
+			display: grid;
+			gap: 4px;
+		}
+
+		/* component chrome: same header on every instance, so reuse is visible */
+		.cmp {
+			background: var(--panel);
+			border: 1px solid var(--rule);
+			border-radius: 6px;
+			overflow: hidden;
+			min-width: 0;
+		}
+		.cmp-head {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			flex-wrap: wrap;
+			padding: 10px 14px;
+			border-bottom: 1px solid var(--rule);
+		}
+		.cmp-head h3 {
+			font-size: 20px;
+		}
+		.cmp-tag {
+			margin-left: auto;
+			font: 500 11px/1 var(--mono);
+			color: var(--marker);
+			background: #e9effa;
+			border: 1px solid #c6d4ef;
+			padding: 5px 7px;
+			border-radius: 3px;
+			white-space: nowrap;
+		}
+		.toggle {
+			display: inline-flex;
+			border: 1px solid var(--rule);
+			border-radius: 6px;
+			background: var(--panel);
+			padding: 3px;
+			gap: 3px;
+		}
+		.toggle button {
+			font: 600 11.5px/1 var(--mono);
+			border: 0;
+			background: transparent;
+			color: var(--ink-soft);
+			padding: 0 11px;
+			min-height: 36px;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+		.toggle button.on {
+			background: var(--ink);
+			color: var(--panel);
+		}
+
+		/* shared bits */
+		.label-sm {
+			font: 600 11px/1.2 var(--mono);
+			text-transform: uppercase;
+			letter-spacing: 0.07em;
+			color: var(--ink-soft);
+		}
+		.typepill {
+			display: inline-block;
+			font: 600 10.5px/1 var(--mono);
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			padding: 5px 7px;
+			border-radius: 3px;
+			border: 1px solid;
+		}
+		.typepill.choice {
+			color: var(--marker);
+			border-color: var(--marker);
+			background: #e9effa;
+		}
+		.typepill.noul {
+			color: var(--accent);
+			border-color: var(--accent);
+			background: #fbecec;
+		}
+		.qkey {
+			font: 600 13px/1 var(--mono);
+		}
+		.instr {
+			font-size: 13.5px;
+			background: var(--wash);
+			border: 1px solid var(--rule);
+			padding: 10px 12px;
+			border-radius: 4px;
+		}
+		.src {
+			display: inline-flex;
+			gap: 4px;
+			align-items: center;
+			font: 500 10.5px/1 var(--mono);
+			padding: 4px 6px;
+			border-radius: 3px;
+			border: 1px solid var(--rule);
+			color: var(--ink-soft);
+			background: var(--panel);
+		}
+		.src.na {
+			border-style: dashed;
+			color: var(--fits);
+		}
+		svg text {
+			font-family: var(--mono);
+		}
+		.piece {
+			cursor: pointer;
+		}
+		.piece:focus {
+			outline: none;
+		}
+		.piece:focus-visible .outline,
+		.piece.sel .outline {
+			stroke: var(--ink);
+			stroke-width: 3;
+		}
+		.piece .outline {
+			fill: none;
+			stroke: rgba(22, 32, 42, 0.55);
+			stroke-width: 1.2;
+		}
+		.piece text {
+			font-size: 10px;
+			font-weight: 600;
+			fill: var(--ink);
+			paint-order: stroke;
+			stroke: rgba(251, 252, 253, 0.85);
+			stroke-width: 3px;
+			pointer-events: none;
+		}
+		.marks {
+			display: inline-flex;
+			gap: 3px;
+		}
+		.mk {
+			width: 18px;
+			height: 18px;
+			border-radius: 50%;
+			font: 600 9.5px/18px var(--mono);
+			text-align: center;
+			color: var(--panel);
+			flex: none;
+		}
+		.mk.J {
+			background: var(--ink);
+		}
+		.mk.R {
+			background: var(--marker);
+		}
+		.mk.A {
+			background: var(--fits);
+		}
+		.mk.off {
+			background: transparent;
+			color: transparent;
+		}
+		.footnote {
+			font: 12px/1.45 var(--mono);
+			color: var(--ink-soft);
+		}
+
+		/* RosterDiagram */
+		.rd-body {
+			padding: 14px;
+			display: grid;
+			gap: 10px;
+		}
+		.boardsvg {
+			width: 100%;
+			height: auto;
+			max-height: 600px;
+			display: block;
+		}
+		.verdict {
+			display: flex;
+			gap: 8px;
+			flex-wrap: wrap;
+			align-items: center;
+			padding-top: 10px;
+			border-top: 1px solid var(--rule);
+			font-size: 13px;
+		}
+		.chip {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			border: 1px solid var(--rule);
+			border-radius: 999px;
+			padding: 4px 10px 4px 4px;
+			font: 500 12px/1 var(--mono);
+			background: var(--panel);
+		}
+		.chip.disagree {
+			border-color: var(--accent);
+		}
+		.legend {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 14px;
+			font-size: 12px;
+			color: var(--ink-soft);
+			align-items: center;
+		}
+		.savant {
+			display: inline-block;
+			width: 80px;
+			height: 8px;
+			border-radius: 2px;
+			background: linear-gradient(
+				90deg,
+				rgb(50, 90, 168),
+				rgb(140, 170, 215),
+				rgb(220, 220, 220),
+				rgb(236, 152, 130),
+				rgb(210, 45, 73)
+			);
+			vertical-align: middle;
+		}
+		.lanes {
+			display: grid;
+			border: 1px solid var(--rule);
+			border-radius: 4px;
+			overflow: hidden;
+		}
+		.lane {
+			display: grid;
+			grid-template-columns: 210px minmax(0, 1fr);
+			border-top: 1px solid var(--rule);
+			min-height: 84px;
+		}
+		.lane:first-child {
+			border-top: 0;
+		}
+		.lane-key {
+			padding: 8px 12px;
+			display: grid;
+			grid-template-columns: 24px minmax(0, 1fr);
+			gap: 2px 8px;
+			align-content: center;
+			border-right: 1px solid var(--rule);
+			background: var(--panel);
+		}
+		.lane-key .lbl {
+			font: 400 15px/1 var(--display);
+		}
+		.lane-key .rule {
+			grid-column: 2;
+			font: 500 10.5px/1.35 var(--mono);
+			color: var(--marker);
+		}
+		.lane-key .cnt {
+			font: 500 11px/1 var(--mono);
+			color: var(--ink-soft);
+		}
+		.lane-track {
+			position: relative;
+			background: var(--wash);
+			background-image: linear-gradient(90deg, rgba(22, 32, 42, 0.05) 1px, transparent 1px);
+			background-size: 48px 100%;
+		}
+		.lane-track svg {
+			display: block;
+			width: 100%;
+			height: 84px;
+		}
+		.lane.empty .lane-track::after {
+			content: 'no one';
+			position: absolute;
+			left: 14px;
+			top: 50%;
+			transform: translateY(-50%);
+			font: 500 11px/1 var(--mono);
+			color: var(--ink-soft);
+			opacity: 0.6;
+		}
+
+		/* JevCall */
+		.jc-sec {
+			padding: 12px 16px;
+			border-bottom: 1px solid var(--rule);
+			display: grid;
+			gap: 8px;
+			align-content: start;
+			min-width: 0;
+		}
+		.jc-sec:last-child {
+			border-bottom: 0;
+		}
+		.jc-who {
+			font: 400 22px/1 var(--display);
+		}
+		.jc-meta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
+		}
+		.state {
+			display: grid;
+			grid-template-columns: 130px minmax(0, 1fr);
+			gap: 2px 10px;
+			font: 12px/1.5 var(--mono);
+			margin: 0;
+		}
+		.state dt {
+			color: var(--ink-soft);
+		}
+		.state dd {
+			margin: 0;
+			overflow-wrap: anywhere;
+		}
+		.state dd.na {
+			color: var(--fits);
+			font-style: italic;
+		}
+		.qhead {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			flex-wrap: wrap;
+		}
+		.qhead .n {
+			font: 600 11px/1 var(--mono);
+			color: var(--ink-soft);
+		}
+		.crit {
+			display: grid;
+			gap: 2px;
+		}
+		.crit details[open] {
+			background: var(--wash);
+			border-radius: 4px;
+		}
+		.crit summary {
+			list-style: none;
+			display: grid;
+			grid-template-columns: 20px 86px minmax(40px, 1fr) 38px 62px;
+			gap: 8px;
+			align-items: center;
+			padding: 5px 6px;
+			cursor: pointer;
+			min-height: 32px;
+			font-size: 13px;
+		}
+		.crit summary::-webkit-details-marker {
+			display: none;
+		}
+		.crit summary .lbl {
+			font-weight: 600;
+		}
+		.bar {
+			height: 8px;
+			background: var(--wash);
+			border-radius: 2px;
+			overflow: hidden;
+			border: 1px solid var(--rule);
+		}
+		.bar i {
+			display: block;
+			height: 100%;
+			background: var(--ink);
+		}
+		.crit .pct {
+			font: 500 12px/1 var(--mono);
+			text-align: right;
+		}
+		.crit .txt {
+			padding: 0 8px 8px 34px;
+			font-size: 12.5px;
+			color: var(--ink-soft);
+			display: grid;
+			gap: 4px;
+		}
+		.crit .txt .rule {
+			font: 500 11px/1.4 var(--mono);
+			color: var(--marker);
+		}
+		.noul-scale {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			gap: 10px;
+			font-size: 12.5px;
+			color: var(--ink-soft);
+		}
+		.noul-scale div:last-child {
+			text-align: right;
+		}
+		.gauge {
+			position: relative;
+			height: 10px;
+			background: linear-gradient(90deg, #f3d9d6, var(--wash) 50%, #d6eadc);
+			border: 1px solid var(--rule);
+			border-radius: 2px;
+			margin-bottom: 18px;
+		}
+		.gauge b {
+			position: absolute;
+			top: -5px;
+			width: 3px;
+			height: 18px;
+			background: var(--ink);
+			transform: translateX(-1px);
+		}
+		.gauge span {
+			position: absolute;
+			top: 16px;
+			transform: translateX(-50%);
+			font: 600 11px/1 var(--mono);
+		}
+		.jc-h {
+			display: grid;
+			grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr);
+		}
+		.jc-h > .jc-sec {
+			border-bottom: 0;
+			border-left: 1px solid var(--rule);
+		}
+		.jc-h > .jc-sec:first-child {
+			border-left: 0;
+		}
+		.jc-h .crit summary {
+			grid-template-columns: 20px 86px minmax(40px, 1fr) 38px 62px;
+		}
+		.qbtn {
+			text-align: left;
+			display: grid;
+			gap: 6px;
+			padding: 10px;
+			border: 1px solid var(--rule);
+			background: var(--panel);
+			border-radius: 4px;
+			font: inherit;
+			color: inherit;
+			cursor: pointer;
+			min-height: 44px;
+		}
+		.qbtn.on {
+			border-color: var(--ink);
+			background: var(--wash);
+		}
+		.qbtn.add {
+			border-style: dashed;
+			color: var(--ink-soft);
+			font: 500 12px/1 var(--mono);
+			align-content: center;
+		}
+
+		@media (max-width: 860px) {
+			.two {
+				grid-template-columns: 1fr;
+			}
+			.term {
+				grid-template-columns: 1fr;
+				gap: 2px;
+			}
+		}
+	</style>
+
+	<div class="page">
+		<header class="lede">
+			<h1>Jev call: three layouts</h1>
+			<p>
+				Revised so the <strong>roster diagram</strong> and the <strong>Jev call</strong> are both
+				primary components on every layout. Each is built once, with the same header, data and
+				controls, and each layout only changes how the two sit together. Click a piece anywhere and
+				every instance follows the same player.
+			</p>
+			<p>
+				The players, slots, splits, analyst labels and rule-baseline labels are the real 2026 Wild
+				Card roster bundle (dated 2026-09-27). The request text is what
+				<code>buildProfileRequest</code> produces today.
+				<strong>Jev's answers are made up for the mockup</strong>; no live call was made.
+			</p>
+			<div><span class="tag-illus">Jev probabilities are illustrative</span></div>
+			<nav class="jump" aria-label="Sections">
+				<a href="#anatomy">The two components</a>
+				<a href="#dir-a">A · Side by side</a>
+				<a href="#dir-b">B · Call over board</a>
+				<a href="#dir-c">C · Lanes and call</a>
+			</nav>
+		</header>
+
+		<section id="anatomy" class="dir">
+			<div class="dir-head">
+				<h2>The two components</h2>
+				<p>
+					Both take the same selected player and the same three label sources (Jev, rule baseline,
+					analyst). Neither can change a run total: the diagram's sizes come from the engine's
+					display layer, and the call is advisory.
+				</p>
+			</div>
+			<div class="two">
+				<div class="spec">
+					<h3>&lt;RosterDiagram&gt;</h3>
+					<p>
+						The decision's board: lineup packed under the pool's best, the off-the-field tray at the
+						same scale, pieces split by pitcher hand. A lanes mode regroups the same pieces by
+						criterion.
+					</p>
+					<table class="props">
+						<tbody>
+							<tr>
+								<td>mode</td>
+								<td>
+									<code>packed</code> (the D-50 board) or <code>lanes</code> (one lane per profile
+									criterion)
+								</td>
+							</tr>
+							<tr>
+								<td>source</td>
+								<td>
+									which label draws the shape: <code>analyst</code>, <code>rule</code> or
+									<code>jev</code>
+								</td>
+							</tr>
+							<tr>
+								<td>highlight</td>
+								<td>
+									<code>none</code> or <code>disagreements</code> (red dashed ring where the sources
+									differ)
+								</td>
+							</tr>
+							<tr>
+								<td>selected</td>
+								<td>player id, shared with JevCall</td>
+							</tr>
+							<tr>
+								<td>thinEvidence</td>
+								<td>hatch pieces whose <code>evidence_sufficient</code> is below .50</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="spec">
+					<h3>&lt;JevCall&gt;</h3>
+					<p>
+						One player's request and answer: the state Jev was given, then every question with its
+						type, instructions and criteria, and the answer laid on the criteria.
+					</p>
+					<table class="props">
+						<tbody>
+							<tr>
+								<td>request</td>
+								<td>the <code>JevSystemOneRequest</code> from <code>buildProfileRequest</code></td>
+							</tr>
+							<tr>
+								<td>response</td>
+								<td>validated <code>JevResponse</code>, or a not-configured / invalid state</td>
+							</tr>
+							<tr>
+								<td>compare</td>
+								<td>rule and analyst labels, drawn as R and A marks on the criteria</td>
+							</tr>
+							<tr>
+								<td>orientation</td>
+								<td>
+									<code>vertical</code> (a column) or <code>horizontal</code> (a full-width strip)
+								</td>
+							</tr>
+							<tr>
+								<td>editable</td>
+								<td>
+									shows the question rail with Add question; adding one bumps the prompt version
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="two">
+				<pre class="req" aria-label="Request shape">POST /v1/systemone
+{
+  <b>"model"</b>: "jev-latest",
+  <b>"state"</b>: "Player: Roman Anthony (mlbam-701350)
+            Bats: L · Age: not available
+            Eligible fielding positions: LF, RF
+            Against LHP: .588 OPS over 83 PA …",
+  <b>"questions"</b>: {
+    <span class="k1">"profile"</span>: {
+      <b>"type"</b>: "choice",
+      <b>"instructions"</b>: "Which single profile label …",
+      <b>"criteria"</b>: { "Square": "…", "Star": "…", … 9 }
+    },
+    <span class="k2">"evidence_sufficient"</span>: {
+      <b>"type"</b>: "noul",
+      <b>"instructions"</b>: "Do the supplied observations …",
+      <b>"criteria"</b>: { "true": "…", "false": "…" }
+    }
+  }
+}</pre>
+				<dl class="terms">
+					<div class="term">
+						<dt>Questions</dt>
+						<dd>
+							Keyed asks in one call. Today there are two: <code>profile</code> and
+							<code>evidence_sufficient</code>.
+						</dd>
+					</div>
+					<div class="term">
+						<dt>Type</dt>
+						<dd>
+							<span class="typepill choice">choice</span> returns one option plus a full probability
+							distribution. <span class="typepill noul">noul</span> returns one probability that the
+							true criterion holds.
+						</dd>
+					</div>
+					<div class="term">
+						<dt>Instructions</dt>
+						<dd>
+							The sentence the model answers. It forbids arithmetic and prose, so the answer can
+							never become a run total.
+						</dd>
+					</div>
+					<div class="term">
+						<dt>Criteria</dt>
+						<dd>
+							For a choice, one definition per shape with its recorded rule. For a noul, what true
+							and false mean. The rubric version is part of the cache key.
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</section>
+
+		<section id="dir-a" class="dir">
+			<div class="dir-head">
+				<span class="letter">LAYOUT A</span>
+				<h2>Side by side</h2>
+				<p>
+					Equal halves. The packed board on the left, the call as a column on the right. Reading
+					goes piece, then the call about that piece. This is the closest to the current decision
+					page.
+				</p>
+			</div>
+			<div class="scroller">
+				<div class="frame">
+					<div class="appbar">
+						<span class="wm">ROSTER SHAPES</span><span>DECISIONS</span
+						><span class="pill">WILD CARD</span><span>Board</span><span>Case</span
+						><span>Snapshots</span><span class="sp">2026 Red Sox · position players</span>
+					</div>
+					<div class="screen">
+						<div class="split-ab">
+							<div class="cmp" data-diagram="a" data-mode="packed" data-source="analyst"></div>
+							<div class="cmp" data-call="a" data-orientation="vertical"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tradeoffs">
+				<div class="good">
+					<h4>Good for</h4>
+					<ul>
+						<li>Both components at full height, side by side, with no scrolling between them.</li>
+						<li>Keeps the D-50 board as the decision's diagram.</li>
+					</ul>
+				</div>
+				<div class="cost">
+					<h4>Costs</h4>
+					<ul>
+						<li>Each half is narrower, so the board loses some size.</li>
+						<li>On a phone the call drops below the board.</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<section id="dir-b" class="dir">
+			<div class="dir-head">
+				<span class="letter">LAYOUT B</span>
+				<h2>Call over board</h2>
+				<p>
+					Stacked, both full width. The call runs across the top as a horizontal strip: questions,
+					state, the profile criteria with answers, and the noul. The board fills the width below
+					and rings every piece where Jev, the rule and the analyst disagree. The call is editable
+					here.
+				</p>
+			</div>
+			<div class="scroller">
+				<div class="frame">
+					<div class="appbar">
+						<span class="wm">ROSTER SHAPES</span><span>DECISIONS</span
+						><span class="pill">WILD CARD</span><span>Snapshots</span
+						><span class="pill" style="background: var(--marker)">JEV CALL</span
+						><span class="sp">jev-profile-prompt-v1 · jev-profile-rubric-v1</span>
+					</div>
+					<div class="screen">
+						<div class="cmp" data-call="b" data-orientation="horizontal" data-editable="1"></div>
+						<div
+							class="cmp"
+							data-diagram="b"
+							data-mode="packed"
+							data-source="jev"
+							data-highlight="disagreements"
+						></div>
+					</div>
+				</div>
+			</div>
+			<div class="tradeoffs">
+				<div class="good">
+					<h4>Good for</h4>
+					<ul>
+						<li>Biggest board of the three, and the call reads in one line across.</li>
+						<li>
+							Editing the call and seeing disagreements land on the board happen on one screen.
+						</li>
+					</ul>
+				</div>
+				<div class="cost">
+					<h4>Costs</h4>
+					<ul>
+						<li>The page is tall; the board sits below the fold on a laptop.</li>
+						<li>
+							The horizontal strip needs a wide screen and stacks into the vertical call on phones.
+						</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<section id="dir-c" class="dir">
+			<div class="dir-head">
+				<span class="letter">LAYOUT C</span>
+				<h2>Lanes and call</h2>
+				<p>
+					The diagram opens in lanes mode, one lane per profile criterion, so the rubric is the axis
+					and the call beside it explains each lane. Switch the source and pieces move lanes; switch
+					to Packed and the same component becomes the board.
+				</p>
+			</div>
+			<div class="scroller">
+				<div class="frame">
+					<div class="appbar">
+						<span class="wm">ROSTER SHAPES</span><span>DECISIONS</span
+						><span class="pill">WILD CARD</span><span>Board</span><span>Shapes by criterion</span
+						><span class="sp">14 position players</span>
+					</div>
+					<div class="screen">
+						<div class="split-c">
+							<div
+								class="cmp"
+								data-diagram="c"
+								data-mode="lanes"
+								data-source="jev"
+								data-thin="1"
+								data-controls="1"
+							></div>
+							<div class="cmp" data-call="c" data-orientation="vertical"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tradeoffs">
+				<div class="good">
+					<h4>Good for</h4>
+					<ul>
+						<li>The criteria and the answers become one picture.</li>
+						<li>The source toggle shows where Jev and the rules part ways.</li>
+					</ul>
+				</div>
+				<div class="cost">
+					<h4>Costs</h4>
+					<ul>
+						<li>Lanes say nothing about empty space until you switch to Packed.</li>
+						<li>Two toggles on the diagram is more to learn.</li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<footer class="footnote" style="max-width: 80ch">
+			Sources: mlbam-bos-2026-wild-card-roster bundle (2026-09-27); MLB Stats API season totals and
+			statSplits; analyst labels from rubric v2; rule baseline rule-baseline-v1 with the Diamond cut
+			at the labeled players' median 2026 rate (.1086 R/PA). Colors follow the app's Savant ramp
+			around league OPS .719 vs LHP and .727 vs RHP. Jev probabilities and evidence scores on this
+			page are invented for layout only.
+		</footer>
+	</div>
+
+	<script>
+		(() => {
+			const LABELS = [
+				'Square',
+				'Rectangle',
+				'Circle',
+				'Pentagon',
+				'Octagon',
+				'Diamond',
+				'Star',
+				'Funky',
+				'Unclassified'
+			];
+			const CRIT = {
+				Square:
+					'A steady everyday regular at one position with no platoon quirk. Choose when the evidence shows a single eligible fielding position, a full workload, and no large split gap.',
+				Rectangle:
+					'A high-volume workhorse carrying everyday at-bats: 550 or more plate appearances in the season, at one or more everyday positions.',
+				Circle:
+					'A well-rounded utility player who is eligible at two or more positions but has no everyday slot and no platoon quirk.',
+				Pentagon:
+					'A young flash, 25 or under, with extra-base or speed electricity and high variance.',
+				Octagon: 'A defensive anchor: the shortstop-grade glove the infield is built around.',
+				Diamond:
+					'High value but fragile: an above-median rate with an injury-limited season of fewer than 300 plate appearances.',
+				Star: 'A quirky or tough fit, not a star player: much better against one hand than the other, so he fills a slot snugly only as half of a platoon. Recorded rule: a gap of at least .200 OPS between his rates against left- and right-handed pitching, with 50 or more plate appearances on each side. Production level alone never makes a Star.',
+				Funky:
+					'An irregular profile: a designated-hitter-only bat with no fielding position of 10 or more games, or a fringe bat under 100 plate appearances.',
+				Unclassified:
+					'The evidence is missing: zero plate appearances and no eligible position. Never guess a label the evidence cannot support.'
+			};
+			const RULE_CODE = {
+				Square: '1 position · full load · gap < .200',
+				Rectangle: 'PA ≥ 550',
+				Circle: '2+ positions · no everyday slot',
+				Pentagon: 'needs age + power/speed (rule abstains)',
+				Octagon: 'needs defensive runs (rule abstains)',
+				Diamond: 'rate > median · PA < 300',
+				Star: '|vL − vR| ≥ .200 · 50+ PA each',
+				Funky: 'DH only, or PA < 100',
+				Unclassified: '0 PA · no position'
+			};
+			const INSTR_P =
+				'Which single profile label describes this position player under the rubric above? Answer only from the supplied observations. Do not estimate plate appearances, runs, defensive value, or transaction value, and do not describe the player in prose.';
+			const INSTR_E =
+				'Do the supplied observations contain enough evidence to apply the profile rubric to this player without guessing?';
+			const E_TRUE =
+				'The observations state position eligibility, a rate or an explicit absence of one, and enough season or split volume to apply the rubric.';
+			const E_FALSE =
+				'A required observation is missing or too small to apply a boundary rule, so any label would be a guess.';
+			const LEAGUE = { L: 0.719, R: 0.727 };
+
+			// Real bundle evidence (wild-card-roster, 2026-09-27); `jev` and `ev` are illustrative.
+			const P = [
+				{
+					id: 'mlbam-668939',
+					name: 'Adley Rutschman',
+					last: 'Rutschman',
+					slot: 'C',
+					bats: 'S',
+					elig: ['C'],
+					rate: 0.107317,
+					pa: 410,
+					vL: [143, 0.649],
+					vR: [267, 0.792],
+					analyst: 'Square',
+					rule: 'Square',
+					jev: { Square: 0.71, Star: 0.09, Rectangle: 0.08, Circle: 0.04, Diamond: 0.04 },
+					ev: 0.86
+				},
+				{
+					id: 'mlbam-575929',
+					name: 'Willson Contreras',
+					last: 'Contreras',
+					slot: '1B',
+					bats: 'R',
+					elig: ['1B'],
+					rate: 0.127103,
+					pa: 535,
+					vL: [146, 0.966],
+					vR: [389, 0.878],
+					analyst: 'Square',
+					rule: 'Square',
+					jev: { Square: 0.78, Rectangle: 0.14 },
+					ev: 0.9
+				},
+				{
+					id: 'mlbam-686765',
+					name: 'Nick Sogard',
+					last: 'Sogard',
+					slot: '2B',
+					bats: 'S',
+					elig: ['1B', '2B'],
+					rate: 0.104693,
+					pa: 277,
+					vL: [73, 0.813],
+					vR: [204, 0.693],
+					analyst: 'Circle',
+					rule: 'Circle',
+					jev: { Circle: 0.69, Square: 0.1, Diamond: 0.09 },
+					ev: 0.84
+				},
+				{
+					id: 'mlbam-702332',
+					name: 'Caleb Durbin',
+					last: 'Durbin',
+					slot: '3B',
+					bats: 'R',
+					elig: ['2B', '3B'],
+					rate: 0.12628,
+					pa: 586,
+					vL: [164, 0.696],
+					vR: [422, 0.716],
+					analyst: 'Square',
+					rule: 'Rectangle',
+					jev: { Rectangle: 0.52, Square: 0.34, Circle: 0.08 },
+					ev: 0.88
+				},
+				{
+					id: 'mlbam-596115',
+					name: 'Trevor Story',
+					last: 'Story',
+					slot: 'SS',
+					bats: 'R',
+					elig: ['SS'],
+					rate: 0.090226,
+					pa: 266,
+					vL: [76, 0.636],
+					vR: [190, 0.615],
+					analyst: 'Octagon',
+					rule: null,
+					jev: { Square: 0.41, Octagon: 0.27, Diamond: 0.14 },
+					ev: 0.46
+				},
+				{
+					id: 'mlbam-680776',
+					name: 'Jarren Duran',
+					last: 'Duran',
+					slot: 'LF',
+					bats: 'L',
+					elig: ['LF', 'CF'],
+					rate: 0.108553,
+					pa: 608,
+					vL: [141, 0.608],
+					vR: [467, 0.633],
+					analyst: 'Rectangle',
+					rule: 'Rectangle',
+					jev: { Rectangle: 0.81, Square: 0.1 },
+					ev: 0.92
+				},
+				{
+					id: 'mlbam-678882',
+					name: 'Ceddanne Rafaela',
+					last: 'Rafaela',
+					slot: 'CF',
+					bats: 'R',
+					elig: ['2B', 'CF'],
+					rate: 0.116319,
+					pa: 576,
+					vL: [154, 0.824],
+					vR: [422, 0.743],
+					analyst: 'Pentagon',
+					rule: 'Rectangle',
+					jev: { Rectangle: 0.58, Pentagon: 0.16, Circle: 0.12, Octagon: 0.08 },
+					ev: 0.8
+				},
+				{
+					id: 'mlbam-677800',
+					name: 'Wilyer Abreu',
+					last: 'Abreu',
+					slot: 'RF',
+					bats: 'L',
+					elig: ['RF'],
+					rate: 0.118943,
+					pa: 681,
+					vL: [217, 0.854],
+					vR: [464, 0.735],
+					analyst: 'Rectangle',
+					rule: 'Rectangle',
+					jev: { Rectangle: 0.74, Square: 0.2 },
+					ev: 0.91
+				},
+				{
+					id: 'mlbam-701350',
+					name: 'Roman Anthony',
+					last: 'Anthony',
+					slot: 'DH',
+					bats: 'L',
+					elig: ['LF', 'RF'],
+					rate: 0.099174,
+					pa: 242,
+					vL: [83, 0.588],
+					vR: [159, 0.817],
+					analyst: 'Pentagon',
+					rule: 'Star',
+					jev: { Star: 0.61, Pentagon: 0.17, Diamond: 0.1, Circle: 0.06 },
+					ev: 0.72
+				},
+				{
+					id: 'mlbam-655316',
+					name: 'Andruw Monasterio',
+					last: 'Monasterio',
+					slot: null,
+					bats: 'R',
+					elig: ['1B', '2B', 'SS'],
+					rate: 0.100865,
+					pa: 347,
+					vL: [130, 0.772],
+					vR: [217, 0.602],
+					analyst: 'Circle',
+					rule: 'Circle',
+					jev: { Circle: 0.64, Star: 0.18, Square: 0.06 },
+					ev: 0.81
+				},
+				{
+					id: 'mlbam-643396',
+					name: 'Isiah Kiner-Falefa',
+					last: 'Kiner-Falefa',
+					slot: null,
+					bats: 'R',
+					elig: ['2B', '3B', 'SS'],
+					rate: 0.125683,
+					pa: 183,
+					vL: [56, 0.463],
+					vR: [127, 0.706],
+					analyst: 'Star',
+					rule: 'Star',
+					jev: { Star: 0.74, Circle: 0.13 },
+					ev: 0.79
+				},
+				{
+					id: 'mlbam-657136',
+					name: 'Connor Wong',
+					last: 'Wong',
+					slot: null,
+					bats: 'R',
+					elig: ['C'],
+					rate: 0.092437,
+					pa: 238,
+					vL: [71, 0.71],
+					vR: [167, 0.631],
+					analyst: 'Square',
+					rule: null,
+					jev: { Square: 0.52, Funky: 0.14, Circle: 0.1, Diamond: 0.08 },
+					ev: 0.63
+				},
+				{
+					id: 'mlbam-663330',
+					name: 'Jahmai Jones',
+					last: 'Jones',
+					slot: null,
+					bats: 'R',
+					elig: ['LF', 'RF'],
+					rate: 0.110497,
+					pa: 181,
+					vL: [156, 0.742],
+					vR: [25, 0.24],
+					analyst: 'Circle',
+					rule: 'Diamond',
+					jev: { Diamond: 0.38, Star: 0.27, Circle: 0.22 },
+					ev: 0.41
+				},
+				{
+					id: 'mlbam-681987',
+					name: 'Nate Eaton',
+					last: 'Eaton',
+					slot: null,
+					bats: 'R',
+					elig: ['3B', 'CF', 'RF'],
+					rate: 0.066667,
+					pa: 60,
+					vL: [35, 0.493],
+					vR: [25, 0.644],
+					analyst: 'Funky',
+					rule: 'Funky',
+					jev: { Funky: 0.7, Unclassified: 0.12, Circle: 0.1 },
+					ev: 0.58
+				}
+			];
+			for (const p of P) {
+				const given = Object.values(p.jev).reduce((a, b) => a + b, 0);
+				const rest = LABELS.filter((l) => !(l in p.jev));
+				for (const l of rest) p.jev[l] = Math.max(0, (1 - given) / rest.length);
+				p.pick = LABELS.reduce((a, l) => (p.jev[l] > p.jev[a] ? l : a), LABELS[0]);
+				p.runs = p.pa * p.rate;
+			}
+			const byId = Object.fromEntries(P.map((p) => [p.id, p]));
+			let selected = 'mlbam-701350';
+			const callQ = {}; // per-instance selected question for editable calls
+
+			const fmtOps = (v) => v.toFixed(3).replace(/^0/, '');
+			const pct = (v) => Math.round(v * 100) + '%';
+			const SRC_NAME = { jev: 'Jev', rule: 'Rule baseline', analyst: 'Analyst' };
+
+			// Savant ramp, same stops as src/lib/app/shape-case.ts
+			const STOPS = [
+				[-1, [50, 90, 168]],
+				[-0.5, [140, 170, 215]],
+				[0, [220, 220, 220]],
+				[0.5, [236, 152, 130]],
+				[1, [210, 45, 73]]
+			];
+			function savant(ops, side) {
+				const v = Math.max(-1, Math.min(1, (ops - LEAGUE[side]) / 0.15));
+				for (let i = 0; i < STOPS.length - 1; i++) {
+					const [a, ca] = STOPS[i],
+						[b, cb] = STOPS[i + 1];
+					if (v <= b) {
+						const k = (v - a) / (b - a);
+						return `rgb(${ca.map((c, j) => Math.round(c + (cb[j] - c) * k)).join(',')})`;
+					}
+				}
+				return 'rgb(210,45,73)';
+			}
+
+			// Unit outlines, scaled to a target area via the shoelace formula
+			function poly(n, rot = -Math.PI / 2, rIn = null) {
+				const pts = [],
+					m = rIn ? n * 2 : n;
+				for (let i = 0; i < m; i++) {
+					const a = rot + (i * 2 * Math.PI) / m,
+						r = rIn && i % 2 ? rIn : 1;
+					pts.push([Math.cos(a) * r, Math.sin(a) * r]);
+				}
+				return pts;
+			}
+			const UNIT = {
+				Square: [
+					[-1, -1],
+					[1, -1],
+					[1, 1],
+					[-1, 1]
+				],
+				Rectangle: [
+					[-1.6, -0.8],
+					[1.6, -0.8],
+					[1.6, 0.8],
+					[-1.6, 0.8]
+				],
+				Circle: poly(40),
+				Pentagon: poly(5),
+				Octagon: poly(8, -Math.PI / 2 + Math.PI / 8),
+				Diamond: [
+					[0, -1.25],
+					[0.85, 0],
+					[0, 1.25],
+					[-0.85, 0]
+				],
+				Star: poly(5, -Math.PI / 2, 0.5),
+				Funky: [
+					[-1, -0.6],
+					[-0.2, -1],
+					[0.5, -0.7],
+					[1, -0.95],
+					[0.9, 0.1],
+					[1.1, 0.8],
+					[0.2, 0.6],
+					[-0.5, 1],
+					[-1.1, 0.4]
+				],
+				Unclassified: poly(40)
+			};
+			function area(pts) {
+				let s = 0;
+				for (let i = 0; i < pts.length; i++) {
+					const [x1, y1] = pts[i],
+						[x2, y2] = pts[(i + 1) % pts.length];
+					s += x1 * y2 - x2 * y1;
+				}
+				return Math.abs(s) / 2;
+			}
+			function outline(label, targetArea) {
+				const u = UNIT[label] || UNIT.Unclassified,
+					k = Math.sqrt(targetArea / area(u));
+				const pts = u.map(([x, y]) => [x * k, y * k]);
+				const xs = pts.map((p) => p[0]),
+					ys = pts.map((p) => p[1]);
+				return {
+					pts,
+					w: Math.max(...xs) - Math.min(...xs),
+					h: Math.max(...ys) - Math.min(...ys),
+					minx: Math.min(...xs),
+					miny: Math.min(...ys)
+				};
+			}
+			let uid = 0;
+			function pieceSVG(p, label, cx, cy, A, opts = {}) {
+				const o = outline(label, A);
+				const d =
+					o.pts
+						.map(([x, y], i) => `${i ? 'L' : 'M'}${(cx + x).toFixed(1)},${(cy + y).toFixed(1)}`)
+						.join('') + 'Z';
+				const id = 'c' + uid++;
+				const x0 = cx + o.minx - 2,
+					y0 = cy + o.miny - 2,
+					w = o.w + 4,
+					h = o.h + 4;
+				const hatch = opts.hatch ? `<path d="${d}" fill="url(#hatch)"/>` : '';
+				const ring = opts.ring
+					? `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-dasharray="5 3"/>`
+					: '';
+				const dashed = label === 'Unclassified' ? ' stroke-dasharray="4 3"' : '';
+				const name = `<text x="${cx}" y="${cy + 3}" text-anchor="middle">${opts.text ?? (p.slot ? p.slot + ' ' : '') + p.last}</text>`;
+				return `<g class="piece${p.id === selected ? ' sel' : ''}" data-id="${p.id}" tabindex="0" role="button" aria-label="${p.name}, ${label}${p.slot ? ', ' + p.slot : ', off the field'}, ${p.runs.toFixed(0)} runs">
+    <title>${p.name} · ${label} · ${p.runs.toFixed(1)} runs · vs LHP ${fmtOps(p.vL[1])} (${p.vL[0]} PA) · vs RHP ${fmtOps(p.vR[1])} (${p.vR[0]} PA)</title>
+    <clipPath id="${id}L"><rect x="${x0}" y="${y0}" width="${w / 2}" height="${h}"/></clipPath>
+    <clipPath id="${id}R"><rect x="${x0 + w / 2}" y="${y0}" width="${w / 2}" height="${h}"/></clipPath>
+    <path d="${d}" fill="${savant(p.vL[1], 'L')}" clip-path="url(#${id}L)"/>
+    <path d="${d}" fill="${savant(p.vR[1], 'R')}" clip-path="url(#${id}R)"/>
+    ${hatch}<path class="outline" d="${d}"${dashed}/>${ring}${name}${opts.marks || ''}
+  </g>`;
+			}
+			const DEFS = `<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="rgba(251,252,253,.35)"/><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(22,32,42,.55)" stroke-width="1.6"/></pattern></defs>`;
+			function glyph(label, size = 18, fill = 'var(--ink)') {
+				const o = outline(label, size * size * 0.42);
+				const d =
+					o.pts
+						.map(
+							([x, y], i) =>
+								`${i ? 'L' : 'M'}${(size / 2 + x).toFixed(1)},${(size / 2 + y).toFixed(1)}`
+						)
+						.join('') + 'Z';
+				const st =
+					label === 'Unclassified'
+						? `fill="none" stroke="${fill}" stroke-dasharray="2 2"`
+						: `fill="${fill}"`;
+				return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true" style="flex:none"><path d="${d}" ${st}/></svg>`;
+			}
+			const labelFor = (p, src) =>
+				src === 'jev' ? p.pick : src === 'rule' ? (p.rule ?? 'Unclassified') : p.analyst;
+			const disagree = (p) => new Set([p.pick, p.rule ?? 'abstain', p.analyst]).size > 1;
+
+			// ---------- <RosterDiagram> ----------
+			const SCALE = 112; // px² per run in packed mode
+			function shelf(list, x, y, w, h, labelOf) {
+				const items = list
+					.map((p) => ({ p, o: outline(labelOf(p), p.runs * SCALE) }))
+					.sort((a, b) => b.o.h - a.o.h);
+				const rows = [];
+				let row = [],
+					used = 0;
+				for (const it of items) {
+					if (used + it.o.w + 6 > w && row.length) {
+						rows.push(row);
+						row = [];
+						used = 0;
+					}
+					row.push(it);
+					used += it.o.w + 6;
+				}
+				if (row.length) rows.push(row);
+				let floor = y + h - 6;
+				const placed = [];
+				for (const r of rows) {
+					const rh = Math.max(...r.map((i) => i.o.h));
+					let cx = x + (w - r.reduce((s, i) => s + i.o.w + 6, -6)) / 2;
+					for (const it of r) {
+						placed.push({ ...it, cx: cx - it.o.minx, cy: floor - it.o.h - it.o.miny });
+						cx += it.o.w + 6;
+					}
+					floor -= rh + 6;
+				}
+				return placed;
+			}
+			function packedSVG(cfg) {
+				const labelOf = (p) => labelFor(p, cfg.source);
+				const opt = (p) => ({
+					ring: cfg.highlight === 'disagreements' && disagree(p),
+					hatch: cfg.thin && p.ev < 0.5
+				});
+				let s = DEFS;
+				s += `<text x="8" y="22" font-size="11" font-weight="600" fill="var(--ink)" letter-spacing="1.2">ON THE FIELD</text>`;
+				s += `<rect x="8" y="34" width="388" height="388" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/>`;
+				s += `<line x1="8" y1="104" x2="396" y2="104" stroke="var(--marker)" stroke-dasharray="6 4" stroke-width="1.5"/>`;
+				s += `<text x="202" y="96" text-anchor="middle" font-size="10.5" fill="var(--marker)" letter-spacing="1.5">LID = POOL'S BEST · HEADROOM ABOVE</text>`;
+				s += `<text x="414" y="22" font-size="11" font-weight="600" fill="var(--ink)" letter-spacing="1.2">OFF THE FIELD</text>`;
+				s += `<rect x="414" y="34" width="218" height="388" fill="none" stroke="var(--ink-soft)" stroke-dasharray="3 4"/>`;
+				for (const it of shelf(
+					P.filter((p) => p.slot),
+					12,
+					104,
+					380,
+					318,
+					labelOf
+				))
+					s += pieceSVG(it.p, labelOf(it.p), it.cx, it.cy, it.p.runs * SCALE, opt(it.p));
+				for (const it of shelf(
+					P.filter((p) => !p.slot),
+					418,
+					34,
+					210,
+					388,
+					labelOf
+				))
+					s += pieceSVG(it.p, labelOf(it.p), it.cx, it.cy, it.p.runs * SCALE, opt(it.p));
+				return `<svg class="boardsvg" viewBox="0 0 640 430" role="group" aria-label="Lineup and bench, sized by 2026 runs, shaped by ${SRC_NAME[cfg.source]}">${s}</svg>`;
+			}
+			function lanesHTML(cfg) {
+				const maxH = Math.max(...P.map((p) => outline(labelFor(p, cfg.source), p.runs).h));
+				const k = (68 / maxH) ** 2;
+				const mine = { jev: 'J', rule: 'R', analyst: 'A' }[cfg.source];
+				return `<div class="lanes">${LABELS.map((l) => {
+					const members = P.filter((p) => labelFor(p, cfg.source) === l).sort(
+						(a, b) => b.runs - a.runs
+					);
+					let x = 12,
+						g = '';
+					for (const p of members) {
+						const A = p.runs * k,
+							o = outline(l, A);
+						const cx = x - o.minx,
+							cy = 42 - (o.miny + o.h / 2);
+						const others = [
+							['J', p.pick],
+							['R', p.rule ?? 'abstain'],
+							['A', p.analyst]
+						].filter(([s, v]) => s !== mine && v !== l);
+						const marks = others
+							.map(
+								([s, v], i) =>
+									`<text x="${cx + o.minx + o.w + 4}" y="${20 + i * 12}" font-size="9" font-weight="600" fill="${s === 'R' ? 'var(--marker)' : s === 'A' ? 'var(--fits)' : 'var(--ink)'}" style="stroke:none">${s}:${v}</text>`
+							)
+							.join('');
+						g += pieceSVG(p, l, cx, cy, A, {
+							hatch: cfg.thin && p.ev < 0.5,
+							ring: cfg.highlight === 'disagreements' && disagree(p),
+							text: p.last,
+							marks
+						});
+						x += o.w + 16 + (others.length ? 62 : 0);
+					}
+					const label = cfg.source === 'rule' && l === 'Unclassified' ? 'Abstained' : l;
+					return `<div class="lane${members.length ? '' : ' empty'}"><div class="lane-key">${glyph(l, 22)}<span class="lbl">${label} <span class="cnt">${members.length}</span></span><span class="rule">${RULE_CODE[l]}</span></div>
+      <div class="lane-track"><svg viewBox="0 0 440 84" preserveAspectRatio="xMinYMid meet" role="group" aria-label="${label}: ${members.map((m) => m.name).join(', ') || 'no one'}">${DEFS}${g}</svg></div></div>`;
+				}).join('')}</div>`;
+			}
+			function renderDiagram(el) {
+				const cfg = {
+					mode: el.dataset.mode,
+					source: el.dataset.source,
+					highlight: el.dataset.highlight || 'none',
+					thin: el.dataset.thin === '1',
+					controls: el.dataset.controls === '1'
+				};
+				const p = byId[selected];
+				const tg = (attr, val, text, on) =>
+					`<button type="button" data-set="${attr}" data-val="${val}" class="${on ? 'on' : ''}">${text}</button>`;
+				const controls = `<span class="toggle" role="group" aria-label="Mode">${tg('mode', 'packed', 'Packed', cfg.mode === 'packed')}${tg('mode', 'lanes', 'By criterion', cfg.mode === 'lanes')}</span>
+    <span class="toggle" role="group" aria-label="Shape source">${['jev', 'rule', 'analyst'].map((s) => tg('source', s, SRC_NAME[s], cfg.source === s)).join('')}</span>`;
+				const chip = (k, lbl, title) =>
+					`<span class="chip${lbl !== p.pick ? ' disagree' : ''}"><span class="mk ${k}">${k}</span>${lbl ? glyph(lbl, 14) : ''}${title}: ${lbl ?? 'abstained'}</span>`;
+				el.innerHTML = `<div class="cmp-head"><h3>Roster</h3>${controls}<span class="cmp-tag">&lt;RosterDiagram mode="${cfg.mode}" source="${cfg.source}"${cfg.highlight !== 'none' ? ' highlight="' + cfg.highlight + '"' : ''}&gt;</span></div>
+    <div class="rd-body">${cfg.mode === 'packed' ? packedSVG(cfg) : lanesHTML(cfg)}
+      <div class="legend"><span><span class="savant"></span> vs LHP | vs RHP OPS against league</span><span>Area = 2026 runs</span>${cfg.highlight === 'disagreements' ? '<span style="color:var(--accent)">Red ring: sources disagree</span>' : ''}${cfg.thin ? '<span>Hatched: thin evidence (noul &lt; .50)</span>' : ''}</div>
+      <div class="verdict"><strong>${p.name}</strong>${chip('J', p.pick, 'Jev')}${chip('R', p.rule, 'Rule')}${chip('A', p.analyst, 'Analyst')}</div>
+    </div>`;
+			}
+
+			// ---------- <JevCall> ----------
+			function stateRows(p) {
+				return [
+					['Player', `${p.name} (${p.id})`],
+					['Bats', p.bats],
+					['Age', null],
+					['Eligible positions', p.elig.join(', ')],
+					['Observed R/PA', p.rate.toFixed(6)],
+					['Season PA', String(p.pa)],
+					['vs LHP', `${fmtOps(p.vL[1])} OPS · ${p.vL[0]} PA`],
+					['vs RHP', `${fmtOps(p.vR[1])} OPS · ${p.vR[0]} PA`],
+					['Analyst label', 'withheld'],
+					['Rubric', 'jev-profile-rubric-v1']
+				];
+			}
+			function marksFor(p, l) {
+				return `<span class="marks">${['J', 'R', 'A']
+					.map((k) => {
+						const hit =
+							(k === 'J' && p.pick === l) ||
+							(k === 'R' && p.rule === l) ||
+							(k === 'A' && p.analyst === l);
+						return `<span class="mk ${hit ? k : 'off'}" title="${{ J: 'Jev pick', R: 'Rule baseline', A: 'Analyst' }[k]}">${k}</span>`;
+					})
+					.join('')}</span>`;
+			}
+			function stateSec(p) {
+				return `<div class="jc-sec"><span class="label-sm">State · what Jev was told</span>
+    <dl class="state">${stateRows(p)
+			.map(
+				([k, v]) =>
+					`<dt>${k}</dt><dd class="${v === null || v === 'withheld' ? 'na' : ''}">${v ?? 'not available'}</dd>`
+			)
+			.join('')}</dl></div>`;
+			}
+			function profileSec(p) {
+				const rows = [...LABELS].sort((a, b) => p.jev[b] - p.jev[a]);
+				return `<div class="jc-sec">
+    <div class="qhead"><span class="n">Q1</span><span class="qkey">profile</span><span class="typepill choice">choice</span><span style="margin-left:auto" class="label-sm">confidence ${pct(p.jev[p.pick])}</span></div>
+    <p class="instr">${INSTR_P}</p>
+    <div class="crit">${rows.map((l) => `<details${l === p.pick ? ' open' : ''}><summary>${glyph(l, 18)}<span class="lbl">${l}</span><span class="bar"><i style="width:${(p.jev[l] * 100).toFixed(1)}%"></i></span><span class="pct">${pct(p.jev[l])}</span>${marksFor(p, l)}</summary><div class="txt"><span>${CRIT[l]}</span><span class="rule">Rule: ${RULE_CODE[l]}</span></div></details>`).join('')}</div>
+  </div>`;
+			}
+			function noulSec(p) {
+				return `<div class="jc-sec">
+    <div class="qhead"><span class="n">Q2</span><span class="qkey">evidence_sufficient</span><span class="typepill noul">noul</span></div>
+    <p class="instr">${INSTR_E}</p>
+    <div class="noul-scale"><div><strong>false</strong> · ${E_FALSE}</div><div><strong>true</strong> · ${E_TRUE}</div></div>
+    <div class="gauge"><b style="left:${p.ev * 100}%"></b><span style="left:${p.ev * 100}%">${p.ev.toFixed(2)}</span></div>
+    <p class="footnote">Advisory only. The answer never changes a run total, a lineup, or a piece's size.</p>
+  </div>`;
+			}
+			function railSec(key) {
+				const q = callQ[key] || 'profile';
+				return `<div class="jc-sec"><span class="label-sm">Questions</span>
+    <button type="button" class="qbtn${q === 'profile' ? ' on' : ''}" data-q="profile" data-inst="${key}"><span class="qkey">profile</span><span class="typepill choice" style="justify-self:start">choice · 9</span></button>
+    <button type="button" class="qbtn${q === 'evidence_sufficient' ? ' on' : ''}" data-q="evidence_sufficient" data-inst="${key}"><span class="qkey">evidence_sufficient</span><span class="typepill noul" style="justify-self:start">noul</span></button>
+    <button type="button" class="qbtn add">+ Add question</button>
+    <p class="footnote">A new question bumps the prompt version and the cache key.</p></div>`;
+			}
+			function renderCall(el) {
+				const p = byId[selected],
+					key = el.dataset.call,
+					horiz = el.dataset.orientation === 'horizontal',
+					editable = el.dataset.editable === '1';
+				const head = `<div class="cmp-head"><h3>Jev call · ${p.name}</h3><span class="src">POST /v1/systemone</span><span class="src">jev-latest</span><span class="tag-illus" style="padding:4px 6px;font-size:10px">illustrative answer</span><span class="cmp-tag">&lt;JevCall orientation="${horiz ? 'horizontal' : 'vertical'}"${editable ? ' editable' : ''}&gt;</span></div>`;
+				if (horiz) {
+					const q = callQ[key] || 'profile';
+					el.innerHTML =
+						head +
+						`<div class="jc-h">${railSec(key)}${stateSec(p)}${q === 'profile' ? profileSec(p) : noulSec(p)}${q === 'profile' ? noulSec(p) : profileSec(p)}</div>`;
+				} else {
+					el.innerHTML = head + stateSec(p) + profileSec(p) + noulSec(p);
+				}
+			}
+
+			function renderAll() {
+				uid = 0;
+				document.querySelectorAll('[data-diagram]').forEach(renderDiagram);
+				document.querySelectorAll('[data-call]').forEach(renderCall);
+			}
+			document.addEventListener('click', (e) => {
+				const t = e.target.closest('[data-id]');
+				if (t) {
+					selected = t.dataset.id;
+					renderAll();
+					return;
+				}
+				const q = e.target.closest('[data-q]');
+				if (q) {
+					callQ[q.dataset.inst] = q.dataset.q;
+					renderAll();
+					return;
+				}
+				const s = e.target.closest('[data-set]');
+				if (s) {
+					const host = s.closest('[data-diagram]');
+					host.dataset[s.dataset.set] = s.dataset.val;
+					renderAll();
+				}
+			});
+			document.addEventListener('keydown', (e) => {
+				if (e.key !== 'Enter' && e.key !== ' ') return;
+				const t = e.target.closest && e.target.closest('[data-id]');
+				if (t) {
+					e.preventDefault();
+					selected = t.dataset.id;
+					renderAll();
+				}
+			});
+			renderAll();
+		})();
+	</script>
+</html>
