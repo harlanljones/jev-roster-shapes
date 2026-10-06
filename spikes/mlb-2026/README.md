@@ -44,7 +44,11 @@ each storyline player) for the display layer.
   Boston starts there in 2026 through the decision date, or ≥3 starts in the
   pin's observed window. Date-range fielding rows carry no position, so 2026
   eligibility comes from box-score starts.
-- **Baselines** are the lineups Boston used most in each observed window.
+- **Baselines** are the lineups Boston used most in each observed window, except
+  the three winter pins: their baselines are the projected 2027 roster from
+  early-October reporting (D-56, `storyline-projection-2027`), and the
+  projected starters it names are written to each scenario's
+  `projectedStarters` so the pool-fit search must field them.
 - **Fixed decision windows.** `ROSTER_DATES` and `FIXED_WINDOWS` keep
   2026-09-27 and the window key `through-2026-09-27`, so a later `DATA_AS_OF`
   can no longer drop a pin's window (the moving `through-${END_DATE}` key is
@@ -70,9 +74,9 @@ opening-day-outfield  50.70271 | A 48.773902 (−1.928808)| B 48.88215 (−1.820
 july-run              44.0207  | A 45.77464 (+1.75394)  | B 44.7284  (+0.7077)
 deadline              46.08519 | A 46.54759 (+0.4624)   | B 44.65364 (−1.43155)
 wild-card-roster      43.289994| A 43.51009 (+0.220096)  | B 42.799194 (−0.4908)
-winter-infield        43.289994| A 45.578704 (+2.28871) | B 46.004264 (+2.71427)
-winter-duran          43.289994| A 43.432194 (+0.1422)  | B 43.25889  (−0.031104)
-winter-bat            43.289994| A 45.66305 (+2.373056) | B 44.447994 (+1.158)
+winter-infield        45.720904| A 45.24008 (−0.480824) | B 46.146464 (+0.42556)
+winter-duran          45.720904| A 45.720904 (0)        | B 45.578704 (−0.1422)
+winter-bat            45.720904| A 47.95176 (+2.230856) | B 46.378606 (+0.657702)
 ```
 
 Every scenario is feasible; readiness is false only for the missing
@@ -87,7 +91,9 @@ transaction-rule acknowledgment. An independent Decimal hand derivation
   page, NESN for the clinch); the snapshot is primary for records and lineups.
 - No club decision had been announced for the three winter pins as of
   October 1, 2026, so they price reporting's questions rather than a choice
-  the club has made.
+  the club has made. The projected 2027 roster is a judgment from early-October
+  reporting (D-56), not a club announcement; the DH and shortstop stay open in
+  the search.
 - Franklin Arias is excluded from the winter scenarios: he has no
   major-league plate appearance to build a rate from, and scoring him would
   need minor-league rates and a new eligibility rule, neither of which exists.

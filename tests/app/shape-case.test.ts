@@ -7,6 +7,7 @@ import {
 	interactionEdges,
 	lineupBin,
 	lineupRuns,
+	locksOf,
 	scenarioLineup,
 	tightestBin,
 	tightestFit
@@ -90,6 +91,19 @@ describe('Shape Case model (display layer, D-43)', () => {
 		const view = caseView(pool, withCasas, lineups[0]!);
 		expect(view.runs).toBeNull();
 		expect(view.findings.empty.some((f) => f.lead.includes('no 2026 data'))).toBe(true);
+	});
+
+	it('keeps locked projected starters in the hindsight best nine (D-56)', () => {
+		const winter = getStoryline('winter-infield')!;
+		const winterPool = buildPool(winter.bundle);
+		const locks = locksOf(winter.bundle.comparison.baseline);
+		const fit = tightestFit(winterPool, locks);
+
+		expect(fit.L.C).toBe('mlbam-668939'); // Rutschman catches
+		expect(fit.R.C).toBe('mlbam-668939');
+		expect(Object.values(fit.L)).toContain('mlbam-701350'); // Anthony starts
+		expect(Object.values(fit.R)).toContain('mlbam-701350');
+		expect(fit.R['2B']).toBe('mlbam-678554'); // Mead keeps second
 	});
 
 	it('derives platoon complements and tested swaps from the storylines', () => {

@@ -188,6 +188,14 @@ const workloadCapSchema = z
 	})
 	.strict();
 
+const projectedStarterSchema = z
+	.object({
+		playerId: visibleId,
+		role: z.enum(BATTING_ROLES).nullable(),
+		sourceId: visibleId
+	})
+	.strict();
+
 const costBudgetSchema = z
 	.object({
 		currency,
@@ -233,6 +241,7 @@ const scenarioSchema = z
 		outgoingIds: z.array(visibleId),
 		allocations: z.array(allocationSchema),
 		workloadCaps: z.array(workloadCapSchema),
+		projectedStarters: z.array(projectedStarterSchema).optional(),
 		constraints: constraintsSchema,
 		review: reviewSchema
 	})
@@ -413,6 +422,7 @@ export type Assumptions = z.infer<typeof assumptionsSchema>;
 export type Assignment = z.infer<typeof assignmentSchema>;
 export type Allocation = z.infer<typeof allocationSchema>;
 export type WorkloadCap = z.infer<typeof workloadCapSchema>;
+export type ProjectedStarter = z.infer<typeof projectedStarterSchema>;
 export type Constraints = z.infer<typeof constraintsSchema>;
 export type Review = z.infer<typeof reviewSchema>;
 export type Scenario = z.infer<typeof scenarioSchema>;
@@ -930,6 +940,81 @@ function validateSemanticBundle(bundle: Bundle): BundleValidationIssue[] {
 					'exactly one workload cap is required for each scenario member'
 				)
 			);
+		}
+		const projectedStarters = scenario.projectedStarters ?? [];
+		const starterKeys = projectedStarters.map((starter) => starter.playerId);
+		if (new Set(starterKeys).size !== starterKeys.length) {
+			rejecting.push(
+				issue(
+					'DUPLICATE_ID',
+					`${scenarioPath}/projectedStarters`,
+					'a projected starter may be listed only once'
+				)
+			);
+		}
+		for (const [starterIndex, starter] of projectedStarters.entries()) {
+			if (!memberSet.has(starter.playerId)) {
+				rejecting.push(
+					issue(
+						'UNKNOWN_REFERENCE',
+						`${scenarioPath}/projectedStarters/${starterIndex}/playerId`,
+						'projected starter must belong to a scenario member',
+						[starter.playerId]
+					)
+				);
+			}
+			if (!sourceIds.has(starter.sourceId))
+				addUnknownReference(
+					rejecting,
+					`${scenarioPath}/projectedStarters/${starterIndex}/sourceId`,
+					starter.sourceId,
+					'projected starter source'
+				);
+			if (starter.role !== null) {
+				const player = bundle.dataset.players.find(({ id }) => id === starter.playerId);
+				if (starter.role !== 'DH' && player && !player.eligiblePositions.includes(starter.role)) {
+					rejecting.push(
+						issue(
+							'INELIGIBLE_POSITION',
+							`${scenarioPath}/projectedStarters/${starterIndex}/role`,
+							'projected starter role is not an eligible position for this player',
+							[starter.playerId]
+						)
+					);
+				}
+			}
+			for (const [allocationIndex, allocation] of scenario.allocations.entries()) {
+				const template = bundle.assumptions.templates.find(
+					({ id }) => id === allocation.templateId
+				);
+				if (!template) continue;
+				const slotsByOrder = new Map(template.slots.map((slot) => [slot.order, slot.role]));
+				const assigned = allocation.assignments.filter(
+					(assignment) => assignment.playerId === starter.playerId
+				);
+				if (assigned.length === 0) {
+					rejecting.push(
+						issue(
+							'UNASSIGNED_SLOT',
+							`${scenarioPath}/allocations/${allocationIndex}`,
+							'projected starter is not assigned in this allocation',
+							[starter.playerId]
+						)
+					);
+				} else if (
+					starter.role !== null &&
+					!assigned.some((assignment) => slotsByOrder.get(assignment.order) === starter.role)
+				) {
+					rejecting.push(
+						issue(
+							'INELIGIBLE_POSITION',
+							`${scenarioPath}/allocations/${allocationIndex}`,
+							'projected starter is not assigned to the projected role in this allocation',
+							[starter.playerId]
+						)
+					);
+				}
+			}
 		}
 		const costKeys = scenario.constraints.costs.map((cost) => cost.playerId);
 		const costCounts = new Map<string, number>();

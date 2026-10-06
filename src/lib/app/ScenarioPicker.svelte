@@ -3,7 +3,7 @@
 	import { page } from '$app/state';
 	import type { Bundle, Scenario } from '$lib/contracts';
 	import { scenariosOf } from './decision';
-	import { lineupBin, lineupRuns, scenarioLineup, type Pool } from './shape-case';
+	import { lineupBin, lineupRuns, locksOf, scenarioLineup, type Pool } from './shape-case';
 
 	// D-50: the decision's scenarios as one control. The pick lives in the
 	// `?scenario=` query, so the board and every subpage agree on it and a
@@ -15,7 +15,7 @@
 		return scenariosOf(bundle).map((s) => {
 			const lineup = scenarioLineup(bundle, s);
 			const runs = lineupRuns(pool, lineup);
-			const bin = lineupBin(pool, lineup);
+			const bin = lineupBin(pool, lineup, locksOf(s));
 			const isBase = s.id === bundle.comparison.baseline.id;
 			const delta =
 				isBase || runs == null || base == null

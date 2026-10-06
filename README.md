@@ -35,11 +35,11 @@ The engine answers a different question from the diagrams. For each scenario it 
 | Jul 22 July run | 44.02 | 45.77 | +1.754 |
 | Aug 3 deadline | 46.09 | 46.16 | +0.077 |
 | Sep 27 Wild Card | 43.29 | 45.32 | +2.033 |
-| Oct 1 2027 infield | 43.29 | 45.90 | +2.610 |
-| Nov 6 add a bat | 43.29 | 45.90 | +2.610 |
-| Dec 7 trade Duran | 43.29 | 45.90 | +2.610 |
+| Oct 1 2027 infield | 45.72 | 46.06 | +0.340 |
+| Nov 6 add a bat | 45.72 | 46.06 | +0.340 |
+| Dec 7 trade Duran | 45.72 | 46.06 | +0.340 |
 
-Each decision compares the lineup Boston actually used (from MLB box scores) against two alternatives over the same illustrative 10-game horizon. The engine scores all three with what was known on the decision date: 2025 runs per plate appearance before Opening Day, 2026 rates through the day before for later pins (D-44). Data comes from the free MLB Stats API.
+Each decision compares the lineup Boston used (from MLB box scores) — or, for the three winter pins, the projected 2027 lineup grounded in early-October reporting (D-56) — against two alternatives over the same illustrative 10-game horizon. The engine scores all three with what was known on the decision date: 2025 runs per plate appearance before Opening Day, 2026 rates through the day before for later pins (D-44). Data comes from the free MLB Stats API.
 
 ### Snapshots: the prompt and its answers
 
@@ -54,11 +54,11 @@ Nothing on that page is a claim. The rubric is analyst-derived and has no evalua
 | Jul 22 | July run: June regulars or July regulars? | 44.02 | 45.77 (+1.75) | 44.73 (+0.71) |
 | Aug 3 | Deadline: stand pat, the Rutschman and Mayer trades, or Rutschman and keep Mayer | 46.09 | 46.55 (+0.46) | 44.65 (−1.43) |
 | Sep 27 | Who plays first against the Yankees (14 position players, Gasper on the injured list, Mead not travelling for Game 1): the Game 1 lineup with Contreras at first, Contreras at DH only, or the September 25 plan with him carried but not playing | 43.29 | 43.51 (+0.22) | 42.80 (−0.49) |
-| Oct 1 | Who plays short and second in 2027?: Mead at second every day with Story staying at short, or Story off shortstop with Monasterio at short and Mead at second | 43.29 | 45.58 (+2.29) | 46.00 (+2.71) |
-| Nov 6 | Spend on a bat from outside?: sign Arozarena for left field, or sign Lowe at second with Monasterio still there against left-handers | 43.29 | 45.66 (+2.37) | 44.45 (+1.16) |
-| Dec 7 | Trade Jarren Duran?: trade him and play Anthony in left with Yoshida at DH, or keep him and play him against left-handers too | 43.29 | 43.43 (+0.14) | 43.26 (−0.03) |
+| Oct 1 | Who plays short and second in 2027?: the projected 2027 infield with Story at short and Mead at second, Story to DH when Arias takes short, or Story to the bench | 45.72 | 45.24 (−0.48) | 46.15 (+0.43) |
+| Nov 6 | Spend on a bat from outside?: sign Arozarena for left field with Anthony to DH, or sign Lowe at second with Mead to DH | 45.72 | 47.95 (+2.23) | 46.38 (+0.66) |
+| Dec 7 | Trade Jarren Duran?: trade him and keep the projected nine, or keep him and start him at DH against right-handers | 45.72 | 45.72 (0.00) | 45.58 (−0.14) |
 
-The Wild Card pin compares three rosters under the same 14-position-player limit Boston used in 2025, with the September 27–29 news (D-51): Contreras back as the DH in the September 27 finale and expected at first for Game 1, Mickey Gasper on the injured list, and Curtis Mead not travelling for Game 1. It is not a postseason optimization. The three winter pins keep 2026 regular-season rates through September 27, but their timeline anchors are staggered: October 1 for the infield reporting, November 6 for free agency opening, and December 7 for the Winter Meetings opening (D-53). These are dated decision milestones, not claims that Boston made a transaction or settled a role on those dates. Franklin Arias is named in the short-and-second pin but left out of the numbers because he has no major-league plate appearance to score him from. The April 25 manager change is marked on the timeline but is not a decision here: it led to coaching and batting-order changes, not roster moves. Scenario details were checked against 2026 reporting (D-48).
+The Wild Card pin compares three rosters under the same 14-position-player limit Boston used in 2025, with the September 27–29 news (D-51): Contreras back as the DH in the September 27 finale and expected at first for Game 1, Mickey Gasper on the injured list, and Curtis Mead not travelling for Game 1. It is not a postseason optimization. The three winter pins keep 2026 regular-season rates through September 27, but their timeline anchors are staggered: October 1 for the infield reporting, November 6 for free agency opening, and December 7 for the Winter Meetings opening (D-53). These are dated decision milestones, not claims that Boston made a transaction or settled a role on those dates. Their baselines are the projected 2027 roster grounded in early-October reporting (D-56): Rutschman catching, Contreras at first, Mead penciled in at second, Durbin at third, Story at short, and Anthony, Rafaela and Abreu across the outfield, with Yoshida/Jones at DH. Those projected starters are locked into every searched best nine, so the engine cannot bench Rutschman or Anthony for a hot small sample. Franklin Arias is named in the short-and-second pin but left out of the numbers because he has no major-league plate appearance to score him from. The April 25 manager change is marked on the timeline but is not a decision here: it led to coaching and batting-order changes, not roster moves. Scenario details were checked against 2026 reporting (D-48).
 
 ![Season timeline with eight decisions above the Wild Card decision board](docs/images/library-roster-shapes.png)
 ![A decision board: the baseline and two candidate scenarios with engine totals, above the fitted case](docs/images/storyline-comparison.png)

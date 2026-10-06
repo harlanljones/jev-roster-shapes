@@ -25,6 +25,7 @@
 		interactionFindings,
 		lineupBin,
 		lineupIds,
+		locksOf,
 		scenarioLineup,
 		tightestBin,
 		tightestFit
@@ -44,6 +45,7 @@
 	const scenario = $derived(pickScenario(bundle, page.url.searchParams.get('scenario')));
 	const isBaseline = $derived(scenario.id === bundle.comparison.baseline.id);
 	const pool = $derived(buildPool(bundle));
+	const locks = $derived(locksOf(scenario));
 	const baseLineup = $derived(scenarioLineup(bundle, bundle.comparison.baseline));
 	const lineup = $derived(scenarioLineup(bundle, scenario));
 	const view = $derived(caseView(pool, lineup, baseLineup));
@@ -88,16 +90,16 @@
 	const netFind = $derived(diagram === 'interactions' ? interactionFindings(pool, edges) : []);
 	const slots = $derived.by(() => {
 		if (diagram !== 'slots') return null;
-		const fit = tightestFit(pool);
+		const fit = tightestFit(pool, locks);
 		const cur = barFill(pool, lineup, lineup);
 		const best = barFill(pool, fit.L, fit.R);
 		return {
-			curBin: lineupBin(pool, lineup),
-			bestBin: tightestBin(pool),
+			curBin: lineupBin(pool, lineup, locks),
+			bestBin: tightestBin(pool, locks),
 			cur,
 			best,
 			px: 800 / Math.max(cur.pa, best.pa),
-			find: barFindings(pool, cur, best)
+			find: barFindings(pool, cur, best, locks)
 		};
 	});
 </script>

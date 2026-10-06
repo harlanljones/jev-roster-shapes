@@ -632,6 +632,59 @@ cut itself stays fixed; agreement with the analyst labels measures rubric alignm
 baseball truth (O-03 stays open), and the Brier/reliability half of SPEC §7 waits for the Jev
 evaluation with probabilistic outputs.
 
+### Projected 2027 roster and locked starters in the winter pins (D-56, user directive 2026-10-06)
+
+Delivered: the three winter pins no longer use the September shape as their
+baseline. Their baselines and candidates are the projected 2027 roster grounded
+in early-October reporting: Rutschman catching, Contreras at first, Mead
+penciled in at second ("broadly (the) plan", Chad Tracy via The Boston Globe,
+October 5–6; MLB Trade Rumors, CBS Sports, October 6), Durbin at third, Story
+at short, Anthony/Rafaela/Abreu across the outfield, Yoshida and Jones at DH
+(Sports Illustrated, October 1; Yahoo Sports, October 2). `winter-infield`
+compares the plan with the succession (A: Story to DH when Arias takes short;
+B: Story benched; Monasterio stands in for the unscored Arias), `winter-duran`
+compares trading Duran against keeping him and starting him at DH against
+right-handers, and `winter-bat` compares Arozarena in left with Anthony to DH
+against Lowe at second with Mead to DH.
+
+Contract: a scenario may carry `projectedStarters` (`{playerId, role,
+sourceId}`, role nullable), validated against membership, eligibility, the
+source list, and its own allocations (`src/lib/contracts/bundle.ts`). Engine:
+`bestLineup` in `src/lib/engine/pool-fit.ts` fixes locked players into the
+searched nine (enumerating the slots an open-role lock may take) and reports an
+unplaceable lock as an `UNASSIGNED_SLOT` reason. Display: `shape-case.ts`
+threads `locksOf(scenario)` through the hindsight tightest fit and the bin
+scale, and the library board, decision board, engine, slots and scenario-picker
+views pass them, so Gasper cannot catch over Rutschman and Sogard cannot start
+at second over Mead. The projection is a sourced assumption
+(`storyline-projection-2027`, effective 2026-10-06) applied to all three pins;
+rates stay decision-date through September 27, the winter assumption revision
+moves to 3, and Gasper/Eaton leave the winter rosters (and `season.json`).
+
+Observed (2026-10-06): `bun spikes/mlb-2026/timeline-build.mjs` builds all
+eight bundles with every scenario feasible. New pinned totals (base / A / B):
+winter-infield 45.720904 / 45.24008 (−0.480824) / 46.146464 (+0.42556);
+winter-duran 45.720904 / 45.720904 (0) / 45.578704 (−0.1422); winter-bat
+45.720904 / 47.95176 (+2.230856) / 46.378606 (+0.657702). Engine pool-fit
+totals: winter-infield 46.06096 / 46.63964 / 46.63964; winter-duran 46.06096 /
+46.06096 / 46.06096; winter-bat 46.06096 / 47.95176 / 46.9372, each keeping
+Rutschman at catcher, Anthony in the nine and Mead at second where the
+projection holds. `bun run test`: 14 files / 120 tests (new lock cases in
+`tests/engine/pool-fit.test.ts`, `tests/storylines/registry.test.ts` and
+`tests/app/shape-case.test.ts`). `bun run check`: 0 errors / 0 warnings.
+`bun run lint`: clean. `bun run build` green; `bun run test:e2e`: 34 passed,
+including the full axe audits. The engine-fit panel lists the locked projected
+starters, the library footer names the projection, and the snapshots caption
+moves to `pool-fit-analysis-v2`.
+
+Limitations: the projection is a judgment from reporting, not a club
+announcement, and it postdates the October 1 anchor of `winter-infield`; the
+rates remain observed 2026 R/PA, not forward projections; the lock list covers
+the positions reporting calls settled plus the two the user named, while the
+open DH and shortstop stay a search; the display fit's pool is bundle-wide, so
+a candidate-only player can still appear in a baseline hindsight lid (D-43
+behavior, unchanged).
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

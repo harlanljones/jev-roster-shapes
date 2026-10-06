@@ -60,6 +60,8 @@ function storyline({ json, ...rest }: StorylineInput): Storyline {
 
 const SNAPSHOT_LABEL =
 	'MLB Stats API season-timeline snapshot (spikes/mlb-2026/timeline-snapshot.json)';
+const PROJECTION_LABEL =
+	'MLB Stats API snapshot + projected 2027 roster from early-October reporting (D-56)';
 
 export const PINNED_STORYLINE_DIGESTS = {
 	'offseason-infield': '74e18f82c56de781204f0c6db7edd922c71e413725d44321d64d24040bbfe07a',
@@ -67,9 +69,9 @@ export const PINNED_STORYLINE_DIGESTS = {
 	'july-run': 'aa6a80ac05944f65cd66fa600a13dfd6fa0138dfb27b6fd7165cb21cd82de4b5',
 	deadline: '630cd397d2cce063589ea39cf72a961a0452d49ee558c57aeaff827319020efa',
 	'wild-card-roster': '1259941764c7001fe7b504f5e3f8ac809ab677f8b1ebe52452f8ab44d57326cf',
-	'winter-infield': '49c1fccce9e3be9d3fa256e277d5ff803948ba0dcc56dcaaf0b253f7a813f3a1',
-	'winter-duran': '32fce7755e4ad54038ebd7f1649f7979cc02fdb57ebfea351329f4d7da955feb',
-	'winter-bat': '599910b787ccc38864f3042479f80ad28e2b8e565f3c67e0f585c17d2e79057b'
+	'winter-infield': '27adcbdc311e4d40c5526d9c32559129c1c359a8a72fe9996d8aac84a734f2ce',
+	'winter-duran': 'de8e2dec6fed9065f2f41ff7d5fca21d0b4a601cd2984a7214bfba96b4952174',
+	'winter-bat': 'b21b2d7650b8e40b37462f70607fa2129b8e10c708c829dd7bf9831e74d64396'
 } as const;
 
 export const storylineRegistry: readonly Storyline[] = [
@@ -222,27 +224,27 @@ export const storylineRegistry: readonly Storyline[] = [
 		slug: 'winter-infield',
 		short: '2027 infield',
 		title: 'Who plays short and second in 2027?',
-		lede: 'Boston started six players at shortstop and seven at second in 2026 and finished with Trevor Story at short and Nick Sogard or Andruw Monasterio at second. ESPN says those positions will probably be resolved in 2027 with Franklin Arias and Curtis Mead — and Arias has never taken a major-league plate appearance, so he cannot be scored from this data. The pin therefore compares only what Boston already has rates for: keep Story at short and hand second base to Mead, or move Story off shortstop as well?',
+		lede: 'Reporting projects the 2027 nine with Adley Rutschman behind the plate, Curtis Mead penciled in at second — “broadly (the) plan,” Chad Tracy said — and Trevor Story at short with Franklin Arias pushing. Arias has never taken a major-league plate appearance, so he cannot be scored from this data; Monasterio stands in at short in the succession scenarios. The pin compares the club’s plan with the two ways the succession can go: Story keeps his bat at DH, or he goes to the bench.',
 		eventDate: '2026-10-01',
 		rateLabel: '2026 regular season',
 		date: 'October 1, 2026 → spring training 2027',
 		retrospective: false,
 		eventBasis:
-			'No club decision had been announced as of October 1, 2026. ESPN (Schoenfield, October 1): the positions will probably be resolved in 2027 with Franklin Arias and Curtis Mead, and Story still has a year on his contract but has no reason to play ahead of Arias. NBC Sports Boston (October 1): Story and Duran are the top trade candidates and Arias is ready to take the shortstop job. SI: the internal version is Arias at short, Mead at second and Story at DH, with Story owed $25 million for 2027. Arias is not on the 40-man roster and has no major-league stats (MLB Stats API, people/808265), so every scenario here uses only the four infielders with 2026 rates: Story, Mead, Monasterio and Sogard, with Seigler behind them; Isiah Kiner-Falefa, who also played second, is a free agent (ESPN, October 1). Baseline is the September shape: Story at short, Sogard at second against right-handers and Monasterio against left-handers. A hands second base to Mead, the player the club acquired to play it there (The Athletic, July 27). B moves Story off shortstop too, the internal stand-in for the answer reporting gives. Rates are regular-season R/PA through September 27, what Boston knows all winter. This compares three rosters on shared assumptions; it is not a projection of 2027.',
-		sourceLabel: SNAPSHOT_LABEL,
+			'No club decision had been announced as of October 1, 2026. Chad Tracy, via Tim Healey (The Boston Globe, October 5–6; MLB Trade Rumors and CBS Sports, October 6): it is “broadly (the) plan” for Curtis Mead to get the majority of the second-base work — “he was acquired for a reason.” Sports Illustrated (October 1) lays out the internal options: Arias at short with Mead at second and Story at DH, or Story at short with Arias at second and Mead at DH; Yahoo Sports’ projected roster (October 2) lists Story/Arias at short and Mead/Sogard at second. Franklin Arias is named but not scored — he has no major-league plate appearance (MLB Stats API, people/808265) — so Monasterio stands in at short. Baseline is the projected 2027 lineup (D-56): Story at short, Mead at second, with Rutschman catching and Anthony in left locked into the searched best nine. A gives Story the DH at-bats when Arias takes short; B benches him. Rates are regular-season R/PA through September 27, what Boston knows all winter. This compares three rosters on shared assumptions; it is not a projection of 2027.',
+		sourceLabel: PROJECTION_LABEL,
 		json: winterInfieldJson,
 		expected: [
-			{ scenarioId: 'base', offenseRuns: '43.289994', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '45.720904', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '45.578704',
-				offenseDelta: '2.28871',
+				offenseRuns: '45.24008',
+				offenseDelta: '-0.480824',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '46.004264',
-				offenseDelta: '2.71427',
+				offenseRuns: '46.146464',
+				offenseDelta: '0.42556',
 				feasibility: 'feasible'
 			}
 		]
@@ -251,27 +253,27 @@ export const storylineRegistry: readonly Storyline[] = [
 		slug: 'winter-duran',
 		short: 'Trade Duran',
 		title: 'Trade Jarren Duran?',
-		lede: 'Jarren Duran hit .207/.266/.361 in 2026 and is fourth on the depth chart behind Roman Anthony, Ceddanne Rafaela and Wilyer Abreu — while Boston still controls him through 2028 and has never traded him. Does he still have a role here: move him and play the other three every day, or keep him and play him against left-handers too?',
+		lede: 'Jarren Duran hit .207/.266/.361 in 2026 and is fourth on the depth chart behind Roman Anthony, Ceddanne Rafaela and Wilyer Abreu — while Boston still controls him through 2028 and has never traded him. Does he still have a role here: move him and keep the projected nine, or keep him and start him at DH against right-handers?',
 		eventDate: '2026-12-07',
 		rateLabel: '2026 regular season',
 		date: 'October 1, 2026 → winter meetings, December 7–10, 2026',
 		retrospective: false,
 		eventBasis:
-			'No trade had been announced in reporting as of October 1, 2026. The pin marks the Winter Meetings opening on December 7, a sourced point for trade discussions rather than a claim that Boston makes a deal that day. Feinsand (MLB.com, September): with Anthony, Rafaela and Abreu on the roster Duran has no clear-cut role, and Boston would have to settle for a lesser return; he makes $7.7 million and is controllable through 2028 (MLB Trade Rumors). ESPN (October 1): his trade value took a nosedive but two years of control will still find a taker, and he is clearly fourth on the depth chart. Sporting News (October 2026) and NBC Sports Boston (October 1) both put him at the top of the trade list. Baseline is the September shape: Duran in left against right-handers only, with Anthony in left and Jones at DH against left-handers. A trades him and plays Anthony in left with Yoshida at DH. B keeps him and plays him against left-handers too — the club did not do that once in October (he sat Game 2 against Max Fried with Nate Eaton in left; Rotowire via CBS Sports, September 30). Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of a trade return.',
-		sourceLabel: SNAPSHOT_LABEL,
+			'No trade had been announced in reporting as of October 1, 2026. The pin marks the Winter Meetings opening on December 7, a sourced point for trade discussions rather than a claim that Boston makes a deal that day. Feinsand (MLB.com, September): with Anthony, Rafaela and Abreu on the roster Duran has no clear-cut role, and Boston would have to settle for a lesser return; he makes $7.7 million and is controllable through 2028 (MLB Trade Rumors). ESPN (October 1): his trade value took a nosedive but two years of control will still find a taker, and he is clearly fourth on the depth chart. Sporting News (October 2026) and NBC Sports Boston (October 1) both put him at the top of the trade list. Baseline is the projected 2027 lineup (D-56): Anthony, Rafaela and Abreu every day, with Duran the fourth outfielder and Yoshida/Jones at DH. A trades him — the projected nine does not change, so the return is what the move is for and it is not priced here. B keeps him and starts him at DH against right-handers, his strong side, with Yoshida on the bench; the club used him that way in September (Just Baseball’s playoff projection). Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of a trade return.',
+		sourceLabel: PROJECTION_LABEL,
 		json: winterDuranJson,
 		expected: [
-			{ scenarioId: 'base', offenseRuns: '43.289994', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '45.720904', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '43.432194',
-				offenseDelta: '0.1422',
+				offenseRuns: '45.720904',
+				offenseDelta: '0',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '43.25889',
-				offenseDelta: '-0.031104',
+				offenseRuns: '45.578704',
+				offenseDelta: '-0.1422',
 				feasibility: 'feasible'
 			}
 		]
@@ -280,27 +282,27 @@ export const storylineRegistry: readonly Storyline[] = [
 		slug: 'winter-bat',
 		short: 'Add a bat',
 		title: 'Spend on a bat from outside?',
-		lede: 'Upgrading the lineup is the No. 1 job this winter (NBC Sports Boston), and the top hitters on the market are Seattle outfielder Randy Arozarena, Chicago outfielder Seiya Suzuki and Pittsburgh second baseman Brandon Lowe. This pin prices two of them against the roster Boston has: Arozarena in left, or Lowe at second base, each taking the spot of the player who held it in September.',
+		lede: 'Upgrading the lineup is the No. 1 job this winter (NBC Sports Boston), and the top hitters on the market are Seattle outfielder Randy Arozarena, Chicago outfielder Seiya Suzuki and Pittsburgh second baseman Brandon Lowe. This pin prices two of them against the projected 2027 roster: Arozarena in left with Anthony moving to DH, or Lowe at second with Mead moving to DH.',
 		eventDate: '2026-11-06',
 		rateLabel: '2026 regular season',
 		date: 'October 1, 2026 → free agency opens November 6, 2026',
 		retrospective: false,
 		eventBasis:
-			'The question was posed in reporting on October 1; the pin marks free agency opening November 6, when outside signings become available. NBC Sports Boston (October 1): Arozarena, Suzuki and Lowe are the top three hitters set to hit free agency, and if Boston will not spend on one of them it should turn to the trade market. Bleacher Report (September 30): Arozarena is among the best fits for Boston and is a right-handed bat, while Suzuki would have to accept left field. Yahoo (off-season outlook, September 30): expect Suzuki to be connected to Boston, and Lowe, who hit 35 home runs for Pittsburgh in 2026, would fit. Lowe cannot hit left-handed pitching (.223/.270/.378 against lefties in 2026, RotoWire), so B keeps Monasterio at second against left-handers. Arozarena (670 PA, 113 R) and Lowe (656 PA, 94 R) were fetched into the snapshot for these two candidates only; eligibility comes from 2025 fielding (Arozarena 158 games in left, Lowe 121 at second). Trading Wilyer Abreu or extending Adley Rutschman (about $20 million a year is the reported ask) are separate questions that move no roster spot here. Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of 2027.',
-		sourceLabel: SNAPSHOT_LABEL,
+			'The question was posed in reporting on October 1; the pin marks free agency opening November 6, when outside signings become available. NBC Sports Boston (October 1): Arozarena, Suzuki and Lowe are the top three hitters set to hit free agency, and if Boston will not spend on one of them it should turn to the trade market. Bleacher Report (September 30): Arozarena is among the best fits for Boston and is a right-handed bat, while Suzuki would have to accept left field. Sports Illustrated (October 1): landing Arozarena would let Boston shift Anthony to DH. Yahoo (off-season outlook, September 30): expect Suzuki to be connected to Boston, and Lowe, who hit 35 home runs for Pittsburgh in 2026, would fit; MLB Trade Rumors (October 6) expects the club to push Mead to a multi-positional role before long, so B moves him to DH against right-handers and keeps Monasterio at second against left-handers, where Lowe cannot hit (.223/.270/.378 against lefties in 2026, RotoWire). Baseline is the projected 2027 lineup (D-56). Arozarena (670 PA, 113 R) and Lowe (656 PA, 94 R) were fetched into the snapshot for these two candidates only; eligibility comes from 2025 fielding (Arozarena 158 games in left, Lowe 121 at second). Trading Wilyer Abreu or extending Adley Rutschman (about $20 million a year is the reported ask) are separate questions that move no roster spot here. Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of 2027.',
+		sourceLabel: PROJECTION_LABEL,
 		json: winterBatJson,
 		expected: [
-			{ scenarioId: 'base', offenseRuns: '43.289994', offenseDelta: '0', feasibility: 'feasible' },
+			{ scenarioId: 'base', offenseRuns: '45.720904', offenseDelta: '0', feasibility: 'feasible' },
 			{
 				scenarioId: 'cand-a',
-				offenseRuns: '45.66305',
-				offenseDelta: '2.373056',
+				offenseRuns: '47.95176',
+				offenseDelta: '2.230856',
 				feasibility: 'feasible'
 			},
 			{
 				scenarioId: 'cand-b',
-				offenseRuns: '44.447994',
-				offenseDelta: '1.158',
+				offenseRuns: '46.378606',
+				offenseDelta: '0.657702',
 				feasibility: 'feasible'
 			}
 		]

@@ -256,4 +256,50 @@ describe('pool fit', () => {
 		expect(poolFitFor(analysis, 'base')?.deltaVsReference?.runs).toBe('0.07654');
 		expect(poolFitFor(analysis, 'cand-a')?.deltaVsBaseline?.runs).toBe('0.53894');
 	});
+
+	it('keeps every projected starter in the searched nine (D-56)', () => {
+		// The winter pins lock the projected 2027 starters, so the search cannot
+		// bench Rutschman or Anthony for a hot small sample.
+		for (const slug of ['winter-infield', 'winter-duran', 'winter-bat']) {
+			const story = storylineRegistry.find((candidate) => candidate.slug === slug)!;
+			const analysis = calculatePoolFit(story.bundle);
+			for (const fit of analysis.fits) {
+				const scenario = [
+					story.bundle.comparison.baseline,
+					...story.bundle.comparison.candidates
+				].find((candidate) => candidate.id === fit.scenarioId)!;
+				expect(fit.projectedStarters.map(({ playerId, role }) => [playerId, role])).toEqual(
+					(scenario.projectedStarters ?? []).map(({ playerId, role }) => [playerId, role])
+				);
+				expect(fit.projectedStarters.length).toBeGreaterThan(0);
+				for (const lock of fit.projectedStarters) {
+					const started = fit.contexts.every((context) =>
+						context.slots.some(
+							(slot) =>
+								slot.playerId === lock.playerId && (lock.role === null || slot.role === lock.role)
+						)
+					);
+					expect(started, `${slug}/${fit.scenarioId}/${lock.playerId}`).toBe(true);
+				}
+			}
+		}
+	});
+
+	it('reports a projected starter it cannot place instead of silently dropping the lock', () => {
+		const data = bundle('preseason-dh');
+		const baseline = data.comparison.baseline;
+		baseline.projectedStarters = [
+			{ playerId: 'mlbam-665966', role: 'C', sourceId: data.sources[0]!.id }
+		];
+		data.dataset.projections = data.dataset.projections.filter(
+			({ playerId }) => playerId !== 'mlbam-665966'
+		);
+		const fit = poolFitFor(calculatePoolFit(data), 'base')!;
+
+		expect(
+			fit.reasons.some(
+				({ code, playerIds }) => code === 'UNASSIGNED_SLOT' && playerIds.includes('mlbam-665966')
+			)
+		).toBe(true);
+	});
 });

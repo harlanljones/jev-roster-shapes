@@ -1238,21 +1238,6 @@
 				}
 			}
 		},
-		"mlbam-681508": {
-			"name": "Mickey Gasper",
-			"pa": 225,
-			"runs": 26,
-			"split": {
-				"vL": {
-					"pa": 28,
-					"ops": ".268"
-				},
-				"vR": {
-					"pa": 197,
-					"ops": ".902"
-				}
-			}
-		},
 		"mlbam-681987": {
 			"name": "Nate Eaton",
 			"pa": 60,

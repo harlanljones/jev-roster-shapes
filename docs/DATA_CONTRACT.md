@@ -89,10 +89,12 @@ Scenario:
 
 ```text
 { id, revision, authorId, label, memberIds, incomingIds, outgoingIds,
-  allocations, workloadCaps, constraints, review }
+  allocations, workloadCaps, projectedStarters, constraints, review }
 ```
 
 Baseline incoming/outgoing lists are empty. For each candidate, membership must equal `(baseline.memberIds - outgoingIds) union incomingIds`. Incoming IDs cannot already be baseline members; outgoing IDs must be baseline members. Lists contain no duplicates. Every member resolves to a dataset player. Incoming/outgoing IDs cannot overlap.
+
+ProjectedStarter: an optional array of `{playerId, role, sourceId}` (D-56). Each player must be a scenario member, each source must resolve in the bundle, and a non-null role must be a defensive position the player is eligible for, or DH. The starter must be assigned in every allocation, at the declared role when one is given. The list records a sourced projection of who starts; the engine's pool-fit search must place each locked starter (a role-null lock may take any eligible slot), and a lock the search cannot place is reported as an `UNASSIGNED_SLOT` reason rather than dropped. The display layer's hindsight tightest fit honors the same locks. An empty or absent list means the search is unconstrained.
 
 Allocation: `{templateId, assignments}` with Assignment `{order, playerId}`. Each scenario includes every shared template exactly once and every slot exactly once. `playerId` is an ID or null. Draft references that are structurally valid but violate domain constraints may be saved, with issues; broken references cannot be imported as a valid bundle.
 

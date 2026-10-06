@@ -140,6 +140,19 @@
 				</ul>
 			{/if}
 		</div>
+		{#if fit.projectedStarters.length > 0}
+			<div>
+				<h4>Projected starters locked</h4>
+				<ul>
+					{#each fit.projectedStarters as lock (lock.playerId)}
+						<li>
+							<span class="who">{nameOf(lock.playerId)}</span>
+							<span class="num">{lock.role ?? 'any slot'}</span>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
 		<div>
 			<h4>Still uncovered</h4>
 			{#if fit.shortfalls.length === 0}
@@ -190,10 +203,11 @@
 
 	<p class="footnote">
 		Slots are listed in lineup order ({SLOT_ROLES.join(', ')}). The search maximizes the bundle's
-		metric under eligibility and one-player-per-slot; capacity limits are applied afterwards by the
-		engine, so a fit that needs more workload than a cap allows is reported infeasible rather than
-		quietly replaced. Ties resolve to the lowest player IDs, so the result is reproducible from the
-		pinned digest.
+		metric under eligibility and one-player-per-slot; any projected starters the scenario declares
+		are fixed first, and a lock the roster cannot place is reported rather than dropped. Capacity
+		limits are applied afterwards by the engine, so a fit that needs more workload than a cap allows
+		is reported infeasible rather than quietly replaced. Ties resolve to the lowest player IDs, so
+		the result is reproducible from the pinned digest.
 	</p>
 </section>
 

@@ -39,7 +39,7 @@ Use one comparison workspace with these reachable views. They may be panels or r
 | Compare | Baseline/A/B columns, coverage, PA transfers, supported metrics, checks | Inspect a result |
 | Evidence | Source, assumptions/judgments, formula and input versions | Return to originating result |
 | Review / export | Exact revision, readiness checks, missing metrics, unchecked rules | Save / export revision |
-| Pool fit | The engine's best nine per pitcher-hand context, its total, what it leaves on the table against the lineup used and against the baseline fit, per-player PA transfers, benched members, required position moves, remaining shortfalls, exclusions, and capacity pressure | Switch the scenario the fit is computed for |
+| Pool fit | The engine's best nine per pitcher-hand context, its total, what it leaves on the table against the lineup used and against the baseline fit, per-player PA transfers, benched members, required position moves, remaining shortfalls, exclusions, and capacity pressure; any scenario `projectedStarters` are placed by the search, and a lock it cannot place is reported | Switch the scenario the fit is computed for |
 | Snapshots | The exact request body, the provider's answers with their distributions, model identity, tokens, timing, and estimated cost, beside the roster and the engine fit | Configure a key, acknowledge external processing, classify |
 
 Keep the comparison name, shared assumption revision, snapshot date, active scenario, unsaved status, and readiness summary visible or one navigation action away. Give empty workspaces an explicit load/import action.

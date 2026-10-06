@@ -21,6 +21,7 @@ const outDir = join(here, '..', '..', 'src', 'lib', 'storylines');
 
 const SOURCE_ID = 'mlb-stats-api-2026';
 const ASSUMPTION_SOURCE_ID = 'storyline-assumptions';
+const PROJECTION_SOURCE_ID = 'storyline-projection-2027';
 const ROLES = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'];
 const FIELD = ROLES.slice(0, 8);
 // D-35 rule, adapted to dated data: a position counts at >= 10 fielding games
@@ -146,32 +147,46 @@ const wildCardVsRight = lineup({
 const noContrerasVsLeft = { ...wildCardVsLeft, '1B': 'sogard' };
 const noContrerasVsRight = { ...wildCardVsRight, '1B': 'sogard', '2B': 'ikf' };
 
-// The club as it finished 2026: the reported Wild Card Game 1 lineup against
-// right-handers, and the September 22–23 shape against left-handers. Shared by
-// the three off-season pins (D-52), which are scored through September 27.
-const winterVsRight = lineup({
+// The projected 2027 club as Boston reporting describes it in early October
+// 2026 (D-56): Rutschman behind the plate, Contreras at first, Mead penciled
+// in at second ("broadly our plan", Chad Tracy via The Boston Globe), Durbin
+// at third, Story at short with Franklin Arias waiting, and Anthony in left
+// every day with Rafaela and Abreu alongside him. The DH is the unsettled
+// spot, so it stays with the club's own September usage: Yoshida against
+// right-handers, Jones against left-handers. The projection is a judgment
+// applied to all three winter pins; the rates stay decision-date.
+const projectedVsRight = lineup({
 	C: 'rutschman',
 	'1B': 'contreras',
-	'2B': 'sogard',
-	'3B': 'durbin',
-	SS: 'story',
-	LF: 'duran',
-	CF: 'rafaela',
-	RF: 'abreu',
-	DH: 'anthony'
-});
-const winterVsLeft = lineup({
-	C: 'rutschman',
-	'1B': 'contreras',
-	'2B': 'monasterio',
+	'2B': 'mead',
 	'3B': 'durbin',
 	SS: 'story',
 	LF: 'anthony',
 	CF: 'rafaela',
 	RF: 'abreu',
-	DH: 'jones'
+	DH: 'yoshida'
 });
-const winterReserves = ['wong', 'gasper', 'yoshida', 'eaton', 'seigler'];
+const projectedVsLeft = { ...projectedVsRight, DH: 'jones' };
+const projectedLineups = { L: projectedVsLeft, R: projectedVsRight };
+// Every projected starter is locked into the searched best nine (D-56), so a
+// hot small sample cannot bench him. Reporting calls catcher, first, third,
+// left, center and right settled; Anthony only has to be in the lineup, not a
+// fixed slot, because a signing or a platoon can move him to DH. Mead is
+// locked at second wherever the projection holds.
+const settledLocks = [
+	{ key: 'rutschman', role: 'C' },
+	{ key: 'contreras', role: '1B' },
+	{ key: 'durbin', role: '3B' },
+	{ key: 'anthony', role: null },
+	{ key: 'rafaela', role: 'CF' },
+	{ key: 'abreu', role: 'RF' }
+];
+const projectedLocks = [...settledLocks, { key: 'mead', role: '2B' }];
+const projectedLocksMeadOpen = [...settledLocks, { key: 'mead', role: null }];
+// The projection keeps Story at short until Arias takes it, so scenarios whose
+// lineup does that lock him there; the succession scenarios leave short open.
+const storyAtShort = { key: 'story', role: 'SS' };
+const winterReserves = ['wong', 'sogard', 'monasterio', 'seigler', 'duran'];
 
 const TIMELINE = [
 	{
@@ -345,34 +360,28 @@ const TIMELINE = [
 		rates: 'through-2026-09-27',
 		observed: ['2026-08-03', SEASON_END],
 		rateLabel: '2026 through 2026-09-27',
+		projected: true,
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — The September shape: Story at short, Sogard or Monasterio at second',
-				lineups: { L: winterVsLeft, R: winterVsRight },
-				reserves: winterReserves
+				label: 'Baseline — The projected 2027 infield: Story at short, Mead at second',
+				lineups: projectedLineups,
+				reserves: winterReserves,
+				projectedStarters: [...projectedLocks, storyAtShort]
 			},
 			{
 				id: 'cand-a',
-				label: 'A — Mead at second every day, Story stays at short',
-				lineups: {
-					L: { ...winterVsLeft, '2B': 'mead' },
-					R: { ...winterVsRight, '2B': 'mead' }
-				},
-				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler', 'monasterio'],
-				outgoing: ['sogard'],
-				incoming: ['mead']
+				label: 'A — Arias takes short: Story moves to DH',
+				lineups: both(projectedLineups, { SS: 'monasterio', DH: 'story' }),
+				reserves: ['wong', 'sogard', 'seigler', 'duran', 'jones', 'yoshida'],
+				projectedStarters: projectedLocks
 			},
 			{
 				id: 'cand-b',
-				label: 'B — Story off shortstop: Monasterio at short, Mead at second',
-				lineups: {
-					L: { ...winterVsLeft, '2B': 'mead', SS: 'monasterio' },
-					R: { ...winterVsRight, '2B': 'mead', SS: 'monasterio' }
-				},
-				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler', 'sogard'],
-				outgoing: ['story'],
-				incoming: ['mead']
+				label: 'B — Arias takes short: Story to the bench',
+				lineups: both(projectedLineups, { SS: 'monasterio' }),
+				reserves: ['wong', 'sogard', 'seigler', 'duran', 'story'],
+				projectedStarters: projectedLocks
 			}
 		]
 	},
@@ -383,34 +392,35 @@ const TIMELINE = [
 		rates: 'through-2026-09-27',
 		observed: ['2026-08-03', SEASON_END],
 		rateLabel: '2026 through 2026-09-27',
+		projected: true,
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — The September shape: Duran in left against right-handers only',
-				lineups: { L: winterVsLeft, R: winterVsRight },
-				reserves: winterReserves
+				label: 'Baseline — The projected outfield: Anthony, Rafaela and Abreu, with Duran fourth',
+				lineups: projectedLineups,
+				reserves: winterReserves,
+				projectedStarters: [...projectedLocks, storyAtShort]
 			},
 			{
 				id: 'cand-a',
-				label: 'A — Trade him: Anthony in left, Yoshida at DH',
-				lineups: {
-					L: winterVsLeft,
-					R: { ...winterVsRight, LF: 'anthony', DH: 'yoshida' }
-				},
-				reserves: ['wong', 'gasper', 'eaton', 'seigler'],
+				label: 'A — Trade him: the projected nine does not change',
+				lineups: projectedLineups,
+				reserves: ['wong', 'sogard', 'monasterio', 'seigler'],
 				outgoing: ['duran'],
-				incoming: []
+				incoming: [],
+				projectedStarters: [...projectedLocks, storyAtShort]
 			},
 			{
 				id: 'cand-b',
-				label: 'B — Keep him: play him against left-handers too',
+				label: 'B — Keep him: start him at DH against right-handers',
 				lineups: {
-					L: { ...winterVsLeft, LF: 'duran', DH: 'anthony' },
-					R: winterVsRight
+					L: projectedVsLeft,
+					R: { ...projectedVsRight, DH: 'duran' }
 				},
-				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler', 'jones'],
+				reserves: ['wong', 'sogard', 'monasterio', 'seigler', 'yoshida'],
 				outgoing: [],
-				incoming: []
+				incoming: [],
+				projectedStarters: [...projectedLocks, storyAtShort]
 			}
 		]
 	},
@@ -421,31 +431,35 @@ const TIMELINE = [
 		rates: 'through-2026-09-27',
 		observed: ['2026-08-03', SEASON_END],
 		rateLabel: '2026 through 2026-09-27',
+		projected: true,
 		scenarios: [
 			{
 				id: 'base',
-				label: 'Baseline — The September shape: Duran in left against right-handers only',
-				lineups: { L: winterVsLeft, R: winterVsRight },
-				reserves: winterReserves
+				label: 'Baseline — The projected 2027 lineup: Yoshida and Jones at DH, no outside bat',
+				lineups: projectedLineups,
+				reserves: winterReserves,
+				projectedStarters: [...projectedLocks, storyAtShort]
 			},
 			{
 				id: 'cand-a',
-				label: 'A — Sign Arozarena for left field',
-				lineups: {
-					L: { ...winterVsLeft, LF: 'arozarena', DH: 'anthony' },
-					R: { ...winterVsRight, LF: 'arozarena' }
-				},
-				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler', 'jones'],
+				label: 'A — Sign Arozarena: Anthony moves to DH',
+				lineups: both(projectedLineups, { LF: 'arozarena', DH: 'anthony' }),
+				reserves: ['wong', 'sogard', 'monasterio', 'seigler', 'jones', 'yoshida'],
 				outgoing: ['duran'],
-				incoming: ['arozarena']
+				incoming: ['arozarena'],
+				projectedStarters: [...projectedLocks, storyAtShort, { key: 'arozarena', role: null }]
 			},
 			{
 				id: 'cand-b',
-				label: 'B — Sign Lowe for second base',
-				lineups: { L: winterVsLeft, R: { ...winterVsRight, '2B': 'lowe' } },
-				reserves: ['wong', 'gasper', 'yoshida', 'eaton', 'seigler'],
+				label: 'B — Sign Lowe: Mead moves to DH',
+				lineups: {
+					L: projectedVsLeft,
+					R: { ...projectedVsRight, '2B': 'lowe', DH: 'mead' }
+				},
+				reserves: ['wong', 'monasterio', 'seigler', 'yoshida', 'duran'],
 				outgoing: ['sogard'],
-				incoming: ['lowe']
+				incoming: ['lowe'],
+				projectedStarters: [...projectedLocksMeadOpen, storyAtShort]
 			}
 		]
 	}
@@ -613,6 +627,9 @@ for (const story of TIMELINE) {
 	const datasetId = `mlbam-bos-asof-${story.asOf}`;
 	const datasetRevision = Number(story.asOf.replaceAll('-', ''));
 	const assumptionId = 'storyline-horizon-10';
+	// The projected winter pins revise the baseline assumption (D-56), so they
+	// carry a new revision; every other pin keeps revision 2.
+	const assumptionRevision = story.projected ? 3 : 2;
 	const byKey = (key) => players.get(key).id;
 	const scenarioFor = (def) => {
 		const members = keysIn(def);
@@ -638,6 +655,15 @@ for (const story of TIMELINE) {
 				maxPA: 200,
 				sourceId: ASSUMPTION_SOURCE_ID
 			})),
+			...(def.projectedStarters
+				? {
+						projectedStarters: def.projectedStarters.map(({ key, role }) => ({
+							playerId: byKey(key),
+							role,
+							sourceId: PROJECTION_SOURCE_ID
+						}))
+					}
+				: {}),
 			constraints: { rosterSizeMax: story.rosterSizeMax ?? null, costBudget: null, costs: [] },
 			review: {
 				scope: 'coverage_and_offense',
@@ -669,8 +695,23 @@ for (const story of TIMELINE) {
 				title: 'Observed batting-order pattern · illustrative 10-game allocation',
 				kind: 'manual',
 				effectiveAt: `${story.asOf}T00:00:00Z`,
-				note: 'PA demand is scaled from one observed nine-inning Boston–Pittsburgh game on 2026-08-14: 39 PA across the nine starting slots (5 each for batting orders 1–3; 4 each for orders 4–9). Applied to four left-starter-context games and six right-starter-context games: top three slots receive 20/30 PA per context; remaining slots receive 16/24. L/R exposure is an illustrative 25/75 split assumption, not measured context data. This is not a team planning horizon or forecast. Workload caps remain generous placeholders (O-02). Baseline lineups are the club’s observed starting lineups for the storyline’s window. Source box score: https://www.baseball-almanac.com/box-scores/boxscore.php?boxid=202608140PIT'
-			}
+				note: `PA demand is scaled from one observed nine-inning Boston–Pittsburgh game on 2026-08-14: 39 PA across the nine starting slots (5 each for batting orders 1–3; 4 each for orders 4–9). Applied to four left-starter-context games and six right-starter-context games: top three slots receive 20/30 PA per context; remaining slots receive 16/24. L/R exposure is an illustrative 25/75 split assumption, not measured context data. This is not a team planning horizon or forecast. Workload caps remain generous placeholders (O-02). ${
+					story.projected
+						? 'Baseline and scenario lineups are the projected 2027 roster (see the projected-roster source), not the club’s observed September shape.'
+						: 'Baseline lineups are the club’s observed starting lineups for the storyline’s window.'
+				} Source box score: https://www.baseball-almanac.com/box-scores/boxscore.php?boxid=202608140PIT`
+			},
+			...(story.projected
+				? [
+						{
+							id: PROJECTION_SOURCE_ID,
+							title: 'Projected 2027 roster — Boston reporting, October 1–6, 2026',
+							kind: 'projection',
+							effectiveAt: '2026-10-06T00:00:00Z',
+							note: 'The baseline and every scenario lineup are the projected 2027 roster: a judgment recorded from early-October reporting, applied to all three winter pins while the rates stay decision-date. Chad Tracy, via Tim Healey (The Boston Globe, October 5–6; MLB Trade Rumors and CBS Sports, October 6): it is “broadly (the) plan” for Curtis Mead to get the majority of the second-base work — “he was acquired for a reason.” Sports Illustrated (October 1): with Anthony in left, Rafaela in center, Abreu in right, Contreras at first, Durbin at third and Rutschman behind the plate, shortstop, second base and the DH are the open spots; internally Boston can play Arias at short with Mead at second and Story at DH, or Story at short with Arias at second and Mead at DH. Yahoo Sports’ projected roster (October 2) lists Mead/Sogard at second and Story/Arias at short. Rutschman catching, Anthony starting and Mead at second are locked into every searched lineup so a hot small sample cannot bench them (D-56). The DH stays with the club’s September usage: Yoshida against right-handers, Jones against left-handers. Franklin Arias is named but not scored — he has no major-league plate appearance (MLB Stats API, people/808265) — so Monasterio stands in at short in the succession scenarios. Rates remain observed 2026 R/PA through September 27.'
+						}
+					]
+				: [])
 		],
 		dataset: {
 			id: datasetId,
@@ -703,7 +744,7 @@ for (const story of TIMELINE) {
 		},
 		assumptions: {
 			id: assumptionId,
-			revision: 2,
+			revision: assumptionRevision,
 			authorId: 'storyline-adapter',
 			horizonGames: 10,
 			offenseMode: 'overall',
@@ -715,7 +756,7 @@ for (const story of TIMELINE) {
 			id: `cmp-${story.slug}`,
 			revision: 1,
 			datasetRef: { id: datasetId, revision: datasetRevision },
-			assumptionRef: { id: assumptionId, revision: 2 },
+			assumptionRef: { id: assumptionId, revision: assumptionRevision },
 			baseline: scenarioFor(baseDef),
 			candidates: story.scenarios.slice(1).map(scenarioFor)
 		},

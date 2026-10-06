@@ -29,7 +29,7 @@ import {
 	type ScenarioEvaluation
 } from './calculation';
 
-export const POOL_FIT_VERSION = 'pool-fit-analysis-v1';
+export const POOL_FIT_VERSION = 'pool-fit-analysis-v2';
 
 /** One slot of a discovered lineup. `runs` is that slot's own contribution. */
 export interface PoolFitSlot {
@@ -101,6 +101,8 @@ export interface PoolFitScenarioFit {
 	transfers: PoolFitTransfer[];
 	/** Members the fit leaves on the bench, with the PA and runs they forgo. */
 	bench: { playerId: string; pa: number; runs: string | null }[];
+	/** Projected starters the search was required to place. */
+	projectedStarters: PoolFitLock[];
 	excluded: PoolFitExclusion[];
 	moves: PoolFitMove[];
 	/** Coverage the fit still cannot cover, by template and position. */
@@ -300,22 +302,56 @@ function isBetter(candidate: LineupFit, incumbent: LineupFit): boolean {
 }
 
 /**
+ * One projected starter the search must place. `role` fixes the slot; null
+ * leaves the slot open to any position the player is eligible for (or DH).
+ */
+export interface PoolFitLock {
+	playerId: string;
+	role: string | null;
+}
+
+/** Slots a locked player may occupy with a scorable contribution. */
+function lockSlots(
+	template: Template,
+	player: ScoredPlayer,
+	role: string | null,
+	mode: Bundle['assumptions']['offenseMode']
+): number[] {
+	return template.slots
+		.map((slot, index) => ({ slot, index }))
+		.filter(
+			({ slot }) =>
+				(role === null
+					? slot.role === 'DH' || player.eligible.includes(slot.role)
+					: slot.role === role) && slotValue(slot, player, mode) !== null
+		)
+		.map(({ index }) => index);
+}
+
+/**
  * Exact maximum-weight assignment over one template's slots by bitmask dynamic
  * programming: each scored member is either benched or placed in one free
- * eligible slot. Because the two contexts are different games, each template is
- * searched on its own and a member may start both. All arithmetic is in the
- * engine's millionths, so the optimum is exact, not sampled.
+ * eligible slot, starting from any slots a lock already fixed. Because the two
+ * contexts are different games, each template is searched on its own and a
+ * member may start both. All arithmetic is in the engine's millionths, so the
+ * optimum is exact, not sampled.
  */
-function bestLineup(
+function fillLineup(
 	template: Template,
-	players: readonly ScoredPlayer[],
-	mode: Bundle['assumptions']['offenseMode']
+	scored: readonly ScoredPlayer[],
+	mode: Bundle['assumptions']['offenseMode'],
+	initial: LineupFit,
+	fixedIds: ReadonlySet<string>
 ): LineupFit {
 	const slots = template.slots;
 	const full = (1 << slots.length) - 1;
-	const scored = players.filter((player) => player.exclusion === null);
-	const state = new Map<number, LineupFit>([[0, unfilledLineup(slots.length)]]);
+	const startMask = initial.values.reduce(
+		(mask, value, index) => (value === null ? mask : mask | (1 << index)),
+		0
+	);
+	const state = new Map<number, LineupFit>([[startMask, initial]]);
 	for (const player of scored) {
+		if (fixedIds.has(player.id)) continue;
 		const options = slots
 			.map((slot, index) => ({ slot, index, value: slotValue(slot, player, mode) }))
 			.filter(
@@ -350,6 +386,74 @@ function bestLineup(
 	let best: LineupFit | null = null;
 	for (const fit of state.values()) if (!best || isBetter(fit, best)) best = fit;
 	return best ?? unfilledLineup(slots.length);
+}
+
+/**
+ * The best lineup the roster can field with every projected starter placed. Each
+ * lock is fixed first (enumerating the slots an open-role lock may take), then
+ * the rest of the lineup is filled by the exact search. A lock the roster
+ * cannot place is reported as unsatisfied rather than silently dropped.
+ */
+function bestLineup(
+	template: Template,
+	players: readonly ScoredPlayer[],
+	mode: Bundle['assumptions']['offenseMode'],
+	locks: readonly PoolFitLock[] = []
+): { fit: LineupFit; unsatisfied: string[] } {
+	const scored = players.filter((player) => player.exclusion === null);
+	const byId = new Map(scored.map((player) => [player.id, player]));
+	const unsatisfied: string[] = [];
+	const enforceable: { player: ScoredPlayer; slots: number[] }[] = [];
+	for (const lock of locks) {
+		const player = byId.get(lock.playerId);
+		const slots = player ? lockSlots(template, player, lock.role, mode) : [];
+		if (!player || slots.length === 0) {
+			unsatisfied.push(lock.playerId);
+			continue;
+		}
+		enforceable.push({ player, slots });
+	}
+	const search = (constraints: typeof enforceable): LineupFit | null => {
+		let best: LineupFit | null = null;
+		const usedSlots = new Set<number>();
+		const fixedIds = new Set<string>();
+		const fixed = new Map<number, { playerId: string; value: bigint }>();
+		const go = (index: number) => {
+			if (index === constraints.length) {
+				const initial = unfilledLineup(template.slots.length);
+				for (const [slotIndex, entry] of fixed) {
+					initial.pick[slotIndex] = entry.playerId;
+					initial.values[slotIndex] = entry.value;
+					initial.total += entry.value;
+					initial.covered += 1;
+				}
+				const filled = fillLineup(template, scored, mode, initial, fixedIds);
+				if (!best || isBetter(filled, best)) best = filled;
+				return;
+			}
+			const constraint = constraints[index]!;
+			for (const slotIndex of constraint.slots) {
+				if (usedSlots.has(slotIndex)) continue;
+				const value = slotValue(template.slots[slotIndex]!, constraint.player, mode);
+				if (value === null) continue;
+				usedSlots.add(slotIndex);
+				fixedIds.add(constraint.player.id);
+				fixed.set(slotIndex, { playerId: constraint.player.id, value });
+				go(index + 1);
+				fixed.delete(slotIndex);
+				fixedIds.delete(constraint.player.id);
+				usedSlots.delete(slotIndex);
+			}
+		};
+		go(0);
+		return best;
+	};
+	let fit = search(enforceable);
+	if (!fit && enforceable.length > 0) {
+		for (const constraint of enforceable) unsatisfied.push(constraint.player.id);
+		fit = search([]);
+	}
+	return { fit: fit ?? unfilledLineup(template.slots.length), unsatisfied };
 }
 
 // ---------- assembling the analysis ----------
@@ -497,12 +601,20 @@ function fitFor(
 		.map((playerId) => scored.get(playerId)!.exclusion)
 		.filter((exclusion): exclusion is PoolFitExclusion => exclusion !== null);
 
-	const fits = new Map(
+	const locks: PoolFitLock[] = (reference.projectedStarters ?? []).map(({ playerId, role }) => ({
+		playerId,
+		role
+	}));
+	const searched = new Map(
 		templates.map((template) => [
 			template.id,
-			bestLineup(template, usable, bundle.assumptions.offenseMode)
+			bestLineup(template, usable, bundle.assumptions.offenseMode, locks)
 		])
 	);
+	const fits = new Map([...searched].map(([templateId, { fit }]) => [templateId, fit]));
+	const unsatisfiedLocks = [
+		...new Set([...searched.values()].flatMap(({ unsatisfied }) => unsatisfied))
+	];
 	const scenario = draftScenario(reference, templates, fits);
 	const evaluation = evaluateScenarioDraft(bundle, scenario, {
 		path: `/analysis/${scenario.id.replace(':', '/')}`
@@ -568,7 +680,16 @@ function fitFor(
 		shortfalls: shortfallsOf(evaluation),
 		capPressure: capPressureOf(scenario, evaluation),
 		evaluation,
-		reasons: result.issues
+		projectedStarters: locks,
+		reasons: [
+			...result.issues,
+			...unsatisfiedLocks.map((playerId) => ({
+				code: 'UNASSIGNED_SLOT',
+				path: `/analysis/${scenario.id}/projectedStarters/${playerId}`,
+				message: 'projected starter could not be placed in the searched lineup',
+				playerIds: [playerId]
+			}))
+		]
 	};
 }
 

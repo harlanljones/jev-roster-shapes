@@ -43,6 +43,7 @@
 		caseView,
 		lineupBin,
 		lineupIds,
+		locksOf,
 		scenarioLineup,
 		type BinResult,
 		type Lineup
@@ -111,11 +112,16 @@
 	const pool = $derived(buildPool(bundle));
 	const bundleScenarios = $derived([bundle.comparison.baseline, ...bundle.comparison.candidates]);
 	const baseLineup = $derived(scenarioLineup(bundle, bundle.comparison.baseline));
-	const scenarioBins = $derived(
-		new Map(bundleScenarios.map((s) => [s.id, lineupBin(pool, scenarioLineup(bundle, s))]))
-	);
 	const activeBundleScenario = $derived(
 		bundleScenarios.find((s) => s.id === model.activeScenarioId) ?? bundle.comparison.baseline
+	);
+	// One bin scale per page: the viewed scenario's projected starters set the
+	// lid every bin is packed against.
+	const pageLocks = $derived(locksOf(activeBundleScenario));
+	const scenarioBins = $derived(
+		new Map(
+			bundleScenarios.map((s) => [s.id, lineupBin(pool, scenarioLineup(bundle, s), pageLocks)])
+		)
 	);
 	// The engine's pool fit (D-45): the best nine this scenario's own roster can
 	// field, searched per context and judged by the engine. Its lineup is drawn
@@ -129,7 +135,7 @@
 		for (const slot of busiest?.slots ?? []) lineup[slot.role] = slot.playerId;
 		return lineup;
 	});
-	const fitBin = $derived(lineupBin(pool, fitLineup));
+	const fitBin = $derived(lineupBin(pool, fitLineup, pageLocks));
 	const engineDelta = (value: string | null | undefined) =>
 		value == null
 			? 'unavailable'

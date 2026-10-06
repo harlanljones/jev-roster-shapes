@@ -24,6 +24,22 @@ export const SLOT_ROLES = ['C', '1B', '2B', 'SS', '3B', 'LF', 'CF', 'RF', 'DH'] 
 export type Role = (typeof SLOT_ROLES)[number];
 export const FIELD_ROLES: readonly Role[] = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
 
+/**
+ * A projected starter the display's best nine must keep in the lineup. `role`
+ * fixes the slot; null means the player only has to start somewhere. The
+ * display fit is hindsight, so the lock keeps a projected starter from being
+ * benched by a small-sample 2026 run total.
+ */
+export interface DisplayLock {
+	playerId: string;
+	role: Role | null;
+}
+
+/** The scenario's projected starters as display locks. */
+export function locksOf(scenario: Scenario): DisplayLock[] {
+	return (scenario.projectedStarters ?? []).map(({ playerId, role }) => ({ playerId, role }));
+}
+
 export interface CasePlayer {
 	id: string;
 	name: string;
@@ -596,9 +612,28 @@ export function interactionFindings(pool: Pool, edges: readonly Edge[]): Finding
 }
 
 // ---------- tightest fit: best nine against each hand ----------
-/** Best nine against one hand, eligibility enforced, a player in at most one slot. */
-export function bestAgainst(pool: Pool, side: Side): Lineup {
+/**
+ * Best nine against one hand, eligibility enforced, a player in at most one
+ * slot. Projected starters are locked: a fixed role may only be filled by its
+ * player, and an open-role lock must appear somewhere in the nine.
+ */
+export function bestAgainst(pool: Pool, side: Side, locks: readonly DisplayLock[] = []): Lineup {
 	const ids = [...pool.values()].filter((p) => p.rate != null && p.split);
+	const byId = new Map(ids.map((p) => [p.id, p]));
+	const roleLock = new Map<Role, string>();
+	const openLocks: string[] = [];
+	for (const lock of locks) {
+		const player = byId.get(lock.playerId);
+		if (!player) continue;
+		if (lock.role !== null) {
+			if (lock.role === 'DH' || player.elig.includes(lock.role))
+				roleLock.set(lock.role, lock.playerId);
+		} else if (!openLocks.includes(lock.playerId)) {
+			openLocks.push(lock.playerId);
+		}
+	}
+	const openBit = new Map(openLocks.map((id, index) => [id, 1 << index]));
+	const allOpen = (1 << openLocks.length) - 1;
 	const order = [...SLOT_ROLES].sort(
 		(a, b) =>
 			Number(a === 'DH') - Number(b === 'DH') ||
@@ -607,22 +642,26 @@ export function bestAgainst(pool: Pool, side: Side): Lineup {
 	let best = { v: -1, lineup: {} as Lineup };
 	const used = new Set<string>();
 	const lineup: Lineup = {};
-	const go = (k: number, v: number) => {
+	const go = (k: number, v: number, placed: number) => {
 		if (k === order.length) {
+			if (placed !== allOpen) return;
 			if (v > best.v) best = { v, lineup: { ...lineup } };
 			return;
 		}
 		const role = order[k]!;
+		const locked = roleLock.get(role);
 		for (const p of ids) {
+			if (locked !== undefined && p.id !== locked) continue;
 			if (used.has(p.id) || (role !== 'DH' && !p.elig.includes(role))) continue;
 			used.add(p.id);
 			lineup[role] = p.id;
-			go(k + 1, v + (cellRuns(p, side) ?? 0));
+			go(k + 1, v + (cellRuns(p, side) ?? 0), placed | (openBit.get(p.id) ?? 0));
 			used.delete(p.id);
 			delete lineup[role];
 		}
 	};
-	go(0, 0);
+	go(0, 0, 0);
+	if (best.v < 0 && locks.length > 0) return bestAgainst(pool, side, []);
 	return best.lineup;
 }
 
@@ -632,18 +671,20 @@ export interface TightestFit {
 }
 
 // The pool is rebuilt on every workspace edit, but its players rarely change,
-// so the search and the bin calibration are cached by the pool's contents.
-function poolKey(pool: Pool): string {
-	return [...pool.values()]
+// so the search and the bin calibration are cached by the pool's contents and
+// the projected-starter locks in force.
+function poolKey(pool: Pool, locks: readonly DisplayLock[] = []): string {
+	const lockKey = locks.map((lock) => `${lock.playerId}:${lock.role ?? '*'}`).join(',');
+	return `${[...pool.values()]
 		.map((p) => `${p.id}:${p.rateText}:${p.shape}:${p.elig.join('/')}`)
-		.join('|');
+		.join('|')}::${lockKey}`;
 }
 const fitCache = new Map<string, TightestFit>();
-export function tightestFit(pool: Pool): TightestFit {
-	const key = poolKey(pool);
+export function tightestFit(pool: Pool, locks: readonly DisplayLock[] = []): TightestFit {
+	const key = poolKey(pool, locks);
 	let fit = fitCache.get(key);
 	if (!fit) {
-		fit = { L: bestAgainst(pool, 'L'), R: bestAgainst(pool, 'R') };
+		fit = { L: bestAgainst(pool, 'L', locks), R: bestAgainst(pool, 'R', locks) };
 		fitCache.set(key, fit);
 	}
 	return fit;
@@ -798,11 +839,11 @@ function binWith(pool: Pool, lineupL: Lineup, lineupR: Lineup, scale: number): B
 
 const scaleCache = new Map<string, number>();
 /** Scale runs → radius so the tightest fit's pile just reaches the lid. */
-export function binScale(pool: Pool): number {
-	const key = poolKey(pool);
+export function binScale(pool: Pool, locks: readonly DisplayLock[] = []): number {
+	const key = poolKey(pool, locks);
 	const cached = scaleCache.get(key);
 	if (cached != null) return cached;
-	const fit = tightestFit(pool);
+	const fit = tightestFit(pool, locks);
 	const fitRuns = SLOT_ROLES.reduce((s, r) => {
 		const l = fit.L[r];
 		const rr = fit.R[r];
@@ -830,14 +871,18 @@ export function binScale(pool: Pool): number {
 }
 
 /** A lineup (one player per slot, both sides) packed into the pool's bin. */
-export function lineupBin(pool: Pool, lineup: Lineup): BinResult {
-	return binWith(pool, lineup, lineup, binScale(pool));
+export function lineupBin(
+	pool: Pool,
+	lineup: Lineup,
+	locks: readonly DisplayLock[] = []
+): BinResult {
+	return binWith(pool, lineup, lineup, binScale(pool, locks));
 }
 
 /** The pool's tightest fit (platoons and position moves allowed) packed into the same bin. */
-export function tightestBin(pool: Pool): BinResult {
-	const fit = tightestFit(pool);
-	return binWith(pool, fit.L, fit.R, binScale(pool));
+export function tightestBin(pool: Pool, locks: readonly DisplayLock[] = []): BinResult {
+	const fit = tightestFit(pool, locks);
+	return binWith(pool, fit.L, fit.R, binScale(pool, locks));
 }
 
 // ---------- off the field: the bench tray beside the board (D-50) ----------
@@ -861,9 +906,13 @@ export interface TrayResult {
  * and at the same runs-to-area scale as the board, so a bench piece reads at
  * the size it would take up on the field.
  */
-export function benchTray(pool: Pool, lineup: Lineup): TrayResult {
+export function benchTray(
+	pool: Pool,
+	lineup: Lineup,
+	locks: readonly DisplayLock[] = []
+): TrayResult {
 	const on = new Set(lineupIds(lineup));
-	const scale = binScale(pool);
+	const scale = binScale(pool, locks);
 	const off = [...pool.keys()].filter((id) => !on.has(id));
 	const pieces = off.map((id) => slotPiece(pool, 'DH', id, id, scale));
 	const pile = pack(pool, pieces, TRAY_W);
@@ -928,10 +977,11 @@ export function binFindings(
 	pool: Pool,
 	lineup: Lineup,
 	cur: BinResult,
-	best: BinResult
+	best: BinResult,
+	locks: readonly DisplayLock[] = []
 ): Finding[][] {
 	const inLineup = new Set(lineupIds(lineup));
-	const fit = tightestFit(pool);
+	const fit = tightestFit(pool, locks);
 	const inFit = new Set([...lineupIds(fit.L), ...lineupIds(fit.R)]);
 	const stars = [...pool.values()].filter((p) => p.shape === 'Star');
 	const more = cur.runs == null || best.runs == null ? null : best.runs - cur.runs;
@@ -988,7 +1038,12 @@ export function binFindings(
 	];
 }
 
-export function barFindings(pool: Pool, cur: BarResult, best: BarResult): Finding[][] {
+export function barFindings(
+	pool: Pool,
+	cur: BarResult,
+	best: BarResult,
+	locks: readonly DisplayLock[] = []
+): Finding[][] {
 	const name = (id: string | null) => (id ? (pool.get(id)?.last ?? id) : 'nobody');
 	const gaps = cur.cells
 		.flatMap((c) =>
@@ -1001,7 +1056,7 @@ export function barFindings(pool: Pool, cur: BarResult, best: BarResult): Findin
 		)
 		.sort((a, b) => b.gap - a.gap)
 		.slice(0, 3);
-	const fit = tightestFit(pool);
+	const fit = tightestFit(pool, locks);
 	const platoons = best.cells.filter((c) => c.L.id !== c.R.id);
 	const roleIn = (l: Lineup, id: string) => SLOT_ROLES.find((r) => l[r] === id);
 	const moved = [...pool.keys()].flatMap((id) => {

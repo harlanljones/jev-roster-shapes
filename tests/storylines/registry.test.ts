@@ -205,6 +205,51 @@ describe('2026 storyline registry', () => {
 		expect(roleOf(2)).toEqual([]);
 	});
 
+	it('projects the 2027 roster with its starters locked (D-56)', () => {
+		const rutschman = 'mlbam-668939';
+		const anthony = 'mlbam-701350';
+		const mead = 'mlbam-678554';
+		const sogard = 'mlbam-686765';
+		for (const slug of ['winter-infield', 'winter-duran', 'winter-bat']) {
+			const storyline = getStoryline(slug);
+			if (!storyline) throw new Error(`${slug} storyline missing`);
+			const scenarios = [
+				storyline.bundle.comparison.baseline,
+				...storyline.bundle.comparison.candidates
+			];
+			for (const scenario of scenarios) {
+				const locks = scenario.projectedStarters ?? [];
+				expect(
+					locks.map(({ playerId }) => playerId),
+					`${slug}/${scenario.id}`
+				).toEqual(expect.arrayContaining([rutschman, anthony]));
+				for (const allocation of scenario.allocations) {
+					const template = storyline.bundle.assumptions.templates.find(
+						({ id }) => id === allocation.templateId
+					)!;
+					const roleOf = (playerId: string) => {
+						const assignment = allocation.assignments.find(
+							(candidate) => candidate.playerId === playerId
+						);
+						return assignment
+							? template.slots.find(({ order }) => order === assignment.order)?.role
+							: null;
+					};
+					// Rutschman always catches and Anthony always starts.
+					expect(roleOf(rutschman), `${slug}/${scenario.id}`).toBe('C');
+					expect(roleOf(anthony), `${slug}/${scenario.id}`).not.toBeNull();
+					// Sogard is a utility man, never the second baseman of record.
+					expect(roleOf(sogard), `${slug}/${scenario.id}`).not.toBe('2B');
+				}
+			}
+			// The projection holds at second base wherever its lineup has Mead.
+			const baseLocks = storyline.bundle.comparison.baseline.projectedStarters ?? [];
+			expect(baseLocks.find(({ playerId }) => playerId === mead)?.role, `${slug} baseline`).toBe(
+				'2B'
+			);
+		}
+	});
+
 	it('anchors winter decisions to their offseason milestones', () => {
 		const dates = Object.fromEntries(
 			storylineRegistry

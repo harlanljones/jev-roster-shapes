@@ -19,6 +19,7 @@
 		caseView,
 		lineupBin,
 		lineupIds,
+		locksOf,
 		scenarioLineup,
 		tightestBin
 	} from './shape-case';
@@ -56,10 +57,11 @@
 		selectedId && pool.has(selectedId) ? selectedId : (lineup['3B'] ?? lineupIds(lineup)[0] ?? null)
 	);
 
-	const board = $derived(lineupBin(pool, lineup));
-	const best = $derived(tightestBin(pool));
-	const tray = $derived(benchTray(pool, lineup));
-	const reads = $derived(binFindings(pool, lineup, board, best));
+	const locks = $derived(locksOf(scenario));
+	const board = $derived(lineupBin(pool, lineup, locks));
+	const best = $derived(tightestBin(pool, locks));
+	const tray = $derived(benchTray(pool, lineup, locks));
+	const reads = $derived(binFindings(pool, lineup, board, best, locks));
 	const leftOff = $derived(board.runs == null || best.runs == null ? null : best.runs - board.runs);
 
 	const runs = (v: number | null) => (v == null ? 'runs unavailable' : `${v.toFixed(1)} runs`);
@@ -205,12 +207,16 @@
 	</section>
 
 	<footer class="sources">
-		Players, eligibility and observed R/PA come from the five checked-in season-timeline bundles ({story.sourceLabel}).
+		Players, eligibility and observed R/PA come from the eight checked-in season-timeline bundles ({story.sourceLabel}).
 		Splits and PA come from {SPLIT_SOURCE.label}, fetched {SPLIT_SOURCE.fetchedAt}. Shapes follow
 		rubric v2, where a Star is a tough fit rather than a star player. The board is a hindsight
 		display layer over actual 2026 production; the engine's pool fit uses the bundle's dated metric
 		only, which is why the two can disagree. Split run estimates are a judgment layer and never
 		change an engine number.
+		{#if (story.bundle.comparison.baseline.projectedStarters ?? []).length > 0}
+			This decision's lineups are the projected 2027 roster from early-October reporting (D-56), and
+			its starters are locked into every searched best nine.
+		{/if}
 	</footer>
 </div>
 

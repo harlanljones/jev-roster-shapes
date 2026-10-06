@@ -237,7 +237,7 @@
 			<table class="fit-table">
 				<caption>
 					The engine's best nine for {scenario.label}, per pitcher-hand context
-					(pool-fit-analysis-v1)
+					(pool-fit-analysis-v2)
 				</caption>
 				<thead>
 					<tr>

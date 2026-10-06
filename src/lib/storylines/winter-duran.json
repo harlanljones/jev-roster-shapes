@@ -16,7 +16,14 @@
 			"title": "Observed batting-order pattern · illustrative 10-game allocation",
 			"kind": "manual",
 			"effectiveAt": "2026-09-27T00:00:00Z",
-			"note": "PA demand is scaled from one observed nine-inning Boston–Pittsburgh game on 2026-08-14: 39 PA across the nine starting slots (5 each for batting orders 1–3; 4 each for orders 4–9). Applied to four left-starter-context games and six right-starter-context games: top three slots receive 20/30 PA per context; remaining slots receive 16/24. L/R exposure is an illustrative 25/75 split assumption, not measured context data. This is not a team planning horizon or forecast. Workload caps remain generous placeholders (O-02). Baseline lineups are the club’s observed starting lineups for the storyline’s window. Source box score: https://www.baseball-almanac.com/box-scores/boxscore.php?boxid=202608140PIT"
+			"note": "PA demand is scaled from one observed nine-inning Boston–Pittsburgh game on 2026-08-14: 39 PA across the nine starting slots (5 each for batting orders 1–3; 4 each for orders 4–9). Applied to four left-starter-context games and six right-starter-context games: top three slots receive 20/30 PA per context; remaining slots receive 16/24. L/R exposure is an illustrative 25/75 split assumption, not measured context data. This is not a team planning horizon or forecast. Workload caps remain generous placeholders (O-02). Baseline and scenario lineups are the projected 2027 roster (see the projected-roster source), not the club’s observed September shape. Source box score: https://www.baseball-almanac.com/box-scores/boxscore.php?boxid=202608140PIT"
+		},
+		{
+			"id": "storyline-projection-2027",
+			"title": "Projected 2027 roster — Boston reporting, October 1–6, 2026",
+			"kind": "projection",
+			"effectiveAt": "2026-10-06T00:00:00Z",
+			"note": "The baseline and every scenario lineup are the projected 2027 roster: a judgment recorded from early-October reporting, applied to all three winter pins while the rates stay decision-date. Chad Tracy, via Tim Healey (The Boston Globe, October 5–6; MLB Trade Rumors and CBS Sports, October 6): it is “broadly (the) plan” for Curtis Mead to get the majority of the second-base work — “he was acquired for a reason.” Sports Illustrated (October 1): with Anthony in left, Rafaela in center, Abreu in right, Contreras at first, Durbin at third and Rutschman behind the plate, shortstop, second base and the DH are the open spots; internally Boston can play Arias at short with Mead at second and Story at DH, or Story at short with Arias at second and Mead at DH. Yahoo Sports’ projected roster (October 2) lists Mead/Sogard at second and Story/Arias at short. Rutschman catching, Anthony starting and Mead at second are locked into every searched lineup so a hot small sample cannot bench them (D-56). The DH stays with the club’s September usage: Yoshida against right-handers, Jones against left-handers. Franklin Arias is named but not scored — he has no major-league plate appearance (MLB Stats API, people/808265) — so Monasterio stands in at short in the succession scenarios. Rates remain observed 2026 R/PA through September 27."
 		}
 	],
 	"dataset": {
@@ -39,10 +46,10 @@
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
-				"id": "mlbam-655316",
-				"name": "Andruw Monasterio",
+				"id": "mlbam-678554",
+				"name": "Curtis Mead",
 				"bats": "R",
-				"eligiblePositions": ["1B", "2B", "SS"],
+				"eligiblePositions": ["1B", "2B", "3B"],
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
@@ -88,17 +95,10 @@
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
-				"id": "mlbam-686765",
-				"name": "Nick Sogard",
-				"bats": "S",
-				"eligiblePositions": ["1B", "2B", "3B", "SS"],
-				"sourceIds": ["mlb-stats-api-2026"]
-			},
-			{
-				"id": "mlbam-680776",
-				"name": "Jarren Duran",
+				"id": "mlbam-807799",
+				"name": "Masataka Yoshida",
 				"bats": "L",
-				"eligiblePositions": ["LF", "CF"],
+				"eligiblePositions": [],
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
@@ -109,24 +109,17 @@
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
-				"id": "mlbam-681508",
-				"name": "Mickey Gasper",
+				"id": "mlbam-686765",
+				"name": "Nick Sogard",
 				"bats": "S",
-				"eligiblePositions": ["C", "1B"],
+				"eligiblePositions": ["1B", "2B", "3B", "SS"],
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
-				"id": "mlbam-807799",
-				"name": "Masataka Yoshida",
-				"bats": "L",
-				"eligiblePositions": [],
-				"sourceIds": ["mlb-stats-api-2026"]
-			},
-			{
-				"id": "mlbam-681987",
-				"name": "Nate Eaton",
+				"id": "mlbam-655316",
+				"name": "Andruw Monasterio",
 				"bats": "R",
-				"eligiblePositions": ["3B", "CF", "RF"],
+				"eligiblePositions": ["1B", "2B", "SS"],
 				"sourceIds": ["mlb-stats-api-2026"]
 			},
 			{
@@ -134,6 +127,13 @@
 				"name": "Anthony Seigler",
 				"bats": "S",
 				"eligiblePositions": ["2B", "3B"],
+				"sourceIds": ["mlb-stats-api-2026"]
+			},
+			{
+				"id": "mlbam-680776",
+				"name": "Jarren Duran",
+				"bats": "L",
+				"eligiblePositions": ["LF", "CF"],
 				"sourceIds": ["mlb-stats-api-2026"]
 			}
 		],
@@ -164,9 +164,9 @@
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
-				"playerId": "mlbam-655316",
+				"playerId": "mlbam-678554",
 				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-09-27",
-				"overall": "0.100865",
+				"overall": "0.148936",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
@@ -220,17 +220,9 @@
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
-				"playerId": "mlbam-686765",
+				"playerId": "mlbam-807799",
 				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-09-27",
-				"overall": "0.104693",
-				"vsL": null,
-				"vsR": null,
-				"sourceId": "mlb-stats-api-2026"
-			},
-			{
-				"playerId": "mlbam-680776",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-09-27",
-				"overall": "0.108553",
+				"overall": "0.114478",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
@@ -244,25 +236,17 @@
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
-				"playerId": "mlbam-681508",
+				"playerId": "mlbam-686765",
 				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-09-27",
-				"overall": "0.115556",
+				"overall": "0.104693",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
 			},
 			{
-				"playerId": "mlbam-807799",
+				"playerId": "mlbam-655316",
 				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-09-27",
-				"overall": "0.114478",
-				"vsL": null,
-				"vsR": null,
-				"sourceId": "mlb-stats-api-2026"
-			},
-			{
-				"playerId": "mlbam-681987",
-				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-09-27",
-				"overall": "0.066667",
+				"overall": "0.100865",
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
@@ -274,12 +258,20 @@
 				"vsL": null,
 				"vsR": null,
 				"sourceId": "mlb-stats-api-2026"
+			},
+			{
+				"playerId": "mlbam-680776",
+				"metricDefinitionId": "mlbam-observed-r-per-pa-through-2026-09-27",
+				"overall": "0.108553",
+				"vsL": null,
+				"vsR": null,
+				"sourceId": "mlb-stats-api-2026"
 			}
 		]
 	},
 	"assumptions": {
 		"id": "storyline-horizon-10",
-		"revision": 2,
+		"revision": 3,
 		"authorId": "storyline-adapter",
 		"horizonGames": 10,
 		"offenseMode": "overall",
@@ -477,30 +469,29 @@
 		},
 		"assumptionRef": {
 			"id": "storyline-horizon-10",
-			"revision": 2
+			"revision": 3
 		},
 		"baseline": {
 			"id": "base",
 			"revision": 1,
 			"authorId": "storyline-adapter",
-			"label": "Baseline — The September shape: Duran in left against right-handers only",
+			"label": "Baseline — The projected outfield: Anthony, Rafaela and Abreu, with Duran fourth",
 			"memberIds": [
 				"mlbam-668939",
 				"mlbam-575929",
-				"mlbam-655316",
+				"mlbam-678554",
 				"mlbam-702332",
 				"mlbam-596115",
 				"mlbam-701350",
 				"mlbam-678882",
 				"mlbam-677800",
 				"mlbam-663330",
-				"mlbam-686765",
-				"mlbam-680776",
-				"mlbam-657136",
-				"mlbam-681508",
 				"mlbam-807799",
-				"mlbam-681987",
-				"mlbam-678011"
+				"mlbam-657136",
+				"mlbam-686765",
+				"mlbam-655316",
+				"mlbam-678011",
+				"mlbam-680776"
 			],
 			"incomingIds": [],
 			"outgoingIds": [],
@@ -518,7 +509,7 @@
 						},
 						{
 							"order": 3,
-							"playerId": "mlbam-655316"
+							"playerId": "mlbam-678554"
 						},
 						{
 							"order": 4,
@@ -559,7 +550,7 @@
 						},
 						{
 							"order": 3,
-							"playerId": "mlbam-686765"
+							"playerId": "mlbam-678554"
 						},
 						{
 							"order": 4,
@@ -571,7 +562,7 @@
 						},
 						{
 							"order": 6,
-							"playerId": "mlbam-680776"
+							"playerId": "mlbam-701350"
 						},
 						{
 							"order": 7,
@@ -583,7 +574,7 @@
 						},
 						{
 							"order": 9,
-							"playerId": "mlbam-701350"
+							"playerId": "mlbam-807799"
 						}
 					]
 				}
@@ -604,7 +595,7 @@
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-655316",
+					"playerId": "mlbam-678554",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
@@ -653,14 +644,7 @@
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-686765",
-					"maxStarts": 10,
-					"maxDefensiveOuts": 300,
-					"maxPA": 200,
-					"sourceId": "storyline-assumptions"
-				},
-				{
-					"playerId": "mlbam-680776",
+					"playerId": "mlbam-807799",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
@@ -674,21 +658,14 @@
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-681508",
+					"playerId": "mlbam-686765",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
 					"sourceId": "storyline-assumptions"
 				},
 				{
-					"playerId": "mlbam-807799",
-					"maxStarts": 10,
-					"maxDefensiveOuts": 300,
-					"maxPA": 200,
-					"sourceId": "storyline-assumptions"
-				},
-				{
-					"playerId": "mlbam-681987",
+					"playerId": "mlbam-655316",
 					"maxStarts": 10,
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
@@ -700,6 +677,55 @@
 					"maxDefensiveOuts": 300,
 					"maxPA": 200,
 					"sourceId": "storyline-assumptions"
+				},
+				{
+					"playerId": "mlbam-680776",
+					"maxStarts": 10,
+					"maxDefensiveOuts": 300,
+					"maxPA": 200,
+					"sourceId": "storyline-assumptions"
+				}
+			],
+			"projectedStarters": [
+				{
+					"playerId": "mlbam-668939",
+					"role": "C",
+					"sourceId": "storyline-projection-2027"
+				},
+				{
+					"playerId": "mlbam-575929",
+					"role": "1B",
+					"sourceId": "storyline-projection-2027"
+				},
+				{
+					"playerId": "mlbam-702332",
+					"role": "3B",
+					"sourceId": "storyline-projection-2027"
+				},
+				{
+					"playerId": "mlbam-701350",
+					"role": null,
+					"sourceId": "storyline-projection-2027"
+				},
+				{
+					"playerId": "mlbam-678882",
+					"role": "CF",
+					"sourceId": "storyline-projection-2027"
+				},
+				{
+					"playerId": "mlbam-677800",
+					"role": "RF",
+					"sourceId": "storyline-projection-2027"
+				},
+				{
+					"playerId": "mlbam-678554",
+					"role": "2B",
+					"sourceId": "storyline-projection-2027"
+				},
+				{
+					"playerId": "mlbam-596115",
+					"role": "SS",
+					"sourceId": "storyline-projection-2027"
 				}
 			],
 			"constraints": {
@@ -718,22 +744,21 @@
 				"id": "cand-a",
 				"revision": 1,
 				"authorId": "storyline-adapter",
-				"label": "A — Trade him: Anthony in left, Yoshida at DH",
+				"label": "A — Trade him: the projected nine does not change",
 				"memberIds": [
 					"mlbam-668939",
 					"mlbam-575929",
-					"mlbam-655316",
+					"mlbam-678554",
 					"mlbam-702332",
 					"mlbam-596115",
 					"mlbam-701350",
 					"mlbam-678882",
 					"mlbam-677800",
 					"mlbam-663330",
-					"mlbam-686765",
 					"mlbam-807799",
 					"mlbam-657136",
-					"mlbam-681508",
-					"mlbam-681987",
+					"mlbam-686765",
+					"mlbam-655316",
 					"mlbam-678011"
 				],
 				"incomingIds": [],
@@ -752,7 +777,7 @@
 							},
 							{
 								"order": 3,
-								"playerId": "mlbam-655316"
+								"playerId": "mlbam-678554"
 							},
 							{
 								"order": 4,
@@ -793,7 +818,7 @@
 							},
 							{
 								"order": 3,
-								"playerId": "mlbam-686765"
+								"playerId": "mlbam-678554"
 							},
 							{
 								"order": 4,
@@ -838,7 +863,7 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-655316",
+						"playerId": "mlbam-678554",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -887,13 +912,6 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-686765",
-						"maxStarts": 10,
-						"maxDefensiveOuts": 300,
-						"maxPA": 200,
-						"sourceId": "storyline-assumptions"
-					},
-					{
 						"playerId": "mlbam-807799",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
@@ -908,14 +926,14 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-681508",
+						"playerId": "mlbam-686765",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-681987",
+						"playerId": "mlbam-655316",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -927,6 +945,48 @@
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
 						"sourceId": "storyline-assumptions"
+					}
+				],
+				"projectedStarters": [
+					{
+						"playerId": "mlbam-668939",
+						"role": "C",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-575929",
+						"role": "1B",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-702332",
+						"role": "3B",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-701350",
+						"role": null,
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-678882",
+						"role": "CF",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-677800",
+						"role": "RF",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-678554",
+						"role": "2B",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-596115",
+						"role": "SS",
+						"sourceId": "storyline-projection-2027"
 					}
 				],
 				"constraints": {
@@ -944,24 +1004,23 @@
 				"id": "cand-b",
 				"revision": 1,
 				"authorId": "storyline-adapter",
-				"label": "B — Keep him: play him against left-handers too",
+				"label": "B — Keep him: start him at DH against right-handers",
 				"memberIds": [
 					"mlbam-668939",
 					"mlbam-575929",
-					"mlbam-655316",
+					"mlbam-678554",
 					"mlbam-702332",
 					"mlbam-596115",
-					"mlbam-680776",
+					"mlbam-701350",
 					"mlbam-678882",
 					"mlbam-677800",
-					"mlbam-701350",
-					"mlbam-686765",
+					"mlbam-663330",
+					"mlbam-680776",
 					"mlbam-657136",
-					"mlbam-681508",
-					"mlbam-807799",
-					"mlbam-681987",
+					"mlbam-686765",
+					"mlbam-655316",
 					"mlbam-678011",
-					"mlbam-663330"
+					"mlbam-807799"
 				],
 				"incomingIds": [],
 				"outgoingIds": [],
@@ -979,7 +1038,7 @@
 							},
 							{
 								"order": 3,
-								"playerId": "mlbam-655316"
+								"playerId": "mlbam-678554"
 							},
 							{
 								"order": 4,
@@ -991,7 +1050,7 @@
 							},
 							{
 								"order": 6,
-								"playerId": "mlbam-680776"
+								"playerId": "mlbam-701350"
 							},
 							{
 								"order": 7,
@@ -1003,7 +1062,7 @@
 							},
 							{
 								"order": 9,
-								"playerId": "mlbam-701350"
+								"playerId": "mlbam-663330"
 							}
 						]
 					},
@@ -1020,7 +1079,7 @@
 							},
 							{
 								"order": 3,
-								"playerId": "mlbam-686765"
+								"playerId": "mlbam-678554"
 							},
 							{
 								"order": 4,
@@ -1032,7 +1091,7 @@
 							},
 							{
 								"order": 6,
-								"playerId": "mlbam-680776"
+								"playerId": "mlbam-701350"
 							},
 							{
 								"order": 7,
@@ -1044,7 +1103,7 @@
 							},
 							{
 								"order": 9,
-								"playerId": "mlbam-701350"
+								"playerId": "mlbam-680776"
 							}
 						]
 					}
@@ -1065,7 +1124,7 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-655316",
+						"playerId": "mlbam-678554",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -1086,7 +1145,7 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-680776",
+						"playerId": "mlbam-701350",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -1107,14 +1166,14 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-701350",
+						"playerId": "mlbam-663330",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-686765",
+						"playerId": "mlbam-680776",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -1128,21 +1187,14 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-681508",
+						"playerId": "mlbam-686765",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-807799",
-						"maxStarts": 10,
-						"maxDefensiveOuts": 300,
-						"maxPA": 200,
-						"sourceId": "storyline-assumptions"
-					},
-					{
-						"playerId": "mlbam-681987",
+						"playerId": "mlbam-655316",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
@@ -1156,11 +1208,53 @@
 						"sourceId": "storyline-assumptions"
 					},
 					{
-						"playerId": "mlbam-663330",
+						"playerId": "mlbam-807799",
 						"maxStarts": 10,
 						"maxDefensiveOuts": 300,
 						"maxPA": 200,
 						"sourceId": "storyline-assumptions"
+					}
+				],
+				"projectedStarters": [
+					{
+						"playerId": "mlbam-668939",
+						"role": "C",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-575929",
+						"role": "1B",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-702332",
+						"role": "3B",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-701350",
+						"role": null,
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-678882",
+						"role": "CF",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-677800",
+						"role": "RF",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-678554",
+						"role": "2B",
+						"sourceId": "storyline-projection-2027"
+					},
+					{
+						"playerId": "mlbam-596115",
+						"role": "SS",
+						"sourceId": "storyline-projection-2027"
 					}
 				],
 				"constraints": {
