@@ -549,8 +549,8 @@ the club has made, and the rates are observed, not projected. Franklin Arias
 is named in the `winter-infield` lede but excluded from its numbers: he has no
 major-league plate appearance, and scoring him would need minor-league rates
 and a new eligibility rule. The 2027-03-25 window assumes the December 1 CBA
-expiry produces no lockout delay. The README screenshots still show the
-five-pin start screen.
+expiry produces no lockout delay. The README screenshots were refreshed in
+D-55 to the eight-pin timeline and a decision board.
 
 ### Quiet daily refresh: write only on material change (D-54, user directive 2026-10-05)
 
