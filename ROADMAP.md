@@ -589,6 +589,12 @@ with the first scheduled run or `workflow_dispatch`, carrying that fetch's
 the no-op behavior is proven by unit tests and an offline rebuild, not by a
 scheduled run.
 
+Real-world proof (2026-10-06, two manual `workflow_dispatch` runs on main):
+the first run opened PR #11 carrying exactly the predicted one-time shrink
+plus timestamp carry (reviewed: no rate, eligibility, assignment, or
+expectation change) and was merged; the second run succeeded with no pull
+request. The offseason no-op guarantee holds in production.
+
 ### Rule-based baseline beside the Jev prompt (D-55, user directive 2026-10-05)
 
 Delivered: `src/lib/classification/baseline.ts` applies the frozen profile rubric's recorded
