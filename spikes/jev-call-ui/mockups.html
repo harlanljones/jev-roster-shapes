@@ -10,8 +10,8 @@
 		href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;600&family=Saira+Stencil+One&display=swap"
 	/>
 	<style>
-		/* Layout: the app's steel magnet board; each direction is a full app screen pinned to it,
-   with a short brief above and the trade-offs below. Single light world by choice (DESIGN.md: no dark theme). */
+		/* Layout: the app's steel magnet board. Two components, RosterDiagram and JevCall, are built once and
+   composed three ways; each layout gives both full size. Single light world by choice (DESIGN.md: no dark theme). */
 		:root {
 			color-scheme: light;
 			--board: #dde3e8;
@@ -25,8 +25,6 @@
 			--snug: #23794a;
 			--fits: #8a5e0e;
 			--loose: #b3261e;
-			--foam: #2c312f;
-			--shell: #191d1c;
 			--wash: #eef1f4;
 			--display: 'Saira Stencil One', 'Arial Black', Impact, sans-serif;
 			--body: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
@@ -46,7 +44,7 @@
 			font: 15px/1.55 var(--body);
 		}
 		.page {
-			max-width: 1240px;
+			max-width: 1280px;
 			margin: 0 auto;
 			padding: 40px 20px 80px;
 			display: grid;
@@ -132,14 +130,14 @@
 			outline-offset: 2px;
 		}
 
-		/* anatomy */
-		.anatomy {
+		/* anatomy + component spec */
+		.two {
 			display: grid;
-			grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 			gap: 24px;
 			align-items: start;
 		}
-		.anatomy pre {
+		pre.req {
 			margin: 0;
 			background: var(--panel);
 			border: 1px solid var(--rule);
@@ -149,21 +147,22 @@
 			overflow-x: auto;
 			color: var(--ink-soft);
 		}
-		.anatomy pre b {
+		pre.req b {
 			color: var(--ink);
 			font-weight: 600;
 		}
-		.anatomy pre .k1 {
+		pre.req .k1 {
 			color: var(--marker);
 			font-weight: 600;
 		}
-		.anatomy pre .k2 {
+		pre.req .k2 {
 			color: var(--accent);
 			font-weight: 600;
 		}
 		.terms {
 			display: grid;
-			gap: 12px;
+			gap: 0;
+			margin: 0;
 		}
 		.term {
 			display: grid;
@@ -182,8 +181,43 @@
 			color: var(--ink-soft);
 			font-size: 14px;
 		}
+		.spec {
+			background: var(--panel);
+			border: 1px solid var(--rule);
+			border-radius: 6px;
+			padding: 16px 18px;
+			display: grid;
+			gap: 10px;
+		}
+		.spec h3 {
+			font-family: var(--mono);
+			font-weight: 600;
+			font-size: 16px;
+		}
+		.spec p {
+			color: var(--ink-soft);
+			font-size: 14px;
+		}
+		.props {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 13px;
+		}
+		.props td {
+			padding: 6px 0;
+			border-top: 1px solid var(--rule);
+			vertical-align: top;
+		}
+		.props td:first-child {
+			font: 600 12px/1.5 var(--mono);
+			white-space: nowrap;
+			padding-right: 14px;
+		}
+		.props td:last-child {
+			color: var(--ink-soft);
+		}
 
-		/* direction sections */
+		/* layout sections */
 		.dir {
 			display: grid;
 			gap: 18px;
@@ -209,7 +243,7 @@
 				0 10px 30px rgba(22, 32, 42, 0.1);
 		}
 		.frame {
-			min-width: 1120px;
+			min-width: 1160px;
 			background: var(--board);
 			background-image: inherit;
 			border: 1px solid var(--rule);
@@ -246,10 +280,17 @@
 			display: grid;
 			gap: 18px;
 		}
-		.panel {
-			background: var(--panel);
-			border: 1px solid var(--rule);
-			border-radius: 6px;
+		.split-ab {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			gap: 18px;
+			align-items: start;
+		}
+		.split-c {
+			display: grid;
+			grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+			gap: 18px;
+			align-items: start;
 		}
 		.tradeoffs {
 			display: grid;
@@ -283,6 +324,58 @@
 			gap: 4px;
 		}
 
+		/* component chrome: same header on every instance, so reuse is visible */
+		.cmp {
+			background: var(--panel);
+			border: 1px solid var(--rule);
+			border-radius: 6px;
+			overflow: hidden;
+			min-width: 0;
+		}
+		.cmp-head {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			flex-wrap: wrap;
+			padding: 10px 14px;
+			border-bottom: 1px solid var(--rule);
+		}
+		.cmp-head h3 {
+			font-size: 20px;
+		}
+		.cmp-tag {
+			margin-left: auto;
+			font: 500 11px/1 var(--mono);
+			color: var(--marker);
+			background: #e9effa;
+			border: 1px solid #c6d4ef;
+			padding: 5px 7px;
+			border-radius: 3px;
+			white-space: nowrap;
+		}
+		.toggle {
+			display: inline-flex;
+			border: 1px solid var(--rule);
+			border-radius: 6px;
+			background: var(--panel);
+			padding: 3px;
+			gap: 3px;
+		}
+		.toggle button {
+			font: 600 11.5px/1 var(--mono);
+			border: 0;
+			background: transparent;
+			color: var(--ink-soft);
+			padding: 0 11px;
+			min-height: 36px;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+		.toggle button.on {
+			background: var(--ink);
+			color: var(--panel);
+		}
+
 		/* shared bits */
 		.label-sm {
 			font: 600 11px/1.2 var(--mono);
@@ -314,8 +407,6 @@
 		}
 		.instr {
 			font-size: 13.5px;
-			color: var(--ink);
-			border-left: 0;
 			background: var(--wash);
 			border: 1px solid var(--rule);
 			padding: 10px 12px;
@@ -375,6 +466,7 @@
 			font: 600 9.5px/18px var(--mono);
 			text-align: center;
 			color: var(--panel);
+			flex: none;
 		}
 		.mk.J {
 			background: var(--ink);
@@ -389,32 +481,26 @@
 			background: transparent;
 			color: transparent;
 		}
-
-		/* ---------- Direction A: tag on the piece ---------- */
-		.a-grid {
-			display: grid;
-			grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-			gap: 18px;
-			align-items: start;
+		.footnote {
+			font: 12px/1.45 var(--mono);
+			color: var(--ink-soft);
 		}
-		.a-board {
-			padding: 16px;
+
+		/* RosterDiagram */
+		.rd-body {
+			padding: 14px;
 			display: grid;
 			gap: 10px;
-		}
-		.a-board .row {
-			display: flex;
-			justify-content: space-between;
-			align-items: baseline;
 		}
 		.boardsvg {
 			width: 100%;
 			height: auto;
+			max-height: 600px;
 			display: block;
 		}
 		.verdict {
 			display: flex;
-			gap: 10px;
+			gap: 8px;
 			flex-wrap: wrap;
 			align-items: center;
 			padding-top: 10px;
@@ -434,56 +520,120 @@
 		.chip.disagree {
 			border-color: var(--accent);
 		}
-		.calltag {
-			position: relative;
-			padding: 0;
-			overflow: hidden;
-		}
-		.calltag::before {
-			content: '';
-			position: absolute;
-			top: 14px;
-			left: 14px;
-			width: 12px;
-			height: 12px;
-			border-radius: 50%;
-			background: var(--board);
-			border: 1px solid var(--rule);
-		}
-		.ct-head {
-			padding: 14px 16px 12px 36px;
-			border-bottom: 1px dashed var(--rule);
-			display: grid;
-			gap: 6px;
-		}
-		.ct-head .who {
-			font: 400 22px/1 var(--display);
-		}
-		.ct-meta {
+		.legend {
 			display: flex;
 			flex-wrap: wrap;
-			gap: 6px;
+			gap: 14px;
+			font-size: 12px;
+			color: var(--ink-soft);
+			align-items: center;
 		}
-		.ct-sec {
+		.savant {
+			display: inline-block;
+			width: 80px;
+			height: 8px;
+			border-radius: 2px;
+			background: linear-gradient(
+				90deg,
+				rgb(50, 90, 168),
+				rgb(140, 170, 215),
+				rgb(220, 220, 220),
+				rgb(236, 152, 130),
+				rgb(210, 45, 73)
+			);
+			vertical-align: middle;
+		}
+		.lanes {
+			display: grid;
+			border: 1px solid var(--rule);
+			border-radius: 4px;
+			overflow: hidden;
+		}
+		.lane {
+			display: grid;
+			grid-template-columns: 210px minmax(0, 1fr);
+			border-top: 1px solid var(--rule);
+			min-height: 84px;
+		}
+		.lane:first-child {
+			border-top: 0;
+		}
+		.lane-key {
+			padding: 8px 12px;
+			display: grid;
+			grid-template-columns: 24px minmax(0, 1fr);
+			gap: 2px 8px;
+			align-content: center;
+			border-right: 1px solid var(--rule);
+			background: var(--panel);
+		}
+		.lane-key .lbl {
+			font: 400 15px/1 var(--display);
+		}
+		.lane-key .rule {
+			grid-column: 2;
+			font: 500 10.5px/1.35 var(--mono);
+			color: var(--marker);
+		}
+		.lane-key .cnt {
+			font: 500 11px/1 var(--mono);
+			color: var(--ink-soft);
+		}
+		.lane-track {
+			position: relative;
+			background: var(--wash);
+			background-image: linear-gradient(90deg, rgba(22, 32, 42, 0.05) 1px, transparent 1px);
+			background-size: 48px 100%;
+		}
+		.lane-track svg {
+			display: block;
+			width: 100%;
+			height: 84px;
+		}
+		.lane.empty .lane-track::after {
+			content: 'no one';
+			position: absolute;
+			left: 14px;
+			top: 50%;
+			transform: translateY(-50%);
+			font: 500 11px/1 var(--mono);
+			color: var(--ink-soft);
+			opacity: 0.6;
+		}
+
+		/* JevCall */
+		.jc-sec {
 			padding: 12px 16px;
 			border-bottom: 1px solid var(--rule);
 			display: grid;
 			gap: 8px;
+			align-content: start;
+			min-width: 0;
 		}
-		.ct-sec:last-child {
+		.jc-sec:last-child {
 			border-bottom: 0;
+		}
+		.jc-who {
+			font: 400 22px/1 var(--display);
+		}
+		.jc-meta {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px;
 		}
 		.state {
 			display: grid;
-			grid-template-columns: 150px minmax(0, 1fr);
+			grid-template-columns: 130px minmax(0, 1fr);
 			gap: 2px 10px;
 			font: 12px/1.5 var(--mono);
+			margin: 0;
 		}
 		.state dt {
 			color: var(--ink-soft);
 		}
 		.state dd {
 			margin: 0;
+			overflow-wrap: anywhere;
 		}
 		.state dd.na {
 			color: var(--fits);
@@ -503,16 +653,14 @@
 			display: grid;
 			gap: 2px;
 		}
-		.crit details {
-			border-radius: 4px;
-		}
 		.crit details[open] {
 			background: var(--wash);
+			border-radius: 4px;
 		}
 		.crit summary {
 			list-style: none;
 			display: grid;
-			grid-template-columns: 22px 92px minmax(0, 1fr) 44px 64px;
+			grid-template-columns: 20px 86px minmax(40px, 1fr) 38px 62px;
 			gap: 8px;
 			align-items: center;
 			padding: 5px 6px;
@@ -543,13 +691,15 @@
 			text-align: right;
 		}
 		.crit .txt {
-			padding: 0 8px 8px 36px;
+			padding: 0 8px 8px 34px;
 			font-size: 12.5px;
 			color: var(--ink-soft);
-		}
-		.noul {
 			display: grid;
-			gap: 8px;
+			gap: 4px;
+		}
+		.crit .txt .rule {
+			font: 500 11px/1.4 var(--mono);
+			color: var(--marker);
 		}
 		.noul-scale {
 			display: grid;
@@ -567,6 +717,7 @@
 			background: linear-gradient(90deg, #f3d9d6, var(--wash) 50%, #d6eadc);
 			border: 1px solid var(--rule);
 			border-radius: 2px;
+			margin-bottom: 18px;
 		}
 		.gauge b {
 			position: absolute;
@@ -582,31 +733,24 @@
 			transform: translateX(-50%);
 			font: 600 11px/1 var(--mono);
 		}
-		.footnote {
-			font: 12px/1.45 var(--mono);
-			color: var(--ink-soft);
-		}
-
-		/* ---------- Direction B: call sheet ---------- */
-		.b-top {
+		.jc-h {
 			display: grid;
-			grid-template-columns: 200px minmax(0, 1fr) 270px;
+			grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr);
 		}
-		.b-top > * {
-			padding: 16px;
-		}
-		.b-top > * + * {
+		.jc-h > .jc-sec {
+			border-bottom: 0;
 			border-left: 1px solid var(--rule);
 		}
-		.qlist {
-			display: grid;
-			gap: 6px;
-			align-content: start;
+		.jc-h > .jc-sec:first-child {
+			border-left: 0;
+		}
+		.jc-h .crit summary {
+			grid-template-columns: 20px 86px minmax(40px, 1fr) 38px 62px;
 		}
 		.qbtn {
 			text-align: left;
 			display: grid;
-			gap: 4px;
+			gap: 6px;
 			padding: 10px;
 			border: 1px solid var(--rule);
 			background: var(--panel);
@@ -618,7 +762,6 @@
 		}
 		.qbtn.on {
 			border-color: var(--ink);
-			box-shadow: inset 3px 0 0 transparent;
 			background: var(--wash);
 		}
 		.qbtn.add {
@@ -627,279 +770,9 @@
 			font: 500 12px/1 var(--mono);
 			align-content: center;
 		}
-		.seg {
-			display: inline-flex;
-			border: 1px solid var(--ink);
-			border-radius: 4px;
-			overflow: hidden;
-		}
-		.seg span {
-			font: 600 11px/1 var(--mono);
-			letter-spacing: 0.06em;
-			text-transform: uppercase;
-			padding: 8px 12px;
-		}
-		.seg span.on {
-			background: var(--ink);
-			color: var(--panel);
-		}
-		.editor {
-			display: grid;
-			gap: 12px;
-			align-content: start;
-		}
-		.field {
-			display: grid;
-			gap: 6px;
-		}
-		.ctable {
-			width: 100%;
-			border-collapse: collapse;
-			font-size: 12.5px;
-		}
-		.ctable th,
-		.ctable td {
-			text-align: left;
-			padding: 6px 8px;
-			border-top: 1px solid var(--rule);
-			vertical-align: top;
-		}
-		.ctable th {
-			font: 600 10.5px/1.2 var(--mono);
-			text-transform: uppercase;
-			letter-spacing: 0.06em;
-			color: var(--ink-soft);
-		}
-		.ctable td:first-child {
-			white-space: nowrap;
-			font-weight: 600;
-		}
-		.ctable td.t {
-			color: var(--ink-soft);
-		}
-		.ctable .rule {
-			color: var(--marker);
-		}
-		.stfields {
-			display: grid;
-			gap: 6px;
-			align-content: start;
-			font-size: 12.5px;
-		}
-		.stfields .f {
-			display: flex;
-			justify-content: space-between;
-			gap: 8px;
-			align-items: center;
-			padding: 6px 0;
-			border-top: 1px solid var(--rule);
-		}
-		.b-bottom {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) 340px;
-			gap: 18px;
-			align-items: start;
-		}
-		.vgrid {
-			width: 100%;
-			border-collapse: collapse;
-			font-size: 13px;
-		}
-		.vgrid th,
-		.vgrid td {
-			padding: 6px 10px;
-			border-top: 1px solid var(--rule);
-			text-align: left;
-		}
-		.vgrid th {
-			font: 600 10.5px/1.2 var(--mono);
-			text-transform: uppercase;
-			letter-spacing: 0.06em;
-			color: var(--ink-soft);
-			border-top: 0;
-		}
-		.vgrid tbody tr {
-			cursor: pointer;
-		}
-		.vgrid tbody tr:hover {
-			background: var(--wash);
-		}
-		.vgrid tbody tr.sel {
-			background: #e9effa;
-		}
-		.vgrid .g {
-			display: inline-flex;
-			align-items: center;
-			gap: 6px;
-			font: 500 12px/1 var(--mono);
-		}
-		.vgrid .slot {
-			font: 600 11px/1 var(--mono);
-			color: var(--ink-soft);
-			width: 34px;
-		}
-		.mini-noul {
-			display: inline-block;
-			width: 60px;
-			height: 6px;
-			background: var(--wash);
-			border: 1px solid var(--rule);
-			position: relative;
-			vertical-align: middle;
-		}
-		.mini-noul i {
-			position: absolute;
-			inset: 0 auto 0 0;
-			background: var(--ink-soft);
-		}
-		.status {
-			font: 600 10.5px/1 var(--mono);
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
-			padding: 4px 6px;
-			border-radius: 3px;
-			border: 1px solid;
-			white-space: nowrap;
-		}
-		.status.agree {
-			color: var(--snug);
-		}
-		.status.split {
-			color: var(--accent);
-		}
-		.status.thin {
-			color: var(--fits);
-			border-style: dashed;
-		}
 
-		/* ---------- Direction C: criteria lanes ---------- */
-		.c-top {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) auto;
-			gap: 18px;
-			align-items: center;
-			padding: 14px 16px;
-		}
-		.c-top .q {
-			display: grid;
-			gap: 6px;
-		}
-		.toggle {
-			display: inline-flex;
-			border: 1px solid var(--rule);
-			border-radius: 6px;
-			background: var(--panel);
-			padding: 3px;
-			gap: 3px;
-		}
-		.toggle button {
-			font: 600 12px/1 var(--mono);
-			border: 0;
-			background: transparent;
-			color: var(--ink-soft);
-			padding: 0 14px;
-			min-height: 40px;
-			border-radius: 4px;
-			cursor: pointer;
-		}
-		.toggle button.on {
-			background: var(--ink);
-			color: var(--panel);
-		}
-		.lanes {
-			display: grid;
-		}
-		.lane {
-			display: grid;
-			grid-template-columns: 290px minmax(0, 1fr);
-			border-top: 1px solid var(--rule);
-			min-height: 76px;
-		}
-		.lane:first-child {
-			border-top: 0;
-		}
-		.lane-key {
-			padding: 10px 14px;
-			display: grid;
-			grid-template-columns: 28px minmax(0, 1fr);
-			gap: 4px 10px;
-			align-content: center;
-			border-right: 1px solid var(--rule);
-			background: var(--panel);
-		}
-		.lane-key .lbl {
-			font: 400 16px/1 var(--display);
-		}
-		.lane-key .txt {
-			grid-column: 2;
-			font-size: 11.5px;
-			line-height: 1.35;
-			color: var(--ink-soft);
-			display: -webkit-box;
-			-webkit-line-clamp: 2;
-			-webkit-box-orient: vertical;
-			overflow: hidden;
-		}
-		.lane-key .cnt {
-			font: 500 11px/1 var(--mono);
-			color: var(--ink-soft);
-		}
-		.lane-track {
-			position: relative;
-			background-image: linear-gradient(90deg, rgba(22, 32, 42, 0.05) 1px, transparent 1px);
-			background-size: 48px 100%;
-		}
-		.lane-track svg {
-			display: block;
-			width: 100%;
-			height: 76px;
-		}
-		.lane.empty .lane-track::after {
-			content: 'no one';
-			position: absolute;
-			left: 14px;
-			top: 50%;
-			transform: translateY(-50%);
-			font: 500 11px/1 var(--mono);
-			color: var(--rule);
-		}
-		.c-side {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) 300px;
-			gap: 18px;
-			align-items: start;
-		}
-		.c-card {
-			padding: 14px 16px;
-			display: grid;
-			gap: 10px;
-		}
-		.legend {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 14px;
-			font-size: 12px;
-			color: var(--ink-soft);
-			align-items: center;
-		}
-		.savant {
-			display: inline-block;
-			width: 90px;
-			height: 8px;
-			border-radius: 2px;
-			background: linear-gradient(
-				90deg,
-				rgb(50, 90, 168),
-				rgb(140, 170, 215),
-				rgb(220, 220, 220),
-				rgb(236, 152, 130),
-				rgb(210, 45, 73)
-			);
-			vertical-align: middle;
-		}
-
-		@media (max-width: 760px) {
-			.anatomy {
+		@media (max-width: 860px) {
+			.two {
 				grid-template-columns: 1fr;
 			}
 			.term {
@@ -907,25 +780,16 @@
 				gap: 2px;
 			}
 		}
-		@media (prefers-reduced-motion: no-preference) {
-			.piece {
-				transition: opacity 0.15s;
-			}
-			.lane-track svg g.piece {
-				transition: transform 0.35s ease;
-			}
-		}
 	</style>
 
 	<div class="page">
 		<header class="lede">
-			<h1>Jev call: three directions</h1>
+			<h1>Jev call: three layouts</h1>
 			<p>
-				Mockups before code. Each direction puts the <strong>roster diagram</strong> and the
-				<strong>Jev call</strong> on one screen: the call's question <strong>types</strong>,
-				<strong>instructions</strong>, <strong>criteria</strong>, and the
-				<strong>questions</strong> themselves. Click any piece or row and every direction follows
-				the same player.
+				Revised so the <strong>roster diagram</strong> and the <strong>Jev call</strong> are both
+				primary components on every layout. Each is built once, with the same header, data and
+				controls, and each layout only changes how the two sit together. Click a piece anywhere and
+				every instance follows the same player.
 			</p>
 			<p>
 				The players, slots, splits, analyst labels and rule-baseline labels are the real 2026 Wild
@@ -934,25 +798,103 @@
 				<strong>Jev's answers are made up for the mockup</strong>; no live call was made.
 			</p>
 			<div><span class="tag-illus">Jev probabilities are illustrative</span></div>
-			<nav class="jump" aria-label="Directions">
-				<a href="#anatomy">What a call is</a>
-				<a href="#dir-a">A · Tag on the piece</a>
-				<a href="#dir-b">B · Call sheet</a>
-				<a href="#dir-c">C · Criteria lanes</a>
+			<nav class="jump" aria-label="Sections">
+				<a href="#anatomy">The two components</a>
+				<a href="#dir-a">A · Side by side</a>
+				<a href="#dir-b">B · Call over board</a>
+				<a href="#dir-c">C · Lanes and call</a>
 			</nav>
 		</header>
 
 		<section id="anatomy" class="dir">
 			<div class="dir-head">
-				<h2>What a Jev call is</h2>
+				<h2>The two components</h2>
 				<p>
-					One request per player: a plain-text state, then a set of keyed questions. Each question
-					has a type, instructions and criteria. All three directions have to show these four parts
-					without hiding the evidence.
+					Both take the same selected player and the same three label sources (Jev, rule baseline,
+					analyst). Neither can change a run total: the diagram's sizes come from the engine's
+					display layer, and the call is advisory.
 				</p>
 			</div>
-			<div class="anatomy">
-				<pre aria-label="Request shape">POST /v1/systemone
+			<div class="two">
+				<div class="spec">
+					<h3>&lt;RosterDiagram&gt;</h3>
+					<p>
+						The decision's board: lineup packed under the pool's best, the off-the-field tray at the
+						same scale, pieces split by pitcher hand. A lanes mode regroups the same pieces by
+						criterion.
+					</p>
+					<table class="props">
+						<tbody>
+							<tr>
+								<td>mode</td>
+								<td>
+									<code>packed</code> (the D-50 board) or <code>lanes</code> (one lane per profile
+									criterion)
+								</td>
+							</tr>
+							<tr>
+								<td>source</td>
+								<td>
+									which label draws the shape: <code>analyst</code>, <code>rule</code> or
+									<code>jev</code>
+								</td>
+							</tr>
+							<tr>
+								<td>highlight</td>
+								<td>
+									<code>none</code> or <code>disagreements</code> (red dashed ring where the sources
+									differ)
+								</td>
+							</tr>
+							<tr>
+								<td>selected</td>
+								<td>player id, shared with JevCall</td>
+							</tr>
+							<tr>
+								<td>thinEvidence</td>
+								<td>hatch pieces whose <code>evidence_sufficient</code> is below .50</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="spec">
+					<h3>&lt;JevCall&gt;</h3>
+					<p>
+						One player's request and answer: the state Jev was given, then every question with its
+						type, instructions and criteria, and the answer laid on the criteria.
+					</p>
+					<table class="props">
+						<tbody>
+							<tr>
+								<td>request</td>
+								<td>the <code>JevSystemOneRequest</code> from <code>buildProfileRequest</code></td>
+							</tr>
+							<tr>
+								<td>response</td>
+								<td>validated <code>JevResponse</code>, or a not-configured / invalid state</td>
+							</tr>
+							<tr>
+								<td>compare</td>
+								<td>rule and analyst labels, drawn as R and A marks on the criteria</td>
+							</tr>
+							<tr>
+								<td>orientation</td>
+								<td>
+									<code>vertical</code> (a column) or <code>horizontal</code> (a full-width strip)
+								</td>
+							</tr>
+							<tr>
+								<td>editable</td>
+								<td>
+									shows the question rail with Add question; adding one bumps the prompt version
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="two">
+				<pre class="req" aria-label="Request shape">POST /v1/systemone
 {
   <b>"model"</b>: "jev-latest",
   <b>"state"</b>: "Player: Roman Anthony (mlbam-701350)
@@ -977,8 +919,7 @@
 						<dt>Questions</dt>
 						<dd>
 							Keyed asks in one call. Today there are two: <code>profile</code> and
-							<code>evidence_sufficient</code>. A future call could add more (for example a
-							position-fit question) without touching the engine.
+							<code>evidence_sufficient</code>.
 						</dd>
 					</div>
 					<div class="term">
@@ -1009,13 +950,12 @@
 
 		<section id="dir-a" class="dir">
 			<div class="dir-head">
-				<span class="letter">DIRECTION A</span>
-				<h2>Tag on the piece</h2>
+				<span class="letter">LAYOUT A</span>
+				<h2>Side by side</h2>
 				<p>
-					The board stays the decision's one diagram. Selecting a piece hangs the Jev call on it
-					like an inspection tag: the evidence it was given, each question with its type and
-					instructions, and every criterion with Jev's probability. Analyst and rule labels sit
-					beside Jev's as marks, so disagreement is visible without leaving the board.
+					Equal halves. The packed board on the left, the call as a column on the right. Reading
+					goes piece, then the call about that piece. This is the closest to the current decision
+					page.
 				</p>
 			</div>
 			<div class="scroller">
@@ -1026,22 +966,9 @@
 						><span>Snapshots</span><span class="sp">2026 Red Sox · position players</span>
 					</div>
 					<div class="screen">
-						<div class="a-grid">
-							<div class="panel a-board">
-								<div class="row">
-									<h3>On the field · off the field</h3>
-									<span class="label-sm">piece area = 2026 runs</span>
-								</div>
-								<svg
-									id="a-board"
-									class="boardsvg"
-									viewBox="0 0 640 430"
-									role="group"
-									aria-label="Wild Card baseline lineup and bench, sized by 2026 runs"
-								></svg>
-								<div class="verdict" id="a-verdict"></div>
-							</div>
-							<article class="panel calltag" id="a-tag" aria-live="polite"></article>
+						<div class="split-ab">
+							<div class="cmp" data-diagram="a" data-mode="packed" data-source="analyst"></div>
+							<div class="cmp" data-call="a" data-orientation="vertical"></div>
 						</div>
 					</div>
 				</div>
@@ -1050,16 +977,15 @@
 				<div class="good">
 					<h4>Good for</h4>
 					<ul>
-						<li>Keeps D-50's one-board rule; the call is a detail of a piece, not a new page.</li>
-						<li>Reads player by player, which matches how a call is actually sent.</li>
-						<li>Criteria rows double as the explanation of the shape.</li>
+						<li>Both components at full height, side by side, with no scrolling between them.</li>
+						<li>Keeps the D-50 board as the decision's diagram.</li>
 					</ul>
 				</div>
 				<div class="cost">
 					<h4>Costs</h4>
 					<ul>
-						<li>Roster-wide agreement is hard to see; you inspect one piece at a time.</li>
-						<li>The tag is tall. On a phone it drops below the board.</li>
+						<li>Each half is narrower, so the board loses some size.</li>
+						<li>On a phone the call drops below the board.</li>
 					</ul>
 				</div>
 			</div>
@@ -1067,14 +993,13 @@
 
 		<section id="dir-b" class="dir">
 			<div class="dir-head">
-				<span class="letter">DIRECTION B</span>
-				<h2>Call sheet</h2>
+				<span class="letter">LAYOUT B</span>
+				<h2>Call over board</h2>
 				<p>
-					The call is the main object. Questions are a list you can add to; the selected one opens
-					as a form with its type, instructions and criteria table, and the state template shows
-					which fields come from which source and what is withheld. Below, the call is run across
-					the roster: one row per player with analyst, rule and Jev side by side, and a small board
-					that outlines every disagreement.
+					Stacked, both full width. The call runs across the top as a horizontal strip: questions,
+					state, the profile criteria with answers, and the noul. The board fills the width below
+					and rings every piece where Jev, the rule and the analyst disagree. The call is editable
+					here.
 				</p>
 			</div>
 			<div class="scroller">
@@ -1086,31 +1011,14 @@
 						><span class="sp">jev-profile-prompt-v1 · jev-profile-rubric-v1</span>
 					</div>
 					<div class="screen">
-						<div class="panel b-top">
-							<div class="qlist" id="b-qlist"></div>
-							<div class="editor" id="b-editor"></div>
-							<div class="stfields" id="b-state"></div>
-						</div>
-						<div class="b-bottom">
-							<div class="panel" style="padding: 8px 6px; overflow-x: auto">
-								<table class="vgrid" id="b-grid"></table>
-							</div>
-							<div class="panel" style="padding: 14px; display: grid; gap: 8px">
-								<div class="row" style="display: flex; justify-content: space-between">
-									<span class="label-sm">Board · disagreements outlined</span>
-								</div>
-								<svg
-									id="b-board"
-									class="boardsvg"
-									viewBox="0 0 640 430"
-									role="group"
-									aria-label="Board with disagreements outlined"
-								></svg>
-								<p class="footnote">
-									Red outline: Jev, the rule baseline and the analyst do not all agree.
-								</p>
-							</div>
-						</div>
+						<div class="cmp" data-call="b" data-orientation="horizontal" data-editable="1"></div>
+						<div
+							class="cmp"
+							data-diagram="b"
+							data-mode="packed"
+							data-source="jev"
+							data-highlight="disagreements"
+						></div>
 					</div>
 				</div>
 			</div>
@@ -1118,22 +1026,19 @@
 				<div class="good">
 					<h4>Good for</h4>
 					<ul>
+						<li>Biggest board of the three, and the call reads in one line across.</li>
 						<li>
-							Makes the call itself editable and versionable, which is the "type-safe Jev" part of
-							the project.
-						</li>
-						<li>Roster-wide agreement and coverage are one glance.</li>
-						<li>
-							Shows what is withheld from the prompt (analyst label, age), which keeps the
-							comparison honest.
+							Editing the call and seeing disagreements land on the board happen on one screen.
 						</li>
 					</ul>
 				</div>
 				<div class="cost">
 					<h4>Costs</h4>
 					<ul>
-						<li>The board shrinks to a thumbnail; the shapes stop carrying the argument.</li>
-						<li>Feels like a tool screen, closer to Snapshots than to a decision.</li>
+						<li>The page is tall; the board sits below the fold on a laptop.</li>
+						<li>
+							The horizontal strip needs a wide screen and stacks into the vertical call on phones.
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -1141,13 +1046,12 @@
 
 		<section id="dir-c" class="dir">
 			<div class="dir-head">
-				<span class="letter">DIRECTION C</span>
-				<h2>Criteria lanes</h2>
+				<span class="letter">LAYOUT C</span>
+				<h2>Lanes and call</h2>
 				<p>
-					The criteria become the diagram. Each of the nine profile criteria is a lane, and every
-					piece sits in the lane its source chose, at true scale. Flip the source between Jev, the
-					rule baseline and the analyst and the pieces move lanes. The noul question draws as
-					texture: a piece Jev says had thin evidence is hatched.
+					The diagram opens in lanes mode, one lane per profile criterion, so the rubric is the axis
+					and the call beside it explains each lane. Switch the source and pieces move lanes; switch
+					to Packed and the same component becomes the board.
 				</p>
 			</div>
 			<div class="scroller">
@@ -1158,35 +1062,16 @@
 						><span class="sp">14 position players</span>
 					</div>
 					<div class="screen">
-						<div class="panel c-top">
-							<div class="q">
-								<div class="qhead">
-									<span class="qkey">profile</span><span class="typepill choice">choice</span
-									><span class="qkey" style="color: var(--ink-soft)">+</span
-									><span class="qkey">evidence_sufficient</span
-									><span class="typepill noul">noul</span>
-								</div>
-								<p style="font-size: 13.5px">
-									“Which single profile label describes this position player under the rubric above?
-									Answer only from the supplied observations.”
-								</p>
-							</div>
-							<div class="toggle" role="group" aria-label="Place pieces by">
-								<button type="button" data-src="jev" class="on">Jev</button>
-								<button type="button" data-src="rule">Rule baseline</button>
-								<button type="button" data-src="analyst">Analyst</button>
-							</div>
-						</div>
-						<div class="c-side">
-							<div class="panel lanes" id="c-lanes"></div>
-							<div class="panel c-card" id="c-card"></div>
-						</div>
-						<div class="legend">
-							<span
-								><span class="savant"></span> vs LHP | vs RHP OPS against league (−.150 to
-								+.150)</span
-							><span>Hatched: Jev evidence_sufficient below .50</span
-							><span>Small letters: where the other sources put the piece</span>
+						<div class="split-c">
+							<div
+								class="cmp"
+								data-diagram="c"
+								data-mode="lanes"
+								data-source="jev"
+								data-thin="1"
+								data-controls="1"
+							></div>
+							<div class="cmp" data-call="c" data-orientation="vertical"></div>
 						</div>
 					</div>
 				</div>
@@ -1195,16 +1080,15 @@
 				<div class="good">
 					<h4>Good for</h4>
 					<ul>
-						<li>Shows the criteria and the answers as one picture; the rubric is the axis.</li>
-						<li>The source toggle is the clearest way to see where Jev and the rules part ways.</li>
-						<li>Works as a new subpage under D-50 without displacing the board.</li>
+						<li>The criteria and the answers become one picture.</li>
+						<li>The source toggle shows where Jev and the rules part ways.</li>
 					</ul>
 				</div>
 				<div class="cost">
 					<h4>Costs</h4>
 					<ul>
-						<li>Gives up packing, so it says nothing about empty space or value off the field.</li>
-						<li>Instructions get one line; the full state lives in the side card.</li>
+						<li>Lanes say nothing about empty space until you switch to Packed.</li>
+						<li>Two toggles on the diagram is more to learn.</li>
 					</ul>
 				</div>
 			</div>
@@ -1254,8 +1138,8 @@
 				Square: '1 position · full load · gap < .200',
 				Rectangle: 'PA ≥ 550',
 				Circle: '2+ positions · no everyday slot',
-				Pentagon: 'needs age + power/speed (abstains)',
-				Octagon: 'needs defensive runs (abstains)',
+				Pentagon: 'needs age + power/speed (rule abstains)',
+				Octagon: 'needs defensive runs (rule abstains)',
 				Diamond: 'rate > median · PA < 300',
 				Star: '|vL − vR| ≥ .200 · 50+ PA each',
 				Funky: 'DH only, or PA < 100',
@@ -1498,7 +1382,6 @@
 					ev: 0.58
 				}
 			];
-			// fill every distribution to sum to 1 across the nine options
 			for (const p of P) {
 				const given = Object.values(p.jev).reduce((a, b) => a + b, 0);
 				const rest = LABELS.filter((l) => !(l in p.jev));
@@ -1508,10 +1391,11 @@
 			}
 			const byId = Object.fromEntries(P.map((p) => [p.id, p]));
 			let selected = 'mlbam-701350';
-			let cSource = 'jev';
+			const callQ = {}; // per-instance selected question for editable calls
 
 			const fmtOps = (v) => v.toFixed(3).replace(/^0/, '');
 			const pct = (v) => Math.round(v * 100) + '%';
+			const SRC_NAME = { jev: 'Jev', rule: 'Rule baseline', analyst: 'Analyst' };
 
 			// Savant ramp, same stops as src/lib/app/shape-case.ts
 			const STOPS = [
@@ -1536,11 +1420,11 @@
 
 			// Unit outlines, scaled to a target area via the shoelace formula
 			function poly(n, rot = -Math.PI / 2, rIn = null) {
-				const pts = [];
-				const m = rIn ? n * 2 : n;
+				const pts = [],
+					m = rIn ? n * 2 : n;
 				for (let i = 0; i < m; i++) {
-					const a = rot + (i * 2 * Math.PI) / m;
-					const r = rIn && i % 2 ? rIn : 1;
+					const a = rot + (i * 2 * Math.PI) / m,
+						r = rIn && i % 2 ? rIn : 1;
 					pts.push([Math.cos(a) * r, Math.sin(a) * r]);
 				}
 				return pts;
@@ -1591,8 +1475,8 @@
 				return Math.abs(s) / 2;
 			}
 			function outline(label, targetArea) {
-				const u = UNIT[label] || UNIT.Unclassified;
-				const k = Math.sqrt(targetArea / area(u));
+				const u = UNIT[label] || UNIT.Unclassified,
+					k = Math.sqrt(targetArea / area(u));
 				const pts = u.map(([x, y]) => [x * k, y * k]);
 				const xs = pts.map((p) => p[0]),
 					ys = pts.map((p) => p[1]);
@@ -1618,24 +1502,20 @@
 					h = o.h + 4;
 				const hatch = opts.hatch ? `<path d="${d}" fill="url(#hatch)"/>` : '';
 				const ring = opts.ring
-					? `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-dasharray="5 3" transform="translate(0,0)"/>`
+					? `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-dasharray="5 3"/>`
 					: '';
 				const dashed = label === 'Unclassified' ? ' stroke-dasharray="4 3"' : '';
-				const name = opts.noLabel
-					? ''
-					: `<text x="${cx}" y="${cy + 3}" text-anchor="middle">${opts.text ?? (p.slot ? p.slot + ' ' : '') + p.last}</text>`;
-				const marks = opts.marks || '';
+				const name = `<text x="${cx}" y="${cy + 3}" text-anchor="middle">${opts.text ?? (p.slot ? p.slot + ' ' : '') + p.last}</text>`;
 				return `<g class="piece${p.id === selected ? ' sel' : ''}" data-id="${p.id}" tabindex="0" role="button" aria-label="${p.name}, ${label}${p.slot ? ', ' + p.slot : ', off the field'}, ${p.runs.toFixed(0)} runs">
     <title>${p.name} · ${label} · ${p.runs.toFixed(1)} runs · vs LHP ${fmtOps(p.vL[1])} (${p.vL[0]} PA) · vs RHP ${fmtOps(p.vR[1])} (${p.vR[0]} PA)</title>
     <clipPath id="${id}L"><rect x="${x0}" y="${y0}" width="${w / 2}" height="${h}"/></clipPath>
     <clipPath id="${id}R"><rect x="${x0 + w / 2}" y="${y0}" width="${w / 2}" height="${h}"/></clipPath>
     <path d="${d}" fill="${savant(p.vL[1], 'L')}" clip-path="url(#${id}L)"/>
     <path d="${d}" fill="${savant(p.vR[1], 'R')}" clip-path="url(#${id}R)"/>
-    ${hatch}<path class="outline" d="${d}"${dashed}/>${ring}${name}${marks}
+    ${hatch}<path class="outline" d="${d}"${dashed}/>${ring}${name}${opts.marks || ''}
   </g>`;
 			}
 			const DEFS = `<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="rgba(251,252,253,.35)"/><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(22,32,42,.55)" stroke-width="1.6"/></pattern></defs>`;
-
 			function glyph(label, size = 18, fill = 'var(--ink)') {
 				const o = outline(label, size * size * 0.42);
 				const d =
@@ -1649,11 +1529,14 @@
 					label === 'Unclassified'
 						? `fill="none" stroke="${fill}" stroke-dasharray="2 2"`
 						: `fill="${fill}"`;
-				return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><path d="${d}" ${st}/></svg>`;
+				return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true" style="flex:none"><path d="${d}" ${st}/></svg>`;
 			}
+			const labelFor = (p, src) =>
+				src === 'jev' ? p.pick : src === 'rule' ? (p.rule ?? 'Unclassified') : p.analyst;
+			const disagree = (p) => new Set([p.pick, p.rule ?? 'abstain', p.analyst]).size > 1;
 
-			// Board: shelf packing with gravity (rows fill from the floor up)
-			const SCALE = 140; // px² per run
+			// ---------- <RosterDiagram> ----------
+			const SCALE = 112; // px² per run in packed mode
 			function shelf(list, x, y, w, h, labelOf) {
 				const items = list
 					.map((p) => ({ p, o: outline(labelOf(p), p.runs * SCALE) }))
@@ -1675,49 +1558,110 @@
 				const placed = [];
 				for (const r of rows) {
 					const rh = Math.max(...r.map((i) => i.o.h));
-					const tot = r.reduce((s, i) => s + i.o.w + 6, -6);
-					let cx = x + (w - tot) / 2;
+					let cx = x + (w - r.reduce((s, i) => s + i.o.w + 6, -6)) / 2;
 					for (const it of r) {
-						placed.push({
-							...it,
-							cx: cx + it.o.w / 2 - (it.o.minx + it.o.w / 2),
-							cy: floor - it.o.h / 2 - (it.o.miny + it.o.h / 2)
-						});
+						placed.push({ ...it, cx: cx - it.o.minx, cy: floor - it.o.h - it.o.miny });
 						cx += it.o.w + 6;
 					}
 					floor -= rh + 6;
 				}
 				return placed;
 			}
-			function disagree(p) {
-				const s = new Set([p.pick, p.rule ?? 'abstain', p.analyst]);
-				return s.size > 1;
-			}
-			function boardSVG(opts = {}) {
-				uid += 0;
-				const on = P.filter((p) => p.slot),
-					off = P.filter((p) => !p.slot);
-				const labelOf = (p) => p.analyst;
+			function packedSVG(cfg) {
+				const labelOf = (p) => labelFor(p, cfg.source);
+				const opt = (p) => ({
+					ring: cfg.highlight === 'disagreements' && disagree(p),
+					hatch: cfg.thin && p.ev < 0.5
+				});
 				let s = DEFS;
-				// bins
+				s += `<text x="8" y="22" font-size="11" font-weight="600" fill="var(--ink)" letter-spacing="1.2">ON THE FIELD</text>`;
 				s += `<rect x="8" y="34" width="388" height="388" fill="var(--panel)" stroke="var(--ink)" stroke-width="2"/>`;
 				s += `<line x1="8" y1="104" x2="396" y2="104" stroke="var(--marker)" stroke-dasharray="6 4" stroke-width="1.5"/>`;
-				s += `<text x="202" y="96" text-anchor="middle" font-size="10.5" fill="var(--marker)" letter-spacing="1.5">LID = POOL'S BEST · HEADROOM ABOVE THE LINE</text>`;
-				s += `<text x="8" y="22" font-size="11" font-weight="600" fill="var(--ink)" letter-spacing="1.2">ON THE FIELD</text>`;
-				s += `<rect x="414" y="34" width="218" height="388" fill="none" stroke="var(--ink-soft)" stroke-dasharray="3 4"/>`;
+				s += `<text x="202" y="96" text-anchor="middle" font-size="10.5" fill="var(--marker)" letter-spacing="1.5">LID = POOL'S BEST · HEADROOM ABOVE</text>`;
 				s += `<text x="414" y="22" font-size="11" font-weight="600" fill="var(--ink)" letter-spacing="1.2">OFF THE FIELD</text>`;
-				for (const it of shelf(on, 12, 104, 380, 318, labelOf))
-					s += pieceSVG(it.p, labelOf(it.p), it.cx, it.cy, it.p.runs * SCALE, {
-						ring: opts.rings && disagree(it.p)
-					});
-				for (const it of shelf(off, 418, 34, 210, 388, labelOf))
-					s += pieceSVG(it.p, labelOf(it.p), it.cx, it.cy, it.p.runs * SCALE, {
-						ring: opts.rings && disagree(it.p)
-					});
-				return s;
+				s += `<rect x="414" y="34" width="218" height="388" fill="none" stroke="var(--ink-soft)" stroke-dasharray="3 4"/>`;
+				for (const it of shelf(
+					P.filter((p) => p.slot),
+					12,
+					104,
+					380,
+					318,
+					labelOf
+				))
+					s += pieceSVG(it.p, labelOf(it.p), it.cx, it.cy, it.p.runs * SCALE, opt(it.p));
+				for (const it of shelf(
+					P.filter((p) => !p.slot),
+					418,
+					34,
+					210,
+					388,
+					labelOf
+				))
+					s += pieceSVG(it.p, labelOf(it.p), it.cx, it.cy, it.p.runs * SCALE, opt(it.p));
+				return `<svg class="boardsvg" viewBox="0 0 640 430" role="group" aria-label="Lineup and bench, sized by 2026 runs, shaped by ${SRC_NAME[cfg.source]}">${s}</svg>`;
+			}
+			function lanesHTML(cfg) {
+				const maxH = Math.max(...P.map((p) => outline(labelFor(p, cfg.source), p.runs).h));
+				const k = (68 / maxH) ** 2;
+				const mine = { jev: 'J', rule: 'R', analyst: 'A' }[cfg.source];
+				return `<div class="lanes">${LABELS.map((l) => {
+					const members = P.filter((p) => labelFor(p, cfg.source) === l).sort(
+						(a, b) => b.runs - a.runs
+					);
+					let x = 12,
+						g = '';
+					for (const p of members) {
+						const A = p.runs * k,
+							o = outline(l, A);
+						const cx = x - o.minx,
+							cy = 42 - (o.miny + o.h / 2);
+						const others = [
+							['J', p.pick],
+							['R', p.rule ?? 'abstain'],
+							['A', p.analyst]
+						].filter(([s, v]) => s !== mine && v !== l);
+						const marks = others
+							.map(
+								([s, v], i) =>
+									`<text x="${cx + o.minx + o.w + 4}" y="${20 + i * 12}" font-size="9" font-weight="600" fill="${s === 'R' ? 'var(--marker)' : s === 'A' ? 'var(--fits)' : 'var(--ink)'}" style="stroke:none">${s}:${v}</text>`
+							)
+							.join('');
+						g += pieceSVG(p, l, cx, cy, A, {
+							hatch: cfg.thin && p.ev < 0.5,
+							ring: cfg.highlight === 'disagreements' && disagree(p),
+							text: p.last,
+							marks
+						});
+						x += o.w + 16 + (others.length ? 62 : 0);
+					}
+					const label = cfg.source === 'rule' && l === 'Unclassified' ? 'Abstained' : l;
+					return `<div class="lane${members.length ? '' : ' empty'}"><div class="lane-key">${glyph(l, 22)}<span class="lbl">${label} <span class="cnt">${members.length}</span></span><span class="rule">${RULE_CODE[l]}</span></div>
+      <div class="lane-track"><svg viewBox="0 0 440 84" preserveAspectRatio="xMinYMid meet" role="group" aria-label="${label}: ${members.map((m) => m.name).join(', ') || 'no one'}">${DEFS}${g}</svg></div></div>`;
+				}).join('')}</div>`;
+			}
+			function renderDiagram(el) {
+				const cfg = {
+					mode: el.dataset.mode,
+					source: el.dataset.source,
+					highlight: el.dataset.highlight || 'none',
+					thin: el.dataset.thin === '1',
+					controls: el.dataset.controls === '1'
+				};
+				const p = byId[selected];
+				const tg = (attr, val, text, on) =>
+					`<button type="button" data-set="${attr}" data-val="${val}" class="${on ? 'on' : ''}">${text}</button>`;
+				const controls = `<span class="toggle" role="group" aria-label="Mode">${tg('mode', 'packed', 'Packed', cfg.mode === 'packed')}${tg('mode', 'lanes', 'By criterion', cfg.mode === 'lanes')}</span>
+    <span class="toggle" role="group" aria-label="Shape source">${['jev', 'rule', 'analyst'].map((s) => tg('source', s, SRC_NAME[s], cfg.source === s)).join('')}</span>`;
+				const chip = (k, lbl, title) =>
+					`<span class="chip${lbl !== p.pick ? ' disagree' : ''}"><span class="mk ${k}">${k}</span>${lbl ? glyph(lbl, 14) : ''}${title}: ${lbl ?? 'abstained'}</span>`;
+				el.innerHTML = `<div class="cmp-head"><h3>Roster</h3>${controls}<span class="cmp-tag">&lt;RosterDiagram mode="${cfg.mode}" source="${cfg.source}"${cfg.highlight !== 'none' ? ' highlight="' + cfg.highlight + '"' : ''}&gt;</span></div>
+    <div class="rd-body">${cfg.mode === 'packed' ? packedSVG(cfg) : lanesHTML(cfg)}
+      <div class="legend"><span><span class="savant"></span> vs LHP | vs RHP OPS against league</span><span>Area = 2026 runs</span>${cfg.highlight === 'disagreements' ? '<span style="color:var(--accent)">Red ring: sources disagree</span>' : ''}${cfg.thin ? '<span>Hatched: thin evidence (noul &lt; .50)</span>' : ''}</div>
+      <div class="verdict"><strong>${p.name}</strong>${chip('J', p.pick, 'Jev')}${chip('R', p.rule, 'Rule')}${chip('A', p.analyst, 'Analyst')}</div>
+    </div>`;
 			}
 
-			// ---------- A ----------
+			// ---------- <JevCall> ----------
 			function stateRows(p) {
 				return [
 					['Player', `${p.name} (${p.id})`],
@@ -1726,8 +1670,8 @@
 					['Eligible positions', p.elig.join(', ')],
 					['Observed R/PA', p.rate.toFixed(6)],
 					['Season PA', String(p.pa)],
-					['vs LHP', `${fmtOps(p.vL[1])} OPS over ${p.vL[0]} PA`],
-					['vs RHP', `${fmtOps(p.vR[1])} OPS over ${p.vR[0]} PA`],
+					['vs LHP', `${fmtOps(p.vL[1])} OPS · ${p.vL[0]} PA`],
+					['vs RHP', `${fmtOps(p.vR[1])} OPS · ${p.vR[0]} PA`],
 					['Analyst label', 'withheld'],
 					['Rubric', 'jev-profile-rubric-v1']
 				];
@@ -1743,198 +1687,79 @@
 					})
 					.join('')}</span>`;
 			}
-			function renderA() {
-				document.getElementById('a-board').innerHTML = boardSVG();
-				const p = byId[selected];
-				const v = document.getElementById('a-verdict');
-				const chip = (k, lbl, title) =>
-					`<span class="chip${lbl !== p.pick ? ' disagree' : ''}"><span class="mk ${k}">${k}</span>${lbl ? glyph(lbl, 14) : ''}${title}: ${lbl ?? 'abstained'}</span>`;
-				v.innerHTML = `<strong>${p.name}</strong>${chip('J', p.pick, 'Jev')}${chip('R', p.rule, 'Rule')}${chip('A', p.analyst, 'Analyst')}`;
+			function stateSec(p) {
+				return `<div class="jc-sec"><span class="label-sm">State · what Jev was told</span>
+    <dl class="state">${stateRows(p)
+			.map(
+				([k, v]) =>
+					`<dt>${k}</dt><dd class="${v === null || v === 'withheld' ? 'na' : ''}">${v ?? 'not available'}</dd>`
+			)
+			.join('')}</dl></div>`;
+			}
+			function profileSec(p) {
 				const rows = [...LABELS].sort((a, b) => p.jev[b] - p.jev[a]);
-				document.getElementById('a-tag').innerHTML = `
-    <div class="ct-head"><span class="label-sm">Jev call</span><span class="who">${p.name}</span>
-      <div class="ct-meta"><span class="src">POST /v1/systemone</span><span class="src">model jev-latest</span><span class="src">prompt v1</span><span class="tag-illus" style="padding:4px 6px;font-size:10px">illustrative answer</span></div></div>
-    <div class="ct-sec"><span class="label-sm">State · what Jev was told</span>
-      <dl class="state">${stateRows(p)
-				.map(
-					([k, val]) =>
-						`<dt>${k}</dt><dd class="${val === null || val === 'withheld' ? 'na' : ''}">${val ?? 'not available'}</dd>`
-				)
-				.join('')}</dl></div>
-    <div class="ct-sec">
-      <div class="qhead"><span class="n">Q1</span><span class="qkey">profile</span><span class="typepill choice">choice</span><span style="margin-left:auto" class="label-sm">confidence ${pct(p.jev[p.pick])}</span></div>
-      <p class="instr">${INSTR_P}</p>
-      <div class="crit">${rows.map((l) => `<details${l === p.pick ? ' open' : ''}><summary>${glyph(l, 18)}<span class="lbl">${l}</span><span class="bar"><i style="width:${(p.jev[l] * 100).toFixed(1)}%"></i></span><span class="pct">${pct(p.jev[l])}</span>${marksFor(p, l)}</summary><div class="txt">${CRIT[l]}</div></details>`).join('')}</div>
-    </div>
-    <div class="ct-sec noul">
-      <div class="qhead"><span class="n">Q2</span><span class="qkey">evidence_sufficient</span><span class="typepill noul">noul</span></div>
-      <p class="instr">${INSTR_E}</p>
-      <div class="noul-scale"><div><strong>false</strong> · ${E_FALSE}</div><div><strong>true</strong> · ${E_TRUE}</div></div>
-      <div class="gauge" style="margin-bottom:18px"><b style="left:${p.ev * 100}%"></b><span style="left:${p.ev * 100}%">${p.ev.toFixed(2)}</span></div>
-    </div>
-    <div class="ct-sec footnote">Advisory only. The answer never changes a run total, a lineup, or the board's size.</div>`;
+				return `<div class="jc-sec">
+    <div class="qhead"><span class="n">Q1</span><span class="qkey">profile</span><span class="typepill choice">choice</span><span style="margin-left:auto" class="label-sm">confidence ${pct(p.jev[p.pick])}</span></div>
+    <p class="instr">${INSTR_P}</p>
+    <div class="crit">${rows.map((l) => `<details${l === p.pick ? ' open' : ''}><summary>${glyph(l, 18)}<span class="lbl">${l}</span><span class="bar"><i style="width:${(p.jev[l] * 100).toFixed(1)}%"></i></span><span class="pct">${pct(p.jev[l])}</span>${marksFor(p, l)}</summary><div class="txt"><span>${CRIT[l]}</span><span class="rule">Rule: ${RULE_CODE[l]}</span></div></details>`).join('')}</div>
+  </div>`;
 			}
-
-			// ---------- B ----------
-			let bQ = 'profile';
-			function renderB() {
-				document.getElementById('b-qlist').innerHTML = `<span class="label-sm">Questions</span>
-    <button type="button" class="qbtn${bQ === 'profile' ? ' on' : ''}" data-q="profile"><span class="qkey">profile</span><span class="typepill choice" style="justify-self:start">choice · 9</span></button>
-    <button type="button" class="qbtn${bQ === 'evidence_sufficient' ? ' on' : ''}" data-q="evidence_sufficient"><span class="qkey">evidence_sufficient</span><span class="typepill noul" style="justify-self:start">noul</span></button>
+			function noulSec(p) {
+				return `<div class="jc-sec">
+    <div class="qhead"><span class="n">Q2</span><span class="qkey">evidence_sufficient</span><span class="typepill noul">noul</span></div>
+    <p class="instr">${INSTR_E}</p>
+    <div class="noul-scale"><div><strong>false</strong> · ${E_FALSE}</div><div><strong>true</strong> · ${E_TRUE}</div></div>
+    <div class="gauge"><b style="left:${p.ev * 100}%"></b><span style="left:${p.ev * 100}%">${p.ev.toFixed(2)}</span></div>
+    <p class="footnote">Advisory only. The answer never changes a run total, a lineup, or a piece's size.</p>
+  </div>`;
+			}
+			function railSec(key) {
+				const q = callQ[key] || 'profile';
+				return `<div class="jc-sec"><span class="label-sm">Questions</span>
+    <button type="button" class="qbtn${q === 'profile' ? ' on' : ''}" data-q="profile" data-inst="${key}"><span class="qkey">profile</span><span class="typepill choice" style="justify-self:start">choice · 9</span></button>
+    <button type="button" class="qbtn${q === 'evidence_sufficient' ? ' on' : ''}" data-q="evidence_sufficient" data-inst="${key}"><span class="qkey">evidence_sufficient</span><span class="typepill noul" style="justify-self:start">noul</span></button>
     <button type="button" class="qbtn add">+ Add question</button>
-    <p class="footnote" style="margin-top:8px">Adding a question bumps the prompt version and the cache key.</p>`;
-				const ed = document.getElementById('b-editor');
-				if (bQ === 'profile') {
-					ed.innerHTML = `<div class="qhead"><span class="qkey" style="font-size:16px">profile</span><span class="label-sm" style="margin-left:auto">key · stable</span></div>
-      <div class="field"><span class="label-sm">Type</span><span class="seg"><span class="on">Choice</span><span>Noul</span></span></div>
-      <div class="field"><span class="label-sm">Instructions</span><p class="instr">${INSTR_P}</p></div>
-      <div class="field"><span class="label-sm">Criteria · one option per shape</span>
-      <table class="ctable"><thead><tr><th>Option</th><th>Definition</th><th>Recorded rule</th></tr></thead><tbody>
-      ${LABELS.map((l) => `<tr><td><span class="g" style="display:inline-flex;gap:6px;align-items:center">${glyph(l, 14)}${l}</span></td><td class="t">${CRIT[l].split('. ')[0]}.</td><td class="rule mono">${RULE_CODE[l]}</td></tr>`).join('')}
-      </tbody></table></div>`;
+    <p class="footnote">A new question bumps the prompt version and the cache key.</p></div>`;
+			}
+			function renderCall(el) {
+				const p = byId[selected],
+					key = el.dataset.call,
+					horiz = el.dataset.orientation === 'horizontal',
+					editable = el.dataset.editable === '1';
+				const head = `<div class="cmp-head"><h3>Jev call · ${p.name}</h3><span class="src">POST /v1/systemone</span><span class="src">jev-latest</span><span class="tag-illus" style="padding:4px 6px;font-size:10px">illustrative answer</span><span class="cmp-tag">&lt;JevCall orientation="${horiz ? 'horizontal' : 'vertical'}"${editable ? ' editable' : ''}&gt;</span></div>`;
+				if (horiz) {
+					const q = callQ[key] || 'profile';
+					el.innerHTML =
+						head +
+						`<div class="jc-h">${railSec(key)}${stateSec(p)}${q === 'profile' ? profileSec(p) : noulSec(p)}${q === 'profile' ? noulSec(p) : profileSec(p)}</div>`;
 				} else {
-					ed.innerHTML = `<div class="qhead"><span class="qkey" style="font-size:16px">evidence_sufficient</span><span class="label-sm" style="margin-left:auto">key · stable</span></div>
-      <div class="field"><span class="label-sm">Type</span><span class="seg"><span>Choice</span><span class="on">Noul</span></span></div>
-      <div class="field"><span class="label-sm">Instructions</span><p class="instr">${INSTR_E}</p></div>
-      <div class="field"><span class="label-sm">Criteria</span>
-      <table class="ctable"><tbody><tr><td>true</td><td class="t">${E_TRUE}</td></tr><tr><td>false</td><td class="t">${E_FALSE}</td></tr></tbody></table></div>
-      <p class="footnote">Returns one number: the probability that the true criterion holds.</p>`;
+					el.innerHTML = head + stateSec(p) + profileSec(p) + noulSec(p);
 				}
-				document.getElementById('b-state').innerHTML = `<span class="label-sm">State template</span>
-    ${[
-			['Player · id', 'bundle'],
-			['Bats', 'bundle'],
-			['Eligible positions', 'bundle'],
-			['Observed R/PA', 'bundle'],
-			['Season PA', 'statSplits'],
-			['vs LHP / vs RHP', 'statSplits'],
-			['Age', 'not in sources', 1],
-			['Analyst label', 'withheld', 1],
-			['Rubric version', 'frozen']
-		]
-			.map(
-				([k, s, na]) =>
-					`<div class="f"><span>${k}</span><span class="src${na ? ' na' : ''}">${s}</span></div>`
-			)
-			.join('')}
-    <p class="footnote" style="margin-top:6px">Missing values are sent as "not available", never as zero.</p>`;
-				const sorted = [...P];
-				document.getElementById('b-grid').innerHTML =
-					`<thead><tr><th></th><th>Player</th><th>Analyst</th><th>Rule</th><th>Jev</th><th>Evidence</th><th>Status</th></tr></thead><tbody>
-    ${sorted
-			.map((p) => {
-				const st =
-					p.ev < 0.5
-						? ['thin', 'thin evidence']
-						: disagree(p)
-							? ['split', 'disagree']
-							: ['agree', 'all agree'];
-				return `<tr data-id="${p.id}" class="${p.id === selected ? 'sel' : ''}" tabindex="0"><td class="slot">${p.slot ?? 'bench'}</td><td>${p.name}</td>
-      <td><span class="g">${glyph(p.analyst, 14)}${p.analyst}</span></td>
-      <td><span class="g">${p.rule ? glyph(p.rule, 14, 'var(--marker)') + p.rule : '<span style="color:var(--fits)">abstained</span>'}</span></td>
-      <td><span class="g">${glyph(p.pick, 14)}${p.pick} <span style="color:var(--ink-soft)">${pct(p.jev[p.pick])}</span></span></td>
-      <td><span class="mini-noul"><i style="width:${p.ev * 100}%"></i></span> <span class="mono" style="font-size:11px">${p.ev.toFixed(2)}</span></td>
-      <td><span class="status ${st[0]}">${st[1]}</span></td></tr>`;
-			})
-			.join('')}</tbody>`;
-				document.getElementById('b-board').innerHTML = boardSVG({ rings: true });
-			}
-
-			// ---------- C ----------
-			function labelFor(p, src) {
-				return src === 'jev' ? p.pick : src === 'rule' ? (p.rule ?? 'Unclassified') : p.analyst;
-			}
-			function renderC() {
-				const lanes = document.getElementById('c-lanes');
-				// fit the tallest piece into a 76px lane
-				const maxH = Math.max(...P.map((p) => outline(labelFor(p, cSource), p.runs).h));
-				const k = (62 / maxH) ** 2;
-				const html = LABELS.map((l) => {
-					const members = P.filter((p) => labelFor(p, cSource) === l).sort(
-						(a, b) => b.runs - a.runs
-					);
-					let x = 14;
-					let g = '';
-					for (const p of members) {
-						const A = p.runs * k,
-							o = outline(l, A);
-						const cx = x - o.minx,
-							cy = 38 - (o.miny + o.h / 2);
-						const others = [
-							['R', p.rule ?? 'abstain'],
-							['A', p.analyst],
-							['J', p.pick]
-						]
-							.filter(([s]) => ({ jev: 'J', rule: 'R', analyst: 'A' })[cSource] !== s)
-							.filter(([, v]) => v !== l);
-						const marks = others
-							.map(
-								([s, v], i) =>
-									`<text x="${cx + o.minx + o.w + 4}" y="${22 + i * 12}" font-size="9" font-weight="600" fill="${s === 'R' ? 'var(--marker)' : s === 'A' ? 'var(--fits)' : 'var(--ink)'}" style="stroke:none">${s}:${v}</text>`
-							)
-							.join('');
-						g += pieceSVG(p, l, cx, cy, A, { hatch: p.ev < 0.5, text: p.last, marks });
-						x += o.w + 18 + (others.length ? 64 : 0);
-					}
-					const label = cSource === 'rule' && l === 'Unclassified' ? 'Unclassified / abstained' : l;
-					return `<div class="lane${members.length ? '' : ' empty'}"><div class="lane-key">${glyph(l, 24)}<span class="lbl">${label} <span class="cnt">${members.length}</span></span><span class="txt">${CRIT[l]}</span></div>
-      <div class="lane-track"><svg viewBox="0 0 760 76" preserveAspectRatio="xMinYMid meet" role="group" aria-label="${label}: ${members.map((m) => m.name).join(', ') || 'no one'}">${DEFS}${g}</svg></div></div>`;
-				}).join('');
-				lanes.innerHTML = html;
-				const p = byId[selected];
-				document.getElementById('c-card').innerHTML =
-					`<span class="label-sm">Selected piece</span><h3 style="font-size:22px">${p.name}</h3>
-    <div class="ct-meta">${p.slot ? `<span class="src">${p.slot}</span>` : '<span class="src">off the field</span>'}<span class="src">${p.runs.toFixed(1)} runs</span><span class="src">${p.pa} PA</span></div>
-    <dl class="state" style="grid-template-columns:110px minmax(0,1fr)">${stateRows(p)
-			.slice(1)
-			.map(
-				([kk, val]) =>
-					`<dt>${kk}</dt><dd class="${val === null || val === 'withheld' ? 'na' : ''}">${val ?? 'not available'}</dd>`
-			)
-			.join('')}</dl>
-    <div class="qhead"><span class="qkey">profile</span><span class="typepill choice">choice</span></div>
-    <div style="display:grid;gap:4px">${[...LABELS]
-			.sort((a, b) => p.jev[b] - p.jev[a])
-			.slice(0, 4)
-			.map(
-				(l) =>
-					`<div style="display:grid;grid-template-columns:18px 78px 1fr 36px;gap:6px;align-items:center;font-size:12.5px">${glyph(l, 16)}<span>${l}</span><span class="bar"><i style="width:${p.jev[l] * 100}%"></i></span><span class="mono" style="font-size:11px;text-align:right">${pct(p.jev[l])}</span></div>`
-			)
-			.join('')}</div>
-    <div class="qhead"><span class="qkey">evidence_sufficient</span><span class="typepill noul">noul</span><span class="mono" style="margin-left:auto">${p.ev.toFixed(2)}</span></div>
-    <div class="gauge"><b style="left:${p.ev * 100}%"></b></div>
-    <p class="footnote" style="margin-top:6px">Rule: ${p.rule ?? 'abstained'} · Analyst: ${p.analyst}</p>`;
 			}
 
 			function renderAll() {
 				uid = 0;
-				renderA();
-				renderB();
-				renderC();
-			}
-			function pick(id) {
-				if (byId[id]) {
-					selected = id;
-					renderAll();
-				}
+				document.querySelectorAll('[data-diagram]').forEach(renderDiagram);
+				document.querySelectorAll('[data-call]').forEach(renderCall);
 			}
 			document.addEventListener('click', (e) => {
 				const t = e.target.closest('[data-id]');
 				if (t) {
-					pick(t.dataset.id);
+					selected = t.dataset.id;
+					renderAll();
 					return;
 				}
 				const q = e.target.closest('[data-q]');
 				if (q) {
-					bQ = q.dataset.q;
-					renderB();
+					callQ[q.dataset.inst] = q.dataset.q;
+					renderAll();
 					return;
 				}
-				const s = e.target.closest('[data-src]');
+				const s = e.target.closest('[data-set]');
 				if (s) {
-					cSource = s.dataset.src;
-					document.querySelectorAll('[data-src]').forEach((b) => b.classList.toggle('on', b === s));
-					renderC();
+					const host = s.closest('[data-diagram]');
+					host.dataset[s.dataset.set] = s.dataset.val;
+					renderAll();
 				}
 			});
 			document.addEventListener('keydown', (e) => {
@@ -1942,7 +1767,8 @@
 				const t = e.target.closest && e.target.closest('[data-id]');
 				if (t) {
 					e.preventDefault();
-					pick(t.dataset.id);
+					selected = t.dataset.id;
+					renderAll();
 				}
 			});
 			renderAll();
