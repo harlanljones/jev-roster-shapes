@@ -17,7 +17,20 @@
 		label: string;
 	} = $props();
 
-	const runs = (value: string | null) => (value === null ? 'unavailable' : `${value} runs`);
+	// Display-only: consistent decimals; underlying values are untouched.
+	const fixed = (value: string | number | null) => {
+		if (value === null) return null;
+		const numeric = Number(value);
+		return Number.isFinite(numeric) ? numeric.toFixed(3) : String(value);
+	};
+	const runs = (value: string | null) => (value === null ? 'unavailable' : `${fixed(value)} runs`);
+	const capWords: Record<string, string> = {
+		maxStarts: 'starts',
+		maxDefensiveOuts: 'defensive outs',
+		maxPA: 'plate appearances'
+	};
+	const capText = (cap: { field: string; allocated: number; limit: number }) =>
+		`${capWords[cap.field] ?? cap.field} ${cap.allocated} of ${cap.limit} max`;
 	const delta = (value: string | null) => {
 		if (value === null) return 'Δ unavailable';
 		const numeric = Number(value);
@@ -81,7 +94,7 @@
 							<th scope="row">{slot.role || '—'}</th>
 							<td>{slot.playerId ? nameOf(slot.playerId) : 'uncovered'}</td>
 							<td>{slot.pa}</td>
-							<td>{slot.runs ?? 'unavailable'}</td>
+							<td>{fixed(slot.runs) ?? 'unavailable'}</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -118,7 +131,7 @@
 						<li>
 							<span class="who">{nameOf(member.playerId)}</span>
 							<span class="num">
-								{member.pa} PA in the lineup used · {runs(member.runs)} forgone
+								{member.pa} PA used · {runs(member.runs)} forgone
 							</span>
 						</li>
 					{/each}
@@ -190,7 +203,7 @@
 					{#each fit.capPressure.slice(0, 4) as cap (cap.playerId + cap.field)}
 						<li>
 							<span class="who">{nameOf(cap.playerId)}</span>
-							<span class="num">{cap.field} {cap.allocated} of {cap.limit}</span>
+							<span class="num">{capText(cap)}</span>
 						</li>
 					{/each}
 				</ul>
@@ -290,13 +303,17 @@
 		font-weight: 600;
 		width: 3rem;
 	}
+	thead th:nth-child(n + 3) {
+		text-align: right;
+	}
 	td:nth-child(n + 3) {
 		font-family: var(--mono);
 		text-align: right;
+		font-variant-numeric: tabular-nums;
 	}
 	.detail {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
 		gap: 1rem 1.5rem;
 	}
 	ul {
@@ -307,12 +324,14 @@
 		list-style: none;
 	}
 	li {
-		display: flex;
-		justify-content: space-between;
-		gap: 0.75rem;
+		display: grid;
+		grid-template-columns: max-content minmax(0, 1fr);
+		align-items: baseline;
+		gap: 0.1rem 0.75rem;
 		font-size: 0.85rem;
 	}
 	.who {
+		white-space: nowrap;
 		font-weight: 600;
 	}
 	.num {

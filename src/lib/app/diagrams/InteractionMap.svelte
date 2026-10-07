@@ -67,8 +67,7 @@
 	const CLUSTERS: [string, number, number][] = [
 		['INFIELD', 200, 34],
 		['OUTFIELD', 700, 34],
-		['CATCHERS', 40, 560],
-		['NO GLOVE', 580, 500]
+		['CATCHERS', 24, 600]
 	];
 	const LAYERS = [
 		{ key: 'platoon', label: 'Platoon fit (splits)', color: 'var(--snug)', style: 'dotted' },
@@ -101,8 +100,11 @@
 	const rad = (id: string) => (id === 'HUB' ? 46 : Math.max(caseRadius(pool.get(id)!), 22) + 4);
 
 	const shown = $derived(edges.filter((e) => layers[e.type] && pool.has(e.a)));
-	const touches = (e: Edge) => e.a === selected || e.b === selected;
-	const anyHit = $derived(!!selected && shown.some(touches));
+	// Hover or keyboard focus previews a piece's links the way selection does.
+	let hovered = $state<string | null>(null);
+	const focusId = $derived(hovered ?? selected);
+	const touches = (e: Edge) => e.a === focusId || e.b === focusId;
+	const anyHit = $derived(!!focusId && shown.some(touches));
 	const drawn = $derived(
 		shown.map((e) => {
 			const [x1, y1] = pos(e.a);
@@ -121,6 +123,10 @@
 			const sy = y1 + Math.sin(a1) * rad(e.a);
 			const ex = x2 + Math.cos(a2) * rad(e.b);
 			const ey = y2 + Math.sin(a2) * rad(e.b);
+			// Stagger label spots by layer so labels on a shared corridor don't stack.
+			const t = e.type === 'swap' ? 0.34 : e.type === 'compete' ? 0.66 : 0.5;
+			const lx = (1 - t) ** 2 * sx + 2 * t * (1 - t) * mx + t ** 2 * ex;
+			const ly = (1 - t) ** 2 * sy + 2 * t * (1 - t) * my + t ** 2 * ey + 4;
 			const now =
 				e.type === 'swap' &&
 				!!activeTest &&
@@ -129,10 +135,11 @@
 				key: `${e.type}:${key}`,
 				e,
 				d: `M${sx.toFixed(1)},${sy.toFixed(1)} Q${mx.toFixed(1)},${my.toFixed(1)} ${ex.toFixed(1)},${ey.toFixed(1)}`,
-				lx: 0.25 * sx + 0.5 * mx + 0.25 * ex,
-				ly: 0.25 * sy + 0.5 * my + 0.25 * ey + 4,
+				lx,
+				ly,
 				now,
-				dim: anyHit && !touches(e)
+				dim: anyHit && !touches(e),
+				labelled: touches(e) || now
 			};
 		})
 	);
@@ -191,6 +198,7 @@
 	{#each CLUSTERS as [name, x, y] (name)}
 		<text class="cluster" {x} {y}>{name}</text>
 	{/each}
+	<text class="cluster" x={HUB[0]} y={HUB[1] - 60} text-anchor="middle">NO GLOVE · DH LANE</text>
 	<circle class="hub-ring" cx={HUB[0]} cy={HUB[1]} r="44" />
 	<text class="hub-text" x={HUB[0]} y={HUB[1] + 8} text-anchor="middle">DH</text>
 	<text class="sub" x={HUB[0]} y={HUB[1] + 64} text-anchor="middle"
@@ -214,7 +222,7 @@
 		{@const role = roleOf.get(p.id)}
 		{@const hit =
 			!anyHit ||
-			p.id === selected ||
+			p.id === focusId ||
 			shown.some((e) => touches(e) && (e.a === p.id || e.b === p.id))}
 		<g
 			class="piece"
@@ -225,6 +233,10 @@
 			aria-label="{p.name} in the interaction map, {role ?? 'bench'}"
 			aria-pressed={selected === p.id}
 			onclick={() => onSelect(p.id)}
+			onpointerenter={() => (hovered = p.id)}
+			onpointerleave={() => (hovered = null)}
+			onfocus={() => (hovered = p.id)}
+			onblur={() => (hovered = null)}
 			onkeydown={(e) => keySelect(e, p.id)}
 		>
 			<Piece player={p} cx={x} cy={y} {r} faded={!lineupSet.has(p.id)} hatch="{uid}-hatch" />
@@ -238,13 +250,9 @@
 	{/each}
 
 	{#each drawn as edge (edge.key)}
-		{#if edge.e.type !== 'dh'}
-			<text
-				class="e-lab {edge.e.type}"
-				class:dim={edge.dim}
-				x={edge.lx}
-				y={edge.ly}
-				text-anchor="middle">{edge.e.label}</text
+		{#if edge.e.type !== 'dh' && edge.labelled}
+			<text class="e-lab {edge.e.type}" x={edge.lx} y={edge.ly} text-anchor="middle"
+				>{edge.e.label}</text
 			>
 		{/if}
 	{/each}
@@ -291,6 +299,9 @@
 		font-family: var(--mono);
 		font-size: 11px;
 		letter-spacing: 0.08em;
+		paint-order: stroke;
+		stroke: var(--panel);
+		stroke-width: 5px;
 	}
 	.hub-ring {
 		fill: none;
@@ -309,7 +320,7 @@
 	.e-compete {
 		stroke: var(--ink-soft);
 		stroke-width: 1.6;
-		opacity: 0.75;
+		opacity: 0.55;
 	}
 	.e-swap {
 		stroke: var(--accent);
@@ -330,15 +341,20 @@
 		stroke-dasharray: 5 5;
 	}
 	.e.dim {
-		opacity: 0.12;
+		opacity: 0.3;
+	}
+	.e-swap.dim,
+	.e-platoon.dim {
+		opacity: 0.4;
 	}
 	.e-lab {
 		font-family: var(--mono);
 		font-size: 11.5px;
 		paint-order: stroke;
 		stroke: var(--panel);
-		stroke-width: 4px;
+		stroke-width: 6px;
 		stroke-linejoin: round;
+		font-weight: 600;
 		pointer-events: none;
 	}
 	.e-lab.compete {
@@ -349,9 +365,6 @@
 	}
 	.e-lab.platoon {
 		fill: var(--snug);
-	}
-	.e-lab.dim {
-		opacity: 0.15;
 	}
 	.name {
 		fill: var(--ink);
@@ -375,7 +388,7 @@
 		outline: none;
 	}
 	.piece.dim {
-		opacity: 0.25;
+		opacity: 0.5;
 	}
 	.piece.sel :global(.body) {
 		stroke: var(--ink);

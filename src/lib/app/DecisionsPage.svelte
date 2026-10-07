@@ -25,6 +25,9 @@
 		}
 		return found;
 	};
+	// Display-only precision: values stay as the registry strings; only the label is rounded.
+	const runs = (value: string | null) =>
+		value === null || !Number.isFinite(Number(value)) ? 'unavailable' : Number(value).toFixed(2);
 	const decisions = storylineRegistry
 		.map((story: Storyline, index) => {
 			const point = recordOn(story.eventDate);
@@ -65,8 +68,8 @@
 		<h2 id="decisions-heading">The decisions</h2>
 		<ol class="cards">
 			{#each decisions as entry (entry.story.slug)}
-				<li>
-					<article class="card">
+				<li class="card">
+					<article class="parts">
 						<div class="card-topline">
 							<span class="num" aria-hidden="true">{entry.number}</span>
 							<span class="when">
@@ -80,13 +83,13 @@
 						<dl class="numbers">
 							<div>
 								<dt>Baseline</dt>
-								<dd>{entry.story.expected[0]?.offenseRuns ?? 'unavailable'} runs</dd>
+								<dd>{runs(entry.story.expected[0]?.offenseRuns ?? null)} runs</dd>
 							</div>
 							{#each entry.story.expected.slice(1) as expectation (expectation.scenarioId)}
 								<div>
 									<dt>{expectation.scenarioId === 'cand-a' ? 'A' : 'B'}</dt>
 									<dd>
-										{expectation.offenseRuns ?? 'unavailable'}
+										{runs(expectation.offenseRuns)}
 										<span class="delta">
 											{expectation.offenseDelta === null
 												? 'Δ unavailable'
@@ -180,15 +183,20 @@
 	.cards {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-		gap: 1.25rem;
+		gap: 0 1.25rem;
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
+	/* Each card spans five shared row tracks (topline, title, question, numbers,
+	   meta) so those blocks align across a row, and it sizes to its content. */
 	.card {
 		display: grid;
-		gap: 0.6rem;
-		height: 100%;
+		grid-row: span 5;
+		grid-template-rows: subgrid;
+		row-gap: 0.6rem;
+		margin-bottom: 1.25rem;
+		box-sizing: border-box;
 		border: 1px solid var(--rule);
 		border-radius: 12px;
 		padding: 1.1rem 1.25rem 1.25rem;
@@ -196,6 +204,9 @@
 		box-shadow:
 			0 1px 2px rgb(22 32 42 / 6%),
 			0 8px 20px rgb(22 32 42 / 6%);
+	}
+	.parts {
+		display: contents;
 	}
 	.card-topline {
 		display: flex;

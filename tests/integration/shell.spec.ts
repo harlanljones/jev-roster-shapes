@@ -132,7 +132,7 @@ test("each diagram subpage draws its diagram for the board's scenario", async ({
 	await page.goto('/scenario/offseason-infield/engine');
 	const fit = page.getByRole('region', { name: /Pool fit for Baseline/ });
 	await expect(fit).toBeVisible();
-	await expect(fit.getByText('52.69416', { exact: false }).first()).toBeVisible();
+	await expect(fit.getByText('52.694', { exact: false }).first()).toBeVisible();
 	await expect(fit).toContainText('Δ +1.991');
 	await expect(page.getByRole('columnheader', { name: 'Left on the table' })).toBeVisible();
 

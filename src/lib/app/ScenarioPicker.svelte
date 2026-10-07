@@ -25,7 +25,7 @@
 				s,
 				runs: runs == null ? 'runs unavailable' : `${runs.toFixed(1)} runs`,
 				delta: isBase ? 'baseline' : (delta ?? 'Δ unavailable'),
-				fill: `${Math.round(bin.fill)}% filled`
+				fill: `${Math.round(bin.fill)}% board fill`
 			};
 		});
 	});

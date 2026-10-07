@@ -46,6 +46,14 @@
 			missing: false
 		};
 	}
+	// Names stay inside their own half of the piece: truncated to the width on
+	// offer, or left to the hover title when even a short stub would not fit.
+	const CHAR = 6.4;
+	function fit(text: string, room: number): string {
+		const max = Math.floor((room - 6) / CHAR);
+		if (text.length <= max) return text;
+		return max >= 4 ? `${text.slice(0, max - 1)}…` : '';
+	}
 	const name = (id: string | null) => (id ? (pool.get(id)?.last ?? id) : 'empty');
 	const pieces = $derived(
 		bin.pieces.map((pc) => ({
@@ -104,10 +112,13 @@
 			/>
 			<text class="role" x={cx} y={cy - 4} text-anchor="middle">{pc.role}</text>
 			{#if same}
-				<text class="nm" x={cx} y={cy + 11} text-anchor="middle">{name(pc.idR)}</text>
+				{@const t = fit(name(pc.idR), pc.box.left + pc.box.right)}
+				{#if t}<text class="nm" x={cx} y={cy + 11} text-anchor="middle">{t}</text>{/if}
 			{:else}
-				<text class="sub" x={cx} y={cy + 10} text-anchor="middle">{name(pc.idL)} L</text>
-				<text class="sub" x={cx} y={cy + 23} text-anchor="middle">{name(pc.idR)} R</text>
+				{@const tl = fit(name(pc.idL), pc.box.left)}
+				{@const tr = fit(name(pc.idR), pc.box.right)}
+				{#if tl}<text class="sub" x={cx - 3} y={cy + 11} text-anchor="end">{tl}</text>{/if}
+				{#if tr}<text class="sub" x={cx + 3} y={cy + 11} text-anchor="start">{tr}</text>{/if}
 			{/if}
 		</g>
 	{/each}
