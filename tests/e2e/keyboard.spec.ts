@@ -15,28 +15,32 @@ test('a keyboard-only user tabs, edits, swaps, and inspects evidence', async ({ 
 	await page.keyboard.press('ArrowRight');
 	await expect(page.getByRole('tab', { selected: true })).toContainText('A — Bregman re-signs');
 
-	// Change an assignment with the keyboard: Home then ArrowDown guarantees a
-	// selection change no matter which option started selected.
+	// Change an assignment with the keyboard: type-ahead selects "Unassigned",
+	// a real change because the first slot starts with a player. (Recent
+	// Chromium opens the picker on arrow keys instead of changing a closed select.)
 	await page
 		.getByLabel(/assigned player/)
 		.first()
 		.evaluate((el) => el.focus());
-	await page.keyboard.press('Home');
-	await page.keyboard.press('ArrowDown');
+	await page.keyboard.type('Unassigned');
 	await expect(page.locator('.storage-pill')).toHaveAttribute('data-state', 'unsaved');
 	await expect(page.locator('.notice-text')).toContainText('Draft changed locally');
 
 	// Operate the Swap form by keyboard: pick the second slot in swap-a, Tab to
 	// swap-b, change it, Tab to the Swap button, and submit with Enter.
 	const swapForm = page.locator('form.swap').first();
+	// Chromium no longer changes a closed select on arrow keys, so each choice is
+	// typed ahead using the option's own label (third slot, then second slot).
+	const optionLabel = (name: string, index: number) =>
+		swapForm
+			.locator(`select[name="${name}"] option`)
+			.nth(index)
+			.evaluate((el) => (el as HTMLOptionElement).text.trim());
 	await swapForm.locator('select[name="swap-a"]').evaluate((el) => el.focus());
-	await page.keyboard.press('Home');
-	await page.keyboard.press('ArrowDown');
-	await page.keyboard.press('ArrowDown');
+	await page.keyboard.type(await optionLabel('swap-a', 2));
 	await page.keyboard.press('Tab');
 	await expect(swapForm.locator('select[name="swap-b"]')).toBeFocused();
-	await page.keyboard.press('Home');
-	await page.keyboard.press('ArrowDown');
+	await page.keyboard.type(await optionLabel('swap-b', 1));
 	await expect(swapForm.locator('p.form-preview')).toContainText('Swap slot');
 	await page.keyboard.press('Tab');
 	await expect(swapForm.getByRole('button', { name: 'Swap' })).toBeFocused();
