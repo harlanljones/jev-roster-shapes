@@ -368,6 +368,8 @@
 		align-content: start;
 	}
 	.back {
+		display: inline-block;
+		padding-block: 0.4rem;
 		color: var(--marker);
 		font: 500 0.8rem var(--mono);
 		text-decoration: none;

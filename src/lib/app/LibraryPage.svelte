@@ -15,7 +15,7 @@
 	import PieceDetail from './diagrams/PieceDetail.svelte';
 	import SeasonTimeline from './diagrams/SeasonTimeline.svelte';
 	import RosterDiagram from './diagrams/RosterDiagram.svelte';
-	import { sourceLabels } from './jev-call';
+	import { isThinEvidence, sourceLabels } from './jev-call';
 	import { jevRecordFor } from './jev-results';
 	import {
 		benchTray,
@@ -93,11 +93,7 @@
 		)
 	);
 	const thin = $derived(
-		new Set(
-			[...records]
-				.filter(([, record]) => (record?.answer?.evidenceSufficient ?? 1) < 0.5)
-				.map(([id]) => id)
-		)
+		new Set([...records].filter(([, record]) => isThinEvidence(record)).map(([id]) => id))
 	);
 	const leftOff = $derived(board.runs == null || best.runs == null ? null : best.runs - board.runs);
 

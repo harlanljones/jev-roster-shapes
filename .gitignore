@@ -30,3 +30,6 @@ tests/**/__screenshots__
 
 # Hermes project-skill links are per-machine (created by ./dev)
 .hermes/
+
+# Browser automation output
+.playwright-mcp/

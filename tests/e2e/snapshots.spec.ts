@@ -19,6 +19,9 @@ test('the snapshots page shows the prompt, the roster, and the engine fit with t
 	await expect(page.getByLabel('Provider key (session only)')).toHaveCount(0);
 	await expect(page.getByRole('button', { name: 'Classify this player' })).toHaveCount(0);
 	await expect(page.getByRole('table', { name: /Validated provider answers/ })).toBeVisible();
+	// The cost line carries its unit and says the latency was recorded by CI.
+	await expect(page.locator('.outputs .cost')).toContainText(/estimated cost \$\d+\.\d{6} USD/);
+	await expect(page.locator('.outputs .cost')).toContainText('recorded by CI');
 
 	// The exact request that would be sent is inspectable.
 	await page.getByText('Request body, exactly as it would be sent').click();

@@ -20,7 +20,7 @@
 	import JevCall from './diagrams/JevCall.svelte';
 	import PieceDetail from './diagrams/PieceDetail.svelte';
 	import RosterDiagram from './diagrams/RosterDiagram.svelte';
-	import { sourceLabels } from './jev-call';
+	import { isThinEvidence, sourceLabels } from './jev-call';
 	import { jevRecordFor, recordedCount } from './jev-results';
 	import {
 		benchTray,
@@ -122,7 +122,7 @@
 	const thin = $derived(
 		new Set(
 			Object.entries(records)
-				.filter(([, record]) => (record.answer?.evidenceSufficient ?? 1) < 0.5)
+				.filter(([, record]) => isThinEvidence(record))
 				.map(([id]) => id)
 		)
 	);
@@ -404,8 +404,8 @@
 			<p class="cost">
 				{answered.length} answered · {agreement} matching the analyst label · {usage.input} input tokens
 				· {usage.output} output tokens · model {answered[0]?.record.model ?? 'unknown'} ·
-				{answered[0]?.record.timingMs ?? 0}ms for the first answer · estimated cost
-				{answered[0]?.record.usage?.estimatedCostUsd ?? '0.000000'} per answer at the published list price
+				{answered[0]?.record.timingMs ?? 0}ms recorded by CI for the first answer · estimated cost ${answered[0]
+					?.record.usage?.estimatedCostUsd ?? '0.000000'} USD per answer at the published list price
 			</p>
 			<p class="limits">
 				No confidence threshold is applied: SPEC §7 does not adopt the original 0.80 and 0.65
@@ -514,6 +514,8 @@
 		letter-spacing: 0.04em;
 	}
 	.back {
+		display: inline-block;
+		padding-block: 0.4rem;
 		color: var(--marker);
 		font: 500 0.8rem var(--mono);
 		text-decoration: none;
