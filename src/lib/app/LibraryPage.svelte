@@ -193,9 +193,9 @@
 					/>
 				{/if}
 				<p class="call-note">
-					Answers appear here after a call on <a
+					Answers are recorded by CI when new snapshots reach main; <a
 						href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}>Snapshots</a
-					>, for this browser session only.
+					> shows every answer and the request behind it.
 				</p>
 				<button class="primary-button" type="button" onclick={() => (pendingOpen = true)}
 					>Open workspace</button
