@@ -19,7 +19,7 @@ import {
 import { PLAYER_SHAPES } from '$lib/shapes/taxonomy';
 import season from '$lib/storylines/season.json';
 import type { Storyline } from '$lib/storylines/registry';
-import type { CasePlayer, Pool } from './shape-case';
+import { buildPool, type CasePlayer, type Pool } from './shape-case';
 import { SPLIT_SOURCE } from './split-evidence';
 
 const METRIC_LABELS: Readonly<Record<string, string>> = {
@@ -90,5 +90,13 @@ export function baselineFor(
 				medianRate: LABELED_MEDIAN_RATE
 			})
 		])
+	);
+}
+
+/** The evidence every player in a decision's pool carries (the CI run asks these). */
+export function jevEvidenceFor(story: Storyline): ProfileEvidence[] {
+	const note = provenanceNote(story);
+	return [...buildPool(story.bundle).values()].map((player) =>
+		evidenceFor(story.bundle, player, note)
 	);
 }

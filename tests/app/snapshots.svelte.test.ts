@@ -4,21 +4,25 @@ import { render } from 'vitest-browser-svelte';
 import SnapshotsPage from '../../src/lib/app/SnapshotsPage.svelte';
 import { getStoryline } from '../../src/lib/storylines/registry';
 
-// D-47: with no key configured the page shows the prompt and the roster and
-// invents nothing. A call only happens after a person supplies a key and
-// acknowledges external processing.
+// D-47, D-58: the page shows the prompt and the roster and invents nothing. Jev
+// is asked from CI, so the page has no key field, no acknowledgment and no ask
+// button, and it shows only recorded answers.
 describe('SnapshotsPage', () => {
 	const story = getStoryline('offseason-infield')!;
 
-	it('shows the prompt, the roster, and the engine fit with no provider configured', async () => {
+	it('shows the prompt, the roster, and the engine fit before anything is asked', async () => {
 		await render(SnapshotsPage, { props: { story } });
 
 		await expect
 			.element(page.getByRole('heading', { level: 1 }))
 			.toHaveTextContent('Snapshots: the prompt and its answers');
-		await expect.element(page.getByText(/No key is set, so nothing has been sent/)).toBeVisible();
-		await expect.element(page.getByRole('button', { name: 'Classify this player' })).toBeDisabled();
-		await expect.element(page.getByText(/No answers yet/)).toBeVisible();
+		await expect.element(page.getByLabelText(/Provider key/)).not.toBeInTheDocument();
+		await expect.element(page.getByRole('checkbox')).not.toBeInTheDocument();
+		await expect.element(page.getByText(/Recorded answers only/)).toBeVisible();
+		await expect
+			.element(page.getByRole('button', { name: 'Classify this player' }))
+			.not.toBeInTheDocument();
+		await expect.element(page.getByText(/No answers recorded yet/)).toBeVisible();
 
 		// D-57: the roster diagram opens by criterion, placed by the rule baseline,
 		// beside the Jev call with its questions and no invented answer.
@@ -39,7 +43,7 @@ describe('SnapshotsPage', () => {
 		await expect.element(page.getByText('Request body, exactly as it would be sent')).toBeVisible();
 	});
 
-	it('keeps the engine fit as the scenario changes and never calls the provider on its own', async () => {
+	it('keeps the engine fit as the scenario changes and never calls the provider', async () => {
 		await render(SnapshotsPage, { props: { story } });
 
 		await page.getByRole('button', { name: /No Contreras trade/ }).click();
@@ -48,8 +52,8 @@ describe('SnapshotsPage', () => {
 		await expect
 			.element(page.getByText(/\+5\.785 against the lineup this scenario used/))
 			.toBeVisible();
-		// Still nothing asked, and the roster analysis follows the scenario.
-		await expect.element(page.getByText(/No answers yet/)).toBeVisible();
+		// Still nothing recorded, and the roster analysis follows the scenario.
+		await expect.element(page.getByText(/No answers recorded yet/)).toBeVisible();
 		await expect.element(page.getByText(/2 benched/)).toBeVisible();
 	});
 

@@ -4,3 +4,4 @@ export * from './provider';
 export * from './rubric';
 export * from './schema';
 export * from './service';
+export * from './recorded';

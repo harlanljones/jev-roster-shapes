@@ -1,0 +1,58 @@
+# Jev classification (D-58): runs only when new snapshot data reaches main, not
+# on every main push. It asks Jev for any request without a recorded answer,
+# commits src/lib/classification/jev-results.json, then redeploys the demo,
+# because a push made with GITHUB_TOKEN does not trigger the deploy workflow.
+# Needs the repository secret TYPESAFE_API_KEY. workflow_dispatch is the manual
+# way to run it for the first time or after a rubric/prompt change.
+name: Classify with Jev
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - spikes/mlb-2026/timeline-snapshot.json
+      - src/lib/storylines/*.json
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: jev-classify
+  cancel-in-progress: false
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    name: Record Jev answers
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Ask Jev for requests with no recorded answer
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: bun spikes/mlb-2026/jev-classify.mjs
+
+      - name: Commit new answers and redeploy
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- src/lib/classification/jev-results.json; then
+            echo "no new answers"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/lib/classification/jev-results.json
+          git commit -m "data(jev): record classification answers [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          gh workflow run deploy-demo.yml --ref "${GITHUB_REF_NAME}"
