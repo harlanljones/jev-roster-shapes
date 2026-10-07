@@ -124,6 +124,7 @@ hand-derived scenario expectations before merge.
 | [Interaction contract](docs/WORKFLOWS.md) | Screens, editing, failures, keyboard behavior |
 | [Acceptance](docs/ACCEPTANCE.md) | Exact numerical cases and evaluation protocol |
 | [Decisions](docs/DECISIONS.md) | Adopted defaults (D-01–D-41) and open dependencies |
+| [Jev confidence runbook](docs/JEV_CONFIDENCE_RUNBOOK.md) | Diagnosing flat or untrustworthy Jev scores, the probe, and safe changes |
 | [Shape taxonomy](docs/SHAPE_TAXONOMY.md) | Analyst-labeled 8-shape rubric v2 for the Shape Case diagrams |
 | [Design](DESIGN.md) | Visual system: the case metaphor, tokens, type, and diagram components |
 | [Wyman Diagram conceptual guide](docs/wyman-diagram.md) | Conceptual roster-fit metaphor and shape roles |
