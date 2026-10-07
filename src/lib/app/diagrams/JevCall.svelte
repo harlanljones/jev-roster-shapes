@@ -22,6 +22,7 @@
 
 	const view = $derived(callView(request, record, compare));
 	const pct = (v: number) => `${Math.round(v * 100)}%`;
+	const typeLabel = (q: CallQuestion) => (q.type === 'noul' ? 'True / False' : 'Choice');
 	const noulText = (q: CallQuestion) =>
 		q.type === 'noul' && q.probability !== null ? q.probability.toFixed(2) : '';
 	const isOpen = (o: { jev: boolean; baseline: boolean; analyst: boolean }) =>
@@ -59,7 +60,7 @@
 			<h3 class="qhead">
 				<span class="n">Q{index + 1}</span>
 				<span class="qkey">{q.key}</span>
-				<span class="type {q.type}">{q.type}</span>
+				<span class="type {q.type}">{typeLabel(q)}</span>
 				{#if q.type === 'choice' && q.confidence !== null}
 					<span class="label conf">confidence {pct(q.confidence)}</span>
 				{/if}

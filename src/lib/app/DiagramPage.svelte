@@ -60,7 +60,14 @@
 			? 'Δ unavailable'
 			: `Δ ${Number(v) >= 0 ? '+' : '−'}${Math.abs(Number(v)).toFixed(3)}`;
 	const binStats = (b: { fill: number; gaps: number; headroom: number }) =>
-		`${Math.round(b.fill)}% filled · ${Math.round(b.gaps)}% gaps · ${Math.round(b.headroom)}% headroom`;
+		`${Math.round(b.fill)}% board fill · ${Math.round(b.gaps)}% gaps · ${Math.round(b.headroom)}% headroom`;
+	/** Findings text is written in the engine layer; name its measure here so it can't read as board fill. */
+	const slotBandWords = (t: string) =>
+		t
+			.replace(/fills (\d+)% of the container/, 'has a slot-band fill of $1%')
+			.replace(/^The tightest fit fills (\d+)%,/, 'The tightest fit has a slot-band fill of $1%,');
+	const findingsFor = (items: { lead: string; text: string }[] | undefined) =>
+		(items ?? []).map((i) => ({ ...i, lead: slotBandWords(i.lead) }));
 	const longDate = (iso: string) =>
 		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
 			month: 'long',
@@ -99,7 +106,7 @@
 			cur,
 			best,
 			px: 800 / Math.max(cur.pa, best.pa),
-			find: barFindings(pool, cur, best, locks)
+			find: barFindings(pool, cur, best, locks).map((g) => findingsFor(g) as typeof g)
 		};
 	});
 </script>
@@ -199,7 +206,8 @@
 							>
 							<td>{row.runs ?? 'unavailable'}</td>
 							<td>{engineDelta(row.deltaVsReference?.runs ?? null)}</td>
-							<td>{analysis.best?.scenarioId === row.scenarioId ? 'highest available fit' : ''}</td>
+							<td>{analysis.best?.scenarioId === row.scenarioId ? 'highest available fit' : '—'}</td
+							>
 						</tr>
 					{/each}
 				</tbody>
@@ -250,6 +258,11 @@
 					The board's lid is where the hindsight best nine tops out. Here it is packed beside this
 					lineup, using the platoons and position moves the pool allows.
 				</p>
+				<p class="measure">
+					<b>Board fill</b> is the share of the lid covered by the packed shapes; gaps are space lost
+					where outlines don't nest and headroom is value left off. It is not the slot-band fill measured
+					below.
+				</p>
 				<div class="bins">
 					<figure>
 						<figcaption>
@@ -280,21 +293,23 @@
 					each hand; a band fills with estimated runs per PA against that hand, and full is .150.
 					Dotted lines mark the 2026 league average.
 				</p>
-				<h3>This lineup · {Math.round(slots.cur.pct)}% filled</h3>
+				<p class="measure">
+					<b>Slot-band fill</b> is the share of all nine columns' bands filled by those runs. It differs
+					from the board fill above, which measures how the shapes pack.
+				</p>
+				<h3>This lineup · {Math.round(slots.cur.pct)}% slot-band fill</h3>
 				<SlotBars
 					{pool}
 					bars={slots.cur}
 					px={slots.px}
-					label="{scenario.label} slot by slot: {Math.round(
-						slots.cur.pct
-					)}% of the container filled"
+					label="{scenario.label} slot by slot: {Math.round(slots.cur.pct)}% slot-band fill"
 				/>
-				<h3>Hindsight best nine · {Math.round(slots.best.pct)}% filled</h3>
+				<h3>Hindsight best nine · {Math.round(slots.best.pct)}% slot-band fill</h3>
 				<SlotBars
 					{pool}
 					bars={slots.best}
 					px={slots.px}
-					label="The hindsight best nine slot by slot: {Math.round(slots.best.pct)}% filled"
+					label="The hindsight best nine slot by slot: {Math.round(slots.best.pct)}% slot-band fill"
 				/>
 			</div>
 			<Findings
@@ -331,6 +346,12 @@
 </div>
 
 <style>
+	.measure {
+		margin: 0 0 0.75rem;
+		max-width: 60ch;
+		color: var(--ink-soft);
+		font-size: 0.85rem;
+	}
 	.subpage {
 		display: grid;
 		gap: 2.5rem;

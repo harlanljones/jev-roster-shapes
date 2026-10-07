@@ -28,7 +28,7 @@
 	<nav class="shell-nav" aria-label="Sections">
 		<a href={resolve('/decisions')} aria-current={slug ? undefined : 'page'}>Decisions</a>
 		{#if story && decisionHref}
-			<a href={decisionHref} aria-current={onBoard ? 'page' : undefined}>
+			<a href={decisionHref} aria-current={onBoard ? 'page' : 'true'}>
 				{story.short}
 			</a>
 		{/if}
@@ -154,7 +154,8 @@
 		color: var(--ink);
 	}
 
-	.shell-nav a[aria-current='page'] {
+	.shell-nav a[aria-current='page'],
+	.shell-nav a[aria-current='true'] {
 		border-color: var(--ink);
 		color: var(--panel);
 		background: var(--ink);

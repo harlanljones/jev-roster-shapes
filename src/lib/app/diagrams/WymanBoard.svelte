@@ -39,12 +39,21 @@
 	} = $props();
 
 	const uid = $props.id();
+	/** Narrowest the drawing is allowed to render; below it the panel scrolls sideways. */
+	const MIN_DRAW_W = 600;
+	let panelW = $state(0);
 	const X0 = 10;
 	const TOP = 40;
 	const GAP = 44;
 	const TX = X0 + BIN_W + GAP;
 	const H = $derived(Math.max(BIN_H, tray.height + 24));
 	const FLOOR = $derived(TOP + H);
+	const VB_W = TX + TRAY_W + X0;
+	const drawW = $derived(Math.max(panelW, MIN_DRAW_W));
+	const scrolls = $derived(panelW > 0 && panelW < MIN_DRAW_W);
+	/** Pixels per drawing unit, so in-piece text can hold a readable size on screen. */
+	const unit = $derived(drawW / VB_W);
+	const FS = $derived(Math.max(11, 10.5 / unit));
 
 	function shapeFor(id: string | null): ShapeLabel {
 		const shape = id ? (pool.get(id)?.shape ?? 'Circle') : 'Circle';
@@ -108,6 +117,40 @@
 			};
 		})
 	);
+	/**
+	 * In-piece labels are drawn only where they fit inside the piece and clear
+	 * of every larger label already placed; the rest are offered as tappable
+	 * chips under the board so no name is lost to a collision.
+	 */
+	const labelled = $derived.by(() => {
+		const all = [...onField, ...offField];
+		const shown: string[] = [];
+		const placed: { x0: number; x1: number; y0: number; y1: number }[] = [];
+		const order = [...all].sort((a, b) => b.pc.area - a.pc.area);
+		for (const piece of order) {
+			const w = Math.max(piece.name.length * 0.62, piece.tag.length * 0.66) * FS + 4;
+			const rect = {
+				x0: piece.cx - w / 2,
+				x1: piece.cx + w / 2,
+				y0: piece.cy - FS - 4,
+				y1: piece.cy + FS * 0.45 + 6
+			};
+			const fits =
+				w <= piece.pc.box.left + piece.pc.box.right &&
+				rect.y1 - rect.y0 <= piece.pc.box.top + piece.pc.box.bottom;
+			const clear = placed.every(
+				(o) => rect.x1 <= o.x0 || o.x1 <= rect.x0 || rect.y1 <= o.y0 || o.y1 <= rect.y0
+			);
+			if (fits && clear) {
+				shown.push(piece.key);
+				placed.push(rect);
+			}
+		}
+		return shown;
+	});
+	const unlabelled = $derived(
+		[...onField, ...offField].filter((p) => p.id != null && !labelled.includes(p.key))
+	);
 	/** Where the pile tops out; everything between it and the lid is headroom. */
 	const pileTop = $derived(FLOOR - Math.max(0, ...bin.pieces.map((pc) => pc.y + pc.box.top - 2)));
 
@@ -119,98 +162,171 @@
 	}
 </script>
 
-<svg class="board" viewBox="0 0 {TX + TRAY_W + X0} {TOP + H + 12}" role="group" aria-label={label}>
-	<defs>
-		<pattern
-			id="{uid}-hatch"
-			width="8"
-			height="8"
-			patternUnits="userSpaceOnUse"
-			patternTransform="rotate(45)"
-		>
-			<line x1="0" y1="0" x2="0" y2="8" stroke="var(--unknown)" stroke-width="1.5" opacity="0.5" />
-		</pattern>
-		{#each [...onField, ...offField] as { key, cx } (key)}
-			<clipPath id="{uid}-{key}-L" clipPathUnits="userSpaceOnUse">
-				<rect x={cx - 4000} y="-4000" width="4000" height="8000" />
-			</clipPath>
-			<clipPath id="{uid}-{key}-R" clipPathUnits="userSpaceOnUse">
-				<rect x={cx} y="-4000" width="4000" height="8000" />
-			</clipPath>
-		{/each}
-	</defs>
-
-	<text class="head" x={X0} y={TOP - 14}>ON THE FIELD</text>
-	<text class="head-note" x={X0 + BIN_W} y={TOP - 14} text-anchor="end">lid = this pool's best</text
+<div class="panel" class:scrolls bind:clientWidth={panelW}>
+	<svg
+		class="board"
+		viewBox="0 0 {VB_W} {TOP + H + 12}"
+		style:width="{drawW}px"
+		style:--fs="{FS}px"
+		role="group"
+		aria-label={label}
 	>
-	<rect class="lid" x={X0} y={FLOOR - BIN_H} width={BIN_W} height={BIN_H} />
-	{#if pileTop - (FLOOR - BIN_H) > 22}
-		<line class="pile" x1={X0} x2={X0 + BIN_W} y1={pileTop} y2={pileTop} stroke-dasharray="6 5" />
-		<text
-			class="headroom"
-			x={X0 + BIN_W / 2}
-			y={(pileTop + FLOOR - BIN_H) / 2 + 4}
-			text-anchor="middle">HEADROOM {Math.round(bin.headroom)}%</text
-		>
-	{/if}
-
-	<text class="head" x={TX} y={TOP - 14}>OFF THE FIELD</text>
-	<path
-		class="tray"
-		d="M{TX} {FLOOR - H} V{FLOOR} H{TX + TRAY_W} V{FLOOR - H}"
-		stroke-dasharray="3 5"
-	/>
-	{#if !offField.length}
-		<text class="head-note" x={TX + TRAY_W / 2} y={FLOOR - 20} text-anchor="middle"
-			>nobody left off</text
-		>
-	{/if}
-
-	{#each [...onField, ...offField] as piece (piece.key)}
-		{@const { key, id, pc, cx, cy, L, R } = piece}
-		<g
-			class="piece"
-			class:sel={id != null && selected === id}
-			role="button"
-			tabindex="0"
-			aria-label={piece.aria}
-			aria-pressed={id != null && selected === id}
-			onclick={() => id && onSelect(id)}
-			onkeydown={(e) => keySelect(e, id)}
-		>
-			{#each [['L', L], ['R', R]] as const as [side, h] (side)}
-				<path
-					class="body"
-					d={h.d}
-					fill={h.fill}
-					stroke={h.missing ? 'var(--unknown)' : 'rgba(0,0,0,.45)'}
-					stroke-width={h.missing ? 1.5 : 1}
-					stroke-dasharray={h.missing ? '5 4' : undefined}
-					clip-path="url(#{uid}-{key}-{side})"
+		<defs>
+			<pattern
+				id="{uid}-hatch"
+				width="8"
+				height="8"
+				patternUnits="userSpaceOnUse"
+				patternTransform="rotate(45)"
+			>
+				<line
+					x1="0"
+					y1="0"
+					x2="0"
+					y2="8"
+					stroke="var(--unknown)"
+					stroke-width="1.5"
+					opacity="0.5"
 				/>
+			</pattern>
+			{#each [...onField, ...offField] as { key, cx } (key)}
+				<clipPath id="{uid}-{key}-L" clipPathUnits="userSpaceOnUse">
+					<rect x={cx - 4000} y="-4000" width="4000" height="8000" />
+				</clipPath>
+				<clipPath id="{uid}-{key}-R" clipPathUnits="userSpaceOnUse">
+					<rect x={cx} y="-4000" width="4000" height="8000" />
+				</clipPath>
 			{/each}
-			{#if id != null && ringed.has(id)}
-				<path class="ring" d={shapePath(shapeFor(id), cx, cy, pc.r)} />
-			{/if}
-			<line
-				x1={cx}
-				y1={cy - pc.box.top + 4}
-				x2={cx}
-				y2={cy + pc.box.bottom - 4}
-				stroke="rgba(0,0,0,.35)"
-				stroke-width="1"
-			/>
-			<text class="role" x={cx} y={cy - 4} text-anchor="middle">{piece.tag}</text>
-			<text class="nm" x={cx} y={cy + 11} text-anchor="middle">{piece.name}</text>
-		</g>
-	{/each}
-</svg>
+		</defs>
+
+		<text class="head" x={X0} y={TOP - 14}>ON THE FIELD</text>
+		<text class="head-note" x={X0 + BIN_W} y={TOP - 14} text-anchor="end"
+			>lid = this pool's best</text
+		>
+		<rect class="lid" x={X0} y={FLOOR - BIN_H} width={BIN_W} height={BIN_H} />
+		{#if pileTop - (FLOOR - BIN_H) > 22}
+			<line class="pile" x1={X0} x2={X0 + BIN_W} y1={pileTop} y2={pileTop} stroke-dasharray="6 5" />
+			<text
+				class="headroom"
+				x={X0 + BIN_W / 2}
+				y={(pileTop + FLOOR - BIN_H) / 2 + 4}
+				text-anchor="middle">HEADROOM {Math.round(bin.headroom)}%</text
+			>
+		{/if}
+
+		<text class="head" x={TX} y={TOP - 14}>OFF THE FIELD</text>
+		<path
+			class="tray"
+			d="M{TX} {FLOOR - H} V{FLOOR} H{TX + TRAY_W} V{FLOOR - H}"
+			stroke-dasharray="3 5"
+		/>
+		{#if !offField.length}
+			<text class="head-note" x={TX + TRAY_W / 2} y={FLOOR - 20} text-anchor="middle"
+				>nobody left off</text
+			>
+		{/if}
+
+		{#each [...onField, ...offField] as piece (piece.key)}
+			{@const { key, id, pc, cx, cy, L, R } = piece}
+			<g
+				class="piece"
+				class:sel={id != null && selected === id}
+				role="button"
+				tabindex="0"
+				aria-label={piece.aria}
+				aria-pressed={id != null && selected === id}
+				onclick={() => id && onSelect(id)}
+				onkeydown={(e) => keySelect(e, id)}
+			>
+				{#each [['L', L], ['R', R]] as const as [side, h] (side)}
+					<path
+						class="body"
+						d={h.d}
+						fill={h.fill}
+						stroke={h.missing ? 'var(--unknown)' : 'rgba(0,0,0,.45)'}
+						stroke-width={h.missing ? 1.5 : 1}
+						stroke-dasharray={h.missing ? '5 4' : undefined}
+						clip-path="url(#{uid}-{key}-{side})"
+					/>
+				{/each}
+				{#if id != null && ringed.has(id)}
+					<path class="ring" d={shapePath(shapeFor(id), cx, cy, pc.r)} />
+				{/if}
+				<line
+					x1={cx}
+					y1={cy - pc.box.top + 4}
+					x2={cx}
+					y2={cy + pc.box.bottom - 4}
+					stroke="rgba(0,0,0,.35)"
+					stroke-width="1"
+				/>
+				{#if labelled.includes(key)}
+					<text class="role" x={cx} y={cy - 4} text-anchor="middle">{piece.tag}</text>
+					<text class="nm" x={cx} y={cy + FS} text-anchor="middle">{piece.name}</text>
+				{/if}
+			</g>
+		{/each}
+	</svg>
+</div>
+{#if scrolls}
+	<p class="hint">Scroll the board sideways. Tap a piece to read its tag.</p>
+{/if}
+{#if unlabelled.length}
+	<ul class="chips" aria-label="Pieces too small to label on the board">
+		{#each unlabelled as piece (piece.key)}
+			<li>
+				<button
+					type="button"
+					class="chip"
+					aria-pressed={selected === piece.id}
+					onclick={() => piece.id && onSelect(piece.id)}
+					><span>{piece.tag}</span> {piece.name}</button
+				>
+			</li>
+		{/each}
+	</ul>
+{/if}
 
 <style>
+	.panel {
+		min-width: 0;
+		overflow-x: auto;
+	}
 	.board {
 		display: block;
-		width: 100%;
+		max-width: none;
 		height: auto;
+	}
+	.hint {
+		margin: 0.4rem 0 0;
+		color: var(--ink-soft);
+		font-size: 0.75rem;
+	}
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0.5rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	.chip {
+		min-height: 2.25rem;
+		border: 1px solid var(--rule);
+		border-radius: 999px;
+		padding: 0 0.7rem;
+		color: var(--ink);
+		background: var(--panel);
+		font: 600 0.78rem var(--body);
+		cursor: pointer;
+	}
+	.chip span {
+		color: var(--ink-soft);
+		font: 500 0.68rem var(--mono);
+	}
+	.chip[aria-pressed='true'] {
+		border-color: var(--ink);
+		outline: 2px solid var(--ink);
 	}
 	.lid {
 		fill: var(--panel);
@@ -268,7 +384,7 @@
 		stroke: var(--panel);
 		stroke-width: 3px;
 		pointer-events: none;
-		font-size: 11px;
+		font-size: var(--fs, 11px);
 	}
 	.head,
 	.head-note {

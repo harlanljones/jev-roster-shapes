@@ -68,6 +68,14 @@
 		}
 		return found;
 	});
+	// Below this width the chart scrolls sideways instead of shrinking, so the
+	// month labels, "today" and pin numbers stay at a readable size.
+	let scroller: HTMLDivElement | undefined = $state();
+	$effect(() => {
+		if (!scroller || scroller.scrollWidth <= scroller.clientWidth) return;
+		const target = (x(marker.date) / W) * scroller.scrollWidth - scroller.clientWidth / 2;
+		scroller.scrollLeft = Math.max(0, target);
+	});
 	const summary = $derived(
 		[
 			`Boston's 2026 record by date, ${last ? `${last.wins}–${last.losses} through ${longDate(last.date)}` : 'unavailable'}`,
@@ -83,59 +91,68 @@
 </script>
 
 <nav class="timeline" aria-label="Season timeline">
-	<svg viewBox="0 0 {W} {H}" role="img" aria-label={summary}>
-		<rect
-			class="preseason"
-			x="0"
-			y={top - 8}
-			width={x('2026-03-26')}
-			height={bottom - top + 16}
-			role="img"
-			aria-label="Spring training, March 26 to April 8"
-		/>
-		<rect
-			class="preseason"
-			x={x('2026-09-28')}
-			y={top - 8}
-			width={x(TIMELINE_END) - x('2026-09-28')}
-			height={bottom - top + 16}
-			role="img"
-			aria-label="Off season, September 28, 2026 to March 25, 2027"
-		/>
-		{#each months as m (m.key)}
-			<line class="month" x1={m.x} x2={m.x} y1={top - 8} y2={bottom + 8} />
-			<text class="month-label" x={m.x + 4} y={H - 8}>{m.label}</text>
-		{/each}
-		<line class="zero" x1="0" x2={x(TIMELINE_END)} y1={y(0)} y2={y(0)} />
-		<text class="axis-label" x="4" y={y(0) - 4}>.500</text>
-		{#each SEASON_EVENTS as e (e.date)}
-			<line class="event" x1={x(e.date)} x2={x(e.date)} y1={top - 8} y2={bottom + 8}>
-				<title>{e.label}: {e.source}</title>
-			</line>
-		{/each}
-		<path class="record" d={path} />
-		{#each drawn as item (item.pin.slug)}
-			<g class="pin" class:active={item.pin.slug === activeSlug}>
-				<line x1={item.lineX} x2={item.lineX} y1="18" y2={bottom + 8} />
-				{#if item.circleX !== item.lineX}
-					<line x1={item.lineX} x2={item.circleX} y1="27" y2="27" />
-				{/if}
-				<circle cx={item.circleX} cy="14" r="11" />
-				<text x={item.circleX} y="18.5">{item.num}</text>
-			</g>
-		{/each}
-		<!-- Drawn last: extending the window put today inside the busiest week
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+	<div
+		class="scroll"
+		bind:this={scroller}
+		tabindex="0"
+		role="group"
+		aria-label="Season timeline chart, scrolls sideways on narrow screens"
+	>
+		<svg viewBox="0 0 {W} {H}" role="img" aria-label={summary}>
+			<rect
+				class="preseason"
+				x="0"
+				y={top - 8}
+				width={x('2026-03-26')}
+				height={bottom - top + 16}
+				role="img"
+				aria-label="Spring training, March 26 to April 8"
+			/>
+			<rect
+				class="preseason"
+				x={x('2026-09-28')}
+				y={top - 8}
+				width={x(TIMELINE_END) - x('2026-09-28')}
+				height={bottom - top + 16}
+				role="img"
+				aria-label="Off season, September 28, 2026 to March 25, 2027"
+			/>
+			{#each months as m (m.key)}
+				<line class="month" x1={m.x} x2={m.x} y1={top - 8} y2={bottom + 8} />
+				<text class="month-label" x={m.x + 4} y={H - 8}>{m.label}</text>
+			{/each}
+			<line class="zero" x1="0" x2={x(TIMELINE_END)} y1={y(0)} y2={y(0)} />
+			<text class="axis-label" x="4" y={y(0) - 4}>.500</text>
+			{#each SEASON_EVENTS as e (e.date)}
+				<line class="event" x1={x(e.date)} x2={x(e.date)} y1={top - 8} y2={bottom + 8}>
+					<title>{e.label}: {e.source}</title>
+				</line>
+			{/each}
+			<path class="record" d={path} />
+			{#each drawn as item (item.pin.slug)}
+				<g class="pin" class:active={item.pin.slug === activeSlug}>
+					<line x1={item.lineX} x2={item.lineX} y1="18" y2={bottom + 8} />
+					{#if item.circleX !== item.lineX}
+						<line x1={item.lineX} x2={item.circleX} y1="27" y2="27" />
+					{/if}
+					<circle cx={item.circleX} cy="14" r="11" />
+					<text x={item.circleX} y="18.5">{item.num}</text>
+				</g>
+			{/each}
+			<!-- Drawn last: extending the window put today inside the busiest week
 		     of the axis, and the pin circles would otherwise bury its label. -->
-		<g class="today">
-			<line x1={x(marker.date)} x2={x(marker.date)} y1="6" y2={bottom + 8} />
-			<text x={Math.min(x(marker.date) + 5, W - 96)} y="12">today</text>
-			<title>
-				Today is {longDate(marker.date)}{todayRecord
-					? `; Boston is ${todayRecord.wins}–${todayRecord.losses}`
-					: ', before the first game'}
-			</title>
-		</g>
-	</svg>
+			<g class="today">
+				<line x1={x(marker.date)} x2={x(marker.date)} y1="27" y2={bottom + 8} />
+				<text x={Math.min(x(marker.date) + 5, W - 96)} y={bottom - 6}>today</text>
+				<title>
+					Today is {longDate(marker.date)}{todayRecord
+						? `; Boston is ${todayRecord.wins}–${todayRecord.losses}`
+						: ', before the first game'}
+				</title>
+			</g>
+		</svg>
+	</div>
 	<ol class="pins">
 		{#each pins as pin, i (pin.slug)}
 			<li>
@@ -146,7 +163,10 @@
 				>
 					<span class="num" aria-hidden="true">{i + 1}</span>
 					<span class="name">{pin.short}</span>
-					<small>{longDate(pin.date)}{pin.record ? ` · ${pin.record}` : ' · preseason'}</small>
+					<small
+						>{longDate(pin.date)} · {#if pin.record}<span class="rec">{pin.record}</span
+							>{:else}preseason{/if}</small
+					>
 				</a>
 			</li>
 		{/each}
@@ -172,10 +192,17 @@
 		background: var(--panel);
 		padding: 1rem;
 	}
+	.scroll {
+		overflow-x: auto;
+	}
 	svg {
 		display: block;
 		width: 100%;
+		min-width: 1000px;
 		height: auto;
+	}
+	.rec {
+		white-space: nowrap;
 	}
 	.preseason {
 		fill: var(--chip-bg);

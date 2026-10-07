@@ -206,7 +206,7 @@
 </script>
 
 <svelte:head>
-	<title>Snapshots · {story.short} · Roster Shapes</title>
+	<title>Snapshots · {story.title} · Roster Shapes</title>
 	<meta
 		name="description"
 		content="The Jev profile prompt, its answers, and the transparent rule baseline for the {story.title} roster, next to the case they describe."
@@ -325,7 +325,7 @@
 
 		<section class="prompt" aria-labelledby="prompt-heading">
 			<h2 id="prompt-heading">The prompt</h2>
-			<div class="key-row">
+			<form class="key-row" autocomplete="off" onsubmit={(e) => e.preventDefault()}>
 				<label for="api-key">Provider key (session only)</label>
 				<input
 					id="api-key"
@@ -335,7 +335,7 @@
 					placeholder="TypeSafe API key"
 					bind:value={apiKey}
 				/>
-			</div>
+			</form>
 			<p class="key-note">
 				Kept in memory for this page only. It is never written to a bundle, a saved draft, browser
 				storage, or the repository, and the published demo cannot call the provider without one.

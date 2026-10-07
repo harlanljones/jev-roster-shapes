@@ -368,8 +368,9 @@
 	}
 	.readout dd {
 		margin: 0.2rem 0 0;
-		font: 600 1.05rem var(--mono);
+		font: 600 clamp(0.85rem, 4.2vw, 1.05rem) var(--mono);
 		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
 	}
 	.stamp {
 		display: flex;

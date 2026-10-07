@@ -61,6 +61,26 @@
 	const name = (id: string | null) => (id ? (pool.get(id)?.last ?? id) : 'empty');
 </script>
 
+<!-- Names that are wider than their column turn sideways so they stay inside the frame. -->
+{#snippet bandName(cls: string, col: (typeof cols)[number], text: string, side: Side)}
+	{@const narrow = text.length * 6.8 > col.w - 4}
+	{@const cx = col.x + col.w / 2}
+	{#if narrow}
+		<text
+			class={cls}
+			x={cx}
+			y={side === 'L' ? col.mid - 6 : col.mid + 6}
+			text-anchor={side === 'L' ? 'start' : 'end'}
+			dominant-baseline="central"
+			transform="rotate(-90 {cx} {side === 'L' ? col.mid - 6 : col.mid + 6})">{text}</text
+		>
+	{:else}
+		<text class={cls} x={cx} y={side === 'L' ? col.mid - 8 : col.mid + 18} text-anchor="middle"
+			>{text}</text
+		>
+	{/if}
+{/snippet}
+
 <svg class="bars" viewBox="0 0 1000 {TOP + H + 30}" role="img" aria-label={label}>
 	<defs>
 		<pattern
@@ -110,16 +130,10 @@
 			{/if}
 		{/each}
 		{#if col.same}
-			<text class="nm" x={col.x + col.w / 2} y={col.mid + 18} text-anchor="middle"
-				>{name(col.c.R.id)}</text
-			>
+			{@render bandName('nm', col, name(col.c.R.id), 'R')}
 		{:else}
-			<text class="sub" x={col.x + col.w / 2} y={col.mid - 8} text-anchor="middle"
-				>{name(col.c.L.id)}</text
-			>
-			<text class="nm" x={col.x + col.w / 2} y={col.mid + 18} text-anchor="middle"
-				>{name(col.c.R.id)}</text
-			>
+			{@render bandName('sub', col, name(col.c.L.id), 'L')}
+			{@render bandName('nm', col, name(col.c.R.id), 'R')}
 		{/if}
 		{#if col.x > X0}
 			<line class="rule" x1={col.x} y1={TOP} x2={col.x} y2={TOP + H} />

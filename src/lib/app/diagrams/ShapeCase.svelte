@@ -167,18 +167,28 @@
 					/>
 				{/if}
 			</g>
-			<text class="sock-name" x={s.x} y={s.y + (star ? 82 : 72)} text-anchor="middle">{p.last}</text
-			>
+		{/if}
+	{/each}
+
+	<!-- Captions are drawn after every cutout and piece so a neighbouring piece
+	     can never cover them; x is clamped to keep them inside the case. -->
+	{#each sockets as s (s.role)}
+		{@const star = CUTOUT_ASK[s.role].primary === 'Star'}
+		{@const cx = Math.min(Math.max(s.x, 100), 880)}
+		{#if s.player}
+			{@const p = s.player}
+			{@const g = grade(p, s.role)}
+			<text class="sock-name" x={cx} y={s.y + (star ? 82 : 72)} text-anchor="middle">{p.last}</text>
 			<text
 				class="sock-fit"
-				x={s.x}
+				x={cx}
 				y={s.y + (star ? 99 : 89)}
 				text-anchor="middle"
 				fill={GRADE_COLOR[g]}
 				>{GRADE_TEXT[g].toUpperCase()} · {runsText(p)} · {Math.round(p.pa.L + p.pa.R)} PA</text
 			>
 		{:else}
-			<text class="sock-name" x={s.x} y={s.y + 72} text-anchor="middle">empty</text>
+			<text class="sock-name" x={cx} y={s.y + 72} text-anchor="middle">empty</text>
 		{/if}
 	{/each}
 
@@ -263,6 +273,14 @@
 		font-family: var(--mono);
 		font-size: 13px;
 		letter-spacing: 0.06em;
+	}
+	.sock-name,
+	.sock-fit {
+		paint-order: stroke;
+		stroke: #191d1c;
+		stroke-width: 4px;
+		stroke-linejoin: round;
+		pointer-events: none;
 	}
 	.sock-name {
 		fill: #eef0ea;
