@@ -22,20 +22,22 @@ describe('SnapshotsPage', () => {
 		await expect
 			.element(page.getByRole('button', { name: 'Classify this player' }))
 			.not.toBeInTheDocument();
-		await expect.element(page.getByText(/No answers recorded yet/)).toBeVisible();
+		// The checked-in CI answers (D-58) are shown, with their probabilities.
+		await expect
+			.element(page.getByRole('table', { name: /Validated provider answers/ }))
+			.toBeVisible();
 
 		// D-57: the roster diagram opens by criterion, placed by the rule baseline,
-		// beside the Jev call with its questions and no invented answer.
+		// beside the Jev call with its questions and the recorded answer.
 		await expect
 			.element(
 				page.getByRole('list', { name: /Roster by profile criterion, placed by Rule baseline/ })
 			)
 			.toBeVisible();
 		const call = page.getByRole('article', { name: /^Jev call for / });
-		await expect.element(call.getByText('not requested')).toBeVisible();
 		await expect.element(call.getByText('evidence_sufficient')).toBeVisible();
 		await expect.element(call.getByText(/^Which single profile label/)).toBeVisible();
-		await expect.element(call.getByText('No answer yet.')).toBeVisible();
+		await expect.element(call.getByText('No answer yet.')).not.toBeInTheDocument();
 		await expect.element(page.getByText(/^Engine total 52\.69416 runs/)).toBeVisible();
 		await expect
 			.element(page.getByText(/\+1\.991 against the lineup this scenario used/))
@@ -52,8 +54,7 @@ describe('SnapshotsPage', () => {
 		await expect
 			.element(page.getByText(/\+5\.785 against the lineup this scenario used/))
 			.toBeVisible();
-		// Still nothing recorded, and the roster analysis follows the scenario.
-		await expect.element(page.getByText(/No answers recorded yet/)).toBeVisible();
+		// The roster analysis follows the scenario.
 		await expect.element(page.getByText(/2 benched/)).toBeVisible();
 	});
 
@@ -77,10 +78,10 @@ describe('SnapshotsPage', () => {
 describe('SnapshotsPage diagram modes', () => {
 	const story = getStoryline('wild-card-roster')!;
 
-	it('switches the roster diagram between lanes and the packed board, with Jev disabled until answered', async () => {
+	it('switches the roster diagram between lanes and the packed board, with Jev available from the recorded answers', async () => {
 		await render(SnapshotsPage, { props: { story } });
 
-		await expect.element(page.getByRole('button', { name: 'Jev', exact: true })).toBeDisabled();
+		await expect.element(page.getByRole('button', { name: 'Jev', exact: true })).toBeEnabled();
 		await page.getByRole('button', { name: 'Analyst', exact: true }).click();
 		await expect.element(page.getByRole('list', { name: /placed by Analyst/ })).toBeVisible();
 		await page.getByRole('button', { name: 'Packed' }).click();

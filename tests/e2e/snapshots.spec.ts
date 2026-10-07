@@ -10,7 +10,7 @@ async function openSnapshots(page: Page, slug = 'offseason-infield'): Promise<vo
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Snapshots');
 }
 
-test('the snapshots page shows the prompt, the roster, and the engine fit before any answer is recorded', async ({
+test('the snapshots page shows the prompt, the roster, and the engine fit with the recorded answers', async ({
 	page
 }) => {
 	await openSnapshots(page);
@@ -18,7 +18,7 @@ test('the snapshots page shows the prompt, the roster, and the engine fit before
 	// No key field or ask button exists (D-58), and no output is invented.
 	await expect(page.getByLabel('Provider key (session only)')).toHaveCount(0);
 	await expect(page.getByRole('button', { name: 'Classify this player' })).toHaveCount(0);
-	await expect(page.locator('.state[data-status="none"]')).toContainText('No answers recorded yet');
+	await expect(page.getByRole('table', { name: /Validated provider answers/ })).toBeVisible();
 
 	// The exact request that would be sent is inspectable.
 	await page.getByText('Request body, exactly as it would be sent').click();
