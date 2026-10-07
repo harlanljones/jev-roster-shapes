@@ -16,7 +16,7 @@
 	import SeasonTimeline from './diagrams/SeasonTimeline.svelte';
 	import RosterDiagram from './diagrams/RosterDiagram.svelte';
 	import { sourceLabels } from './jev-call';
-	import { jevRecordFor } from './jev-session.svelte';
+	import { jevRecordFor } from './jev-results';
 	import {
 		benchTray,
 		binFindings,

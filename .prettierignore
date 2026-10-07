@@ -16,3 +16,6 @@ src/lib/fixtures/golden/
 /static/
 reports/
 .impeccable/
+
+# CI-recorded Jev answers: one record per line (serializeResults), not prettier-wrapped
+src/lib/classification/jev-results.json

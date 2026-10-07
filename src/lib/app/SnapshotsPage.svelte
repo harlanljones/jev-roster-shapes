@@ -10,8 +10,6 @@
 		baselineAgreement,
 		buildProfileRequest,
 		classifyBaseline,
-		classifyProfile,
-		createHttpJevProvider,
 		toRuleEvidence,
 		type BaselineResult,
 		type JevRecord
@@ -23,7 +21,7 @@
 	import PieceDetail from './diagrams/PieceDetail.svelte';
 	import RosterDiagram from './diagrams/RosterDiagram.svelte';
 	import { sourceLabels } from './jev-call';
-	import { jevRecordFor, rememberJev } from './jev-session.svelte';
+	import { jevRecordFor, recordedCount } from './jev-results';
 	import {
 		benchTray,
 		buildPool,
@@ -60,23 +58,13 @@
 		selected && pool.has(selected) ? selected : (lineup['3B'] ?? lineupIds(lineup)[0] ?? null)
 	);
 
-	// Provider state, held for this session only: the key is never written to a
-	// bundle, a draft, storage, or the repository.
-	let apiKey = $state('');
-	let acknowledged = $state(false);
-	let pending = $state<string | null>(null);
-	let lastError = $state<string | null>(null);
-
-	const provider = $derived(
-		apiKey.trim() ? createHttpJevProvider({ apiKey: apiKey.trim() }) : null
-	);
 	const note = $derived(provenanceNote(story));
 	const evidenceOf = (playerId: string) => {
 		const player = pool.get(playerId);
 		return player ? evidenceFor(bundle, player, note) : null;
 	};
-	// Answers live in the session store (D-57), so the decision board shows a
-	// call made here without asking again.
+	// Answers are the ones CI recorded for these snapshots (D-58); the page never
+	// calls the provider.
 	const requestOf = (playerId: string) => {
 		const evidence = evidenceOf(playerId);
 		return evidence ? buildProfileRequest(evidence, DEFAULT_JEV_MODEL) : null;
@@ -142,32 +130,6 @@
 		active ? buildProfileRequest(evidenceOf(active)!, DEFAULT_JEV_MODEL) : null
 	);
 	const requestJson = $derived(request ? JSON.stringify(request, null, 2) : '');
-	async function run(playerId: string): Promise<void> {
-		const evidence = evidenceOf(playerId);
-		if (!evidence || !provider || !acknowledged) return;
-		pending = playerId;
-		lastError = null;
-		try {
-			const record = await classifyProfile(evidence, {
-				provider,
-				acknowledged,
-				model: DEFAULT_JEV_MODEL
-			});
-			rememberJev(record);
-		} catch (error) {
-			lastError = error instanceof Error ? error.message : 'the request failed';
-		} finally {
-			pending = null;
-		}
-	}
-
-	async function runAll(): Promise<void> {
-		for (const id of pool.keys()) {
-			if (records[id]) continue;
-			await run(id);
-		}
-	}
-
 	const answered = $derived(
 		[...pool.keys()]
 			.map((id) => ({ id, record: records[id] }))
@@ -193,7 +155,7 @@
 					.slice(0, 3)
 			: [];
 	const statusText = (record: JevRecord | undefined): string => {
-		if (!record) return 'not requested';
+		if (!record) return 'not recorded';
 		if (record.status === 'current') return `current · ${record.model ?? 'model unknown'}`;
 		return record.status;
 	};
@@ -325,43 +287,11 @@
 
 		<section class="prompt" aria-labelledby="prompt-heading">
 			<h2 id="prompt-heading">The prompt</h2>
-			<form class="key-row" autocomplete="off" onsubmit={(e) => e.preventDefault()}>
-				<label for="api-key">Provider key (session only)</label>
-				<input
-					id="api-key"
-					type="password"
-					autocomplete="off"
-					spellcheck="false"
-					placeholder="TypeSafe API key"
-					bind:value={apiKey}
-				/>
-			</form>
-			<p class="key-note">
-				Kept in memory for this page only. It is never written to a bundle, a saved draft, browser
-				storage, or the repository, and the published demo cannot call the provider without one.
+			<p class="state" data-status="recorded">
+				<strong>Recorded answers only.</strong> Jev is asked from CI when new snapshots are pushed
+				to main, and the answers are checked in ({recordedCount} recorded). This page never calls the
+				provider.
 			</p>
-
-			{#if !provider}
-				<p class="state" data-status="not-configured">
-					<strong>Not configured.</strong> No key is set, so nothing has been sent and no answer exists.
-					The request below is what would go out, built from the bundle's dated rate, the approved eligibility,
-					and the display-layer split snapshot.
-				</p>
-			{:else if !acknowledged}
-				<label class="ack">
-					<input type="checkbox" bind:checked={acknowledged} />
-					<span>
-						Send these players' observations to the external provider for this session. I understand
-						the evidence leaves this environment, that the response is advisory, and that no team
-						data is in scope (O-04 is still open).
-					</span>
-				</label>
-			{:else}
-				<p class="state" data-status="ready">
-					<strong>Acknowledged.</strong> Calls run only when you press the button, never on load and never
-					while an allocation edit is being calculated.
-				</p>
-			{/if}
 
 			<div class="actions">
 				<label for="player">Player</label>
@@ -374,31 +304,12 @@
 						<option value={player.id}>{player.name}</option>
 					{/each}
 				</select>
-				<button
-					type="button"
-					class="primary"
-					disabled={!provider || !acknowledged || pending !== null || !active}
-					onclick={() => active && run(active)}
-				>
-					{pending === active ? 'Asking…' : 'Classify this player'}
-				</button>
-				<button
-					type="button"
-					disabled={!provider || !acknowledged || pending !== null}
-					onclick={runAll}
-				>
-					Classify the pool
-				</button>
 			</div>
 			<p class="status-line" role="status" aria-live="polite">
-				{#if lastError}
-					<span class="state" data-status="error">{lastError}</span>
-				{:else if pending}
-					Asking {names.get(pending)}…
-				{:else if active && records[active]}
+				{#if active && records[active]}
 					{statusText(records[active])} for {names.get(active)}
 				{:else}
-					{provider ? 'Ready when you are.' : 'No provider configured.'}
+					No recorded answer for {active ? names.get(active) : 'this player'}.
 				{/if}
 			</p>
 
@@ -418,10 +329,11 @@
 				<pre>{requestJson}</pre>
 			</details>
 			<p class="request-note">
-				Sent to <code>POST /v1/systemone</code> with <code>model: {DEFAULT_JEV_MODEL}</code> and a
-				Bearer key. The state is the evidence above, verbatim; the questions are one closed-set
-				profile choice over the rubric's {PROFILE_LABELS.length} options plus one abstention question.
-				Cached by this exact body, the rubric version, and the model.
+				Sent by CI to <code>POST /v1/systemone</code> with <code>model: {DEFAULT_JEV_MODEL}</code>
+				when this snapshot is pushed to main. The state is the evidence above, verbatim; the questions
+				are one closed-set profile choice over the rubric's {PROFILE_LABELS.length}
+				options plus one abstention question. An answer is shown only when its request digest, rubric
+				version, and prompt version match this exact body.
 			</p>
 		</section>
 	</div>
@@ -430,8 +342,9 @@
 		<h2 id="outputs-heading">Outputs</h2>
 		{#if answered.length === 0}
 			<p class="state" data-status="none">
-				No answers yet. Nothing has been requested, so there is no model output, no cost, and no
-				agreement to report. Every number on the decision page is unaffected either way.
+				No answers recorded yet. CI has not asked Jev for this snapshot, so there is no model
+				output, no cost, and no agreement to report. Every number on the decision page is unaffected
+				either way.
 			</p>
 		{:else}
 			<div class="table-scroll">
@@ -677,7 +590,6 @@
 		padding: 1.25rem;
 		background: var(--panel);
 	}
-	.key-row,
 	.actions {
 		display: flex;
 		flex-wrap: wrap;
@@ -690,7 +602,6 @@
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
-	input[type='password'],
 	select {
 		min-height: 2.5rem;
 		border: 1px solid var(--rule-strong);
@@ -699,7 +610,6 @@
 		font: inherit;
 		font-size: 0.9rem;
 	}
-	.key-note,
 	.request-note,
 	.limits,
 	.cost,
@@ -709,20 +619,6 @@
 		font-size: 0.8rem;
 		line-height: 1.6;
 	}
-	.ack {
-		display: flex;
-		gap: 0.6rem;
-		align-items: flex-start;
-		border: 1px solid var(--marker);
-		border-radius: 8px;
-		padding: 0.75rem;
-		font: inherit;
-		font-size: 0.85rem;
-		letter-spacing: normal;
-		line-height: 1.5;
-		text-transform: none;
-		color: var(--ink);
-	}
 	.state {
 		margin: 0;
 		border-left: 4px solid var(--rule-strong);
@@ -731,22 +627,10 @@
 		font-size: 0.85rem;
 		line-height: 1.55;
 	}
-	.state[data-status='not-configured'],
-	.state[data-status='error'] {
-		border-left-color: var(--accent);
-	}
-	.state[data-status='ready'] {
-		border-left-color: var(--snug);
-	}
 	.status-line {
 		min-height: 1.4rem;
 		margin: 0;
 		font: 500 0.8rem var(--mono);
-	}
-	button.primary {
-		border-color: var(--ink);
-		color: var(--panel);
-		background: var(--ink);
 	}
 	button {
 		min-height: 2.5rem;
