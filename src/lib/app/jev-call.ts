@@ -13,6 +13,19 @@ import {
 } from '$lib/classification';
 import type { ShapeLabel } from '$lib/shapes/taxonomy';
 
+/**
+ * The evidence_sufficient answer below which a piece is marked thin. This is a
+ * recorded judgment, not a calibrated threshold (D-59, O-07): across the 109
+ * recorded answers every player with full evidence scored 0.29–0.55 and the one
+ * player with no plate appearances and no splits scored 0.10, so .50 split the
+ * noise and hatched most of the roster while .25 marks only the clearly thin.
+ */
+export const THIN_EVIDENCE_BELOW = 0.25;
+
+/** True when a validated Jev answer says the evidence was thin. No answer is not thin. */
+export const isThinEvidence = (record: JevRecord | null | undefined): boolean =>
+	(record?.answer?.evidenceSufficient ?? 1) < THIN_EVIDENCE_BELOW;
+
 export interface CallStateRow {
 	key: string;
 	value: string;

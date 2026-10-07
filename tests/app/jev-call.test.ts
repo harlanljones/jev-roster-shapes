@@ -7,7 +7,14 @@ import {
 	type JevRecord,
 	type ProfileEvidence
 } from '../../src/lib/classification';
-import { callView, sourceLabels, sourcesDisagree, stateRows } from '../../src/lib/app/jev-call';
+import {
+	THIN_EVIDENCE_BELOW,
+	callView,
+	isThinEvidence,
+	sourceLabels,
+	sourcesDisagree,
+	stateRows
+} from '../../src/lib/app/jev-call';
 
 // D-57: the call view shows the request's questions, types, instructions and
 // criteria, and lays an answer on them only when a validated one exists.
@@ -144,5 +151,27 @@ describe('state and labels', () => {
 		expect(labels).toEqual({ jev: null, rule: 'Star', analyst: 'Pentagon' });
 		expect(sourcesDisagree(labels)).toBe(true);
 		expect(sourcesDisagree({ jev: null, rule: null, analyst: 'Square' })).toBe(false);
+	});
+});
+
+describe('thin evidence', () => {
+	const withSufficiency = (evidenceSufficient: number): JevRecord => ({
+		...answered({ Star: 1 }, evidenceSufficient),
+		answer: { label: 'Star', probabilities: { Star: 1 }, confidence: 0.6, evidenceSufficient }
+	});
+
+	it('marks only an answer clearly below the recorded judgment cut', () => {
+		expect(THIN_EVIDENCE_BELOW).toBe(0.25);
+		// 0.10 is the recorded answer for a player with no plate appearances and no splits.
+		expect(isThinEvidence(withSufficiency(0.1))).toBe(true);
+		// 0.29–0.55 is the range recorded for players with full evidence: not thin.
+		expect(isThinEvidence(withSufficiency(0.29))).toBe(false);
+		expect(isThinEvidence(withSufficiency(0.49))).toBe(false);
+	});
+
+	it('never marks a missing or unanswered record thin', () => {
+		expect(isThinEvidence(null)).toBe(false);
+		expect(isThinEvidence(undefined)).toBe(false);
+		expect(isThinEvidence(answered({ Star: 1 }, 0.1))).toBe(false);
 	});
 });

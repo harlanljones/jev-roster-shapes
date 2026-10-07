@@ -26,7 +26,7 @@
 		bin: BinResult;
 		tray: TrayResult;
 		labels: ReadonlyMap<string, SourceLabels>;
-		/** Players whose Jev evidence_sufficient answer is under .50. */
+		/** Players whose Jev evidence_sufficient answer is under THIN_EVIDENCE_BELOW. */
 		thin?: ReadonlySet<string>;
 		selected: string | null;
 		onSelect: (playerId: string) => void;
