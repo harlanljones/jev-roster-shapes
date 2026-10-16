@@ -2,7 +2,7 @@ import { computeInputDigest, validateBundle } from '../../src/lib/contracts';
 import { calculateComparison } from '../../src/lib/engine';
 import { shapeOf } from '../../src/lib/shapes/taxonomy';
 import {
-	CURRENT_SLUG,
+	currentSlug,
 	getStoryline,
 	PINNED_STORYLINE_DIGESTS,
 	storylineRegistry
@@ -264,8 +264,19 @@ describe('2026 storyline registry', () => {
 		});
 	});
 
-	it('opens `/` on a decision that exists', () => {
-		expect(CURRENT_SLUG).toBe('wild-card-roster');
-		expect(getStoryline(CURRENT_SLUG)).toBeDefined();
+	it('opens `/` on the latest decision whose event date has arrived', () => {
+		// The default follows the calendar (D-60): mid-season it is the pin that
+		// most recently came due, not a fixed slug.
+		expect(currentSlug('2026-07-25')).toBe('july-run');
+		expect(currentSlug('2026-09-27')).toBe('wild-card-roster');
+		expect(currentSlug('2026-10-16')).toBe('winter-infield');
+		// Registry order is not date order: the December pin sits before the
+		// November one, so the pick must compare dates, not positions.
+		expect(currentSlug('2026-11-06')).toBe('winter-bat');
+		expect(currentSlug('2026-12-07')).toBe('winter-duran');
+		// After the last pin the season's final decision stays current; before
+		// the first, the earliest upcoming one leads.
+		expect(currentSlug('2027-03-01')).toBe('winter-duran');
+		expect(currentSlug('2025-12-01')).toBe('offseason-infield');
 	});
 });

@@ -4,20 +4,28 @@ import { expect, test } from '@playwright/test';
 const require = createRequire(import.meta.url);
 const axeCorePath = require.resolve('axe-core/axe.min.js');
 
-// D-46: the season index lists every decision, each decision is its own page,
-// and the snapshots subpage hangs off the decision it explains. D-49: `/` opens
-// on the current decision and the index lives at `/decisions`.
-test('`/` opens on the Wild Card decision', async ({ page }) => {
-	await page.goto('/');
-	await expect(page).toHaveURL(/\/scenario\/wild-card-roster$/);
-	await expect(page.getByRole('heading', { level: 1 })).toContainText(
-		'Who plays first against the Yankees?'
-	);
-	await expect(
-		page
-			.getByRole('navigation', { name: 'Season timeline' })
-			.getByRole('link', { name: /Wild Card/ })
-	).toHaveAttribute('aria-current', 'page');
+// D-60: the current decision follows the viewer's calendar, not the build date
+// or UTC. Exercise both sides of a pin's local-midnight boundary.
+test.describe('calendar-selected homepage', () => {
+	test.use({ timezoneId: 'America/New_York' });
+
+	for (const [instant, slug] of [
+		['2026-10-16T16:00:00Z', 'winter-infield'],
+		['2026-11-06T04:59:00Z', 'winter-infield'],
+		['2026-11-06T05:00:00Z', 'winter-bat'],
+		['2026-12-07T17:00:00Z', 'winter-duran']
+	] as const) {
+		test(`opens ${slug} at ${instant}`, async ({ page }) => {
+			await page.clock.setFixedTime(new Date(instant));
+			await page.goto('/');
+			await expect(page).toHaveURL(new RegExp(`/scenario/${slug}$`));
+			await expect(
+				page
+					.getByRole('navigation', { name: 'Season timeline' })
+					.locator(`a[href="/scenario/${slug}"]`)
+			).toHaveAttribute('aria-current', 'page');
+		});
+	}
 });
 
 test('the index opens on the timeline with today marked and one card per decision', async ({
@@ -88,7 +96,9 @@ test('the index opens on the timeline with today marked and one card per decisio
 	expect(audit.violations).toEqual([]);
 });
 
-test('a decision page centers on the board and links to its diagram subpages', async ({ page }) => {
+test('a decision page leads with the Jev call beside the board and links to its subpages', async ({
+	page
+}) => {
 	await page.goto('/scenario/offseason-infield');
 
 	await expect(page.getByRole('heading', { level: 1 })).toContainText(
@@ -99,7 +109,8 @@ test('a decision page centers on the board and links to its diagram subpages', a
 	await expect(board).toBeVisible();
 	await expect(board.getByRole('button', { name: /^C: Carlos Narváez/ })).toBeVisible();
 	await expect(board.getByRole('button', { name: /^Off the field: Triston Casas/ })).toBeVisible();
-	const readout = page.getByRole('definition').first();
+	// The board readout, scoped: the Jev call's state list (D-60) precedes it.
+	const readout = page.locator('dl[aria-label="Board readout"]');
 	await expect(readout).toContainText('445.0 runs');
 	// The supplementary diagrams moved to subpages.
 	await expect(page.getByRole('group', { name: /Roster case for/ })).toHaveCount(0);

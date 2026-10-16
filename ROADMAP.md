@@ -685,6 +685,46 @@ open DH and shortstop stay a search; the display fit's pool is bundle-wide, so
 a candidate-only player can still appear in a baseline hindsight lid (D-43
 behavior, unchanged).
 
+### Calendar-selected homepage and call-first decision page (D-60)
+
+Delivered (2026-10-16): `currentSlug(today)` replaces the fixed Wild Card
+default. The client-side `/` redirect uses the viewer's local calendar date:
+latest arrived event, earliest upcoming event before the first, final event
+after the last. Selection compares dates rather than registry positions (the
+December entry precedes November in library order). The decision page places
+the selected player's Jev call first, with the roster board and workspace
+actions beside it on desktop and below it on mobile. Snapshots, calculation
+inputs, public-data gates, provider requests and recorded answers are unchanged.
+
+Observed:
+
+- `bun run check` — 0 errors / 0 warnings.
+- `bun run verify` reached lint, which failed only on the pre-existing,
+  untracked `layerset.json` and `skills-lock.json` local-tool configuration.
+  Neither file is part of this release.
+- `bunx prettier --check . '!layerset.json' '!skills-lock.json'` and
+  `bunx eslint .` — passed.
+- `bun run test` — 17 files / 134 tests passed; registry cases cover a
+  midseason date, exact event dates, October 16, and both season boundaries.
+- `bun run build` — static production build passed.
+- `bun run test:e2e` — 35 Chromium journeys passed, including the full axe
+  audits and fixed-clock homepage cases in `America/New_York`: October 16,
+  November 6 at 04:59 UTC (still November 5 locally) and 05:00 UTC (local
+  midnight), and December 7.
+- Manual Chromium smoke on the running app: `/` opened `winter-infield`;
+  at 1440×1000 the Jev section and supporting board aligned side by side,
+  and at 390×844 the call preceded the board with no page-level horizontal
+  overflow. Selecting Trevor Story on the board updated the call's name,
+  observations and recorded answer. No browser errors or first-party
+  HTTP 4xx/5xx were recorded.
+- `git diff --check` — passed.
+
+Limitations: this is a public-demo UI/navigation change, not a team pilot or
+new model evaluation. No provider calls, new model costs or data refresh were
+needed. The latency journey rewrote its report during the 8-worker run; the
+pre-existing local report was restored and is not part of this release, so no
+new performance claim is made.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

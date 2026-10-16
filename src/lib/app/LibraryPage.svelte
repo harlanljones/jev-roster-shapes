@@ -30,12 +30,13 @@
 	} from './shape-case';
 	import { SPLIT_SOURCE } from './split-evidence';
 
-	// The decision page centers on one diagram (D-50, after the Wyman Diagram
-	// guide): the board, now side by side with the Jev call for the selected
-	// piece (D-57, layout A); both are primary components. The scenario's nine pieces pack into a board whose lid
-	// is the most this pool can field, and everyone left off sits in the tray
-	// beside it. The case, the engine's pool fit, the interaction map, and the
-	// slot bars are supplementary subpages that share the scenario pick.
+	// The decision page leads with the Jev call for the selected piece (D-60):
+	// its instructions, criteria, and recorded decisions are the homepage's
+	// primary component, with the board — the scenario's nine pieces packed
+	// under the most this pool can field, everyone left off in the tray beside
+	// it — as the supporting diagram. The case, the engine's pool fit, the
+	// interaction map, and the slot bars are supplementary subpages that share
+	// the scenario pick (D-50).
 	let {
 		activeSlug = storylineRegistry[0]?.slug ?? '',
 		onOpen
@@ -135,7 +136,25 @@
 			<ScenarioPicker {bundle} {pool} current={scenario} />
 		</div>
 		<div class="pair">
-			<div class="pair-col">
+			<section class="pair-col" aria-label="Jev call">
+				{#if selected && requests.get(selected)}
+					<JevCall
+						name={pool.get(selected)?.name ?? selected}
+						request={requests.get(selected)!}
+						record={records.get(selected) ?? null}
+						compare={{
+							baseline: baselines.get(selected) ?? null,
+							analyst: pool.get(selected)?.shape ?? null
+						}}
+					/>
+				{/if}
+				<p class="call-note">
+					Answers are recorded by CI when new snapshots reach main; <a
+						href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}>Snapshots</a
+					> shows every answer and the request behind it.
+				</p>
+			</section>
+			<aside class="pair-col" aria-label="Roster board and actions">
 				<RosterDiagram
 					{pool}
 					bin={board}
@@ -175,24 +194,6 @@
 				{#if selected}
 					<PieceDetail {pool} playerId={selected} role={view.roleOf.get(selected)} />
 				{/if}
-			</div>
-			<aside class="pair-col" aria-label="Jev call and actions">
-				{#if selected && requests.get(selected)}
-					<JevCall
-						name={pool.get(selected)?.name ?? selected}
-						request={requests.get(selected)!}
-						record={records.get(selected) ?? null}
-						compare={{
-							baseline: baselines.get(selected) ?? null,
-							analyst: pool.get(selected)?.shape ?? null
-						}}
-					/>
-				{/if}
-				<p class="call-note">
-					Answers are recorded by CI when new snapshots reach main; <a
-						href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}>Snapshots</a
-					> shows every answer and the request behind it.
-				</p>
 				<button class="primary-button" type="button" onclick={() => (pendingOpen = true)}
 					>Open workspace</button
 				>

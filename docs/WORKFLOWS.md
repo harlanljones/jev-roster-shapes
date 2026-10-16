@@ -6,8 +6,9 @@ Status: implementation defaults for the local prototype (D-38 through D-40: libr
 
 | Route | Screen | Required content |
 | --- | --- | --- |
-| `/` | Season index | Timeline with today's date marked and the record through it, plus one card per decision with its date, baseline, and both deltas |
-| `/scenario/[slug]` | Decision board | One diagram (D-50): the scenario's lineup packed under the pool's best, the players left off the field beside it, its readout and findings, and cards to the subpages |
+| `/` | Current decision (D-60) | Redirects to the decision matching today's date; the season index lives at `/decisions` |
+| `/decisions` | Season index | Timeline with today's date marked and the record through it, plus one card per decision with its date, baseline, and both deltas |
+| `/scenario/[slug]` | Decision board | The Jev call for the selected piece as the primary component (D-60): its state, each question's instructions and criteria, and the recorded decisions; beside it the decision's one diagram (D-50): the scenario's lineup packed under the pool's best, the players left off the field, its readout, and cards to the subpages |
 | `/scenario/[slug]/case` | Case subpage | The fitted case, its findings, and its table equivalent |
 | `/scenario/[slug]/engine` | Engine subpage | The engine's pool fit per scenario with its offensive deltas |
 | `/scenario/[slug]/interactions` | Interactions subpage | The interaction map and its findings |
@@ -33,7 +34,7 @@ Use one comparison workspace with these reachable views. They may be panels or r
 | View | Required content | Primary action |
 | --- | --- | --- |
 | Season index | Season timeline with today marked, and one dated card per decision with its baseline and deltas | Open a decision |
-| Decision | The board (lineup pieces under the pool's best, players off the field, readout, findings) with player detail; the case, engine pool fit, interaction map, and slot bars on its subpages | Pick a scenario; open the workspace; open a subpage |
+| Decision | The Jev call for the selected piece (instructions, criteria, recorded decisions) as the primary component, beside the board (lineup pieces under the pool's best, players off the field, readout, findings) with player detail; the case, engine pool fit, interaction map, and slot bars on its subpages | Pick a scenario; open the workspace; open a subpage |
 | Assumptions | Horizon, templates, PA budgets, exposure assumptions, limits, provenance | Apply assumptions |
 | Allocation | Baseline/A/B selector, membership, template slots, workloads, diagnostics | Commit allocation edit |
 | Compare | Baseline/A/B columns, coverage, PA transfers, supported metrics, checks | Inspect a result |

@@ -309,9 +309,17 @@ export const storylineRegistry: readonly Storyline[] = [
 	})
 ];
 
-/** The decision `/` opens on (D-49): the Wild Card roster, kept there even
- * though the winter pins (D-52) are dated later — the season's pivotal choice. */
-export const CURRENT_SLUG = 'wild-card-roster';
+/** The decision `/` opens on (D-60, superseding D-49's fixed Wild Card default):
+ * the latest pin whose event date has arrived, so the default follows the
+ * calendar the way a refreshed snapshot moves its as-of date. Before the first
+ * pin, the earliest upcoming decision leads. `today` is an ISO date. */
+export function currentSlug(today: string): string {
+	const arrived = storylineRegistry.filter((storyline) => storyline.eventDate <= today);
+	if (arrived.length > 0) {
+		return arrived.reduce((a, b) => (b.eventDate > a.eventDate ? b : a)).slug;
+	}
+	return storylineRegistry.reduce((a, b) => (b.eventDate < a.eventDate ? b : a)).slug;
+}
 
 export function getStoryline(slug: string): Storyline | undefined {
 	return storylineRegistry.find((storyline) => storyline.slug === slug);
