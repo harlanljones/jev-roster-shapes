@@ -725,6 +725,14 @@ needed. The latency journey rewrote its report during the 8-worker run; the
 pre-existing local report was restored and is not part of this release, so no
 new performance claim is made.
 
+Release: `d2880a3` pushed to `main`; `gh run watch 38949478880 --exit-status`
+completed successfully (Cloudflare Pages build/deploy). Deployment:
+https://da7c6bb0.jev-roster-shapes.pages.dev. Post-deploy Chromium smoke on
+https://jev-roster-shapes.pages.dev/ confirmed the redirect to `winter-infield`,
+desktop call-first columns, Trevor Story selection updating the call, and
+390px mobile stacking without horizontal overflow. No browser/console errors
+or first-party HTTP 4xx/5xx were recorded.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.
