@@ -9671,7 +9671,7 @@
 			"name": "Isiah Kiner-Falefa",
 			"bats": "R",
 			"throws": "R",
-			"primary": "2B"
+			"primary": "SS"
 		},
 		"645261": {
 			"name": "Sandy Alcantara",
@@ -10584,16 +10584,16 @@
 			],
 			"through-2026-09-27": [
 				{
-					"team": 144,
-					"pa": 144,
-					"runs": 17,
-					"games": 69
-				},
-				{
 					"team": 111,
 					"pa": 60,
 					"runs": 10,
 					"games": 27
+				},
+				{
+					"team": 144,
+					"pa": 144,
+					"runs": 17,
+					"games": 69
 				},
 				{
 					"team": null,
@@ -10606,16 +10606,16 @@
 		"643396": {
 			"season-2025": [
 				{
-					"team": null,
-					"pa": 459,
-					"runs": 45,
-					"games": 138
-				},
-				{
 					"team": 134,
 					"pa": 428,
 					"runs": 40,
 					"games": 119
+				},
+				{
+					"team": null,
+					"pa": 459,
+					"runs": 45,
+					"games": 138
 				},
 				{
 					"team": 141,
@@ -10796,12 +10796,6 @@
 			],
 			"through-2026-08-02": [
 				{
-					"team": 111,
-					"pa": 15,
-					"runs": 5,
-					"games": 9
-				},
-				{
 					"team": 116,
 					"pa": 105,
 					"runs": 7,
@@ -10812,6 +10806,12 @@
 					"pa": 120,
 					"runs": 12,
 					"games": 66
+				},
+				{
+					"team": 111,
+					"pa": 15,
+					"runs": 5,
+					"games": 9
 				}
 			],
 			"through-2026-09-27": [
@@ -10978,16 +10978,16 @@
 			],
 			"through-2026-09-27": [
 				{
-					"team": 111,
-					"pa": 197,
-					"runs": 17,
-					"games": 62
-				},
-				{
 					"team": 110,
 					"pa": 88,
 					"runs": 5,
 					"games": 33
+				},
+				{
+					"team": 111,
+					"pa": 197,
+					"runs": 17,
+					"games": 62
 				},
 				{
 					"team": null,
@@ -11100,15 +11100,15 @@
 					"games": 18
 				},
 				{
-					"team": 111,
-					"pa": 9,
-					"runs": 4,
-					"games": 3
-				},
-				{
 					"team": 110,
 					"pa": 6,
 					"runs": 0,
+					"games": 3
+				},
+				{
+					"team": 111,
+					"pa": 9,
+					"runs": 4,
 					"games": 3
 				},
 				{
@@ -11303,10 +11303,10 @@
 		"678554": {
 			"season-2025": [
 				{
-					"team": null,
-					"pa": 264,
-					"runs": 26,
-					"games": 90
+					"team": 145,
+					"pa": 132,
+					"runs": 12,
+					"games": 41
 				},
 				{
 					"team": 139,
@@ -11315,10 +11315,10 @@
 					"games": 49
 				},
 				{
-					"team": 145,
-					"pa": 132,
-					"runs": 12,
-					"games": 41
+					"team": null,
+					"pa": 264,
+					"runs": 26,
+					"games": 90
 				}
 			],
 			"through-2026-06-30": [
@@ -11675,16 +11675,16 @@
 			],
 			"through-2026-09-27": [
 				{
-					"team": 111,
-					"pa": 228,
-					"runs": 19,
-					"games": 70
-				},
-				{
 					"team": 137,
 					"pa": 17,
 					"runs": 0,
 					"games": 6
+				},
+				{
+					"team": 111,
+					"pa": 228,
+					"runs": 19,
+					"games": 70
 				},
 				{
 					"team": null,
@@ -11771,16 +11771,16 @@
 			],
 			"through-2026-08-02": [
 				{
-					"team": 133,
-					"pa": 6,
-					"runs": 0,
-					"games": 5
-				},
-				{
 					"team": 111,
 					"pa": 3,
 					"runs": 0,
 					"games": 1
+				},
+				{
+					"team": 133,
+					"pa": 6,
+					"runs": 0,
+					"games": 5
 				},
 				{
 					"team": null,
@@ -11790,12 +11790,6 @@
 				}
 			],
 			"through-2026-09-27": [
-				{
-					"team": 133,
-					"pa": 6,
-					"runs": 0,
-					"games": 5
-				},
 				{
 					"team": 111,
 					"pa": 3,
@@ -11813,6 +11807,12 @@
 					"pa": 51,
 					"runs": 3,
 					"games": 21
+				},
+				{
+					"team": 133,
+					"pa": 6,
+					"runs": 0,
+					"games": 5
 				}
 			]
 		},
@@ -12004,26 +12004,20 @@
 			"season-2025": [
 				{
 					"team": 111,
-					"pos": "3B",
-					"games": 113,
-					"gamesStarted": 110
-				},
-				{
-					"team": 111,
 					"pos": "DH",
 					"games": 1,
 					"gamesStarted": 1
+				},
+				{
+					"team": 111,
+					"pos": "3B",
+					"games": 113,
+					"gamesStarted": 110
 				}
 			]
 		},
 		"642201": {
 			"season-2025": [
-				{
-					"team": 144,
-					"pos": "1B",
-					"games": 4,
-					"gamesStarted": 0
-				},
 				{
 					"team": 144,
 					"pos": "LF",
@@ -12032,9 +12026,9 @@
 				},
 				{
 					"team": 144,
-					"pos": "CF",
-					"games": 6,
-					"gamesStarted": 4
+					"pos": "1B",
+					"games": 4,
+					"gamesStarted": 0
 				},
 				{
 					"team": 144,
@@ -12047,47 +12041,17 @@
 					"pos": "DH",
 					"games": 6,
 					"gamesStarted": 0
+				},
+				{
+					"team": 144,
+					"pos": "CF",
+					"games": 6,
+					"gamesStarted": 4
 				}
 			]
 		},
 		"643396": {
 			"season-2025": [
-				{
-					"team": null,
-					"pos": "3B",
-					"games": 32,
-					"gamesStarted": 30
-				},
-				{
-					"team": 134,
-					"pos": "3B",
-					"games": 25,
-					"gamesStarted": 24
-				},
-				{
-					"team": 141,
-					"pos": "3B",
-					"games": 7,
-					"gamesStarted": 6
-				},
-				{
-					"team": null,
-					"pos": "SS",
-					"games": 95,
-					"gamesStarted": 93
-				},
-				{
-					"team": 134,
-					"pos": "SS",
-					"games": 94,
-					"gamesStarted": 93
-				},
-				{
-					"team": 141,
-					"pos": "SS",
-					"games": 1,
-					"gamesStarted": 0
-				},
 				{
 					"team": 141,
 					"pos": "P",
@@ -12096,20 +12060,50 @@
 				},
 				{
 					"team": 141,
+					"pos": "SS",
+					"games": 1,
+					"gamesStarted": 0
+				},
+				{
+					"team": 141,
 					"pos": "2B",
 					"games": 13,
 					"gamesStarted": 1
+				},
+				{
+					"team": 134,
+					"pos": "3B",
+					"games": 25,
+					"gamesStarted": 24
+				},
+				{
+					"team": null,
+					"pos": "3B",
+					"games": 32,
+					"gamesStarted": 30
+				},
+				{
+					"team": 141,
+					"pos": "3B",
+					"games": 7,
+					"gamesStarted": 6
+				},
+				{
+					"team": 134,
+					"pos": "SS",
+					"games": 94,
+					"gamesStarted": 93
+				},
+				{
+					"team": null,
+					"pos": "SS",
+					"games": 95,
+					"gamesStarted": 93
 				}
 			]
 		},
 		"655316": {
 			"season-2025": [
-				{
-					"team": 158,
-					"pos": "1B",
-					"games": 15,
-					"gamesStarted": 0
-				},
 				{
 					"team": 158,
 					"pos": "2B",
@@ -12118,9 +12112,15 @@
 				},
 				{
 					"team": 158,
-					"pos": "3B",
-					"games": 8,
-					"gamesStarted": 5
+					"pos": "1B",
+					"games": 15,
+					"gamesStarted": 0
+				},
+				{
+					"team": 158,
+					"pos": "LF",
+					"games": 2,
+					"gamesStarted": 0
 				},
 				{
 					"team": 158,
@@ -12130,20 +12130,14 @@
 				},
 				{
 					"team": 158,
-					"pos": "LF",
-					"games": 2,
-					"gamesStarted": 0
+					"pos": "3B",
+					"games": 8,
+					"gamesStarted": 5
 				}
 			]
 		},
 		"657136": {
 			"season-2025": [
-				{
-					"team": 111,
-					"pos": "C",
-					"games": 61,
-					"gamesStarted": 52
-				},
 				{
 					"team": 111,
 					"pos": "1B",
@@ -12155,6 +12149,12 @@
 					"pos": "DH",
 					"games": 1,
 					"gamesStarted": 0
+				},
+				{
+					"team": 111,
+					"pos": "C",
+					"games": 61,
+					"gamesStarted": 52
 				}
 			]
 		},
@@ -12190,9 +12190,9 @@
 			"season-2025": [
 				{
 					"team": 111,
-					"pos": "1B",
-					"games": 58,
-					"gamesStarted": 41
+					"pos": "3B",
+					"games": 2,
+					"gamesStarted": 1
 				},
 				{
 					"team": 111,
@@ -12202,15 +12202,15 @@
 				},
 				{
 					"team": 111,
-					"pos": "3B",
-					"games": 2,
-					"gamesStarted": 1
-				},
-				{
-					"team": 111,
 					"pos": "DH",
 					"games": 5,
 					"gamesStarted": 2
+				},
+				{
+					"team": 111,
+					"pos": "1B",
+					"games": 58,
+					"gamesStarted": 41
 				}
 			]
 		},
@@ -12218,15 +12218,15 @@
 			"season-2025": [
 				{
 					"team": 139,
-					"pos": "1B",
-					"games": 3,
-					"gamesStarted": 2
-				},
-				{
-					"team": 139,
 					"pos": "2B",
 					"games": 121,
 					"gamesStarted": 117
+				},
+				{
+					"team": 139,
+					"pos": "1B",
+					"games": 3,
+					"gamesStarted": 2
 				},
 				{
 					"team": 139,
@@ -12272,6 +12272,12 @@
 			"season-2025": [
 				{
 					"team": 116,
+					"pos": "DH",
+					"games": 1,
+					"gamesStarted": 0
+				},
+				{
+					"team": 116,
 					"pos": "P",
 					"games": 4,
 					"gamesStarted": 0
@@ -12281,12 +12287,6 @@
 					"pos": "C",
 					"games": 41,
 					"gamesStarted": 39
-				},
-				{
-					"team": 116,
-					"pos": "DH",
-					"games": 1,
-					"gamesStarted": 0
 				}
 			]
 		},
@@ -12294,15 +12294,15 @@
 			"season-2025": [
 				{
 					"team": 110,
-					"pos": "C",
-					"games": 73,
-					"gamesStarted": 66
-				},
-				{
-					"team": 110,
 					"pos": "DH",
 					"games": 18,
 					"gamesStarted": 18
+				},
+				{
+					"team": 110,
+					"pos": "C",
+					"games": 73,
+					"gamesStarted": 66
 				}
 			]
 		},
@@ -12336,7 +12336,7 @@
 			"season-2025": [
 				{
 					"team": 158,
-					"pos": "P",
+					"pos": "1B",
 					"games": 1,
 					"gamesStarted": 0
 				},
@@ -12348,38 +12348,26 @@
 				},
 				{
 					"team": 158,
-					"pos": "1B",
+					"pos": "P",
 					"games": 1,
 					"gamesStarted": 0
-				},
-				{
-					"team": 158,
-					"pos": "3B",
-					"games": 25,
-					"gamesStarted": 16
 				},
 				{
 					"team": 158,
 					"pos": "DH",
 					"games": 1,
 					"gamesStarted": 1
+				},
+				{
+					"team": 158,
+					"pos": "3B",
+					"games": 25,
+					"gamesStarted": 16
 				}
 			]
 		},
 		"678554": {
 			"season-2025": [
-				{
-					"team": null,
-					"pos": "1B",
-					"games": 32,
-					"gamesStarted": 23
-				},
-				{
-					"team": 139,
-					"pos": "1B",
-					"games": 19,
-					"gamesStarted": 13
-				},
 				{
 					"team": 145,
 					"pos": "1B",
@@ -12393,16 +12381,22 @@
 					"gamesStarted": 12
 				},
 				{
-					"team": null,
-					"pos": "3B",
-					"games": 29,
-					"gamesStarted": 27
+					"team": 139,
+					"pos": "1B",
+					"games": 19,
+					"gamesStarted": 13
 				},
 				{
 					"team": 139,
-					"pos": "3B",
-					"games": 7,
-					"gamesStarted": 7
+					"pos": "DH",
+					"games": 2,
+					"gamesStarted": 0
+				},
+				{
+					"team": 145,
+					"pos": "DH",
+					"games": 2,
+					"gamesStarted": 1
 				},
 				{
 					"team": 145,
@@ -12412,21 +12406,27 @@
 				},
 				{
 					"team": null,
+					"pos": "3B",
+					"games": 29,
+					"gamesStarted": 27
+				},
+				{
+					"team": null,
+					"pos": "1B",
+					"games": 32,
+					"gamesStarted": 23
+				},
+				{
+					"team": null,
 					"pos": "DH",
 					"games": 4,
 					"gamesStarted": 1
 				},
 				{
 					"team": 139,
-					"pos": "DH",
-					"games": 2,
-					"gamesStarted": 0
-				},
-				{
-					"team": 145,
-					"pos": "DH",
-					"games": 2,
-					"gamesStarted": 1
+					"pos": "3B",
+					"games": 7,
+					"gamesStarted": 7
 				}
 			]
 		},
@@ -12434,15 +12434,15 @@
 			"season-2025": [
 				{
 					"team": 111,
-					"pos": "2B",
-					"games": 24,
-					"gamesStarted": 19
-				},
-				{
-					"team": 111,
 					"pos": "CF",
 					"games": 141,
 					"gamesStarted": 129
+				},
+				{
+					"team": 111,
+					"pos": "2B",
+					"games": 24,
+					"gamesStarted": 19
 				}
 			]
 		},
@@ -12450,15 +12450,15 @@
 			"season-2025": [
 				{
 					"team": 111,
-					"pos": "LF",
-					"games": 139,
-					"gamesStarted": 129
+					"pos": "DH",
+					"games": 1,
+					"gamesStarted": 1
 				},
 				{
 					"team": 111,
-					"pos": "CF",
-					"games": 28,
-					"gamesStarted": 22
+					"pos": "LF",
+					"games": 139,
+					"gamesStarted": 129
 				},
 				{
 					"team": 111,
@@ -12468,32 +12468,14 @@
 				},
 				{
 					"team": 111,
-					"pos": "DH",
-					"games": 1,
-					"gamesStarted": 1
+					"pos": "CF",
+					"games": 28,
+					"gamesStarted": 22
 				}
 			]
 		},
 		"681508": {
 			"season-2025": [
-				{
-					"team": 142,
-					"pos": "C",
-					"games": 19,
-					"gamesStarted": 12
-				},
-				{
-					"team": 142,
-					"pos": "1B",
-					"games": 7,
-					"gamesStarted": 2
-				},
-				{
-					"team": 142,
-					"pos": "2B",
-					"games": 2,
-					"gamesStarted": 2
-				},
 				{
 					"team": 142,
 					"pos": "LF",
@@ -12505,6 +12487,24 @@
 					"pos": "DH",
 					"games": 12,
 					"gamesStarted": 8
+				},
+				{
+					"team": 142,
+					"pos": "C",
+					"games": 19,
+					"gamesStarted": 12
+				},
+				{
+					"team": 142,
+					"pos": "2B",
+					"games": 2,
+					"gamesStarted": 2
+				},
+				{
+					"team": 142,
+					"pos": "1B",
+					"games": 7,
+					"gamesStarted": 2
 				}
 			]
 		},
@@ -12518,9 +12518,21 @@
 				},
 				{
 					"team": 111,
+					"pos": "DH",
+					"games": 1,
+					"gamesStarted": 1
+				},
+				{
+					"team": 111,
 					"pos": "3B",
 					"games": 12,
 					"gamesStarted": 10
+				},
+				{
+					"team": 111,
+					"pos": "RF",
+					"games": 16,
+					"gamesStarted": 9
 				},
 				{
 					"team": 111,
@@ -12533,18 +12545,6 @@
 					"pos": "CF",
 					"games": 5,
 					"gamesStarted": 4
-				},
-				{
-					"team": 111,
-					"pos": "RF",
-					"games": 16,
-					"gamesStarted": 9
-				},
-				{
-					"team": 111,
-					"pos": "DH",
-					"games": 1,
-					"gamesStarted": 1
 				}
 			]
 		},
@@ -12558,18 +12558,6 @@
 				},
 				{
 					"team": 111,
-					"pos": "2B",
-					"games": 8,
-					"gamesStarted": 8
-				},
-				{
-					"team": 111,
-					"pos": "3B",
-					"games": 9,
-					"gamesStarted": 3
-				},
-				{
-					"team": 111,
 					"pos": "SS",
 					"games": 2,
 					"gamesStarted": 0
@@ -12579,6 +12567,18 @@
 					"pos": "RF",
 					"games": 3,
 					"gamesStarted": 2
+				},
+				{
+					"team": 111,
+					"pos": "2B",
+					"games": 8,
+					"gamesStarted": 8
+				},
+				{
+					"team": 111,
+					"pos": "3B",
+					"games": 9,
+					"gamesStarted": 3
 				}
 			]
 		},
@@ -12586,9 +12586,9 @@
 			"season-2025": [
 				{
 					"team": 111,
-					"pos": "2B",
-					"games": 8,
-					"gamesStarted": 7
+					"pos": "SS",
+					"games": 2,
+					"gamesStarted": 0
 				},
 				{
 					"team": 111,
@@ -12598,9 +12598,9 @@
 				},
 				{
 					"team": 111,
-					"pos": "SS",
-					"games": 2,
-					"gamesStarted": 0
+					"pos": "2B",
+					"games": 8,
+					"gamesStarted": 7
 				}
 			]
 		},
@@ -12624,20 +12624,26 @@
 			"season-2025": [
 				{
 					"team": 133,
-					"pos": "1B",
-					"games": 5,
-					"gamesStarted": 1
-				},
-				{
-					"team": 133,
 					"pos": "3B",
 					"games": 27,
 					"gamesStarted": 20
+				},
+				{
+					"team": 133,
+					"pos": "1B",
+					"games": 5,
+					"gamesStarted": 1
 				}
 			]
 		},
 		"701350": {
 			"season-2025": [
+				{
+					"team": 111,
+					"pos": "DH",
+					"games": 18,
+					"gamesStarted": 17
+				},
 				{
 					"team": 111,
 					"pos": "LF",
@@ -12649,12 +12655,6 @@
 					"pos": "RF",
 					"games": 36,
 					"gamesStarted": 32
-				},
-				{
-					"team": 111,
-					"pos": "DH",
-					"games": 18,
-					"gamesStarted": 17
 				}
 			]
 		},
@@ -12684,12 +12684,6 @@
 			"season-2025": [
 				{
 					"team": 111,
-					"pos": "LF",
-					"games": 5,
-					"gamesStarted": 4
-				},
-				{
-					"team": 111,
 					"pos": "RF",
 					"games": 1,
 					"gamesStarted": 1
@@ -12699,6 +12693,12 @@
 					"pos": "DH",
 					"games": 44,
 					"gamesStarted": 44
+				},
+				{
+					"team": 111,
+					"pos": "LF",
+					"games": 5,
+					"gamesStarted": 4
 				}
 			]
 		}
@@ -12749,12 +12749,6 @@
 		"642201": [
 			{
 				"code": "vl",
-				"team": 144,
-				"pa": 93,
-				"ops": ".758"
-			},
-			{
-				"code": "vl",
 				"team": 111,
 				"pa": 24,
 				"ops": ".382"
@@ -12766,10 +12760,10 @@
 				"ops": ".678"
 			},
 			{
-				"code": "vr",
-				"team": 111,
-				"pa": 36,
-				"ops": ".875"
+				"code": "vl",
+				"team": 144,
+				"pa": 93,
+				"ops": ".758"
 			},
 			{
 				"code": "vr",
@@ -12782,6 +12776,12 @@
 				"team": null,
 				"pa": 87,
 				"ops": ".699"
+			},
+			{
+				"code": "vr",
+				"team": 111,
+				"pa": 36,
+				"ops": ".875"
 			}
 		],
 		"643396": [
@@ -12829,12 +12829,6 @@
 		"663330": [
 			{
 				"code": "vl",
-				"team": 111,
-				"pa": 68,
-				"ops": "1.058"
-			},
-			{
-				"code": "vl",
 				"team": 116,
 				"pa": 88,
 				"ops": ".506"
@@ -12846,10 +12840,10 @@
 				"ops": ".742"
 			},
 			{
-				"code": "vr",
+				"code": "vl",
 				"team": 111,
-				"pa": 8,
-				"ops": ".500"
+				"pa": 68,
+				"ops": "1.058"
 			},
 			{
 				"code": "vr",
@@ -12862,6 +12856,12 @@
 				"team": null,
 				"pa": 25,
 				"ops": ".240"
+			},
+			{
+				"code": "vr",
+				"team": 111,
+				"pa": 8,
+				"ops": ".500"
 			}
 		],
 		"663853": [
@@ -12895,12 +12895,6 @@
 		"665966": [
 			{
 				"code": "vl",
-				"team": 111,
-				"pa": 42,
-				"ops": ".657"
-			},
-			{
-				"code": "vl",
 				"team": 110,
 				"pa": 35,
 				"ops": ".206"
@@ -12912,10 +12906,10 @@
 				"ops": ".450"
 			},
 			{
-				"code": "vr",
+				"code": "vl",
 				"team": 111,
-				"pa": 155,
-				"ops": ".501"
+				"pa": 42,
+				"ops": ".657"
 			},
 			{
 				"code": "vr",
@@ -12928,6 +12922,12 @@
 				"team": null,
 				"pa": 208,
 				"ops": ".474"
+			},
+			{
+				"code": "vr",
+				"team": 111,
+				"pa": 155,
+				"ops": ".501"
 			}
 		],
 		"668227": [
@@ -12947,15 +12947,9 @@
 		"668670": [
 			{
 				"code": "vl",
-				"team": 110,
-				"pa": 4,
-				"ops": ".833"
-			},
-			{
-				"code": "vl",
-				"team": 116,
-				"pa": 21,
-				"ops": ".807"
+				"team": 111,
+				"pa": 1,
+				"ops": ".000"
 			},
 			{
 				"code": "vl",
@@ -12965,33 +12959,21 @@
 			},
 			{
 				"code": "vl",
-				"team": 111,
-				"pa": 1,
-				"ops": ".000"
-			},
-			{
-				"code": "vl",
 				"team": null,
 				"pa": 45,
 				"ops": ".773"
 			},
 			{
-				"code": "vr",
-				"team": 111,
-				"pa": 8,
-				"ops": "1.458"
-			},
-			{
-				"code": "vr",
+				"code": "vl",
 				"team": 116,
-				"pa": 89,
-				"ops": ".507"
+				"pa": 21,
+				"ops": ".807"
 			},
 			{
-				"code": "vr",
-				"team": 145,
-				"pa": 27,
-				"ops": ".228"
+				"code": "vl",
+				"team": 110,
+				"pa": 4,
+				"ops": ".833"
 			},
 			{
 				"code": "vr",
@@ -13001,18 +12983,30 @@
 			},
 			{
 				"code": "vr",
+				"team": 145,
+				"pa": 27,
+				"ops": ".228"
+			},
+			{
+				"code": "vr",
 				"team": null,
 				"pa": 126,
 				"ops": ".491"
+			},
+			{
+				"code": "vr",
+				"team": 116,
+				"pa": 89,
+				"ops": ".507"
+			},
+			{
+				"code": "vr",
+				"team": 111,
+				"pa": 8,
+				"ops": "1.458"
 			}
 		],
 		"668939": [
-			{
-				"code": "vl",
-				"team": 110,
-				"pa": 103,
-				"ops": ".705"
-			},
 			{
 				"code": "vl",
 				"team": 111,
@@ -13026,10 +13020,10 @@
 				"ops": ".649"
 			},
 			{
-				"code": "vr",
+				"code": "vl",
 				"team": 110,
-				"pa": 181,
-				"ops": ".799"
+				"pa": 103,
+				"ops": ".705"
 			},
 			{
 				"code": "vr",
@@ -13042,6 +13036,12 @@
 				"team": null,
 				"pa": 267,
 				"ops": ".792"
+			},
+			{
+				"code": "vr",
+				"team": 110,
+				"pa": 181,
+				"ops": ".799"
 			}
 		],
 		"671213": [],
@@ -13082,12 +13082,6 @@
 			},
 			{
 				"code": "vr",
-				"team": 120,
-				"pa": 186,
-				"ops": ".817"
-			},
-			{
-				"code": "vr",
 				"team": 111,
 				"pa": 2,
 				"ops": ".500"
@@ -13097,6 +13091,12 @@
 				"team": null,
 				"pa": 188,
 				"ops": ".815"
+			},
+			{
+				"code": "vr",
+				"team": 120,
+				"pa": 186,
+				"ops": ".817"
 			}
 		],
 		"678882": [
@@ -13172,12 +13172,6 @@
 		"691785": [
 			{
 				"code": "vl",
-				"team": 111,
-				"pa": 18,
-				"ops": "1.385"
-			},
-			{
-				"code": "vl",
 				"team": 137,
 				"pa": 8,
 				"ops": ".125"
@@ -13189,10 +13183,10 @@
 				"ops": "1.013"
 			},
 			{
-				"code": "vr",
+				"code": "vl",
 				"team": 111,
-				"pa": 210,
-				"ops": ".523"
+				"pa": 18,
+				"ops": "1.385"
 			},
 			{
 				"code": "vr",
@@ -13205,6 +13199,12 @@
 				"team": null,
 				"pa": 219,
 				"ops": ".516"
+			},
+			{
+				"code": "vr",
+				"team": 111,
+				"pa": 210,
+				"ops": ".523"
 			}
 		],
 		"691907": [
@@ -13230,12 +13230,6 @@
 			},
 			{
 				"code": "vl",
-				"team": 133,
-				"pa": 3,
-				"ops": ".667"
-			},
-			{
-				"code": "vl",
 				"team": 111,
 				"pa": 2,
 				"ops": ".500"
@@ -13247,10 +13241,10 @@
 				"ops": ".536"
 			},
 			{
-				"code": "vr",
-				"team": 137,
-				"pa": 18,
-				"ops": ".347"
+				"code": "vl",
+				"team": 133,
+				"pa": 3,
+				"ops": ".667"
 			},
 			{
 				"code": "vr",
@@ -13269,6 +13263,12 @@
 				"team": null,
 				"pa": 22,
 				"ops": ".282"
+			},
+			{
+				"code": "vr",
+				"team": 137,
+				"pa": 18,
+				"ops": ".347"
 			}
 		],
 		"701350": [
@@ -13314,6 +13314,6 @@
 			}
 		]
 	},
-	"asOf": "2026-10-06",
-	"fetchedAt": "2026-10-06T03:24:21Z"
+	"asOf": "2026-11-04",
+	"fetchedAt": "2026-11-04T22:45:26Z"
 }
