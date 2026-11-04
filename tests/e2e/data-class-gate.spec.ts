@@ -19,9 +19,9 @@ test('a decision card asks for acknowledgment, then opens with public labels', a
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Eight roster decisions');
 	await page.getByRole('link', { name: 'How do you replace Bregman?' }).dispatchEvent('click');
 	await expect(page).toHaveURL(/\/decisions\/offseason-infield$/);
-	await expect(page.getByRole('button', { name: 'Open workspace' })).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Open workspace' })).toBeVisible();
 
-	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
+	await page.getByRole('link', { name: 'Open workspace' }).dispatchEvent('click');
 	await expect(page.getByRole('button', { name: 'Open public scenario' })).toBeVisible();
 
 	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
@@ -40,15 +40,16 @@ test('a decision card asks for acknowledgment, then opens with public labels', a
 	await expect(page.getByRole('option', { name: 'Ceddanne Rafaela' }).first()).toBeAttached();
 });
 
-test('declining the acknowledgment keeps you on the decision page', async ({ page }) => {
+test('declining the acknowledgment returns you to the decision page', async ({ page }) => {
 	await page.goto('/decisions/offseason-infield');
 	await expect(page.getByRole('heading', { level: 1 })).toContainText(
 		'How do you replace Bregman?'
 	);
 
-	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
+	await page.getByRole('link', { name: 'Open workspace' }).dispatchEvent('click');
 	await expect(page.getByRole('button', { name: 'Open public scenario' })).toBeVisible();
-	await page.getByRole('button', { name: 'Keep browsing' }).dispatchEvent('click');
+	await page.getByRole('link', { name: 'Back to the board' }).dispatchEvent('click');
+	await expect(page).toHaveURL(/\/decisions\/offseason-infield$/);
 	await expect(page.getByRole('heading', { level: 1 })).toContainText(
 		'How do you replace Bregman?'
 	);

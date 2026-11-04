@@ -207,13 +207,6 @@
 		line-height: var(--text-sm--lh);
 	}
 
-	input:focus-visible,
-	select:focus-visible,
-	button:focus-visible {
-		outline: 2px solid var(--focus);
-		outline-offset: 2px;
-	}
-
 	.input-with-suffix {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import {
+		formatDay,
 		SEASON_EVENTS,
 		TIMELINE_END,
 		datePosition,
@@ -54,12 +55,7 @@
 	}));
 	const marker = $derived(todayMarker(today));
 	const href = (slug: string) => resolve('/decisions/[slug]', { slug: slug });
-	const longDate = (iso: string) =>
-		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
-			month: 'long',
-			day: 'numeric',
-			timeZone: 'UTC'
-		});
+	const longDate = (iso: string) => formatDay(iso);
 	const todayRecord = $derived.by(() => {
 		let found: (typeof series)[number] | null = null;
 		for (const point of series) {

@@ -280,7 +280,7 @@ test('the board numbers decisions and steps through them in date order', async (
 
 test('the scenario pick survives a trip into the workspace and back', async ({ page }) => {
 	await page.goto('/decisions/offseason-infield?scenario=cand-a');
-	await page.getByRole('button', { name: 'Open workspace' }).click();
+	await page.getByRole('link', { name: 'Open workspace' }).click();
 	await page.getByRole('button', { name: 'Open public scenario' }).click();
 	await expect(page).toHaveURL(/\/decisions\/offseason-infield\/compare\?scenario=cand-a$/);
 	await page.getByRole('button', { name: '← Storylines' }).click();
@@ -299,4 +299,52 @@ test('the open phone menu keeps keyboard focus inside it', async ({ page }) => {
 		);
 		expect(underOverlay).toBe(false);
 	}
+});
+
+// Lower-ranked review fixes (2026-11-04).
+test('links styled as buttons are as tall as buttons', async ({ page }) => {
+	await page.goto('/decisions/offseason-infield/compare');
+	const open = page.getByRole('button', { name: 'Open public scenario' });
+	const back = page.getByRole('link', { name: 'Back to the board' });
+	const heights = await Promise.all(
+		[open, back].map(async (el) => Math.round((await el.boundingBox())!.height))
+	);
+	expect(heights).toEqual([44, 44]);
+});
+
+test('line boxes grow with the reader text size', async ({ page }) => {
+	await page.goto('/decisions');
+	await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
+	const [size, lead] = await page
+		.locator('h1.page-title')
+		.evaluate((el) => [
+			parseFloat(getComputedStyle(el).fontSize),
+			parseFloat(getComputedStyle(el).lineHeight)
+		]);
+	expect(lead).toBeGreaterThanOrEqual(size);
+	const body = await page
+		.locator('.lede')
+		.first()
+		.evaluate((el) => [
+			parseFloat(getComputedStyle(el).fontSize),
+			parseFloat(getComputedStyle(el).lineHeight)
+		]);
+	expect(body[1]).toBeGreaterThan(body[0]);
+});
+
+test('every split legend says the colour is a rating', async ({ page }) => {
+	await page.goto('/decisions/offseason-infield');
+	await expect(
+		page.getByText('Colour is a rating here, not role as in the original framework.').first()
+	).toBeVisible();
+	await expect(page.getByText('−.150 OPS').first()).toBeVisible();
+});
+
+test('the overview board keeps its headings readable at phone width', async ({ page }) => {
+	await page.setViewportSize({ width: 320, height: 800 });
+	await page.goto('/');
+	const caption = page.locator('.board-caption');
+	await expect(caption).toContainText("On the field (lid = this pool's best)");
+	await expect(caption).toContainText('Off the field');
+	await expect(page.locator('svg.board text.head')).toHaveCount(0);
 });

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatDay } from './season-timeline';
 	import { resolve } from '$app/paths';
 	import { scenarioQuery } from './routes';
 	import { page } from '$app/state';
@@ -69,13 +70,7 @@
 			.replace(/^The tightest fit fills (\d+)%,/, 'The tightest fit has a slot-band fill of $1%,');
 	const findingsFor = (items: { lead: string; text: string }[] | undefined) =>
 		(items ?? []).map((i) => ({ ...i, lead: slotBandWords(i.lead) }));
-	const longDate = (iso: string) =>
-		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
-			month: 'long',
-			day: 'numeric',
-			year: 'numeric',
-			timeZone: 'UTC'
-		});
+	const longDate = (iso: string) => formatDay(iso, { year: true });
 
 	// Each diagram's inputs, computed only on the subpage that draws it.
 	const pinned = $derived(
@@ -415,14 +410,6 @@
 		font-size: var(--text-base);
 		line-height: var(--text-base--lh);
 	}
-	.visually-hidden {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
-	}
 	.split {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 24rem;
@@ -431,7 +418,8 @@
 	}
 	.side {
 		position: sticky;
-		top: 1rem;
+		/* Clear the floating nav, which is sticky at the top of the page too. */
+		top: var(--spacing-800);
 	}
 	.stamp {
 		display: flex;

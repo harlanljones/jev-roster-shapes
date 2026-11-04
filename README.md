@@ -137,7 +137,8 @@ Repository layout:
 ```text
 src/lib/{contracts,storylines,shapes,engine,persistence,ui,classification}/  component sources
 src/lib/app/  season index, decision case, Shape Case model and diagrams, workspace wiring
-src/routes/   / · /scenario/[slug] · /scenario/[slug]/snapshots · /player/[id]
+src/routes/   / · /decisions · /decisions/[slug]{,/detail,/snapshots,/compare} · /players/[id] · /method
+              (old /scenario/* and /player/* paths redirect; see docs/WORKFLOWS.md §0)
 tests/{contracts,storylines,engine,persistence,classification,integration,e2e,fixtures,app}/  checks
 spikes/mlb-2026/  season snapshot fetcher and storyline bundle builder
 docs/  contracts, decisions, shape rubric, research, example bundle

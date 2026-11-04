@@ -288,7 +288,7 @@
 				</div>
 				<div class="table-scroll">
 					<table>
-						<caption class="sr-only">Assignments for {template.label}</caption>
+						<caption class="visually-hidden">Assignments for {template.label}</caption>
 						<thead>
 							<tr>
 								<th scope="col">Order</th>
@@ -330,7 +330,10 @@
 										>
 									</td>
 									<td>
-										<label class="sr-only" for={`${scenario.id}-${template.id}-${slot.order}`}>
+										<label
+											class="visually-hidden"
+											for={`${scenario.id}-${template.id}-${slot.order}`}
+										>
 											{template.label}
 											{slot.role} player
 										</label>
@@ -666,12 +669,6 @@
 		line-height: var(--text-xs--lh);
 	}
 
-	select:focus-visible,
-	button:focus-visible {
-		outline: 2px solid var(--focus);
-		outline-offset: 2px;
-	}
-
 	tr.problem {
 		background: color-mix(in srgb, var(--grade-loose) 8%, transparent);
 	}
@@ -747,18 +744,6 @@
 		color: var(--ink-muted);
 		font-size: var(--text-xs);
 		line-height: var(--text-xs--lh);
-	}
-
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: 0;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
 	}
 
 	@media (max-width: 600px) {

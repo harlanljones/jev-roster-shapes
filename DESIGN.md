@@ -35,6 +35,7 @@ gradient anywhere is on page-title text: black to `#666666` in light, white to `
 | `case-000` · `case-100` · `case-200` | Page ground · panels · sunken surfaces (table heads, tracks) |
 | `case-300` · `case-400` | Hairlines and dividers · control borders (3:1) |
 | `ink` · `ink-muted` | Text · secondary text, axes, sources (4.5:1 on every case surface, both themes) |
+| `ink-faint` | Large text in a transient state only (the tagline before it fills); 3:1, never body copy |
 | `turf` · `on-turf` · `turf-soft` | The one accent: primary action, links, current state · text on it · hover ground |
 | `focus` · `focus-inverse` | The 2px focus ring, offset 2px · the ring on foam |
 | `foam` · `foam-deep` · `foam-edge` · `on-foam` | The case object, dark in both themes · recesses · cutout lips (3:1) · text on foam |
@@ -55,7 +56,9 @@ carries a 3px halo in the panel colour, since it straddles two fills.
 - **Geist** for everything read; **Geist Mono** for everything counted, with tabular figures.
   Self-hosted through Fontsource; the app makes no third-party font request.
 - Every size is a Tailwind step with its own line height (12/16 up to 96/1), set through
-  `--text-*` and `--text-*--lh`. No italics; nothing above weight 600.
+  `--text-*` and `--text-*--lh`. Line heights are Tailwind's unitless ratios, so line boxes grow
+  with the reader's text size. No italics; nothing above weight 600; Geist Mono loads 400, 500 and
+  600, so no weight is synthesised.
 - Page titles use `.page-title`: `text-5xl`, `text-4xl` at phone width, capped at 680px.
 
 ## Space, shape, motion
@@ -74,8 +77,8 @@ carries a 3px halo in the panel colour, since it straddles two fills.
   height, links arriving 60ms apart), and the site footer — the one `contentinfo` landmark, carrying
   the Taylor Wyman credit (D-61) and the privacy, terms and source links.
 - `app/OverviewPage`: `/`, with the current decision's board as the hero (`WymanBoard fit`).
-- `app/TaglineReveal`: the overview's large tagline; words start at 50% ink, the lowest tone that
-  keeps the transient state at 3:1 for large text in both themes.
+- `app/TaglineReveal`: the overview's large tagline; words start in `ink-faint`, the lowest opaque
+  tone that keeps the transient state at 3:1 for large text in both themes.
 - `app/DecisionNav`: Board · Diagrams · Snapshots · Workspace, plus the Diagram tab row.
 - `app/MethodPage`, `app/ProsePage`, `app/CompareGate`: how to read it; plain pages; the workspace's
   acknowledgment.

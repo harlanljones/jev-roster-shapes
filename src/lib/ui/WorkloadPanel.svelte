@@ -47,7 +47,7 @@
 	{:else}
 		<div class="table-scroll">
 			<table>
-				<caption class="sr-only">Workload for {scenario.label}</caption>
+				<caption class="visually-hidden">Workload for {scenario.label}</caption>
 				<thead>
 					<tr>
 						<th scope="col">Player</th>
@@ -285,18 +285,6 @@
 
 	.empty-state strong {
 		color: var(--ink);
-	}
-
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: 0;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
 	}
 
 	@media (max-width: 600px) {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { acknowledgePublic, hasAcknowledgedPublic } from './public-ack';
 	import { onMount } from 'svelte';
 
 	import type { Bundle, Scenario } from '$lib/contracts';
@@ -74,7 +75,7 @@
 	let activeScenarioId = $state(start.bundle.comparison.baseline.id);
 	let storageState = $state<ComparisonViewModel['storageState']>('unsaved');
 	let storageMessage = $state<string | undefined>(
-		`Opened ${start.bundle.bundleId} for local review — observed public values, not team-approved projections. Edits stay local until saved.`
+		`Opened ${start.bundle.bundleId} for local review — observed public values, not team approved projections. Edits stay local until saved.`
 	);
 	let savedAt = $state<string | null>(null);
 	let unsaved = $state(true);
@@ -179,9 +180,7 @@
 				storageState = 'saved';
 				storageMessage = `Restored saved revision ${loaded.current.storedRevision} at ${formatSavedAt(savedAt)}.`;
 				if (loaded.current.bundle.dataClass === 'public') {
-					if (!ackedPublicIds.includes(loaded.current.bundle.bundleId)) {
-						ackedPublicIds.push(loaded.current.bundle.bundleId);
-					}
+					acknowledgePublic(loaded.current.bundle.bundleId);
 				}
 				pendingPublic = null;
 			} catch {
@@ -380,10 +379,9 @@
 	// startup prompt is needed. File imports of other public bundles still go
 	// through the per-bundle acknowledgment below.
 	let pendingPublic = $state<{ text: string; replace: boolean; bundleId: string } | null>(null);
-	// Bundle IDs the user explicitly acknowledged as public this session (D-36).
-	// The library-acknowledged opening bundle is pre-seeded. A plain list:
-	// only read inside event handlers, never rendered.
-	let ackedPublicIds: string[] = [start.bundle.bundleId];
+	// Bundles acknowledged as public this session (D-36) live in the one shared record the
+	// workspace gate writes (public-ack.ts); the opening bundle came through that gate.
+	acknowledgePublic(start.bundle.bundleId);
 
 	function classGate(
 		text: string
@@ -405,7 +403,7 @@
 		if (
 			record.dataClass === 'public' &&
 			typeof record.bundleId === 'string' &&
-			!ackedPublicIds.includes(record.bundleId)
+			!hasAcknowledgedPublic(record.bundleId)
 		) {
 			return { verdict: 'confirm-public', bundleId: record.bundleId };
 		}
@@ -439,7 +437,7 @@
 			}
 			if (gate.verdict === 'confirm-public') {
 				pendingPublic = { text, replace, bundleId: gate.bundleId };
-				storageMessage = `This bundle (${gate.bundleId}) uses public data — observed public values, not team-approved projections. Open it for local review?`;
+				storageMessage = `This bundle (${gate.bundleId}) uses public data — observed public values, not team approved projections. Open it for local review?`;
 				return;
 			}
 		}
@@ -468,7 +466,7 @@
 		const pending = pendingPublic;
 		pendingPublic = null;
 		if (!pending || busy) return;
-		ackedPublicIds.push(pending.bundleId);
+		acknowledgePublic(pending.bundleId);
 		void runImport(pending.text, pending.replace, true);
 	}
 
@@ -547,19 +545,21 @@
 		</div>
 		<div class="hero-actions" aria-label="Draft actions">
 			<span class="storage-pill" data-state={model.storageState}>{model.storageState}</span>
-			<button class="secondary-button" type="button" onclick={onBack}>← Storylines</button>
-			<label class="secondary-button file-button">
+			<button class="button button-secondary" type="button" onclick={onBack}>← Storylines</button>
+			<label class="button button-secondary file-button">
 				Import JSON
 				<input
-					class="sr-only"
+					class="visually-hidden"
 					type="file"
 					accept="application/json,.json"
 					onchange={importFile}
 					disabled={busy}
 				/>
 			</label>
-			<button class="secondary-button" type="button" onclick={exportDraft}>Export JSON</button>
-			<button class="primary-button" type="button" onclick={saveDraft} disabled={busy}>
+			<button class="button button-secondary" type="button" onclick={exportDraft}
+				>Export JSON</button
+			>
+			<button class="button button-primary" type="button" onclick={saveDraft} disabled={busy}>
 				{busy ? 'Saving…' : 'Save draft'}
 			</button>
 		</div>
@@ -568,23 +568,32 @@
 	<div class="notice" aria-live="polite">
 		<span class="notice-text">{model.storageMessage}</span>
 		{#if pendingPublic}
-			<button class="secondary-button" type="button" disabled={busy} onclick={confirmPublicImport}>
+			<button
+				class="button button-secondary"
+				type="button"
+				disabled={busy}
+				onclick={confirmPublicImport}
+			>
 				Open public bundle
 			</button>
-			<button class="secondary-button" type="button" onclick={declinePublicImport}>
+			<button class="button button-secondary" type="button" onclick={declinePublicImport}>
 				Keep current comparison
 			</button>
 		{/if}
 		{#if pendingConflict}
 			<button
-				class="secondary-button"
+				class="button button-secondary"
 				type="button"
 				disabled={busy}
 				onclick={() => pendingConflict && runImport(pendingConflict.text, true)}
 			>
 				Replace as new revision
 			</button>
-			<button class="secondary-button" type="button" onclick={() => (pendingConflict = null)}>
+			<button
+				class="button button-secondary"
+				type="button"
+				onclick={() => (pendingConflict = null)}
+			>
 				Cancel import
 			</button>
 		{/if}
@@ -773,7 +782,7 @@
 						Limitation: {selectedEvidence.limitation}
 					</p>{/if}
 			</div>
-			<button class="secondary-button" type="button" onclick={closeEvidence}>
+			<button class="button button-secondary" type="button" onclick={closeEvidence}>
 				Close evidence
 			</button>
 		</aside>
@@ -861,30 +870,6 @@
 		justify-content: flex-end;
 		gap: var(--spacing-75);
 	}
-	.primary-button,
-	.secondary-button {
-		display: inline-flex;
-		box-sizing: border-box;
-		align-items: center;
-		min-height: 2.75rem;
-		border: 1px solid var(--ink);
-		border-radius: var(--radius-md);
-		padding: var(--spacing-75) var(--spacing-200);
-		cursor: pointer;
-		font: inherit;
-		font-size: var(--text-sm);
-		line-height: var(--text-sm--lh);
-		font-weight: 600;
-	}
-	.primary-button {
-		color: var(--case-100);
-		background: var(--ink);
-	}
-	.secondary-button {
-		border-color: var(--case-400);
-		color: var(--ink);
-		background: var(--case-100);
-	}
 	button:disabled {
 		cursor: not-allowed;
 		opacity: 0.55;
@@ -899,14 +884,6 @@
 	}
 	.notice-text {
 		white-space: pre-line;
-	}
-	:global(.sr-only) {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip: rect(0 0 0 0);
-		white-space: nowrap;
 	}
 	.storage-pill,
 	.snapshot,
@@ -1122,13 +1099,9 @@
 	}
 	.drawer-layer {
 		font-family: var(--font-mono);
-		font-size: var(--text-xs) !important;
-		line-height: var(--text-xs--lh) !important;
 	}
 	.drawer-meta {
 		margin-bottom: var(--spacing-50);
-		font-size: var(--text-xs) !important;
-		line-height: var(--text-xs--lh) !important;
 	}
 	@media (max-width: 1100px) {
 		.bins-grid {

@@ -1,8 +1,8 @@
 <script lang="ts">
+	import { formatDay } from './season-timeline';
 	import { resolve } from '$app/paths';
-	import { detailQuery } from './routes';
+	import { detailQuery, scenarioQuery } from './routes';
 	import { page } from '$app/state';
-	import type { Bundle } from '$lib/contracts';
 	import { DEFAULT_JEV_MODEL, buildProfileRequest } from '$lib/classification';
 	import { calculateComparison, calculatePoolFit, poolFitFor } from '$lib/engine';
 	import { storylineRegistry, storylinesByDate } from '$lib/storylines/registry';
@@ -40,12 +40,10 @@
 	// it — as the supporting diagram. The case, the engine's pool fit, the
 	// interaction map, and the slot bars are supplementary subpages that share
 	// the scenario pick (D-50).
-	let {
-		activeSlug = storylineRegistry[0]?.slug ?? '',
-		onOpen
-	}: { activeSlug?: string; onOpen: (bundle: Bundle) => void } = $props();
+	// The workspace is a link: its own URL collects the D-36 acknowledgment (CompareGate), so
+	// the board carries no second prompt of its own.
+	let { activeSlug = storylineRegistry[0]?.slug ?? '' }: { activeSlug?: string } = $props();
 
-	let pendingOpen = $state(false);
 	let selectedId = $state<string | null>(null);
 
 	const story = $derived(
@@ -54,12 +52,7 @@
 	const position = $derived(storylinesByDate.findIndex((s) => s.slug === story.slug));
 	const prev = $derived(position > 0 ? storylinesByDate[position - 1] : undefined);
 	const next = $derived(storylinesByDate[position + 1]);
-	const eventDay = (iso: string) =>
-		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
-			month: 'long',
-			day: 'numeric',
-			timeZone: 'UTC'
-		});
+	const eventDay = (iso: string) => formatDay(iso);
 	const bundle = $derived(story.bundle);
 	const scenario = $derived(pickScenario(bundle, page.url.searchParams.get('scenario')));
 	const isBaseline = $derived(scenario.id === bundle.comparison.baseline.id);
@@ -122,10 +115,6 @@
 		interactions: 'Gray: shared position · arrow: tested swap · dotted: complement',
 		slots: `Hindsight best nine: ${runs(best.runs)}`
 	});
-
-	function openWorkspace(): void {
-		onOpen(story.bundle);
-	}
 </script>
 
 <svelte:head>
@@ -214,24 +203,12 @@
 				{#if selected}
 					<PieceDetail {pool} playerId={selected} role={view.roleOf.get(selected)} />
 				{/if}
-				<button class="primary-button" type="button" onclick={() => (pendingOpen = true)}
-					>Open workspace</button
+				<a
+					class="button button-primary open-workspace"
+					href="{resolve('/decisions/[slug]/compare', { slug: story.slug })}{scenarioQuery(
+						isBaseline ? null : scenario.id
+					)}">Open workspace</a
 				>
-				{#if pendingOpen}
-					<div class="ack-box" role="group" aria-label="Public data acknowledgment">
-						<p>
-							This scenario uses observed public values, not team approved projections. Open it for
-							local review?
-						</p>
-						<div class="ack-actions">
-							<button class="primary-button" type="button" onclick={openWorkspace}
-								>Open public scenario</button
-							><button class="secondary-button" type="button" onclick={() => (pendingOpen = false)}
-								>Keep browsing</button
-							>
-						</div>
-					</div>
-				{/if}
 				<CaseKey compact />
 			</aside>
 		</div>
@@ -410,43 +387,8 @@
 		color: var(--ink);
 		font-weight: 600;
 	}
-	.primary-button,
-	.secondary-button {
-		min-height: 2.75rem;
-		border: 1px solid var(--ink);
-		border-radius: var(--radius-md);
-		padding: var(--spacing-75) var(--spacing-200);
-		font: inherit;
-		font-size: var(--text-sm);
-		line-height: var(--text-sm--lh);
-		font-weight: 600;
-		cursor: pointer;
-	}
-	.primary-button {
-		color: var(--case-100);
-		background: var(--ink);
-	}
-	.secondary-button {
-		color: var(--ink);
-		background: var(--case-100);
-	}
-	.ack-box {
-		display: grid;
-		gap: var(--spacing-75);
-		border: 1px solid var(--turf);
-		border-radius: var(--radius-md);
-		padding: var(--spacing-100);
-		background: var(--case-100);
-		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
-	}
-	.ack-box p {
-		margin: 0;
-	}
-	.ack-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--spacing-75);
+	.open-workspace {
+		justify-self: start;
 	}
 	.block {
 		display: grid;

@@ -41,10 +41,10 @@ test('the analyst opens a storyline, switches scenarios, edits, and saves', asyn
 	await expect(page.locator('.storage-pill')).toHaveAttribute('data-state', 'saved');
 
 	// The saved draft survives a reload: reopening the storyline restores the
-	// saved revision from localStorage instead of the file.
+	// saved revision from localStorage instead of the file. The acknowledgment is
+	// remembered for the browser session, so the workspace opens without the gate.
 	await page.goto('/scenario/offseason-infield');
-	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
-	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
+	await page.getByRole('link', { name: 'Open workspace' }).dispatchEvent('click');
 	await expect(page.locator('.storage-pill')).toHaveAttribute('data-state', 'saved');
 });
 

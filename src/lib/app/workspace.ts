@@ -188,7 +188,7 @@ function evidenceViews(bundle: Bundle, scenarios: readonly Scenario[]): Evidence
 		limitation:
 			bundle.dataClass === 'synthetic'
 				? 'Synthetic fixture; not team data.'
-				: 'Observed public values; not team-approved projections.'
+				: 'Observed public values; not team approved projections.'
 	}));
 	const assumptions: EvidenceView = {
 		id: `assumption:${bundle.assumptions.id}`,

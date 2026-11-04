@@ -258,6 +258,8 @@
 		display: block;
 		width: 100%;
 		height: auto;
+		/* Pieces with missing data sit on foam here, where the panel unknown is too dark. */
+		--piece-unknown: var(--unknown-on-foam);
 	}
 	.stencil {
 		fill: var(--on-foam);

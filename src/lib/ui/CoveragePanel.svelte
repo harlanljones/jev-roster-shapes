@@ -72,7 +72,7 @@
 					<h3>{group.label}</h3>
 					<div class="table-scroll">
 						<table>
-							<caption class="sr-only">Coverage for {group.label}</caption>
+							<caption class="visually-hidden">Coverage for {group.label}</caption>
 							<thead>
 								<tr>
 									<th scope="col">Position</th>
@@ -290,18 +290,6 @@
 
 	.empty-state strong {
 		color: var(--ink);
-	}
-
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: 0;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
 	}
 
 	@media (max-width: 600px) {

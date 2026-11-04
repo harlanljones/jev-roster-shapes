@@ -86,9 +86,9 @@
 	<path
 		class="body"
 		d={shapePath(drawn, cx, cy, r)}
-		fill="var(--unknown)"
+		fill="var(--piece-unknown, var(--unknown))"
 		fill-opacity="0.25"
-		stroke="var(--unknown)"
+		stroke="var(--piece-unknown, var(--unknown))"
 		stroke-width="1.5"
 		stroke-dasharray="5 4"
 	/>
@@ -97,7 +97,7 @@
 		class="body"
 		d={shapePath(drawn, cx, cy, r)}
 		fill="url(#{hatch})"
-		stroke="var(--unknown)"
+		stroke="var(--piece-unknown, var(--unknown))"
 		stroke-width="2"
 		stroke-dasharray="5 4"
 	/>

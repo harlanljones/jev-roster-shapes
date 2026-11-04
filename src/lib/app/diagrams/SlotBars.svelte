@@ -8,6 +8,7 @@
 		type Pool,
 		type Side
 	} from '../shape-case';
+	import { rateText } from '../split-evidence';
 
 	// Slot by slot (D-43): the lineup as a container. Each column is as wide as
 	// the occupant's actual 2026 PA and splits at his real vs-LHP share. A band
@@ -149,7 +150,7 @@
 	<text class="sub" x={X0 + width + 10} y={TOP + 12}>dotted:</text>
 	<text class="sub" x={X0 + width + 10} y={TOP + 26}>lg avg</text>
 	<text class="sub" x={X0 + width + 10} y={TOP + 40}
-		>{leagueSideRate('L').toFixed(3).slice(1)} / {leagueSideRate('R').toFixed(3).slice(1)}</text
+		>{rateText(leagueSideRate('L'))} / {rateText(leagueSideRate('R'))}</text
 	>
 </svg>
 

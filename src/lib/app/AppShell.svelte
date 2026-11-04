@@ -4,21 +4,24 @@
 	import '@fontsource/geist-sans/latin-600.css';
 	import '@fontsource/geist-mono/latin-400.css';
 	import '@fontsource/geist-mono/latin-500.css';
+	import '@fontsource/geist-mono/latin-600.css';
 	import '$lib/ui/tokens.css';
 	import '$lib/ui/base.css';
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { Snippet } from 'svelte';
 	import Icon from '$lib/ui/Icon.svelte';
-	import { getStoryline } from '$lib/storylines/registry';
+	import type { Storyline } from '$lib/storylines/registry';
 	import { resolve } from '$app/paths';
 
 	let { children }: { children: Snippet } = $props();
 
 	// D-63: the shell names where you are — the overview, the season index, the open decision,
 	// and how to read a board. The decision's own places live in its DecisionNav.
-	const slug = $derived(page.params.slug ?? null);
-	const story = $derived(slug ? getStoryline(slug) : undefined);
+	// The open decision comes from the decision routes' own load (decisions/[slug]/+layout.ts), so
+	// the shell itself never pulls in the storyline registry; /privacy, /terms and the like
+	// load without it.
+	const story = $derived(page.data.storyline as Storyline | undefined);
 	const route = $derived(page.route.id ?? '');
 	const here = $derived({
 		overview: route === '/',

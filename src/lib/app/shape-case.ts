@@ -167,12 +167,6 @@ export function splitColor(ops: string, side: Side): string {
 	return `var(--${SPLIT_STEPS[splitStep(ops, side)]!.token})`;
 }
 
-/** Text drawn on a split fill: the two strongest steps take the light ink. */
-export function splitInk(ops: string, side: Side): string {
-	const step = splitStep(ops, side);
-	return step === 0 || step === SPLIT_STEPS.length - 1 ? 'var(--on-split-strong)' : 'var(--ink)';
-}
-
 export function sideOf(split: PlayerSplit, side: Side) {
 	return side === 'L' ? split.vL : split.vR;
 }

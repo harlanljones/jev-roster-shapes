@@ -93,7 +93,7 @@
 									<span class="marks">
 										{#each MARKS as [letter, field, title] (letter)}
 											<span class="mk {letter}" class:off={!o[field]} {title}
-												>{o[field] ? letter : ''}<span class="sr"
+												>{o[field] ? letter : ''}<span class="visually-hidden"
 													>{o[field] ? ` ${title} pick` : ''}</span
 												></span
 											>
@@ -400,13 +400,6 @@
 	}
 	.mk.off {
 		background: transparent;
-	}
-	.sr {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
 	}
 	.txt {
 		display: grid;

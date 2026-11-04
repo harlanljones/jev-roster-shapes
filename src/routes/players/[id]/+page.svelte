@@ -23,7 +23,12 @@
 	>
 	<section class="profile" aria-labelledby="player-name">
 		<div class="profile-mark">
-			<svg viewBox="0 0 220 220" role="img" aria-label="{player.name} as a {player.shape} piece">
+			<svg
+				viewBox="0 0 220 220"
+				role="img"
+				aria-label="{player.name} as a {player.shape} piece"
+				style="--piece-unknown: var(--unknown-on-foam)"
+			>
 				<defs>
 					<pattern
 						id="player-hatch"

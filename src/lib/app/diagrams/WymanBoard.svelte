@@ -53,11 +53,16 @@
 	const FLOOR = $derived(TOP + H);
 	const VB_W = TX + TRAY_W + X0;
 	const minW = $derived(fit ? 0 : MIN_DRAW_W);
-	const drawW = $derived(Math.max(panelW, minW));
+	// Until the panel is measured, a fitted board draws at its natural width rather than at zero,
+	// so the first pass never works out labels for an empty drawing.
+	const drawW = $derived(fit && panelW === 0 ? VB_W : Math.max(panelW, minW));
 	const scrolls = $derived(panelW > 0 && panelW < minW);
 	/** Pixels per drawing unit, so in-piece text can hold a readable size on screen. */
 	const unit = $derived(drawW / VB_W);
 	const FS = $derived(Math.max(11, 10.5 / unit));
+	/** Drawn this small, the 12px notes inside the SVG would fall under 9px on screen, so the
+	 * headings, the lid note and the headroom figure move into an HTML caption above it. */
+	const compact = $derived(unit < 0.75);
 
 	function shapeFor(id: string | null): ShapeLabel {
 		const shape = id ? (pool.get(id)?.shape ?? 'Circle') : 'Circle';
@@ -153,7 +158,9 @@
 		return shown;
 	});
 	const unlabelled = $derived(
-		[...onField, ...offField].filter((p) => p.id != null && !labelled.includes(p.key))
+		panelW === 0
+			? []
+			: [...onField, ...offField].filter((p) => p.id != null && !labelled.includes(p.key))
 	);
 	/** Where the pile tops out; everything between it and the lid is headroom. */
 	const pileTop = $derived(FLOOR - Math.max(0, ...bin.pieces.map((pc) => pc.y + pc.box.top - 2)));
@@ -166,6 +173,15 @@
 	}
 </script>
 
+{#if compact}
+	<p class="board-caption">
+		<span>On the field (lid = this pool's best)</span>
+		{#if pileTop - (FLOOR - BIN_H) > 22}<span class="caption-headroom"
+				>Headroom {Math.round(bin.headroom)}%</span
+			>{/if}
+		<span>Off the field{offField.length ? '' : ': nobody left off'}</span>
+	</p>
+{/if}
 <div class="panel" class:scrolls bind:clientWidth={panelW}>
 	<svg
 		class="board"
@@ -203,28 +219,32 @@
 			{/each}
 		</defs>
 
-		<text class="head" x={X0} y={TOP - 14}>On the field</text>
-		<text class="head-note" x={X0 + BIN_W} y={TOP - 14} text-anchor="end"
-			>lid = this pool's best</text
-		>
+		{#if !compact}
+			<text class="head" x={X0} y={TOP - 14}>On the field</text>
+			<text class="head-note" x={X0 + BIN_W} y={TOP - 14} text-anchor="end"
+				>lid = this pool's best</text
+			>
+		{/if}
 		<rect class="lid" x={X0} y={FLOOR - BIN_H} width={BIN_W} height={BIN_H} />
 		{#if pileTop - (FLOOR - BIN_H) > 22}
 			<line class="pile" x1={X0} x2={X0 + BIN_W} y1={pileTop} y2={pileTop} stroke-dasharray="6 5" />
-			<text
-				class="headroom"
-				x={X0 + BIN_W / 2}
-				y={(pileTop + FLOOR - BIN_H) / 2 + 4}
-				text-anchor="middle">Headroom {Math.round(bin.headroom)}%</text
-			>
+			{#if !compact}
+				<text
+					class="headroom"
+					x={X0 + BIN_W / 2}
+					y={(pileTop + FLOOR - BIN_H) / 2 + 4}
+					text-anchor="middle">Headroom {Math.round(bin.headroom)}%</text
+				>
+			{/if}
 		{/if}
 
-		<text class="head" x={TX} y={TOP - 14}>Off the field</text>
+		{#if !compact}<text class="head" x={TX} y={TOP - 14}>Off the field</text>{/if}
 		<path
 			class="tray"
 			d="M{TX} {FLOOR - H} V{FLOOR} H{TX + TRAY_W} V{FLOOR - H}"
 			stroke-dasharray="3 5"
 		/>
-		{#if !offField.length}
+		{#if !offField.length && !compact}
 			<text class="head-note" x={TX + TRAY_W / 2} y={FLOOR - 20} text-anchor="middle"
 				>nobody left off</text
 			>
@@ -294,6 +314,20 @@
 {/if}
 
 <style>
+	.board-caption {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: var(--spacing-50) var(--spacing-200);
+		margin: 0 0 var(--spacing-75);
+		color: var(--ink);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
+	}
+	.caption-headroom {
+		color: var(--turf);
+		font-family: var(--font-mono);
+	}
 	.panel {
 		min-width: 0;
 		overflow-x: auto;
@@ -359,20 +393,17 @@
 		fill: var(--ink);
 		font-family: var(--font-sans);
 		font-size: var(--text-base);
-		line-height: var(--text-base--lh);
 		letter-spacing: 0.02em;
 	}
 	.head-note {
 		fill: var(--ink-muted);
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
 	}
 	.headroom {
 		fill: var(--turf);
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
 		letter-spacing: 0.02em;
 	}
 	.piece {
@@ -398,25 +429,19 @@
 	.piece:focus-visible .body {
 		stroke: var(--turf);
 	}
+	/* Labels straddle two split fills, so no single ink reads on every pair: a halo in the
+	   panel colour keeps them legible over any fill, in either theme. */
 	text {
 		paint-order: stroke;
 		stroke: var(--case-100);
 		stroke-width: 3px;
+		stroke-linejoin: round;
 		pointer-events: none;
 		font-size: var(--fs, 11px);
 	}
 	.head,
 	.head-note {
 		stroke: none;
-	}
-	/* Labels straddle two split fills, so no single ink reads on every pair: a halo in the
-	   panel colour keeps them legible over any fill, in either theme. */
-	.role,
-	.nm {
-		paint-order: stroke;
-		stroke: var(--case-100);
-		stroke-width: 3px;
-		stroke-linejoin: round;
 	}
 	.role {
 		fill: var(--ink-muted);

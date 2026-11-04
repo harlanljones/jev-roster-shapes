@@ -57,6 +57,20 @@ export function datePosition(iso: string): number {
 	return Math.min(1, Math.max(0, t));
 }
 
+/** An ISO calendar date as words ("November 6", or "Nov 6" short, optionally with the year),
+ * read in UTC so the day never shifts with the viewer's timezone. */
+export function formatDay(
+	iso: string,
+	{ month = 'long', year = false }: { month?: 'long' | 'short'; year?: boolean } = {}
+): string {
+	return new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
+		month,
+		day: 'numeric',
+		...(year ? { year: 'numeric' as const } : {}),
+		timeZone: 'UTC'
+	});
+}
+
 /** Today in the viewer's own timezone, as an ISO date. */
 export function todayIso(now: Date = new Date()): string {
 	const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000);

@@ -141,9 +141,9 @@
 		paint-order: stroke;
 		stroke: var(--case-100);
 		stroke-width: 3px;
+		stroke-linejoin: round;
 		pointer-events: none;
 		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
 	}
 	.role {
 		fill: var(--ink-muted);
@@ -154,10 +154,6 @@
 		fill: var(--ink);
 		font-family: var(--font-sans);
 		font-weight: 600;
-		paint-order: stroke;
-		stroke: var(--case-100);
-		stroke-width: 3px;
-		stroke-linejoin: round;
 	}
 	.sub {
 		fill: var(--ink-muted);

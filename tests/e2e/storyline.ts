@@ -5,7 +5,7 @@ import { expect, type Page } from '@playwright/test';
 // DOM events stand in for trusted input; see workspace-journey.spec.ts.
 export async function openFirstStoryline(page: Page): Promise<void> {
 	await page.goto('/decisions/offseason-infield');
-	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
+	await page.getByRole('link', { name: 'Open workspace' }).dispatchEvent('click');
 	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
 	await expect(page).toHaveURL(/\/decisions\/offseason-infield\/compare$/);
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();

@@ -330,12 +330,6 @@
 		text-underline-offset: 0.17em;
 	}
 
-	button:focus-visible,
-	select:focus-visible {
-		outline: 2px solid var(--focus);
-		outline-offset: 2px;
-	}
-
 	@media (max-width: 600px) {
 		.section-heading,
 		.review-controls {

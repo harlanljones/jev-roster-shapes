@@ -1,8 +1,9 @@
 <script lang="ts">
 	// D-62: the tagline reveal section that landing-page-design (B11) makes mandatory. Words start
 	// in a muted tone and take the full ink one at a time, in reading order, as they cross a
-	// trigger line. The skill asks for a 25 to 35% tone; this uses 50%, the lowest that keeps even
-	// the transient muted state at 3:1 for large text in both themes (47% light, 36% dark). Guards from this repository's contracts: nothing is muted until script runs,
+	// trigger line. The skill asks for a 25 to 35% tone; this uses the opaque `ink-faint` token, about
+	// 50% of the way from the ground to ink, the lowest that keeps even the transient muted state at
+	// 3:1 for large text in both themes. Guards from this repository's contracts: nothing is muted until script runs,
 	// reduced motion shows full colour at once, and the words stay one paragraph for screen readers.
 	let { lines }: { lines: string[] } = $props();
 
@@ -70,7 +71,7 @@
 		color: var(--ink);
 	}
 	:global(.tagline[data-armed='true']) .word {
-		color: color-mix(in srgb, var(--ink) 50%, transparent);
+		color: var(--ink-faint);
 		transition: color var(--dur-move) var(--ease);
 	}
 	:global(.tagline[data-armed='true']) .word:global([data-on='true']) {

@@ -66,6 +66,9 @@ export const SEASON_RECORD: readonly { date: string; win: boolean }[] = season.r
 export const LEAGUE_OPS = { L: 0.719, R: 0.727 } as const;
 /** Colors saturate at ±.150 OPS from the league line. */
 export const SAVANT_SPAN = 0.15;
+
+/** A non-negative rate in the house format: three places, no leading zero (.312). */
+export const rateText = (v: number): string => v.toFixed(3).replace(/^0/, '');
 /**
  * 2026 league runs per PA: all 30 teams' runs (standings) over games × 38.0 PA
  * per game (from the 20 teams whose vs-LHP and vs-RHP rows both returned).

@@ -1,5 +1,5 @@
 /* Roster Shapes design system (D-62), generated from the design-system artifact's tokens.json
-   (https://claude.ai/artifact/LSQcbG65oYb3ZdM1b43Z1B, version 4; a copy is checked in at
+   (https://claude.ai/artifact/LSQcbG65oYb3ZdM1b43Z1B, version 5; a copy is checked in at
    docs/design/roster-shapes-tokens.json). Concrete values follow
    ai-design-skills (landing-page-design Part B, redesign-existing-projects Design Values).
    Edit the artifact, then regenerate; do not hand-edit values here. */
@@ -13,6 +13,7 @@
 	--case-400: #74807a;
 	--ink: #121917;
 	--ink-muted: #4a564f;
+	--ink-faint: #808483;
 	--foam: #262c28;
 	--on-foam: #eef0ef;
 	--foam-edge: #8e9b93;
@@ -52,23 +53,24 @@
 	--font-sans: 'Geist Sans', 'Geist', system-ui, -apple-system, sans-serif;
 	--font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-	/* Tailwind type scale: every size takes its own paired line height. */
+	/* Tailwind type scale: every size takes its own paired line height, as Tailwind's unitless
+	   ratio so line boxes grow with the reader's text size. */
 	--text-xs: 0.75rem;
-	--text-xs--lh: 16px;
+	--text-xs--lh: calc(1 / 0.75);
 	--text-sm: 0.875rem;
-	--text-sm--lh: 20px;
+	--text-sm--lh: calc(1.25 / 0.875);
 	--text-base: 1rem;
-	--text-base--lh: 24px;
+	--text-base--lh: 1.5;
 	--text-lg: 1.125rem;
-	--text-lg--lh: 28px;
+	--text-lg--lh: calc(1.75 / 1.125);
 	--text-xl: 1.25rem;
-	--text-xl--lh: 28px;
+	--text-xl--lh: calc(1.75 / 1.25);
 	--text-2xl: 1.5rem;
-	--text-2xl--lh: 32px;
+	--text-2xl--lh: calc(2 / 1.5);
 	--text-3xl: 1.875rem;
-	--text-3xl--lh: 36px;
+	--text-3xl--lh: calc(2.25 / 1.875);
 	--text-4xl: 2.25rem;
-	--text-4xl--lh: 40px;
+	--text-4xl--lh: calc(2.5 / 2.25);
 	--text-5xl: 3rem;
 	--text-5xl--lh: 1;
 	--text-6xl: 3.75rem;
@@ -121,6 +123,7 @@
 		--case-400: #7a7a7a;
 		--ink: #ededed;
 		--ink-muted: #a3a3a3;
+		--ink-faint: #828282;
 		--foam: #313131;
 		--on-foam: #ededed;
 		--foam-edge: #9e9e9e;
@@ -168,6 +171,7 @@
 	--case-400: #7a7a7a;
 	--ink: #ededed;
 	--ink-muted: #a3a3a3;
+	--ink-faint: #828282;
 	--foam: #313131;
 	--on-foam: #ededed;
 	--foam-edge: #9e9e9e;

@@ -70,6 +70,14 @@
 				"usage": "Secondary text: captions, axis labels, legends, source lines. On case-000, case-100, case-200."
 			},
 			{
+				"name": "ink-faint",
+				"value": {
+					"light": "#808483",
+					"dark": "#828282"
+				},
+				"usage": "Large text in a transient, not-yet-read state only (the overview tagline's words before they fill). Opaque, so its contrast does not depend on the ground: 3.3:1 on case-000 light and 4.6:1 dark, which clears 3:1 for large text and never body copy."
+			},
+			{
 				"name": "foam",
 				"value": {
 					"light": "#262c28",
@@ -366,7 +374,7 @@
 					{
 						"name": "headline",
 						"fontSize": "30px",
-						"lineHeight": "36px",
+						"lineHeight": 1.2,
 						"fontWeight": 600,
 						"letterSpacing": "-0.02em",
 						"sample": "What the lineup leaves off",
@@ -375,7 +383,7 @@
 					{
 						"name": "title",
 						"fontSize": "20px",
-						"lineHeight": "28px",
+						"lineHeight": 1.4,
 						"fontWeight": 600,
 						"letterSpacing": "-0.01em",
 						"sample": "Winter infield",
@@ -390,7 +398,7 @@
 					{
 						"name": "lead",
 						"fontSize": "18px",
-						"lineHeight": "28px",
+						"lineHeight": 1.5556,
 						"fontWeight": 400,
 						"sample": "Every number traces to a source, an assumption, or a versioned calculation.",
 						"usage": "Standfirst under a page title (text-lg). ink-muted."
@@ -398,7 +406,7 @@
 					{
 						"name": "body",
 						"fontSize": "16px",
-						"lineHeight": "24px",
+						"lineHeight": 1.5,
 						"fontWeight": 400,
 						"sample": "Visible foam is friction; an empty cutout is a position nobody covers.",
 						"usage": "Body copy (text-base). Measure about 65ch. Main buttons, semibold."
@@ -406,7 +414,7 @@
 					{
 						"name": "body-sm",
 						"fontSize": "14px",
-						"lineHeight": "20px",
+						"lineHeight": 1.4286,
 						"fontWeight": 400,
 						"sample": "Split run estimates are a judgment layer and never change an engine number.",
 						"usage": "Card body, findings, source lines (text-sm). Header buttons, semibold."
@@ -420,7 +428,7 @@
 					{
 						"name": "stat-xl",
 						"fontSize": "36px",
-						"lineHeight": "40px",
+						"lineHeight": 1.1111,
 						"fontWeight": 500,
 						"letterSpacing": "-0.025em",
 						"sample": "+14.2",
@@ -429,7 +437,7 @@
 					{
 						"name": "stat",
 						"fontSize": "20px",
-						"lineHeight": "28px",
+						"lineHeight": 1.4,
 						"fontWeight": 500,
 						"sample": ".127",
 						"usage": "Readout values, slot totals (text-xl)."
@@ -437,7 +445,7 @@
 					{
 						"name": "data",
 						"fontSize": "14px",
-						"lineHeight": "20px",
+						"lineHeight": 1.4286,
 						"fontWeight": 400,
 						"sample": "582  .697  .718",
 						"usage": "Table cells, tooltip values, inputs (text-sm)."
@@ -445,7 +453,7 @@
 					{
 						"name": "label",
 						"fontSize": "12px",
-						"lineHeight": "16px",
+						"lineHeight": 1.3333,
 						"fontWeight": 500,
 						"letterSpacing": "0.06em",
 						"sample": "Public data · observed",

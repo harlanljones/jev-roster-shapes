@@ -10,7 +10,7 @@
 	} from '$lib/storylines/registry';
 	import WymanBoard from './diagrams/WymanBoard.svelte';
 	import { reveal } from './reveal';
-	import { todayIso } from './season-timeline';
+	import { formatDay, todayIso } from './season-timeline';
 	import { benchTray, buildPool, lineupBin, locksOf, scenarioLineup } from './shape-case';
 	import TaglineReveal from './TaglineReveal.svelte';
 
@@ -29,12 +29,7 @@
 	const players = new Set(
 		storylineRegistry.flatMap(({ bundle: b }) => b.dataset.players.map((p) => p.id))
 	).size;
-	const short = (iso: string) =>
-		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
-			month: 'short',
-			day: 'numeric',
-			timeZone: 'UTC'
-		});
+	const short = (iso: string) => formatDay(iso, { month: 'short' });
 	const first = storylinesByDate[0]!;
 	const last = storylinesByDate[storylinesByDate.length - 1]!;
 

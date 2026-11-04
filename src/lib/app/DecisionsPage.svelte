@@ -2,7 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { storylineRegistry, type Storyline } from '$lib/storylines/registry';
 	import SeasonTimeline from './diagrams/SeasonTimeline.svelte';
-	import { recordSeries, todayMarker } from './season-timeline';
+	import { formatDay, recordSeries, todayMarker } from './season-timeline';
 
 	// The season index (D-46): `/` is the timeline and the eight dated decisions,
 	// and nothing else. Each decision owns `/decisions/[slug]`, including the one
@@ -11,12 +11,7 @@
 
 	const marker = $derived(todayMarker(today));
 	const series = recordSeries();
-	const longDate = (iso: string) =>
-		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
-			month: 'long',
-			day: 'numeric',
-			timeZone: 'UTC'
-		});
+	const longDate = (iso: string) => formatDay(iso);
 	const recordOn = (iso: string) => {
 		let found: (typeof series)[number] | null = null;
 		for (const point of series) {
@@ -150,14 +145,6 @@
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
-	h3 a {
-		color: var(--ink);
-		text-decoration-color: var(--turf);
-		text-underline-offset: 3px;
-	}
-	h3 a:hover {
-		color: var(--turf);
-	}
 	.lede {
 		max-width: 70ch;
 		margin: 0;
@@ -172,15 +159,6 @@
 		display: grid;
 		gap: var(--spacing-200);
 	}
-	/* Each card spans five shared row tracks (topline, title, question, numbers,
-	   meta) so those blocks align across a row, and it sizes to its content. */
-	.num {
-		color: var(--turf);
-		font-family: var(--font-mono);
-		font-size: var(--text-base);
-		line-height: var(--text-base--lh);
-		font-weight: 600;
-	}
 	.when {
 		color: var(--ink-muted);
 		font-family: var(--font-mono);
@@ -189,35 +167,12 @@
 		font-weight: 400;
 		letter-spacing: 0.03em;
 	}
-	dt {
-		color: var(--ink-muted);
-		font-family: var(--font-mono);
-		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
-		font-weight: 500;
-		letter-spacing: 0.02em;
-	}
-	dd {
-		margin: var(--spacing-25) 0 0;
-		font-family: var(--font-mono);
-		font-size: var(--text-sm);
-		line-height: var(--text-sm--lh);
-		font-weight: 600;
-	}
-	.meta,
-	.note {
-		margin: 0;
-		color: var(--ink-muted);
-		font-family: var(--font-mono);
-		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
-		font-weight: 400;
-	}
 	.note {
 		max-width: 90ch;
+		margin: 0;
 		border-top: 1px solid var(--case-300);
 		padding-top: var(--spacing-200);
-		font-family: var(--font-sans);
+		color: var(--ink-muted);
 		font-size: var(--text-xs);
 		line-height: var(--text-xs--lh);
 	}
@@ -254,7 +209,7 @@
 		font-size: var(--text-xs);
 		line-height: var(--text-xs--lh);
 	}
-	.card-topline .num {
+	.num {
 		color: var(--turf);
 		font-size: var(--text-sm);
 		line-height: var(--text-sm--lh);
@@ -306,9 +261,14 @@
 	}
 	.numbers dt {
 		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	.numbers dd {
 		margin: 0;
+		font-weight: 600;
 		text-align: right;
 		font-variant-numeric: tabular-nums;
 	}

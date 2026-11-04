@@ -824,6 +824,63 @@ Observed:
 
 Limitations: the review's lower-ranked candidates were not verified because a container restart stopped those verifiers, and they are not fixed here. They include the px line heights under text scaling, the fit-mode board labels at phone width, the missing-data piece contrast on foam, synthesized mono semibold, and the cleanup items.
 
+### Lower-ranked review findings (D-62, D-63, D-64, user directive 2026-11-04)
+
+Delivered (2026-11-04): fixes for the review candidates that ranked below the reported 15.
+
+Design system (artifact version 5; tokens regenerated into `tokens.css`, copy in `docs/design/`):
+- Line heights are Tailwind's unitless ratios, so line boxes grow with the reader's text size.
+- A new opaque `ink-faint` token replaces the tagline's hand-tuned translucent ink.
+- Geist Mono 600 is loaded, so the mono semibold is no longer synthesised.
+
+Base layer:
+- A universal `box-sizing: border-box`; a link styled as a button is now 44px tall, not 62px.
+- Page titles keep room for descenders.
+- One `.visually-hidden` class in place of six scoped copies.
+- The global focus ring in place of three scoped copies.
+- The unused `.skeleton`, `.button-small`, `.on-foam` and `[class*='mono']` rules are removed.
+
+Diagrams:
+- Pieces with missing data use `unknown-on-foam` on the foam case.
+- The overview board, when drawn under 75% scale, moves its headings, lid note and headroom into an HTML caption, and no longer runs its first pass at zero width.
+- Every split legend shows the ±.150 OPS scale and says the colour is a rating.
+- Sections reveal on any visible pixel through one shared observer, reading every position before writing any.
+- The diagram page's sticky aside clears the floating nav.
+
+Workspace:
+- The board's `Open workspace` is a plain link to `/compare`, whose gate is now the only D-36 prompt.
+- The workspace import gate reads the same session record.
+- `?scenario=` rides through the link.
+- The workspace uses the shared `.button` classes.
+- "team approved" is spelled one way.
+
+Cleanup:
+- One `formatDay` and one `rateText` replace seven local formatters.
+- `splitInk` is removed.
+- Duplicate and no-op rules are dropped in DecisionsPage, WymanBoard, CapacityBin and HomePage.
+- The shell takes the open decision from route data instead of importing the storyline registry, so `/privacy` and `/terms` load without it.
+- WORKFLOWS, README and ACCEPTANCE now name the routes and redirects as built.
+
+Observed:
+
+- `bun run check`: 0 errors and 0 warnings over 623 files.
+- `bun run lint`: Prettier and ESLint clean.
+- `bun run test`: 18 files and 136 tests passed. The board's decline test went with the inline prompt; declining is covered end to end through the gate's `Back to the board`.
+- `bun run test:e2e`: 71 passed (before: 67). The new journeys cover:
+  - 44px button and link heights
+  - line heights at a 200% root size
+  - the legend's rating note and OPS scale
+  - the overview caption at 320px
+- Before and after screenshots of nine routes at 1280px and 390px (Chromium) show no horizontal overflow, and every `.button` measures 44px (before: 62px for links).
+- Overview board work, timed in Vitest under Node: about 68 ms cold, then about 7 ms once the calibration and fit caches are warm.
+- `reports/prototype/edit-latency.json` was restored after the end-to-end run.
+- `git diff --check`: clean.
+
+Not changed, with reasons:
+- **Overview board at first paint.** The board is still built before the overview's first paint. The calibration and fit search are already cached by pool contents, so the board page repeats only the warm cost. Deferring the hero would make the page jump.
+- **Old-URL redirect stubs.** They stay instead of a host `_redirects` file, because the local preview and the end-to-end suite cannot exercise host redirects, and the stubs are tested.
+- **Footer credit test.** It still loads each route, because it asserts one `contentinfo` per page.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.
