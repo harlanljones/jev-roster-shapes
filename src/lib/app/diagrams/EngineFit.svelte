@@ -237,11 +237,9 @@
 	}
 	h3 {
 		margin: 0;
-		font-family: var(--font-sans);
-		font-size: var(--text-lg);
-		line-height: var(--text-lg--lh);
-		font-weight: 400;
-		letter-spacing: 0.04em;
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
+		font-weight: 600;
 	}
 	h4 {
 		margin: 0 0 var(--spacing-50);

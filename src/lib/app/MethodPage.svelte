@@ -3,7 +3,6 @@
 	import Icon from '$lib/ui/Icon.svelte';
 	import CaseKey from './diagrams/CaseKey.svelte';
 	import SplitLegend from './diagrams/SplitLegend.svelte';
-	import { reveal } from './reveal';
 
 	// D-63: how to read a board, whose idea it is, and what this project kept, cut and borrowed
 	// from it. The full record is docs/wyman-diagram.md.
@@ -81,7 +80,7 @@
 		</div>
 	</section>
 
-	<section aria-labelledby="space-title" use:reveal>
+	<section aria-labelledby="space-title">
 		<h2 id="space-title">The space they leave</h2>
 		<dl class="terms">
 			<div>
@@ -103,12 +102,12 @@
 		</dl>
 	</section>
 
-	<section aria-labelledby="colour-title" use:reveal>
+	<section aria-labelledby="colour-title">
 		<h2 id="colour-title">The colour on each half</h2>
 		<SplitLegend />
 	</section>
 
-	<section aria-labelledby="credit-title" use:reveal>
+	<section aria-labelledby="credit-title">
 		<h2 id="credit-title">Whose idea this is</h2>
 		<div class="credit">
 			<p>
@@ -128,7 +127,7 @@
 		</div>
 	</section>
 
-	<section aria-labelledby="audit-title" use:reveal>
+	<section aria-labelledby="audit-title">
 		<h2 id="audit-title">What this project kept, cut and borrowed</h2>
 		<div class="table-wrap">
 			<table>

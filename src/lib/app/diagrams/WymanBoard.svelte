@@ -372,7 +372,7 @@
 	.chip {
 		min-height: 2.25rem;
 		border: 1px solid var(--case-300);
-		border-radius: var(--radius-full);
+		border-radius: var(--radius-sm);
 		padding: 0 var(--spacing-100);
 		color: var(--ink);
 		background: var(--case-100);

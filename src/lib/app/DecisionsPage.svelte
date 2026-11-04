@@ -47,7 +47,6 @@
 
 <div class="index">
 	<header class="lead">
-		<p class="eyebrow">January 14, 2026 → December 7, 2026 · eight decision milestones</p>
 		<h1 class="page-title">Eight roster decisions on one season timeline</h1>
 		<p class="lede">
 			Boston's 2026 season as games over .500, with each decision pinned to its event or decision
@@ -124,26 +123,15 @@
 		display: grid;
 		gap: var(--spacing-100);
 	}
-	.eyebrow {
-		margin: 0;
-		color: var(--ink-muted);
-		font-family: var(--font-mono);
-		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
-		font-weight: 500;
-		letter-spacing: 0.02em;
-	}
 	h1 {
 		max-width: 20ch;
 		margin: 0;
 	}
 	h2 {
 		margin: 0;
-		font-family: var(--font-sans);
-		font-size: var(--text-3xl);
-		line-height: var(--text-3xl--lh);
-		font-weight: 400;
-		letter-spacing: 0.04em;
+		font-size: var(--text-xl);
+		line-height: var(--text-xl--lh);
+		font-weight: 600;
 	}
 	.lede {
 		max-width: 70ch;

@@ -32,7 +32,7 @@
 
 <div class="tabs-wrap">
 	<div class="tabs-heading">
-		<span class="eyebrow">Scenarios</span>
+		<span class="label">Scenarios</span>
 		<span class="tabs-note">same assumptions · separate allocations</span>
 	</div>
 	<div class="scenario-tabs" role="tablist" aria-label="Comparison scenarios">
@@ -68,12 +68,11 @@
 		gap: var(--spacing-200);
 	}
 
-	.eyebrow {
-		color: var(--ink-muted);
-		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
+	.label {
+		color: var(--ink);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 		font-weight: 600;
-		letter-spacing: 0.02em;
 	}
 
 	.tabs-note {

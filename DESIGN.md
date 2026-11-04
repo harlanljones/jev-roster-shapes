@@ -1,15 +1,19 @@
 # Design
 
-The visual system for Roster Shapes after the public-release redesign (D-62). The source of truth
+The visual system for Roster Shapes after the public-release redesign (D-62), with the landing-page
+apparatus removed by D-66. The source of truth
 is the **Roster Shapes design system** artifact
 (<https://claude.ai/artifact/LSQcbG65oYb3ZdM1b43Z1B>): its brand book, tokens and component
 previews. A copy of its tokens is checked in at `docs/design/roster-shapes-tokens.json`, and
 `src/lib/ui/tokens.css` is generated from it — edit the artifact, then regenerate; never hand-edit
 a value in `tokens.css`.
 
-Concrete values follow Harlan Jones' `ai-design-skills`: `landing-page-design` Part B and its
-companion `redesign-existing-projects` (Design Values). Values those skills leave open — the light
-surfaces, the accent and the data colours — are this system's own. The number format, chart rules
+Concrete values (type, spacing, radii, dark surfaces) follow Harlan Jones' `ai-design-skills`:
+`landing-page-design` Part B and its companion `redesign-existing-projects` (Design Values). Values
+those skills leave open — the light surfaces, the accent and the data colours — are this system's
+own. The skills' landing-page conventions (floating nav, gradient titles, tagline and scroll
+reveals, press feedback, hero-plus-sections layout) were adopted by D-62 and removed by D-66: the
+site is a working tool, and reads as one. The number format, chart rules
 and grey-midpoint diverging scale are borrowed from the sibling Hot Stove Lab system; its verdict
 apparatus is not (D-62). The redesign's audit and scores are in
 `reports/redesign/2026-11-04-diagnosis.md`.
@@ -27,15 +31,15 @@ look at, not how the page was built.
 
 A flat page in two themes, following `prefers-color-scheme`. Light is a cool case ground
 (`case-000`) with white panels (`case-100`) edged in hairlines; dark uses only the approved dark
-surfaces (`#181818`, `#1F1F1F`, `#272727`, `#313131`). Backgrounds are never gradients. The one
-gradient anywhere is on page-title text: black to `#666666` in light, white to `#9B9B9B` in dark.
+surfaces (`#181818`, `#1F1F1F`, `#272727`, `#313131`). There are no gradients anywhere; page titles
+are plain ink (D-66). `--hero-from` and `--hero-to` stay in the generated tokens, unused.
 
 | Token | Use |
 | --- | --- |
 | `case-000` · `case-100` · `case-200` | Page ground · panels · sunken surfaces (table heads, tracks) |
 | `case-300` · `case-400` | Hairlines and dividers · control borders (3:1) |
 | `ink` · `ink-muted` | Text · secondary text, axes, sources (4.5:1 on every case surface, both themes) |
-| `ink-faint` | Large text in a transient state only (the tagline before it fills); 3:1, never body copy |
+| `ink-faint` | Unused since D-66 (it carried the tagline reveal's transient state); kept in the generated tokens, never body copy |
 | `turf` · `on-turf` · `turf-soft` | The one accent: primary action, links, current state · text on it · hover ground |
 | `focus` · `focus-inverse` | The 2px focus ring, offset 2px · the ring on foam |
 | `foam` · `foam-deep` · `foam-edge` · `on-foam` | The case object, dark in both themes · recesses · cutout lips (3:1) · text on foam |
@@ -59,26 +63,29 @@ carries a 3px halo in the panel colour, since it straddles two fills.
   `--text-*` and `--text-*--lh`. Line heights are Tailwind's unitless ratios, so line boxes grow
   with the reader's text size. No italics; nothing above weight 600; Geist Mono loads 400, 500 and
   600, so no weight is synthesised.
-- Page titles use `.page-title`: `text-5xl`, `text-4xl` at phone width, capped at 680px.
+- Page titles use `.page-title`: `text-4xl`, `text-3xl` at phone width, capped at 680px, plain ink.
+- Section headings are `text-xl` (panel headings `text-lg`), weight 600, untracked. No eyebrows,
+  no display weights.
 
 ## Space, shape, motion
 
 - Spacing only from 0, 2, 4, 8, 12, 16, 24, 32, 40, 48, 64, 80, 96px (`--spacing-*`).
-- Corners: `--radius-sm` 2px, `--radius-md` 4px, `--radius-full` for the nav and thumbs.
-- Borders, not shadows; `--shadow-pop` only for the floating nav and popovers.
-- One curve, `cubic-bezier(0.22,1,0.36,1)`: 500ms movement, 300ms colour. Only transform and
-  opacity animate. Section containers rise and fade in once on scroll (`src/lib/app/reveal.ts`);
-  numbers, pieces and bars never move while being read; a script failure leaves everything visible.
-  Reduced motion swaps movement for a fade.
+- Corners: `--radius-sm` 2px for labels, markers and controls, `--radius-md` 4px for panels and
+  buttons, `--radius-full` for thumbs only. No pills.
+- Borders, not shadows; `--shadow-pop` only for popovers (the workspace's evidence drawer).
+- No motion (D-66): nothing rises, fades, scales or blurs, and nothing is hidden until script
+  runs. The curve and duration tokens remain for the few component-level transitions that survive
+  (`--dur-reveal` is unused). Numbers, pieces and bars never move while being read.
 
 ## Components
 
-- `app/AppShell`: the floating nav (content-sized, translucent, blurred), the phone menu (full
-  height, links arriving 60ms apart), and the site footer — the one `contentinfo` landmark, carrying
-  the Taylor Wyman credit (D-61) and the privacy, terms and source links.
-- `app/OverviewPage`: `/`, with the current decision's board as the hero (`WymanBoard fit`).
-- `app/TaglineReveal`: the overview's large tagline; words start in `ink-faint`, the lowest opaque
-  tone that keeps the transient state at 3:1 for large text in both themes.
+- `app/AppShell`: a static top bar with a hairline under it (wordmark, section links, a 44px
+  menu button at phone width), the phone menu as a plain list under the bar, and the site footer —
+  the one `contentinfo` landmark, carrying the Taylor Wyman credit (D-61) and the privacy, terms and
+  source links.
+- `app/OverviewPage`: `/`, one reading-order column: title, lead, the one action, a mono facts
+  line, the current decision's board (`WymanBoard fit`), then `What the board shows`, `How it
+  works`, the credit and the FAQ as plain ruled sections.
 - `app/DecisionNav`: Board · Diagrams · Snapshots · Workspace, plus the Diagram tab row.
 - `app/MethodPage`, `app/ProsePage`, `app/CompareGate`: how to read it; plain pages; the workspace's
   acknowledgment.
@@ -93,7 +100,8 @@ carries a 3px halo in the panel colour, since it straddles two fills.
 
 - Headings stand alone: no eyebrow or kicker labels above them. The decision page's "Decision 6 of
   8" line is navigation, with links to the previous and next decisions.
-- Borders go all the way round or not at all; no coloured side stripes on a card.
+- Borders go all the way round or not at all; no coloured side stripes on a card. Lists of links
+  are ruled rows, not tile grids.
 - Touch targets are at least 44px; focus is the 2px `focus` ring.
 - Links in running text keep an underline: colour alone cannot mark them.
 - Every diagram has a text equivalent: labelled piece buttons, `role="img"` labels with the stats,

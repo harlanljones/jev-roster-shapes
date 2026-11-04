@@ -49,14 +49,8 @@ for (const colorScheme of ['light', 'dark'] as const) {
 		for (const [name, path] of PAGES) {
 			test(`${name} passes the full axe rule set`, async ({ page }) => {
 				await page.goto(path);
-				// Sections below the first screen wait at opacity 0 to rise in on scroll, and axe
-				// skips what it cannot see; show them all so their contrast is audited too.
-				await page.evaluate(() => {
-					for (const node of document.querySelectorAll<HTMLElement>('[data-reveal]')) {
-						node.dataset.reveal = 'shown';
-					}
-				});
-				await page.waitForTimeout(600);
+				// The 404 page is the static shell rendered client side: audit once it has a heading.
+				await page.getByRole('heading', { level: 1 }).first().waitFor();
 				await page.addScriptTag({ path: axeCorePath });
 				const audit = await page.evaluate(() =>
 					(
