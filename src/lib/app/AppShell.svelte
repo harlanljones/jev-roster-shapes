@@ -17,7 +17,7 @@
 	let { children }: { children: Snippet } = $props();
 
 	// D-63: the shell names where you are — the overview, the season index, the open decision,
-	// and how to read a board. The decision's own places live in its DecisionNav. D-65: it is a
+	// and how to read a board. The decision's own places live in its DecisionNav. D-66: it is a
 	// plain top bar, with the phone menu a plain list under it.
 	// The open decision comes from the decision routes' own load (decisions/[slug]/+layout.ts), so
 	// the shell itself never pulls in the storyline registry; /privacy, /terms and the like
@@ -147,7 +147,7 @@
 		top: var(--spacing-200);
 	}
 
-	/* A plain top bar across the page (D-65): a hairline under it, no float, blur or shadow. */
+	/* A plain top bar across the page (D-66): a hairline under it, no float, blur or shadow. */
 	.shell {
 		border-bottom: 1px solid var(--case-300);
 		background: var(--case-000);

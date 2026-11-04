@@ -12,7 +12,7 @@
 	import { benchTray, buildPool, lineupBin, locksOf, scenarioLineup } from './shape-case';
 
 	// D-63 sets what `/` carries: what the tool does, the current decision's board, the framework
-	// credit, how it works and a plain question-and-answer FAQ, with one primary action. D-65 sets
+	// credit, how it works and a plain question-and-answer FAQ, with one primary action. D-66 sets
 	// how: a plain front page in reading order, with no hero, tagline, reveal or repeated action.
 	const story = getStoryline(currentSlug(todayIso()))!;
 	const bundle = story.bundle;

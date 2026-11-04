@@ -549,8 +549,10 @@
 		font-family: var(--font-mono);
 	}
 
+	/* A template card holds a scroll container: the track must not take the table's no-wrap width. */
 	.template-stack {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--spacing-200);
 	}
 
@@ -605,7 +607,12 @@
 		text-decoration: none;
 	}
 
+	/* Wide tables scroll inside their own container, never the page. The container is positioned
+	   so the visually hidden captions and labels inside it are clipped with the table instead of
+	   escaping to the page at their column offset. */
 	.table-scroll {
+		position: relative;
+		min-width: 0;
 		overflow-x: auto;
 	}
 

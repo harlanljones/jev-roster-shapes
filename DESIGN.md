@@ -1,7 +1,7 @@
 # Design
 
 The visual system for Roster Shapes after the public-release redesign (D-62), with the landing-page
-apparatus removed by D-65. The source of truth
+apparatus removed by D-66. The source of truth
 is the **Roster Shapes design system** artifact
 (<https://claude.ai/artifact/LSQcbG65oYb3ZdM1b43Z1B>): its brand book, tokens and component
 previews. A copy of its tokens is checked in at `docs/design/roster-shapes-tokens.json`, and
@@ -12,7 +12,7 @@ Concrete values (type, spacing, radii, dark surfaces) follow Harlan Jones' `ai-d
 `landing-page-design` Part B and its companion `redesign-existing-projects` (Design Values). Values
 those skills leave open — the light surfaces, the accent and the data colours — are this system's
 own. The skills' landing-page conventions (floating nav, gradient titles, tagline and scroll
-reveals, press feedback, hero-plus-sections layout) were adopted by D-62 and removed by D-65: the
+reveals, press feedback, hero-plus-sections layout) were adopted by D-62 and removed by D-66: the
 site is a working tool, and reads as one. The number format, chart rules
 and grey-midpoint diverging scale are borrowed from the sibling Hot Stove Lab system; its verdict
 apparatus is not (D-62). The redesign's audit and scores are in
@@ -32,14 +32,14 @@ look at, not how the page was built.
 A flat page in two themes, following `prefers-color-scheme`. Light is a cool case ground
 (`case-000`) with white panels (`case-100`) edged in hairlines; dark uses only the approved dark
 surfaces (`#181818`, `#1F1F1F`, `#272727`, `#313131`). There are no gradients anywhere; page titles
-are plain ink (D-65). `--hero-from` and `--hero-to` stay in the generated tokens, unused.
+are plain ink (D-66). `--hero-from` and `--hero-to` stay in the generated tokens, unused.
 
 | Token | Use |
 | --- | --- |
 | `case-000` · `case-100` · `case-200` | Page ground · panels · sunken surfaces (table heads, tracks) |
 | `case-300` · `case-400` | Hairlines and dividers · control borders (3:1) |
 | `ink` · `ink-muted` | Text · secondary text, axes, sources (4.5:1 on every case surface, both themes) |
-| `ink-faint` | Unused since D-65 (it carried the tagline reveal's transient state); kept in the generated tokens, never body copy |
+| `ink-faint` | Unused since D-66 (it carried the tagline reveal's transient state); kept in the generated tokens, never body copy |
 | `turf` · `on-turf` · `turf-soft` | The one accent: primary action, links, current state · text on it · hover ground |
 | `focus` · `focus-inverse` | The 2px focus ring, offset 2px · the ring on foam |
 | `foam` · `foam-deep` · `foam-edge` · `on-foam` | The case object, dark in both themes · recesses · cutout lips (3:1) · text on foam |
@@ -73,7 +73,7 @@ carries a 3px halo in the panel colour, since it straddles two fills.
 - Corners: `--radius-sm` 2px for labels, markers and controls, `--radius-md` 4px for panels and
   buttons, `--radius-full` for thumbs only. No pills.
 - Borders, not shadows; `--shadow-pop` only for popovers (the workspace's evidence drawer).
-- No motion (D-65): nothing rises, fades, scales or blurs, and nothing is hidden until script
+- No motion (D-66): nothing rises, fades, scales or blurs, and nothing is hidden until script
   runs. The curve and duration tokens remain for the few component-level transitions that survive
   (`--dur-reveal` is unused). Numbers, pieces and bars never move while being read.
 
@@ -107,7 +107,10 @@ carries a 3px halo in the panel colour, since it straddles two fills.
 - Every diagram has a text equivalent: labelled piece buttons, `role="img"` labels with the stats,
   per-piece titles, and the case table.
 - The page never scrolls sideways at 320px or wider; wide tables and diagrams scroll inside their
-  own container, and auto-fit grids use `minmax(min(Xrem, 100%), 1fr)`.
+  own container, and auto-fit grids use `minmax(min(Xrem, 100%), 1fr)`. A single-column grid
+  that holds a scroll container uses `grid-template-columns: minmax(0, 1fr)`, and the scroll
+  container is positioned, so visually hidden captions and labels are clipped with the table
+  instead of escaping to the page.
 - Engine numbers and display-layer numbers are always labelled apart: "Pinned 10-game engine
   total" versus "actual 2026 (display layer)".
 - Every route passes the full axe rule set in both themes (`tests/e2e/accessibility-full.spec.ts`).

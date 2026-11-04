@@ -792,6 +792,7 @@
 <style>
 	.workspace {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--spacing-600);
 		max-width: 88rem;
 		margin: 0 auto;
@@ -923,8 +924,11 @@
 		font-size: var(--text-xs);
 		line-height: var(--text-xs--lh);
 	}
+	/* Single-column grids take minmax(0, 1fr) so a wide table below scrolls in its container
+	   instead of widening the page (DESIGN.md rules). */
 	.workspace-section {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--spacing-200);
 	}
 	.section-heading {
