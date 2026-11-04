@@ -104,7 +104,7 @@ For position `p` and context `c`, define required defensive innings `D[p,c]` fro
 coverage_shortfall[p,c] = max(0, D[p,c] - sum_i A[i,p,c])
 ```
 
-White space represents this measured shortfall in a dedicated position lane. The interface labels its unit and context. Layout padding and the gaps around irregular icons never count toward the metric.
+White space represents this measured shortfall in a dedicated position lane. The interface labels its unit and context. Layout padding and the gaps around irregular icons never count toward the metric. The term is borrowed from the roster-shapes framework Taylor Wyman originated ([docs/wyman-diagram.md](docs/wyman-diagram.md)), where white space is what a perfect team would add; here it is the measured shortfall defined above and nothing else.
 
 Eligibility and expected defensive quality are separate. An eligible but weak defender fills an assignment while retaining a visible quality concern. Improving defensive quality does not invent additional covered innings.
 
@@ -144,7 +144,7 @@ Every tile carries a name and readable workload value. Color represents a consis
 
 Shape is a compact summary of a player's profile. It never determines tile area, creates coverage, or directly changes projected value. A context change may alter a player's allocation or fit assessment without changing their underlying profile label.
 
-The original eight labels—Square, Rectangle, Circle, Pentagon, Octagon, Diamond, Star, and Funky—are taxonomy candidates. The pilot does not assume that eight exclusive categories are useful or exhaustive.
+The eight labels inherited from the project proposal—Square, Rectangle, Circle, Pentagon, Octagon, Diamond, Star, and Funky—are taxonomy candidates. They are not the shape set Taylor Wyman published (see [docs/wyman-diagram.md](docs/wyman-diagram.md)), which this application does not implement. The pilot does not assume that eight exclusive categories are useful or exhaustive.
 
 Before enabling shape classification, evaluators must document each category's plain-language definition, positive examples, counterexamples, required inputs, and boundary cases. Test whether different evaluators apply those definitions consistently. Permit an unclassified or mixed-profile display state. If the taxonomy adds confusion or cannot be labeled reliably, ship readable skill tags and profile bars while revising it.
 
@@ -261,8 +261,9 @@ Possible next phases are broader position-player planning, candidate ranking aga
 
 ## 14. References and claim boundaries
 
-- The supplied *Project Proposal: Roster Shapes (Jev Engine Edition)* is the concept source. Its partnership framing, staffing, taxonomy, latency, and performance claims are proposals rather than verified project facts.
+- The roster-shapes framework this project applies to baseball originated with Taylor Wyman ([@taylormetrics](https://www.tiktok.com/@taylormetrics)), who publishes it as the Wyman Diagram. His published encoding — size as value over replacement, the outline as fit alongside teammates, colour as role and explicitly not a rating, white space as what a perfect team would add — is stated in [docs/wyman-diagram.md](docs/wyman-diagram.md), together with a rule-by-rule record of what this repository keeps, cuts and borrows. This application does not implement that encoding: its shapes are analyst labels under rubric v2 (§6), its sizes are observed 2026 runs, and its colour is a rating. Wyman has no involvement in this project and has not reviewed it.
+- The supplied *Project Proposal: Roster Shapes (Jev Engine Edition)* is the concept source for this project's brief — the baseball application, the Jev experiment, and the pilot framing. It is not the source of the roster-shapes idea itself. Its partnership framing, staffing, taxonomy, latency, and performance claims are proposals rather than verified project facts.
 - [TypeSafe introduction](https://docs.typesafe.ai/introduction) describes typed questions and recommends composing narrow judgments in application code.
 - [TypeSafe launch announcement](https://typesafe.ai/blog/introducing-system-one-models-and-jev) reports vendor latency and schema guarantees. Those claims do not establish this application's latency, classification calibration, or baseball decision quality.
 
-Vendor references were reviewed on September 18, 2026. Integration must verify the actual API contract and benchmark the selected model version before release.
+Vendor references were reviewed on September 18, 2026. Integration must verify the actual API contract and benchmark the selected model version before release. The Wyman references were reviewed on November 3, 2026; TikTok is JavaScript-gated and x.com was not reachable from the build environment, so no individual post could be opened and none is cited.
