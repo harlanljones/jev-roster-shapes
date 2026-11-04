@@ -16,6 +16,14 @@ friction. The same pieces then appear in the interaction map, the capacity bin,
 and the slot-by-slot bars. A shape is not ornamental filler: it is a compact,
 inspectable profile summary paired with the player's name and readable data.
 
+The idea of reading a roster as shapes packed into a box is Taylor Wyman's
+([@taylormetrics](https://www.tiktok.com/@taylormetrics)); see [the framework
+guide](wyman-diagram.md). The eight labels below come from the supplied project
+proposal, and their rules and boundaries were iterated here (D-39, D-43 and the
+git history). They are this repository's own, not his encoding: his outline
+carries fit alongside teammates and his colour carries role, explicitly not a
+rating. He has not reviewed this rubric.
+
 Required inputs per player: 2026 observed R/PA (or explicit null), 2026 games
 by position (≥10 = eligible, D-35 rule reused), season PA total, age/role
 context from the cited March 2026 previews. A player with zero PA and no

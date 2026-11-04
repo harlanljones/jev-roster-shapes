@@ -77,26 +77,27 @@
 	table {
 		width: 100%;
 		border-collapse: collapse;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	caption {
-		padding-bottom: 0.5rem;
-		color: var(--ink-soft);
+		padding-bottom: var(--spacing-75);
+		color: var(--ink-muted);
 		text-align: left;
 	}
 	th,
 	td {
-		border-bottom: 1px solid var(--rule);
-		padding: 0.4rem 0.6rem;
+		border-bottom: 1px solid var(--case-300);
+		padding: var(--spacing-75) var(--spacing-75);
 		text-align: left;
 		white-space: nowrap;
 	}
 	thead th {
-		color: var(--ink-soft);
+		color: var(--ink-muted);
 		font-weight: 600;
 	}
 	.n {
-		font-family: var(--mono);
+		font-family: var(--font-mono);
 		font-variant-numeric: tabular-nums;
 		text-align: right;
 	}

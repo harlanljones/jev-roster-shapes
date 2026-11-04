@@ -71,7 +71,7 @@ describe('SnapshotsPage', () => {
 		await expect
 			.element(page.getByText(/Recorded interpretations \(D-55\): a Square "full workload"/))
 			.toBeVisible();
-		await expect.element(page.getByText(/no held-out split at this sample size/)).toBeVisible();
+		await expect.element(page.getByText(/no held out split at this sample size/)).toBeVisible();
 	});
 });
 
@@ -88,7 +88,7 @@ describe('SnapshotsPage diagram modes', () => {
 		await expect.element(page.getByRole('group', { name: /^Roster board for/ })).toBeVisible();
 		await page.getByRole('button', { name: 'Mark disagreements' }).click();
 		await expect
-			.element(page.getByText(/Red ring: Jev, the rule baseline, and the analyst disagree/))
+			.element(page.getByText(/Dashed ring: Jev, the rule baseline, and the analyst disagree/))
 			.toBeVisible();
 	});
 });

@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { formatDay } from './season-timeline';
 	import { resolve } from '$app/paths';
+	import { scenarioQuery } from './routes';
 	import { page } from '$app/state';
 	import { calculateComparison, calculatePoolFit, poolFitFor } from '$lib/engine';
 	import type { Storyline } from '$lib/storylines/registry';
@@ -68,14 +70,7 @@
 			.replace(/^The tightest fit fills (\d+)%,/, 'The tightest fit has a slot-band fill of $1%,');
 	const findingsFor = (items: { lead: string; text: string }[] | undefined) =>
 		(items ?? []).map((i) => ({ ...i, lead: slotBandWords(i.lead) }));
-	const longDate = (iso: string) =>
-		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
-			month: 'long',
-			day: 'numeric',
-			year: 'numeric',
-			timeZone: 'UTC'
-		});
-	const query = $derived(isBaseline ? '' : `?scenario=${encodeURIComponent(scenario.id)}`);
+	const longDate = (iso: string) => formatDay(iso, { year: true });
 
 	// Each diagram's inputs, computed only on the subpage that draws it.
 	const pinned = $derived(
@@ -117,10 +112,13 @@
 
 <div class="subpage">
 	<header class="head">
-		<a class="back" href="{resolve('/scenario/[slug]', { slug: story.slug })}{query}"
-			>← Board: {story.title}</a
+		<a
+			class="back"
+			href="{resolve('/decisions/[slug]', { slug: story.slug })}{scenarioQuery(
+				isBaseline ? null : scenario.id
+			)}">← Board: {story.title}</a
 		>
-		<h1>{meta.title}</h1>
+		<h1 class="page-title">{meta.title}</h1>
 		<p class="lede">{meta.blurb}</p>
 		<DecisionNav slug={story.slug} current={diagram} scenarioId={isBaseline ? null : scenario.id} />
 		<ScenarioPicker {bundle} {pool} current={scenario} />
@@ -177,41 +175,46 @@
 			<h2 id="engine-title">What the roster could have done instead</h2>
 			<p class="lede">
 				The engine searches each scenario's own roster for the best nine it can field, one lineup
-				per pitcher-hand context, and judges that lineup with the same feasibility, coverage, and
+				per pitcher hand context, and judges that lineup with the same feasibility, coverage, and
 				capacity rules as any other scenario. Everything here is dated evidence: rates known on {longDate(
 					story.eventDate
 				)}, not hindsight, so it can disagree with the board.
 			</p>
-			<table class="fit-comparison">
-				<caption>
-					Pool fit against the lineup each scenario used, over the same illustrative ten-game
-					horizon
-				</caption>
-				<thead>
-					<tr>
-						<th scope="col">Scenario</th>
-						<th scope="col">Lineup used</th>
-						<th scope="col">Pool's best nine</th>
-						<th scope="col">Left on the table</th>
-						<th scope="col">Best fit overall</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each analysis.fits as row (row.scenarioId)}
+			<div class="table-scroll">
+				<table class="fit-comparison">
+					<caption>
+						Pool fit against the lineup each scenario used, over the same illustrative ten game
+						horizon
+					</caption>
+					<thead>
 						<tr>
-							<th scope="row">{row.label}</th>
-							<td
-								>{analysis.references.find((r) => r.scenarioId === row.scenarioId)?.runs ??
-									'unavailable'}</td
-							>
-							<td>{row.runs ?? 'unavailable'}</td>
-							<td>{engineDelta(row.deltaVsReference?.runs ?? null)}</td>
-							<td>{analysis.best?.scenarioId === row.scenarioId ? 'highest available fit' : '—'}</td
-							>
+							<th scope="col">Scenario</th>
+							<th scope="col">Lineup used</th>
+							<th scope="col">Pool's best nine</th>
+							<th scope="col">Left on the table</th>
+							<th scope="col">Best fit overall</th>
 						</tr>
-					{/each}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{#each analysis.fits as row (row.scenarioId)}
+							<tr>
+								<th scope="row">{row.label}</th>
+								<td
+									>{analysis.references.find((r) => r.scenarioId === row.scenarioId)?.runs ??
+										'unavailable'}</td
+								>
+								<td>{row.runs ?? 'unavailable'}</td>
+								<td>{engineDelta(row.deltaVsReference?.runs ?? null)}</td>
+								<td
+									>{analysis.best?.scenarioId === row.scenarioId
+										? 'highest available fit'
+										: '—'}</td
+								>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 			{#if engineFit}
 				<EngineFit fit={engineFit} {nameOf} label="Pool fit for {scenario.label}" />
 			{/if}
@@ -221,9 +224,9 @@
 			<div class="main">
 				<h2 id="map-title">The same pieces off the field</h2>
 				<p class="lede">
-					Gray lines share a position, red arrows are the swaps this storyline tests (thick in this
-					scenario) with the change in actual 2026 runs, green dots pair players whose real splits
-					complement, and blue dashes lead into the DH lane.
+					Solid gray lines share a position, solid green arrows are the swaps this storyline tests
+					(thick in this scenario) with the change in actual 2026 runs, dotted lines pair players
+					whose real splits complement, and dashed lines lead into the DH lane.
 				</p>
 				<InteractionMap
 					{pool}
@@ -260,7 +263,7 @@
 				</p>
 				<p class="measure">
 					<b>Board fill</b> is the share of the lid covered by the packed shapes; gaps are space lost
-					where outlines don't nest and headroom is value left off. It is not the slot-band fill measured
+					where outlines don't nest and headroom is value left off. It is not the slot band fill measured
 					below.
 				</p>
 				<div class="bins">
@@ -294,17 +297,17 @@
 					Dotted lines mark the 2026 league average.
 				</p>
 				<p class="measure">
-					<b>Slot-band fill</b> is the share of all nine columns' bands filled by those runs. It differs
+					<b>Slot band fill</b> is the share of all nine columns' bands filled by those runs. It differs
 					from the board fill above, which measures how the shapes pack.
 				</p>
-				<h3>This lineup · {Math.round(slots.cur.pct)}% slot-band fill</h3>
+				<h3>This lineup · {Math.round(slots.cur.pct)}% slot band fill</h3>
 				<SlotBars
 					{pool}
 					bars={slots.cur}
 					px={slots.px}
 					label="{scenario.label} slot by slot: {Math.round(slots.cur.pct)}% slot-band fill"
 				/>
-				<h3>Hindsight best nine · {Math.round(slots.best.pct)}% slot-band fill</h3>
+				<h3>Hindsight best nine · {Math.round(slots.best.pct)}% slot band fill</h3>
 				<SlotBars
 					{pool}
 					bars={slots.best}
@@ -347,31 +350,37 @@
 
 <style>
 	.measure {
-		margin: 0 0 0.75rem;
+		margin: 0 0 var(--spacing-100);
 		max-width: 60ch;
-		color: var(--ink-soft);
-		font-size: 0.85rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.subpage {
 		display: grid;
-		gap: 2.5rem;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--spacing-500);
 		max-width: 88rem;
 		margin: 0 auto;
-		padding: 1.5rem clamp(1rem, 4vw, 3rem) 4rem;
+		padding: var(--spacing-300) var(--spacing-300) var(--spacing-700);
 	}
 	.head,
 	.main,
 	.side,
 	.block {
 		display: grid;
-		gap: 1.1rem;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--spacing-200);
 		align-content: start;
 	}
 	.back {
 		display: inline-block;
-		padding-block: 0.4rem;
-		color: var(--marker);
-		font: 500 0.8rem var(--mono);
+		padding-block: var(--spacing-75);
+		color: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 		text-decoration: none;
 	}
 	.back:hover {
@@ -379,143 +388,136 @@
 	}
 	h1 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: clamp(2rem, 4.5vw, 3.25rem);
-		font-weight: 400;
-		letter-spacing: 0.01em;
-		line-height: 1;
 	}
 	h2 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+		font-family: var(--font-sans);
+		font-size: var(--text-3xl);
+		line-height: var(--text-3xl--lh);
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
 	h3 {
 		margin: 0;
-		font-size: 0.95rem;
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 		font-weight: 600;
 	}
 	.lede {
 		max-width: 66ch;
 		margin: 0;
-		color: var(--ink-soft);
-		font-size: 1rem;
-		line-height: 1.55;
-	}
-	.visually-hidden {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
+		color: var(--ink-muted);
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
 	}
 	.split {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 24rem;
-		gap: 2.5rem;
+		gap: var(--spacing-500);
 		align-items: start;
 	}
 	.side {
 		position: sticky;
-		top: 1rem;
+		/* Clear the floating nav, which is sticky at the top of the page too. */
+		top: var(--spacing-800);
 	}
 	.stamp {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.3rem 1.25rem;
+		gap: var(--spacing-50) var(--spacing-200);
 		margin: 0;
-		color: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 0.78rem;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.stamp b {
 		color: var(--ink);
 		font-weight: 600;
 	}
 	.table-toggle {
-		border: 1px solid var(--rule);
-		border-radius: 8px;
-		padding: 0.75rem 1rem;
-		background: var(--panel);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-100) var(--spacing-200);
+		background: var(--case-100);
 	}
 	.table-toggle summary {
 		font-weight: 600;
 		cursor: pointer;
 	}
 	.table-toggle[open] summary {
-		margin-bottom: 0.75rem;
+		margin-bottom: var(--spacing-100);
 	}
 	.fit-comparison {
 		width: 100%;
 		border-collapse: collapse;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.fit-comparison caption {
-		margin-bottom: 0.4rem;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
+		margin-bottom: var(--spacing-75);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		text-align: left;
 	}
 	.fit-comparison th,
 	.fit-comparison td {
-		border-bottom: 1px solid var(--rule);
-		padding: 0.4rem 0.5rem;
+		border-bottom: 1px solid var(--case-300);
+		padding: var(--spacing-75) var(--spacing-75);
 		text-align: left;
 	}
 	.fit-comparison thead th {
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	.fit-comparison td {
-		font-family: var(--mono);
+		font-family: var(--font-mono);
 	}
 	.tray {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 20rem;
-		gap: 2.25rem;
+		gap: var(--spacing-400);
 		align-items: start;
-		border: 1px solid var(--rule);
-		border-radius: 12px;
-		padding: clamp(1rem, 3vw, 1.75rem);
-		background: var(--panel);
-		box-shadow:
-			0 1px 2px rgb(22 32 42 / 6%),
-			0 8px 20px rgb(22 32 42 / 6%);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-300);
+		background: var(--case-100);
 	}
 	.tray > :global(.findings) {
-		padding-top: 4rem;
+		padding-top: var(--spacing-700);
 	}
 	.bins {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 1.5rem;
+		gap: var(--spacing-300);
 	}
 	figure {
 		display: grid;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 		margin: 0;
 	}
 	figcaption {
 		display: grid;
-		gap: 0.15rem;
+		gap: var(--spacing-25);
 	}
 	figcaption span {
-		color: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 0.75rem;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.sources {
 		max-width: 90ch;
-		border-top: 1px solid var(--rule);
-		padding-top: 1rem;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
-		line-height: 1.6;
+		border-top: 1px solid var(--case-300);
+		padding-top: var(--spacing-200);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	@media (max-width: 1100px) {
 		.split,
@@ -533,5 +535,10 @@
 		.bins {
 			grid-template-columns: 1fr;
 		}
+	}
+	/* Wide tables scroll inside their own container, never the page. */
+	.table-scroll {
+		min-width: 0;
+		overflow-x: auto;
 	}
 </style>

@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import { axisExtents, shapePath } from '$lib/shapes/geometry';
-	import { SLOT_ROLES, savantColor, sideOf, splitScale, type CasePlayer } from '../shape-case';
+	import { SLOT_ROLES, splitColor, sideOf, splitScale, type CasePlayer } from '../shape-case';
 
 	// One player piece: the rubric shape at an area set by runs, split down the
 	// middle into a vs-LHP half (left) and a vs-RHP half (right). Each half is
@@ -64,9 +64,10 @@
 		<path
 			class="body"
 			d={shapePath(drawn, cx, cy, r * scale[side])}
-			fill={savantColor(split.ops, side)}
+			fill={splitColor(split.ops, side)}
 			fill-opacity={faded ? 0.62 : 1}
-			stroke={split.pa < 100 ? 'rgba(0,0,0,.6)' : 'rgba(0,0,0,.4)'}
+			stroke="var(--ink)"
+			stroke-opacity={split.pa < 100 ? 0.6 : 0.4}
 			stroke-width={split.pa < 100 ? 1.5 : 1}
 			stroke-dasharray={split.pa < 100 ? '4 3' : undefined}
 			clip-path="url(#{uid}-{side})"
@@ -77,15 +78,17 @@
 		y1={cy + Math.min(exL.top, exR.top)}
 		x2={cx}
 		y2={cy + Math.max(exL.bottom, exR.bottom)}
-		stroke="rgba(0,0,0,.45)"
+		stroke="var(--ink)"
+		stroke-opacity="0.45"
 		stroke-width="1"
 	/>
 {:else if player.rate != null}
 	<path
 		class="body"
 		d={shapePath(drawn, cx, cy, r)}
-		fill="rgba(150,150,150,.25)"
-		stroke="#8a938d"
+		fill="var(--piece-unknown, var(--unknown))"
+		fill-opacity="0.25"
+		stroke="var(--piece-unknown, var(--unknown))"
 		stroke-width="1.5"
 		stroke-dasharray="5 4"
 	/>
@@ -94,7 +97,7 @@
 		class="body"
 		d={shapePath(drawn, cx, cy, r)}
 		fill="url(#{hatch})"
-		stroke="#c8cfca"
+		stroke="var(--piece-unknown, var(--unknown))"
 		stroke-width="2"
 		stroke-dasharray="5 4"
 	/>
@@ -106,8 +109,9 @@
 		width="28"
 		height="16"
 		rx="4"
-		fill="#eef0ea"
-		stroke="rgba(0,0,0,.5)"
+		fill="var(--case-100)"
+		stroke="var(--ink)"
+		stroke-opacity="0.5"
 		stroke-width="1"
 	/>
 	<text class="tab" x={tab.x + 14} y={cy + 4} text-anchor="middle">{tab.label}</text>
@@ -115,9 +119,10 @@
 
 <style>
 	.tab {
-		fill: #1d2320;
-		font-family: var(--mono);
-		font-size: 10.5px;
+		fill: var(--ink);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		font-weight: 500;
 	}
 </style>

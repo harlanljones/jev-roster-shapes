@@ -93,14 +93,14 @@ test('a keyboard-only user reaches a decision, its snapshots, and the prompt', a
 	const card = page.getByRole('link', { name: 'How do you replace Bregman?' });
 	await card.evaluate((el) => el.focus());
 	await page.keyboard.press('Enter');
-	await expect(page).toHaveURL(/\/scenario\/offseason-infield$/);
+	await expect(page).toHaveURL(/\/decisions\/offseason-infield$/);
 	await expect(page.getByRole('group', { name: /Roster board for/ })).toBeVisible();
 
-	// Follow the decision's diagram nav to the snapshots subpage.
-	const nav = page.getByRole('navigation', { name: 'Decision diagrams' });
+	// Follow the decision's own nav to its snapshots page.
+	const nav = page.getByRole('navigation', { name: 'This decision' });
 	await nav.getByRole('link', { name: 'Snapshots' }).evaluate((el) => el.focus());
 	await page.keyboard.press('Enter');
-	await expect(page).toHaveURL(/\/scenario\/offseason-infield\/snapshots$/);
+	await expect(page).toHaveURL(/\/decisions\/offseason-infield\/snapshots$/);
 
 	// The request body is a native disclosure: focusable, operable with Enter.
 	const toggle = page.getByText('Request body, exactly as it would be sent');

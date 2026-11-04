@@ -20,6 +20,8 @@
 		compare: CallCompare;
 	} = $props();
 
+	let stateOpen = $state(window.matchMedia('(min-width: 720px)').matches);
+
 	const view = $derived(callView(request, record, compare));
 	const pct = (v: number) => `${Math.round(v * 100)}%`;
 	const typeLabel = (q: CallQuestion) => (q.type === 'noul' ? 'True / False' : 'Choice');
@@ -46,13 +48,18 @@
 	</header>
 
 	<section class="sec" aria-label="State">
-		<h3 class="label">State · what Jev is told</h3>
-		<dl class="state">
-			{#each view.state as row (row.key)}
-				<dt>{row.key}</dt>
-				<dd class:missing={row.missing}>{row.value}</dd>
-			{/each}
-		</dl>
+		<details class="state-details" bind:open={stateOpen}>
+			<summary
+				><h3 class="label">State · what Jev is told</h3>
+				<span class="count">{view.state.length} fields</span></summary
+			>
+			<dl class="state">
+				{#each view.state as row (row.key)}
+					<dt>{row.key}</dt>
+					<dd class:missing={row.missing}>{row.value}</dd>
+				{/each}
+			</dl>
+		</details>
 	</section>
 
 	{#each view.questions as q, index (q.key)}
@@ -86,7 +93,7 @@
 									<span class="marks">
 										{#each MARKS as [letter, field, title] (letter)}
 											<span class="mk {letter}" class:off={!o[field]} {title}
-												>{o[field] ? letter : ''}<span class="sr"
+												>{o[field] ? letter : ''}<span class="visually-hidden"
 													>{o[field] ? ` ${title} pick` : ''}</span
 												></span
 											>
@@ -135,36 +142,39 @@
 
 <style>
 	.call {
-		border: 1px solid var(--rule);
-		border-radius: 8px;
-		background: var(--panel);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		background: var(--case-100);
 		overflow: hidden;
 	}
 	.head {
 		display: grid;
-		gap: 0.5rem;
-		border-bottom: 1px solid var(--rule);
-		padding: 0.85rem 1rem;
+		gap: var(--spacing-75);
+		border-bottom: 1px solid var(--case-300);
+		padding: var(--spacing-100) var(--spacing-200);
 	}
 	h2 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: 1.35rem;
+		font-family: var(--font-sans);
+		font-size: var(--text-xl);
+		line-height: var(--text-xl--lh);
 		font-weight: 400;
-		line-height: 1.1;
 	}
 	.meta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.35rem;
+		gap: var(--spacing-50);
 		margin: 0;
 	}
 	.chip {
-		border: 1px solid var(--rule);
-		border-radius: 3px;
-		padding: 0.2rem 0.4rem;
-		color: var(--ink-soft);
-		font: 500 0.68rem var(--mono);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-sm);
+		padding: var(--spacing-50) var(--spacing-75);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.status {
 		border-style: dashed;
@@ -172,100 +182,164 @@
 	}
 	.status.answered {
 		border-style: solid;
-		border-color: var(--marker);
-		color: var(--marker);
+		border-color: var(--turf);
+		color: var(--turf);
 	}
 	.sec {
 		display: grid;
-		gap: 0.5rem;
-		border-bottom: 1px solid var(--rule);
-		padding: 0.75rem 1rem;
+		gap: var(--spacing-75);
+		border-bottom: 1px solid var(--case-300);
+		padding: var(--spacing-100) var(--spacing-200);
 	}
 	.label,
 	.n {
 		margin: 0;
-		color: var(--ink-soft);
-		font: 600 0.68rem var(--mono);
-		letter-spacing: 0.07em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
+		letter-spacing: 0.02em;
+	}
+	/* D-62: open on wide screens; on a phone the table folds away so the board is not
+	   pushed thousands of pixels down, while D-60's order (the call first) is kept. */
+	.state-details summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--spacing-75);
+		min-height: 44px;
+		cursor: pointer;
+		list-style: none;
+	}
+	.state-details summary::-webkit-details-marker {
+		display: none;
+	}
+	.state-details summary h3 {
+		margin: 0;
+	}
+	.state-details summary::after {
+		content: 'Show';
+		color: var(--turf);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
+	}
+	.state-details[open] summary::after {
+		content: 'Hide';
+	}
+	.count {
+		margin-left: auto;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.state {
 		display: grid;
 		grid-template-columns: minmax(6rem, 38%) minmax(0, 1fr);
-		gap: 0.1rem 0.75rem;
+		gap: var(--spacing-25) var(--spacing-100);
 		margin: 0;
-		font: 0.75rem/1.5 var(--mono);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.state dt {
-		color: var(--ink-soft);
+		color: var(--ink-muted);
 		overflow-wrap: anywhere;
 	}
 	.state dd {
 		margin: 0;
 		overflow-wrap: anywhere;
 	}
+	@media (max-width: 520px) {
+		.state {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.state dd {
+			margin-bottom: var(--spacing-100);
+		}
+	}
 	.state dd.missing {
-		color: var(--fits);
-		font-style: italic;
+		color: var(--grade-fits);
 	}
 	.qhead {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 		align-items: center;
 		margin: 0;
-		font-size: 1rem;
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
 	}
 	.qkey {
-		font: 600 0.82rem var(--mono);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 	}
 	.type {
 		border: 1px solid;
-		border-radius: 3px;
-		padding: 0.2rem 0.4rem;
-		font: 600 0.65rem var(--mono);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		border-radius: var(--radius-sm);
+		padding: var(--spacing-50) var(--spacing-75);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
+		letter-spacing: 0.02em;
 	}
 	.type.choice {
-		color: var(--marker);
+		color: var(--turf);
 	}
 	.type.noul {
-		color: var(--accent);
+		color: var(--turf);
 	}
 	.conf {
 		margin-left: auto;
 	}
 	.instr {
 		margin: 0;
-		border: 1px solid var(--rule);
-		border-radius: 4px;
-		padding: 0.6rem 0.75rem;
-		background: var(--board);
-		font-size: 0.85rem;
-		line-height: 1.5;
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-100);
+		background: var(--case-000);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.options {
 		display: grid;
-		gap: 0.1rem;
+		gap: var(--spacing-25);
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
 	details[open] {
-		border-radius: 4px;
-		background: var(--board);
+		border-radius: var(--radius-md);
+		background: var(--case-000);
 	}
 	summary {
 		display: grid;
 		grid-template-columns: 18px 6rem minmax(2rem, 1fr) 2.5rem auto;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 		align-items: center;
 		min-height: 2rem;
-		padding: 0.3rem 0.4rem;
-		font-size: 0.82rem;
+		padding: var(--spacing-50) var(--spacing-75);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		cursor: pointer;
 		list-style: none;
+	}
+	/* At phone width the probability bar takes its own row, so the option row never widens
+	   the page. */
+	@media (max-width: 420px) {
+		summary {
+			grid-template-columns: 18px minmax(0, 1fr) 2.5rem auto;
+		}
+		summary .bar {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
 	}
 	summary::-webkit-details-marker {
 		display: none;
@@ -275,10 +349,10 @@
 	}
 	.bar {
 		height: 8px;
-		border: 1px solid var(--rule);
-		border-radius: 2px;
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-sm);
 		overflow: hidden;
-		background: var(--panel);
+		background: var(--case-100);
 	}
 	.bar.empty {
 		border-style: dashed;
@@ -291,65 +365,67 @@
 	}
 	.pct {
 		text-align: right;
-		font: 500 0.75rem var(--mono);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 		font-variant-numeric: tabular-nums;
 	}
 	.pct.na {
-		color: var(--ink-soft);
+		color: var(--ink-muted);
 	}
 	.marks {
 		display: inline-flex;
-		gap: 3px;
+		gap: var(--spacing-25);
 	}
 	.mk {
 		width: 18px;
 		height: 18px;
 		border-radius: 50%;
-		color: var(--panel);
-		font: 600 0.6rem/18px var(--mono);
+		color: var(--case-100);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		text-align: center;
 	}
 	.mk.J {
 		background: var(--ink);
 	}
 	.mk.R {
-		background: var(--marker);
+		background: var(--turf);
 	}
 	.mk.A {
-		background: var(--fits);
+		background: var(--grade-fits);
 	}
 	.mk.off {
 		background: transparent;
 	}
-	.sr {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-	}
 	.txt {
 		display: grid;
-		gap: 0.25rem;
-		padding: 0 0.6rem 0.6rem 2.1rem;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
-		line-height: 1.5;
+		gap: var(--spacing-50);
+		padding: 0 var(--spacing-75) var(--spacing-75) var(--spacing-400);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.txt p {
 		margin: 0;
 	}
 	.rule {
-		color: var(--marker);
-		font: 500 0.72rem var(--mono);
+		color: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.noul {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		gap: 0.75rem;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
-		line-height: 1.5;
+		gap: var(--spacing-100);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.noul p {
 		margin: 0;
@@ -363,10 +439,10 @@
 	.gauge {
 		position: relative;
 		height: 10px;
-		margin-bottom: 1.1rem;
-		border: 1px solid var(--rule);
-		border-radius: 2px;
-		background: linear-gradient(90deg, #f3d9d6, var(--board) 50%, #d6eadc);
+		margin-bottom: var(--spacing-200);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-sm);
+		background: var(--case-200);
 	}
 	.gauge b {
 		position: absolute;
@@ -380,15 +456,20 @@
 		position: absolute;
 		top: 15px;
 		transform: translateX(-50%);
-		font: 600 0.7rem var(--mono);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 	}
 	.note,
 	.foot {
 		margin: 0;
-		color: var(--ink-soft);
-		font: 0.75rem/1.5 var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.foot {
-		padding: 0.75rem 1rem;
+		padding: var(--spacing-100) var(--spacing-200);
 	}
 </style>

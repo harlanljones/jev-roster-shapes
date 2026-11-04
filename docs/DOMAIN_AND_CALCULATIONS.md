@@ -73,7 +73,7 @@ Distinguish these states:
 
 An invalid template never contributes a misleading “feasible” result. An over-capacity player cannot be fixed by clamping their workload or crediting their assignments selectively. Explain the issue and require an edit.
 
-White space is the labeled shortfall within a position lane. Layout spacing, decorative shapes, the ordering of players, and classification changes have no effect on coverage.
+White space is the labeled shortfall within a position lane. Layout spacing, decorative shapes, the ordering of players, and classification changes have no effect on coverage. The term comes from the roster-shapes framework Taylor Wyman originated ([the framework guide](wyman-diagram.md)); in this document it means the labeled shortfall defined here and never a visual quantity.
 
 ## 4. Offensive contribution
 

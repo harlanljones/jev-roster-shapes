@@ -143,91 +143,94 @@
 
 <style>
 	.panel {
-		border: 1px solid var(--line);
-		background: var(--paper);
-		box-shadow: 0 0.9rem 2.5rem rgb(16 35 61 / 0.07);
+		border: 1px solid var(--case-300);
+		background: var(--case-100);
 	}
 
 	.review {
-		padding: clamp(1rem, 2vw, 1.5rem);
+		padding: var(--spacing-300);
 	}
 
 	.section-heading {
 		display: flex;
 		align-items: start;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: var(--spacing-200);
 	}
 
 	h2 {
-		margin: 0.2rem 0 0;
-		font-family: var(--display);
-		font-size: clamp(1.25rem, 2vw, 1.5rem);
+		margin: var(--spacing-50) 0 0;
+		font-family: var(--font-sans);
+		font-size: var(--text-2xl);
+		line-height: var(--text-2xl--lh);
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
 
 	.ready-state {
-		padding: 0.4rem 0.6rem;
-		border: 1px solid var(--rust);
-		border-radius: 999px;
-		color: var(--rust);
-		font-size: 0.72rem;
-		font-weight: 800;
+		padding: var(--spacing-75) var(--spacing-75);
+		border: 1px solid var(--grade-loose);
+		border-radius: var(--radius-full);
+		color: var(--grade-loose);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 	}
 
 	.ready-state.ready {
-		border-color: var(--teal);
-		color: var(--teal);
+		border-color: var(--grade-snug);
+		color: var(--grade-snug);
 	}
 
 	.review-controls {
 		display: grid;
 		grid-template-columns: minmax(13rem, 0.45fr) minmax(0, 1fr);
-		gap: 1rem;
+		gap: var(--spacing-200);
 		align-items: end;
-		margin-top: 1.25rem;
-		padding: 0.9rem;
-		background: var(--paper-deep);
+		margin-top: var(--spacing-200);
+		padding: var(--spacing-200);
+		background: var(--case-200);
 	}
 
 	.review-controls label {
 		display: grid;
-		gap: 0.3rem;
+		gap: var(--spacing-50);
 		color: var(--ink);
-		font-size: 0.76rem;
-		font-weight: 750;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 	}
 
 	select {
 		min-height: 2.4rem;
-		padding: 0.5rem 0.6rem;
-		border: 1px solid var(--line-strong);
-		border-radius: 0.3rem;
-		background: var(--paper-light);
+		padding: var(--spacing-75) var(--spacing-75);
+		border: 1px solid var(--case-400);
+		border-radius: var(--radius-md);
+		background: var(--case-100);
 		color: var(--ink);
 		font: inherit;
 	}
 
 	.review-controls p {
 		margin: 0;
-		color: var(--muted);
-		font-size: 0.8rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.checklist {
 		display: grid;
-		gap: 0.55rem;
-		margin-top: 1rem;
+		gap: var(--spacing-75);
+		margin-top: var(--spacing-200);
 	}
 
 	.check-row {
 		display: grid;
 		grid-template-columns: auto minmax(0, 1fr) auto;
-		gap: 0.65rem;
+		gap: var(--spacing-100);
 		align-items: start;
-		padding: 0.75rem 0;
-		border-bottom: 1px solid var(--line);
+		padding: var(--spacing-100) 0;
+		border-bottom: 1px solid var(--case-300);
 	}
 
 	.check-row:last-child {
@@ -239,55 +242,59 @@
 		width: 1.35rem;
 		height: 1.35rem;
 		place-items: center;
-		border: 1px solid var(--rust);
+		border: 1px solid var(--grade-loose);
 		border-radius: 50%;
-		color: var(--rust);
-		font-family: var(--mono);
-		font-size: 0.72rem;
-		font-weight: 900;
+		color: var(--grade-loose);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 	}
 
 	.check-row.pass .check-mark {
-		border-color: var(--teal);
-		color: var(--teal);
+		border-color: var(--grade-snug);
+		color: var(--grade-snug);
 	}
 
 	.check-row div {
 		display: grid;
-		gap: 0.15rem;
+		gap: var(--spacing-25);
 	}
 
 	.check-row strong {
-		font-size: 0.82rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.check-row span:not(.check-mark) {
-		color: var(--muted);
-		font-size: 0.75rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.check-row b {
-		color: var(--rust);
-		font-size: 0.7rem;
-		font-weight: 800;
-		letter-spacing: 0.05em;
-		text-transform: uppercase;
+		color: var(--grade-loose);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
+		letter-spacing: 0.02em;
 	}
 
 	.check-row.pass b {
-		color: var(--teal);
+		color: var(--grade-snug);
 	}
 
 	.blocking-codes {
 		display: grid;
-		gap: 0.2rem;
-		margin-top: 0.9rem;
-		padding: 0.7rem 0.8rem;
-		border: 1px solid var(--rust);
-		border-radius: 6px;
-		background: var(--paper-deep);
-		color: var(--muted);
-		font-size: 0.75rem;
+		gap: var(--spacing-50);
+		margin-top: var(--spacing-200);
+		padding: var(--spacing-100) var(--spacing-100);
+		border: 1px solid var(--grade-loose);
+		border-radius: var(--radius-md);
+		background: var(--case-200);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.blocking-codes strong {
@@ -295,36 +302,32 @@
 	}
 
 	.acknowledge {
-		margin-top: 1rem;
-		padding: 0.7rem 0.85rem;
-		border: 1px solid var(--navy);
-		border-radius: 0.3rem;
-		background: var(--navy);
-		color: var(--paper);
+		margin-top: var(--spacing-200);
+		padding: var(--spacing-100) var(--spacing-100);
+		border: 1px solid var(--turf);
+		border-radius: var(--radius-md);
+		background: var(--turf);
+		color: var(--case-100);
 		font: inherit;
-		font-size: 0.78rem;
-		font-weight: 760;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		cursor: pointer;
 	}
 
 	.evidence-link {
-		margin-top: 0.9rem;
+		margin-top: var(--spacing-200);
 		padding: 0;
 		border: 0;
 		background: transparent;
-		color: var(--rust);
+		color: var(--grade-loose);
 		font: inherit;
-		font-size: 0.75rem;
-		font-weight: 760;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		cursor: pointer;
 		text-decoration: underline;
 		text-underline-offset: 0.17em;
-	}
-
-	button:focus-visible,
-	select:focus-visible {
-		outline: 3px solid var(--rust-soft);
-		outline-offset: 2px;
 	}
 
 	@media (max-width: 600px) {

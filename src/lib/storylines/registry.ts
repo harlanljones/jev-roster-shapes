@@ -59,9 +59,9 @@ function storyline({ json, ...rest }: StorylineInput): Storyline {
 }
 
 const SNAPSHOT_LABEL =
-	'MLB Stats API season-timeline snapshot (spikes/mlb-2026/timeline-snapshot.json)';
+	'MLB Stats API season timeline snapshot (spikes/mlb-2026/timeline-snapshot.json)';
 const PROJECTION_LABEL =
-	'MLB Stats API snapshot + projected 2027 roster from early-October reporting (D-56)';
+	'MLB Stats API snapshot + projected 2027 roster from early October reporting (D-56)';
 
 export const PINNED_STORYLINE_DIGESTS = {
 	'offseason-infield': '74e18f82c56de781204f0c6db7edd922c71e413725d44321d64d24040bbfe07a',
@@ -79,13 +79,13 @@ export const storylineRegistry: readonly Storyline[] = [
 		slug: 'offseason-infield',
 		short: 'Offseason IF',
 		title: 'How do you replace Bregman?',
-		lede: 'Alex Bregman signed with the Cubs on January 14 after turning down a five-year Boston offer with deferrals. The club had already traded for Willson Contreras to play first, then added Caleb Durbin and Andruw Monasterio from Milwaukee and signed Isiah Kiner-Falefa as a utility man. Was the rebuilt infield better than keeping Bregman, or than staying with Triston Casas at first?',
+		lede: 'Alex Bregman signed with the Cubs on January 14 after turning down a five year Boston offer with deferrals. The club had already traded for Willson Contreras to play first, then added Caleb Durbin and Andruw Monasterio from Milwaukee and signed Isiah Kiner-Falefa as a utility man. Was the rebuilt infield better than keeping Bregman, or than staying with Triston Casas at first?',
 		eventDate: '2026-01-14',
 		rateLabel: '2025 season',
 		date: 'December 22, 2025 → February 9, 2026',
 		retrospective: true,
 		eventBasis:
-			'Contreras trade (December 22), Bregman offer, and Milwaukee trade (February 9) from MLB Trade Rumors and NBC Sports Boston. Baseline is the Opening Day infield: Kiner-Falefa started at second against the lefty, Mayer against right-handers. Rates are 2025 totals, what the club knew that winter; Casas’s cover 112 PA before his knee injury.',
+			'Contreras trade (December 22), Bregman offer, and Milwaukee trade (February 9) from MLB Trade Rumors and NBC Sports Boston. Baseline is the Opening Day infield: Kiner-Falefa started at second against the lefty, Mayer against righties. Rates are 2025 totals, what the club knew that winter; Casas’s cover 112 PA before his knee injury.',
 		sourceLabel: SNAPSHOT_LABEL,
 		json: offseasonInfieldJson,
 		expected: [
@@ -108,7 +108,7 @@ export const storylineRegistry: readonly Storyline[] = [
 		slug: 'opening-day-outfield',
 		short: 'Opening Day',
 		title: 'Four outfielders, a DH, and Yoshida',
-		lede: 'Boston opened with Roman Anthony in left and Jarren Duran at DH, Wilyer Abreu and Ceddanne Rafaela playing every day, and Masataka Yoshida on the bench. The club had turned away trade interest in Duran all winter. Should Yoshida have taken the DH at-bats against right-handers, or should Duran have been traded?',
+		lede: 'Boston opened with Roman Anthony in left and Jarren Duran at DH, Wilyer Abreu and Ceddanne Rafaela playing every day, and Masataka Yoshida on the bench. The club had turned away trade interest in Duran all winter. Should Yoshida have taken the DH at bats against righties, or should Duran have been traded?',
 		eventDate: '2026-03-26',
 		rateLabel: '2025 season',
 		date: 'Opening Day, March 26, 2026',
@@ -201,7 +201,7 @@ export const storylineRegistry: readonly Storyline[] = [
 		date: 'September 27–29, 2026',
 		retrospective: false,
 		eventBasis:
-			'News as of September 29: Contreras back as DH on September 27 and expected to play first in Game 1 (MLB.com; Tracy via Yahoo Sports), Gasper placed on the injured list (Boston Sports Journal), Mead not traveling to New York (Yahoo Sports, Heavy), Tolle vs Schlittler in Game 1, Gray vs Fried in Game 2, and Suárez lined up behind them if it goes three (ESPN and MLB.com, September 28, when Tracy announced the rotation; New York had named Schlittler, Fried and Cole). The baseline against righties is the Game 1 lineup MLB.com reported before first pitch; against lefties Contreras replaces Sogard at first in the September 22–23 lineup. A is the September 27 finale against the lefty, with Contreras at DH and Anthony in left against righties. B is the September 25 plan without him. Every scenario carries 14 position players, with Nate Eaton as the extra outfielder. Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a postseason optimization.',
+			'News as of September 29: Contreras back as DH on September 27 and expected to play first in Game 1 (MLB.com; Tracy via Yahoo Sports), Gasper placed on the injured list (Boston Sports Journal), Mead not traveling to New York (Yahoo Sports, Heavy), Tolle vs Schlittler in Game 1, Gray vs Fried in Game 2, and Suárez lined up behind them if it goes three (ESPN and MLB.com, September 28, when Tracy announced the rotation; New York had named Schlittler, Fried and Cole). The baseline against righties is the Game 1 lineup MLB.com reported before first pitch; against lefties Contreras replaces Sogard at first in the September 22–23 lineup. A is the September 27 finale against the lefty, with Contreras at DH and Anthony in left against righties. B is the September 25 plan without him. Every scenario carries 14 position players, with Nate Eaton as the extra outfielder. Rates are regular season R/PA through September 27. This compares three rosters on shared assumptions; it is not a postseason optimization.',
 		sourceLabel: SNAPSHOT_LABEL,
 		json: wildCardRosterJson,
 		expected: [
@@ -224,13 +224,13 @@ export const storylineRegistry: readonly Storyline[] = [
 		slug: 'winter-infield',
 		short: '2027 infield',
 		title: 'Who plays short and second in 2027?',
-		lede: 'Reporting projects the 2027 nine with Adley Rutschman behind the plate, Curtis Mead penciled in at second — “broadly (the) plan,” Chad Tracy said — and Trevor Story at short with Franklin Arias pushing. Arias has never taken a major-league plate appearance, so he cannot be scored from this data; Monasterio stands in at short in the succession scenarios. The pin compares the club’s plan with the two ways the succession can go: Story keeps his bat at DH, or he goes to the bench.',
+		lede: 'Reporting projects the 2027 nine with Adley Rutschman behind the plate, Curtis Mead penciled in at second — “broadly (the) plan,” Chad Tracy said — and Trevor Story at short with Franklin Arias pushing. Arias has never taken a major league plate appearance, so he cannot be scored from this data; Monasterio stands in at short in the succession scenarios. The pin compares the club’s plan with the two ways the succession can go: Story keeps his bat at DH, or he goes to the bench.',
 		eventDate: '2026-10-01',
 		rateLabel: '2026 regular season',
 		date: 'October 1, 2026 → spring training 2027',
 		retrospective: false,
 		eventBasis:
-			'No club decision had been announced as of October 1, 2026. Chad Tracy, via Tim Healey (The Boston Globe, October 5–6; MLB Trade Rumors and CBS Sports, October 6): it is “broadly (the) plan” for Curtis Mead to get the majority of the second-base work — “he was acquired for a reason.” Sports Illustrated (October 1) lays out the internal options: Arias at short with Mead at second and Story at DH, or Story at short with Arias at second and Mead at DH; Yahoo Sports’ projected roster (October 2) lists Story/Arias at short and Mead/Sogard at second. Franklin Arias is named but not scored — he has no major-league plate appearance (MLB Stats API, people/808265) — so Monasterio stands in at short. Baseline is the projected 2027 lineup (D-56): Story at short, Mead at second, with Rutschman catching and Anthony in left locked into the searched best nine. A gives Story the DH at-bats when Arias takes short; B benches him. Rates are regular-season R/PA through September 27, what Boston knows all winter. This compares three rosters on shared assumptions; it is not a projection of 2027.',
+			'No club decision had been announced as of October 1, 2026. Chad Tracy, via Tim Healey (The Boston Globe, October 5–6; MLB Trade Rumors and CBS Sports, October 6): it is “broadly (the) plan” for Curtis Mead to get the majority of the second base work — “he was acquired for a reason.” Sports Illustrated (October 1) lays out the internal options: Arias at short with Mead at second and Story at DH, or Story at short with Arias at second and Mead at DH; Yahoo Sports’ projected roster (October 2) lists Story/Arias at short and Mead/Sogard at second. Franklin Arias is named but not scored — he has no major league plate appearance (MLB Stats API, people/808265) — so Monasterio stands in at short. Baseline is the projected 2027 lineup (D-56): Story at short, Mead at second, with Rutschman catching and Anthony in left locked into the searched best nine. A gives Story the DH at bats when Arias takes short; B benches him. Rates are regular season R/PA through September 27, what Boston knows all winter. This compares three rosters on shared assumptions; it is not a projection of 2027.',
 		sourceLabel: PROJECTION_LABEL,
 		json: winterInfieldJson,
 		expected: [
@@ -253,13 +253,13 @@ export const storylineRegistry: readonly Storyline[] = [
 		slug: 'winter-duran',
 		short: 'Trade Duran',
 		title: 'Trade Jarren Duran?',
-		lede: 'Jarren Duran hit .207/.266/.361 in 2026 and is fourth on the depth chart behind Roman Anthony, Ceddanne Rafaela and Wilyer Abreu — while Boston still controls him through 2028 and has never traded him. Does he still have a role here: move him and keep the projected nine, or keep him and start him at DH against right-handers?',
+		lede: 'Jarren Duran hit .207/.266/.361 in 2026 and is fourth on the depth chart behind Roman Anthony, Ceddanne Rafaela and Wilyer Abreu — while Boston still controls him through 2028 and has never traded him. Does he still have a role here: move him and keep the projected nine, or keep him and start him at DH against righties?',
 		eventDate: '2026-12-07',
 		rateLabel: '2026 regular season',
 		date: 'October 1, 2026 → winter meetings, December 7–10, 2026',
 		retrospective: false,
 		eventBasis:
-			'No trade had been announced in reporting as of October 1, 2026. The pin marks the Winter Meetings opening on December 7, a sourced point for trade discussions rather than a claim that Boston makes a deal that day. Feinsand (MLB.com, September): with Anthony, Rafaela and Abreu on the roster Duran has no clear-cut role, and Boston would have to settle for a lesser return; he makes $7.7 million and is controllable through 2028 (MLB Trade Rumors). ESPN (October 1): his trade value took a nosedive but two years of control will still find a taker, and he is clearly fourth on the depth chart. Sporting News (October 2026) and NBC Sports Boston (October 1) both put him at the top of the trade list. Baseline is the projected 2027 lineup (D-56): Anthony, Rafaela and Abreu every day, with Duran the fourth outfielder and Yoshida/Jones at DH. A trades him — the projected nine does not change, so the return is what the move is for and it is not priced here. B keeps him and starts him at DH against right-handers, his strong side, with Yoshida on the bench; the club used him that way in September (Just Baseball’s playoff projection). Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of a trade return.',
+			'No trade had been announced in reporting as of October 1, 2026. The pin marks the Winter Meetings opening on December 7, a sourced point for trade discussions rather than a claim that Boston makes a deal that day. Feinsand (MLB.com, September): with Anthony, Rafaela and Abreu on the roster Duran has no clear role, and Boston would have to settle for a lesser return; he makes $7.7 million and is controllable through 2028 (MLB Trade Rumors). ESPN (October 1): his trade value took a nosedive but two years of control will still find a taker, and he is clearly fourth on the depth chart. Sporting News (October 2026) and NBC Sports Boston (October 1) both put him at the top of the trade list. Baseline is the projected 2027 lineup (D-56): Anthony, Rafaela and Abreu every day, with Duran the fourth outfielder and Yoshida/Jones at DH. A trades him — the projected nine does not change, so the return is what the move is for and it is not priced here. B keeps him and starts him at DH against righties, his strong side, with Yoshida on the bench; the club used him that way in September (Just Baseball’s playoff projection). Rates are regular season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of a trade return.',
 		sourceLabel: PROJECTION_LABEL,
 		json: winterDuranJson,
 		expected: [
@@ -288,7 +288,7 @@ export const storylineRegistry: readonly Storyline[] = [
 		date: 'October 1, 2026 → free agency opens November 6, 2026',
 		retrospective: false,
 		eventBasis:
-			'The question was posed in reporting on October 1; the pin marks free agency opening November 6, when outside signings become available. NBC Sports Boston (October 1): Arozarena, Suzuki and Lowe are the top three hitters set to hit free agency, and if Boston will not spend on one of them it should turn to the trade market. Bleacher Report (September 30): Arozarena is among the best fits for Boston and is a right-handed bat, while Suzuki would have to accept left field. Sports Illustrated (October 1): landing Arozarena would let Boston shift Anthony to DH. Yahoo (off-season outlook, September 30): expect Suzuki to be connected to Boston, and Lowe, who hit 35 home runs for Pittsburgh in 2026, would fit; MLB Trade Rumors (October 6) expects the club to push Mead to a multi-positional role before long, so B moves him to DH against right-handers and keeps Monasterio at second against left-handers, where Lowe cannot hit (.223/.270/.378 against lefties in 2026, RotoWire). Baseline is the projected 2027 lineup (D-56). Arozarena (670 PA, 113 R) and Lowe (656 PA, 94 R) were fetched into the snapshot for these two candidates only; eligibility comes from 2025 fielding (Arozarena 158 games in left, Lowe 121 at second). Trading Wilyer Abreu or extending Adley Rutschman (about $20 million a year is the reported ask) are separate questions that move no roster spot here. Rates are regular-season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of 2027.',
+			'The question was posed in reporting on October 1; the pin marks free agency opening November 6, when outside signings become available. NBC Sports Boston (October 1): Arozarena, Suzuki and Lowe are the top three hitters set to hit free agency, and if Boston will not spend on one of them it should turn to the trade market. Bleacher Report (September 30): Arozarena is among the best fits for Boston and is a right handed bat, while Suzuki would have to accept left field. Sports Illustrated (October 1): landing Arozarena would let Boston shift Anthony to DH. Yahoo (offseason outlook, September 30): expect Suzuki to be connected to Boston, and Lowe, who hit 35 home runs for Pittsburgh in 2026, would fit; MLB Trade Rumors (October 6) expects the club to push Mead to a multipositional role before long, so B moves him to DH against righties and keeps Monasterio at second against lefties, where Lowe cannot hit (.223/.270/.378 against lefties in 2026, RotoWire). Baseline is the projected 2027 lineup (D-56). Arozarena (670 PA, 113 R) and Lowe (656 PA, 94 R) were fetched into the snapshot for these two candidates only; eligibility comes from 2025 fielding (Arozarena 158 games in left, Lowe 121 at second). Trading Wilyer Abreu or extending Adley Rutschman (about $20 million a year is the reported ask) are separate questions that move no roster spot here. Rates are regular season R/PA through September 27. This compares three rosters on shared assumptions; it is not a projection of 2027.',
 		sourceLabel: PROJECTION_LABEL,
 		json: winterBatJson,
 		expected: [
@@ -320,6 +320,12 @@ export function currentSlug(today: string): string {
 	}
 	return storylineRegistry.reduce((a, b) => (b.eventDate < a.eventDate ? b : a)).slug;
 }
+
+/** The decisions in event-date order. Registry order is not date order (see the registry
+ * tests), so anything that numbers decisions or walks them in sequence reads this list. */
+export const storylinesByDate: readonly Storyline[] = [...storylineRegistry].sort((a, b) =>
+	a.eventDate.localeCompare(b.eventDate)
+);
 
 export function getStoryline(slug: string): Storyline | undefined {
 	return storylineRegistry.find((storyline) => storyline.slug === slug);

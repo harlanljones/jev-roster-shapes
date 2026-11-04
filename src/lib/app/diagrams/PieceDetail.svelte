@@ -77,73 +77,73 @@
 <style>
 	.tag {
 		display: grid;
-		gap: 0.9rem;
-		border-radius: 12px;
-		padding: 1.25rem;
-		color: #18201c;
-		background: #eef0ea;
-		box-shadow: 0 1px 2px rgb(22 32 42 / 10%);
+		gap: var(--spacing-200);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-200);
+		color: var(--ink);
+		background: var(--case-100);
 	}
 	.who {
 		display: grid;
-		gap: 0.35rem;
+		gap: var(--spacing-50);
 	}
 	.name {
 		margin: 0;
-		font-family: var(--body);
-		font-size: 1.5rem;
+		font-family: var(--font-sans);
+		font-size: var(--text-2xl);
+		line-height: var(--text-2xl--lh);
 		font-weight: 600;
-		line-height: 1.15;
 	}
 	.chips {
 		display: flex;
-		gap: 0.4rem;
+		gap: var(--spacing-75);
 		margin: 0;
 	}
 	.chip {
-		border-radius: 4px;
-		padding: 0.1rem 0.45rem;
-		background: #dfe3dd;
-		font-family: var(--mono);
-		font-size: 0.7rem;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
+		border-radius: var(--radius-md);
+		padding: var(--spacing-25) var(--spacing-75);
+		background: var(--case-200);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		letter-spacing: 0.02em;
 	}
 	.chip.snug {
-		color: #1f6b41;
+		color: var(--grade-snug);
 	}
 	.chip.fits {
-		color: #7a520b;
+		color: var(--grade-fits);
 	}
 	.chip.loose {
-		color: #a3221b;
+		color: var(--grade-loose);
 	}
 	.chip.unknown,
 	.chip.bench {
-		color: #4d5751;
+		color: var(--ink-muted);
 	}
 	p {
 		margin: 0;
-		font-size: 0.85rem;
-		line-height: 1.5;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	dl {
 		display: grid;
 		grid-template-columns: auto 1fr;
-		gap: 0.35rem 0.9rem;
+		gap: var(--spacing-50) var(--spacing-200);
 		margin: 0;
-		font-size: 0.8rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	dt {
-		color: #4d5751;
+		color: var(--ink-muted);
 	}
 	dd {
 		margin: 0;
-		font-family: var(--mono);
+		font-family: var(--font-mono);
 		font-variant-numeric: tabular-nums;
 	}
 	.rubric {
-		color: #4d5751;
+		color: var(--ink-muted);
 	}
 	.layer {
 		font-weight: 600;

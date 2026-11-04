@@ -4,7 +4,7 @@
 	import {
 		BIN_H,
 		BIN_W,
-		savantColor,
+		splitColor,
 		sideOf,
 		type BinPiece,
 		type BinResult,
@@ -42,7 +42,7 @@
 		const k = side === 'L' ? pc.kL : pc.kR;
 		return {
 			d: shapePath(shapeFor(id), cx, cy, pc.r * k),
-			fill: player?.split ? savantColor(sideOf(player.split, side).ops, side) : '#bbb',
+			fill: player?.split ? splitColor(sideOf(player.split, side).ops, side) : 'var(--unknown)',
 			missing: false
 		};
 	}
@@ -96,7 +96,8 @@
 				<path
 					d={h.d}
 					fill={h.fill}
-					stroke={h.missing ? 'var(--unknown)' : 'rgba(0,0,0,.45)'}
+					stroke={h.missing ? 'var(--unknown)' : 'var(--ink)'}
+					stroke-opacity={h.missing ? 1 : 0.45}
 					stroke-width={h.missing ? 1.5 : 1}
 					stroke-dasharray={h.missing ? '5 4' : undefined}
 					clip-path="url(#{uid}-{pc.role}-{side})"
@@ -107,7 +108,8 @@
 				y1={cy - pc.box.top + 4}
 				x2={cx}
 				y2={cy + pc.box.bottom - 4}
-				stroke="rgba(0,0,0,.35)"
+				stroke="var(--ink)"
+				stroke-opacity="0.35"
 				stroke-width="1"
 			/>
 			<text class="role" x={cx} y={cy - 4} text-anchor="middle">{pc.role}</text>
@@ -131,29 +133,30 @@
 		height: auto;
 	}
 	.lid {
-		fill: var(--panel);
-		stroke: var(--ink-soft);
+		fill: var(--case-100);
+		stroke: var(--ink-muted);
 		stroke-width: 2;
 	}
 	text {
 		paint-order: stroke;
-		stroke: var(--panel);
+		stroke: var(--case-100);
 		stroke-width: 3px;
+		stroke-linejoin: round;
 		pointer-events: none;
-		font-size: 11px;
+		font-size: var(--text-xs);
 	}
 	.role {
-		fill: var(--ink-soft);
-		font-family: var(--mono);
-		letter-spacing: 0.08em;
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
+		letter-spacing: 0.02em;
 	}
 	.nm {
 		fill: var(--ink);
-		font-family: var(--body);
+		font-family: var(--font-sans);
 		font-weight: 600;
 	}
 	.sub {
-		fill: var(--ink-soft);
-		font-family: var(--mono);
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
 	}
 </style>

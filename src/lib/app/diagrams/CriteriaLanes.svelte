@@ -4,7 +4,7 @@
 	import { SHAPE_LABELS, type ShapeLabel } from '$lib/shapes/taxonomy';
 	import ShapeGlyph from '$lib/ui/ShapeGlyph.svelte';
 	import { SOURCE_NAMES, type LabelSource, type SourceLabels } from '../jev-call';
-	import { savantColor, sideOf, type CasePlayer, type Pool, type Side } from '../shape-case';
+	import { splitColor, sideOf, type CasePlayer, type Pool, type Side } from '../shape-case';
 
 	// The roster by criterion (D-57): one lane per profile criterion, each
 	// piece in the lane its source chose, sized by 2026 runs like the board.
@@ -46,7 +46,7 @@
 			missing
 				? `url(#${uid}-hatch)`
 				: p.split
-					? savantColor(sideOf(p.split, side).ops, side)
+					? splitColor(sideOf(p.split, side).ops, side)
 					: 'var(--unknown)';
 		const others = (['jev', 'rule', 'analyst'] as const)
 			.filter((s) => s !== source)
@@ -112,7 +112,15 @@
 			patternUnits="userSpaceOnUse"
 			patternTransform="rotate(45)"
 		>
-			<line x1="0" y1="0" x2="0" y2="6" stroke="rgba(22,32,42,.55)" stroke-width="1.6" />
+			<line
+				x1="0"
+				y1="0"
+				x2="0"
+				y2="6"
+				stroke="var(--ink)"
+				stroke-opacity="0.55"
+				stroke-width="1.6"
+			/>
 		</pattern>
 		<clipPath id="{uid}-L"><rect x="-200" y="-200" width="200" height="400" /></clipPath>
 		<clipPath id="{uid}-R"><rect x="0" y="-200" width="200" height="400" /></clipPath>
@@ -167,8 +175,8 @@
 		display: grid;
 		margin: 0;
 		padding: 0;
-		border: 1px solid var(--rule);
-		border-radius: 6px;
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
 		overflow: hidden;
 		list-style: none;
 	}
@@ -176,7 +184,7 @@
 		display: grid;
 		grid-template-columns: minmax(8rem, 12.5rem) minmax(0, 1fr);
 		min-height: 4.5rem;
-		border-top: 1px solid var(--rule);
+		border-top: 1px solid var(--case-300);
 	}
 	.lane:first-child {
 		border-top: 0;
@@ -184,81 +192,97 @@
 	.key {
 		display: grid;
 		grid-template-columns: 22px minmax(0, 1fr);
-		gap: 0.15rem 0.5rem;
+		gap: var(--spacing-25) var(--spacing-75);
 		align-content: center;
-		border-right: 1px solid var(--rule);
-		padding: 0.5rem 0.75rem;
-		background: var(--board);
+		border-right: 1px solid var(--case-300);
+		padding: var(--spacing-75) var(--spacing-100);
+		background: var(--case-000);
 	}
 	.name {
-		font-family: var(--display);
-		font-size: 1rem;
+		font-family: var(--font-sans);
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
 	}
 	.count {
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.rule {
 		grid-column: 2;
-		color: var(--marker);
-		font: 500 0.66rem/1.35 var(--mono);
+		color: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.track {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.35rem 0.75rem;
+		gap: var(--spacing-50) var(--spacing-100);
 		align-items: center;
-		padding: 0.4rem 0.6rem;
-		background: var(--panel);
+		padding: var(--spacing-75) var(--spacing-75);
+		background: var(--case-100);
 	}
 	.piece {
 		display: inline-flex;
 		flex-wrap: wrap;
 		max-width: 100%;
-		gap: 0.3rem;
+		gap: var(--spacing-50);
 		align-items: center;
 		min-height: 2.75rem;
 		border: 1px solid transparent;
-		border-radius: 6px;
-		padding: 0.15rem 0.35rem;
+		border-radius: var(--radius-md);
+		padding: var(--spacing-25) var(--spacing-50);
 		color: var(--ink);
 		background: transparent;
 		font: inherit;
 		cursor: pointer;
 	}
 	.piece:hover {
-		border-color: var(--rule);
+		border-color: var(--case-300);
 	}
 	.piece.sel {
 		border-color: var(--ink);
 	}
 	.outline {
 		fill: none;
-		stroke: rgba(0, 0, 0, 0.45);
+		stroke: var(--ink);
+		stroke-opacity: 0.45;
 		stroke-width: 1;
 	}
 	.piece.sel .outline {
 		stroke: var(--ink);
 		stroke-width: 2.5;
+		stroke-opacity: 1;
 	}
 	.nm {
-		font-size: 0.78rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		font-weight: 600;
 	}
 	.other {
-		font: 600 0.62rem var(--mono);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 	}
 	.other.J {
 		color: var(--ink);
 	}
 	.other.R {
-		color: var(--marker);
+		color: var(--turf);
 	}
 	.other.A {
-		color: var(--fits);
+		color: var(--grade-fits);
 	}
 	.nobody {
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 </style>

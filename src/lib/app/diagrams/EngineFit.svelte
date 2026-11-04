@@ -50,7 +50,7 @@
 		<div>
 			<h3>Pool's tightest fit · engine</h3>
 			<p class="sub">
-				The best nine this roster can field, searched per pitcher-hand context and judged by the
+				The best nine this roster can field, searched per pitcher hand context and judged by the
 				engine. Dated rates, not hindsight; feasibility <span class="state">{fit.feasibility}</span
 				>.
 			</p>
@@ -104,7 +104,7 @@
 
 	<div class="detail">
 		<div>
-			<h4>Plate-appearance transfers</h4>
+			<h4>Plate appearance transfers</h4>
 			{#if fit.transfers.length === 0}
 				<p class="none">Nobody gains or loses a plate appearance.</p>
 			{:else}
@@ -216,7 +216,7 @@
 
 	<p class="footnote">
 		Slots are listed in lineup order ({SLOT_ROLES.join(', ')}). The search maximizes the bundle's
-		metric under eligibility and one-player-per-slot; any projected starters the scenario declares
+		metric under eligibility and one player per slot; any projected starters the scenario declares
 		are fixed first, and a lock the roster cannot place is reported rather than dropped. Capacity
 		limits are applied afterwards by the engine, so a fit that needs more workload than a cap allows
 		is reported infeasible rather than quietly replaced. Ties resolve to the lowest player IDs, so
@@ -227,79 +227,89 @@
 <style>
 	.fit {
 		display: grid;
-		gap: 1rem;
+		gap: var(--spacing-200);
 	}
 	.headline {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
-		gap: 1.5rem;
+		gap: var(--spacing-300);
 		align-items: start;
 	}
 	h3 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: 1.2rem;
+		font-family: var(--font-sans);
+		font-size: var(--text-lg);
+		line-height: var(--text-lg--lh);
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
 	h4 {
-		margin: 0 0 0.35rem;
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		margin: 0 0 var(--spacing-50);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	.sub {
 		max-width: 60ch;
-		margin: 0.35rem 0 0;
-		color: var(--ink-soft);
-		font-size: 0.85rem;
-		line-height: 1.5;
+		margin: var(--spacing-50) 0 0;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.state {
-		font-family: var(--mono);
+		font-family: var(--font-mono);
 		font-weight: 600;
 		color: var(--ink);
 	}
 	.numbers {
 		display: flex;
-		gap: 1.5rem;
+		gap: var(--spacing-300);
 		margin: 0;
 	}
 	dt {
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	dd {
-		margin: 0.15rem 0 0;
-		font: 600 0.95rem var(--mono);
+		margin: var(--spacing-25) 0 0;
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
+		font-weight: 600;
 	}
 	.contexts {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-		gap: 1rem;
+		grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+		gap: var(--spacing-200);
 	}
 	table {
 		width: 100%;
 		border-collapse: collapse;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	caption {
-		margin-bottom: 0.4rem;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
+		margin-bottom: var(--spacing-75);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		text-align: left;
 	}
 	th,
 	td {
-		border-bottom: 1px solid var(--rule);
-		padding: 0.3rem 0.4rem;
+		border-bottom: 1px solid var(--case-300);
+		padding: var(--spacing-50) var(--spacing-75);
 		text-align: left;
 	}
 	tbody th {
-		font-family: var(--mono);
+		font-family: var(--font-mono);
 		font-weight: 600;
 		width: 3rem;
 	}
@@ -307,18 +317,18 @@
 		text-align: right;
 	}
 	td:nth-child(n + 3) {
-		font-family: var(--mono);
+		font-family: var(--font-mono);
 		text-align: right;
 		font-variant-numeric: tabular-nums;
 	}
 	.detail {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-		gap: 1rem 1.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
+		gap: var(--spacing-200) var(--spacing-300);
 	}
 	ul {
 		display: grid;
-		gap: 0.2rem;
+		gap: var(--spacing-50);
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -327,33 +337,37 @@
 		display: grid;
 		grid-template-columns: max-content minmax(0, 1fr);
 		align-items: baseline;
-		gap: 0.1rem 0.75rem;
-		font-size: 0.85rem;
+		gap: var(--spacing-25) var(--spacing-100);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.who {
 		white-space: nowrap;
 		font-weight: 600;
 	}
 	.num {
-		color: var(--ink-soft);
-		font: 400 0.75rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 		text-align: right;
 	}
 	.none,
 	.footnote {
 		margin: 0;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
-		line-height: 1.6;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.footnote {
-		border-top: 1px solid var(--rule);
-		padding-top: 0.75rem;
+		border-top: 1px solid var(--case-300);
+		padding-top: var(--spacing-100);
 		max-width: 90ch;
 	}
 	@media (max-width: 800px) {
 		.headline {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>

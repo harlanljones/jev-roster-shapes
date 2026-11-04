@@ -733,6 +733,155 @@ desktop call-first columns, Trevor Story selection updating the call, and
 390px mobile stacking without horizontal overflow. No browser/console errors
 or first-party HTTP 4xx/5xx were recorded.
 
+### Public release: framework credit, design system and information architecture (D-61, D-62, D-63, user directives 2026-11-03 and 2026-11-04)
+
+Delivered (2026-11-04): the roster shapes framework is credited to Taylor Wyman
+([@taylormetrics](https://www.tiktok.com/@taylormetrics)) in the README lede and a new
+`## Credits and inspiration` section, `SPEC.md` sections 5.2, 6 and 14, the shape rubric, the domain
+rules, the method page, and a site footer on every route (D-61). `docs/wyman-diagram.md` now states
+his published encoding with sources, records rule by rule what this project keeps, cuts and borrows
+from his framework, and keeps the superseded four-shape gloss labelled as such. The UI is rebuilt on
+a new sibling design system, Roster Shapes (artifact
+<https://claude.ai/artifact/LSQcbG65oYb3ZdM1b43Z1B>, tokens checked in at
+`docs/design/roster-shapes-tokens.json`), with its values taken from Harlan's `ai-design-skills`
+after a reported diagnosis (`reports/redesign/2026-11-04-diagnosis.md`): Geist and Geist Mono,
+the Tailwind type and spacing scales, flat surfaces, a seven-step split axis in place of the Savant
+ramp, a light and a dark theme, the floating nav, and the full state set (D-62). The information
+architecture moves decisions under `/decisions/[slug]`, merges the four diagram subpages into one
+tabbed detail page, gives the workspace its own URL behind the D-36 acknowledgment, replaces the `/`
+redirect with an overview, adds `/method`, `/privacy`, `/terms` and a custom 404, and redirects every
+old URL; `docs/WORKFLOWS.md` sections 0 and 2 are revised in the same change (D-63). `package.json`
+gains public-release metadata.
+
+Observed:
+
+- `bun install --frozen-lockfile` — passed after the `package.json` metadata, and again after
+  Geist, Geist Mono and Phosphor were added at exact versions.
+- `bun run verify` — exit 0: `svelte-check` 0 errors / 0 warnings over 619 files; Prettier and
+  ESLint clean; Vitest 17 files / 134 tests passed (baseline before the change: 17 / 134); the
+  production build; Playwright 56 passed (baseline: 35). The 21 new journeys are the full axe rule
+  set on every route in the dark theme and on the new pages, the redirects from five old URLs, the
+  footer credit on six routes, and the workspace URL's acknowledgment.
+- Full axe rule set: 0 violations on 13 routes, in light and dark.
+- Horizontal overflow: none on 14 routes at 320px and 390px (Chromium, a Node port of the
+  MotionSites `shoot.py` QA).
+- Untouched: `src/lib/{engine,contracts,persistence,classification,shapes}`, every storyline
+  bundle, and the engine, contract, persistence, storyline, classification and fixture suites. Tests
+  that changed did so for URLs, nav names and one copy string; no numeric or behavioural assertion
+  was removed.
+- `git diff --check` — clean.
+
+Limitations: TikTok is JavaScript-gated and x.com returned HTTP 402 through this environment's
+proxy, so no post by Taylor Wyman was opened; his encoding is stated from two implementations that
+credit him and from his public profiles, his positions are paraphrased rather than quoted, and he has
+not reviewed the credit. The borrowed replacement-baseline sizing is a recorded proposal, not an
+implementation. The redesign scored 7.9 against the MotionSites review rubric after its three-round
+cap, short of the 8.0 bar; the diagnosis report names what would lift it. Tested in Chromium only, as
+D-16 sets; other browsers and real devices are untested. The latency journey measured edit-to-render
+p95 at 85.2 ms in this cloud container, inside the 250 ms budget; that is not comparable with the
+9.6 ms reference measurement on the D-16 M1 setup, which was not re-run, so
+`reports/prototype/edit-latency.json` is left as recorded. The privacy and terms pages describe what
+the code does and are not reviewed legal documents. Harlan confirmed (2026-11-04) that the eight shape
+labels came from the supplied project proposal or from iterations recorded in the decision log and
+git history (D-39, D-43); `SPEC.md` §6 and `docs/SHAPE_TAXONOMY.md` say so.
+
+Release: on branch `claude/trusting-brown-rpm9ms` for review; not merged or deployed. Merging to
+`main` triggers the Cloudflare Pages deploy, since `package.json` and `src/` are in the change.
+
+### Review fixes on the public release (D-64, `/code-review max` on PR #20, 2026-11-04)
+
+Delivered (2026-11-04): fixes for the 15 findings of the maximum-effort review.
+- Unknown decision and player URLs now reach the branded 404 at any depth. The build emits `404.html` with root-absolute assets, and lookups throw from `load` (D-64).
+- The site-wide og, twitter and theme-color tags moved into `src/app.html`, so crawlers that do not run script see them.
+- The phone menu makes the page behind it inert.
+- Piece focus and selection strokes draw at full opacity, and case focus is now a dotted ring distinct from selection.
+- The shell's link to the board is `aria-current="true"` on its subpages, with a current treatment distinct from hover.
+- The overview's date range and the board's "Decision N of 8" and previous/next links follow event dates (`storylinesByDate`).
+- The legend copy names line styles instead of retired colours.
+- The player page links back to the current decision.
+- The D-36 acknowledgment survives blocked session storage for the page load.
+- `?scenario=` rides through the workspace and back.
+- Revealed sections and page titles print.
+- A blank or malformed split OPS draws neutral instead of throwing.
+
+Observed:
+
+- `bun run check`: 0 errors and 0 warnings over 622 files.
+- `bun run lint`: Prettier and ESLint clean.
+- `bun run test`: Vitest 18 files and 137 tests passed (before: 17 and 134). The new tests cover date order, the malformed split OPS, and the acknowledgment with throwing storage.
+- `bun run test:e2e`: Playwright 67 passed (before: 56). The new journeys are:
+  - the 404 page at `/decisions/nope`, `/decisions/nope/snapshots` and `/players/123`
+  - social tags in the served HTML of `/`, `/decisions` and `/method`
+  - date-ordered sequence links and the overview's Jan 14 to Dec 7 range
+  - the `?scenario=` round trip through the workspace
+  - phone-menu focus
+  - `aria-current` on a subpage
+  - the full axe rule set, in both themes, on two more boards and on the 404 page, with revealed sections shown before the audit
+- The build writes `build/404.html` with `/_app/...` asset URLs and no `200.html`.
+- `reports/prototype/edit-latency.json` was restored after the end-to-end run, as before.
+- `git diff --check`: clean.
+
+- Cloudflare Pages preview <https://d46fb411.jev-roster-shapes.pages.dev> (deploy run 105, commit `95c80d1`). `/nope`, `/decisions/nope`, `/players/123`, `/decisions/nope/x` and `/decisions/offseason-infield/nope` all return status 404 and render "This cutout is empty". `/decisions/offseason-infield` returns 200. The served `/` contains the `og:image` tags. Before this change, the earlier preview left every multi-segment unknown path blank.
+
+Limitations: the review's lower-ranked candidates were not verified because a container restart stopped those verifiers, and they are not fixed here. They include the px line heights under text scaling, the fit-mode board labels at phone width, the missing-data piece contrast on foam, synthesized mono semibold, and the cleanup items.
+
+### Lower-ranked review findings (D-62, D-63, D-64, user directive 2026-11-04)
+
+Delivered (2026-11-04): fixes for the review candidates that ranked below the reported 15.
+
+Design system (artifact version 5; tokens regenerated into `tokens.css`, copy in `docs/design/`):
+- Line heights are Tailwind's unitless ratios, so line boxes grow with the reader's text size.
+- A new opaque `ink-faint` token replaces the tagline's hand-tuned translucent ink.
+- Geist Mono 600 is loaded, so the mono semibold is no longer synthesised.
+
+Base layer:
+- A universal `box-sizing: border-box`; a link styled as a button is now 44px tall, not 62px.
+- Page titles keep room for descenders.
+- One `.visually-hidden` class in place of six scoped copies.
+- The global focus ring in place of three scoped copies.
+- The unused `.skeleton`, `.button-small`, `.on-foam` and `[class*='mono']` rules are removed.
+
+Diagrams:
+- Pieces with missing data use `unknown-on-foam` on the foam case.
+- The overview board, when drawn under 75% scale, moves its headings, lid note and headroom into an HTML caption, and no longer runs its first pass at zero width.
+- Every split legend shows the ±.150 OPS scale and says the colour is a rating.
+- Sections reveal on any visible pixel through one shared observer, reading every position before writing any.
+- The diagram page's sticky aside clears the floating nav.
+
+Workspace:
+- The board's `Open workspace` is a plain link to `/compare`, whose gate is now the only D-36 prompt.
+- The workspace import gate reads the same session record.
+- `?scenario=` rides through the link.
+- The workspace uses the shared `.button` classes.
+- "team approved" is spelled one way.
+
+Cleanup:
+- One `formatDay` and one `rateText` replace seven local formatters.
+- `splitInk` is removed.
+- Duplicate and no-op rules are dropped in DecisionsPage, WymanBoard, CapacityBin and HomePage.
+- The shell takes the open decision from route data instead of importing the storyline registry, so `/privacy` and `/terms` load without it.
+- WORKFLOWS, README and ACCEPTANCE now name the routes and redirects as built.
+
+Observed:
+
+- `bun run check`: 0 errors and 0 warnings over 623 files.
+- `bun run lint`: Prettier and ESLint clean.
+- `bun run test`: 18 files and 136 tests passed. The board's decline test went with the inline prompt; declining is covered end to end through the gate's `Back to the board`.
+- `bun run test:e2e`: 71 passed (before: 67). The new journeys cover:
+  - 44px button and link heights
+  - line heights at a 200% root size
+  - the legend's rating note and OPS scale
+  - the overview caption at 320px
+- Before and after screenshots of nine routes at 1280px and 390px (Chromium) show no horizontal overflow, and every `.button` measures 44px (before: 62px for links).
+- Overview board work, timed in Vitest under Node: about 68 ms cold, then about 7 ms once the calibration and fit caches are warm.
+- `reports/prototype/edit-latency.json` was restored after the end-to-end run.
+- `git diff --check`: clean.
+
+Not changed, with reasons:
+- **Overview board at first paint.** The board is still built before the overview's first paint. The calibration and fit search are already cached by pool contents, so the board page repeats only the warm cost. Deferring the hero would make the page jump.
+- **Old-URL redirect stubs.** They stay instead of a host `_redirects` file, because the local preview and the end-to-end suite cannot exercise host redirects, and the stubs are tested.
+- **Footer credit test.** It still loads each route, because it asserts one `contentinfo` per page.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

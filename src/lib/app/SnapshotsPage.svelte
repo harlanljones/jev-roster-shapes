@@ -178,10 +178,10 @@
 <div class="snapshots">
 	<header class="lead">
 		<div>
-			<a class="back" href={resolve('/scenario/[slug]', { slug: story.slug })}
+			<a class="back" href={resolve('/decisions/[slug]', { slug: story.slug })}
 				>← Board: {story.title}</a
 			>
-			<h1>Snapshots: the prompt and its answers</h1>
+			<h1 class="page-title">Snapshots: the prompt and its answers</h1>
 			<DecisionNav slug={story.slug} current="snapshots" />
 			<p class="lede">
 				What the Jev rubric is asked about each player on this roster, the exact request that would
@@ -192,7 +192,7 @@
 		</div>
 		<aside class="boundary" aria-label="What this page is not">
 			<p>
-				<strong>Advisory only.</strong> A profile label is an assumption-layer mark. It does not change
+				<strong>Advisory only.</strong> A profile label is an assumption layer mark. It does not change
 				coverage, workload, contribution, or any engine result, and a model probability is never the chance
 				an acquisition succeeds.
 			</p>
@@ -237,14 +237,14 @@
 			{/if}
 			<table class="fit-table">
 				<caption>
-					The engine's best nine for {scenario.label}, per pitcher-hand context
+					The engine's best nine for {scenario.label}, per pitcher hand context
 					(pool-fit-analysis-v2)
 				</caption>
 				<thead>
 					<tr>
 						<th scope="col">Slot</th>
-						<th scope="col">Left-starter context</th>
-						<th scope="col">Right-starter context</th>
+						<th scope="col">Left starter context</th>
+						<th scope="col">Right starter context</th>
 						<th scope="col">Fit vs lineup used</th>
 					</tr>
 				</thead>
@@ -280,7 +280,7 @@
 			<p class="fit-note">
 				Engine total {fit.runs ?? 'unavailable'} runs ·
 				{signedRuns(fit.deltaVsReference?.runs)} against the lineup this scenario used ·
-				{fit.transfers.length} plate-appearance transfers ·
+				{fit.transfers.length} plate appearance transfers ·
 				{fit.bench.length} benched
 			</p>
 		</section>
@@ -331,7 +331,7 @@
 			<p class="request-note">
 				Sent by CI to <code>POST /v1/systemone</code> with <code>model: {DEFAULT_JEV_MODEL}</code>
 				when this snapshot is pushed to main. The state is the evidence above, verbatim; the questions
-				are one closed-set profile choice over the rubric's {PROFILE_LABELS.length}
+				are one closed set profile choice over the rubric's {PROFILE_LABELS.length}
 				options plus one abstention question. An answer is shown only when its request digest, rubric
 				version, and prompt version match this exact body.
 			</p>
@@ -473,12 +473,12 @@
 		<p class="limits">
 			Recorded interpretations (D-55): a Square "full workload" is 300+ plate appearances and "no
 			large split gap" is under the Star rule's .200 OPS; Circle reads "no everyday slot" as
-			multi-position eligibility under Rectangle volume; Diamond's rate is above the median of the
+			multiposition eligibility under Rectangle volume; Diamond's rate is above the median of the
 			labeled players' 2026 season rates, and under 100 plate appearances the fringe rule governs
 			instead. Pre-2026 storylines supply a 2025-dated rate against that 2026 cut — each row's rate
 			label names the vintage. Pentagon and Octagon are never mechanically evaluable from these
 			sources — {UNEVALUABLE_LABELS.map(({ label }) => label).join(' and ')} therefore have no baseline
-			coverage. SPEC §7 deviations, recorded in D-55: no held-out split at this sample size with fixed
+			coverage. SPEC §7 deviations, recorded in D-55: no held out split at this sample size with fixed
 			rules, and Brier and reliability scores need probabilistic outputs, so they wait for the Jev evaluation.
 		</p>
 	</section>
@@ -487,58 +487,56 @@
 <style>
 	.snapshots {
 		display: grid;
-		gap: 2rem;
+		gap: var(--spacing-400);
 		max-width: 88rem;
 		margin: 0 auto;
-		padding: 1.5rem clamp(1rem, 4vw, 3rem) 4rem;
+		padding: var(--spacing-300) var(--spacing-300) var(--spacing-700);
 	}
 	.lead {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 24rem;
-		gap: 2.5rem;
+		gap: var(--spacing-500);
 		align-items: start;
 	}
 	h1 {
-		margin: 0.5rem 0 0;
-		font-family: var(--display);
-		font-size: clamp(2rem, 4.5vw, 3.25rem);
-		font-weight: 400;
-		line-height: 1;
-		text-wrap: balance;
+		margin: var(--spacing-75) 0 0;
 	}
 	h2 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+		font-family: var(--font-sans);
+		font-size: var(--text-2xl);
+		line-height: var(--text-2xl--lh);
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
 	.back {
 		display: inline-block;
-		padding-block: 0.4rem;
-		color: var(--marker);
-		font: 500 0.8rem var(--mono);
+		padding-block: var(--spacing-75);
+		color: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 		text-decoration: none;
 	}
 	.lede {
 		max-width: 68ch;
-		margin: 0.75rem 0 0;
-		color: var(--ink-soft);
-		line-height: 1.6;
+		margin: var(--spacing-100) 0 0;
+		color: var(--ink-muted);
 	}
 	.boundary {
 		display: grid;
-		gap: 0.75rem;
-		border: 1px solid var(--marker);
-		border-radius: 10px;
-		padding: 1rem;
-		background: var(--panel);
-		font-size: 0.85rem;
-		line-height: 1.55;
+		gap: var(--spacing-100);
+		border: 1px solid var(--turf);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-200);
+		background: var(--case-100);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.boundary p {
 		margin: 0;
-		color: var(--ink-soft);
+		color: var(--ink-muted);
 	}
 	.boundary strong {
 		color: var(--ink);
@@ -546,17 +544,18 @@
 	.scenario-strip {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 	}
 	.scenario {
 		min-height: 2.5rem;
-		border: 1px solid var(--rule);
-		border-radius: 8px;
-		padding: 0.45rem 0.85rem;
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-100);
 		color: var(--ink);
-		background: var(--panel);
+		background: var(--case-100);
 		font: inherit;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		cursor: pointer;
 	}
 	.scenario[aria-pressed='true'] {
@@ -574,7 +573,7 @@
 	.split {
 		display: grid;
 		grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-		gap: 2rem;
+		gap: var(--spacing-400);
 		align-items: start;
 	}
 	.roster,
@@ -582,143 +581,172 @@
 	.outputs,
 	.baseline {
 		display: grid;
-		gap: 1rem;
+		gap: var(--spacing-200);
 	}
 	.prompt,
 	.outputs,
 	.baseline {
-		border: 1px solid var(--rule);
-		border-radius: 12px;
-		padding: 1.25rem;
-		background: var(--panel);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-200);
+		background: var(--case-100);
 	}
 	.actions {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 		align-items: center;
 	}
 	label {
-		color: var(--ink-soft);
-		font: 500 0.75rem var(--mono);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	select {
 		min-height: 2.5rem;
-		border: 1px solid var(--rule-strong);
-		border-radius: 6px;
-		padding: 0.4rem 0.6rem;
+		border: 1px solid var(--case-400);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-75);
 		font: inherit;
-		font-size: 0.9rem;
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 	}
 	.request-note,
 	.limits,
 	.cost,
 	.fit-note {
 		margin: 0;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
-		line-height: 1.6;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.state {
 		margin: 0;
-		border-left: 4px solid var(--rule-strong);
-		padding: 0.6rem 0.85rem;
-		background: var(--chip-bg);
-		font-size: 0.85rem;
-		line-height: 1.55;
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-100);
+		background: var(--case-200);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.status-line {
 		min-height: 1.4rem;
 		margin: 0;
-		font: 500 0.8rem var(--mono);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	button {
 		min-height: 2.5rem;
-		border: 1px solid var(--rule-strong);
-		border-radius: 6px;
-		padding: 0.45rem 0.85rem;
+		border: 1px solid var(--case-400);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-100);
 		color: var(--ink);
-		background: var(--panel);
+		background: var(--case-100);
 		font: inherit;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		cursor: pointer;
 	}
 	button:disabled {
-		color: var(--ink-soft);
-		background: var(--chip-bg);
+		color: var(--ink-muted);
+		background: var(--case-200);
 		cursor: not-allowed;
 	}
 	.request-toggle {
-		border: 1px solid var(--rule);
-		border-radius: 8px;
-		background: var(--panel);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		background: var(--case-100);
 	}
 	.request-toggle summary {
-		padding: 0.5rem 0.75rem;
-		font: 500 0.8rem var(--mono);
+		padding: var(--spacing-75) var(--spacing-100);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 		cursor: pointer;
 	}
 	.request-toggle[open] summary {
-		border-bottom: 1px solid var(--rule);
+		border-bottom: 1px solid var(--case-300);
 	}
 	pre {
 		max-height: 26rem;
 		margin: 0;
 		overflow: auto;
-		padding: 0.75rem;
-		background: var(--chip-bg);
-		font: 400 0.75rem var(--mono);
-		line-height: 1.5;
+		padding: var(--spacing-100);
+		background: var(--case-200);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 		white-space: pre-wrap;
 		word-break: break-word;
 	}
 	table {
 		width: 100%;
 		border-collapse: collapse;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	caption {
-		margin-bottom: 0.5rem;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
+		margin-bottom: var(--spacing-75);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		text-align: left;
 	}
 	th,
 	td {
-		border-bottom: 1px solid var(--rule);
-		padding: 0.45rem 0.5rem;
+		border-bottom: 1px solid var(--case-300);
+		padding: var(--spacing-75) var(--spacing-75);
 		text-align: left;
 		vertical-align: top;
 	}
 	thead th {
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	.slot {
 		display: block;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.slot small {
-		color: var(--ink-soft);
-		font: 400 0.72rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 	}
 	.fit {
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.options .option {
 		display: block;
-		font: 400 0.75rem var(--mono);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 	}
 	td small {
 		display: block;
-		color: var(--ink-soft);
-		font: 400 0.72rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 	}
 	@media (max-width: 1100px) {
 		.lead,

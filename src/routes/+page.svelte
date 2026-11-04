@@ -1,1 +1,5 @@
-<!-- D-49: `/` redirects to the current decision in +page.ts. -->
+<script lang="ts">
+	import OverviewPage from '$lib/app/OverviewPage.svelte';
+</script>
+
+<OverviewPage />

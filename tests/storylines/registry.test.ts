@@ -5,7 +5,8 @@ import {
 	currentSlug,
 	getStoryline,
 	PINNED_STORYLINE_DIGESTS,
-	storylineRegistry
+	storylineRegistry,
+	storylinesByDate
 } from '../../src/lib/storylines/registry';
 import { describe, expect, it } from 'vitest';
 
@@ -278,5 +279,12 @@ describe('2026 storyline registry', () => {
 		// the first, the earliest upcoming one leads.
 		expect(currentSlug('2027-03-01')).toBe('winter-duran');
 		expect(currentSlug('2025-12-01')).toBe('offseason-infield');
+	});
+
+	it('lists the decisions in event-date order for numbering and sequence links', () => {
+		const dates = storylinesByDate.map((s) => s.eventDate);
+		expect(dates).toEqual([...dates].sort());
+		expect(storylinesByDate).toHaveLength(storylineRegistry.length);
+		expect(storylinesByDate.slice(-2).map((s) => s.slug)).toEqual(['winter-bat', 'winter-duran']);
 	});
 });

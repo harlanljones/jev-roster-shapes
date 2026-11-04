@@ -59,26 +59,28 @@
 	.scenarios {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.6rem;
+		gap: var(--spacing-75);
 	}
 	.scenario {
 		display: grid;
-		gap: 0.1rem;
+		gap: var(--spacing-25);
 		min-height: 2.75rem;
-		border: 1px solid var(--rule);
-		border-radius: 8px;
-		padding: 0.6rem 0.9rem;
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-200);
 		color: var(--ink);
-		background: var(--panel);
+		background: var(--case-100);
 		font: inherit;
-		font-size: 0.9rem;
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 		text-align: left;
 		cursor: pointer;
 	}
 	.scenario small {
-		color: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 0.75rem;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.scenario[aria-pressed='true'] {
 		border-color: var(--ink);

@@ -4,6 +4,8 @@ Baseball teams make roster decisions with incomplete information. Roster Shapes 
 
 Live demo: https://jev-roster-shapes.pages.dev/
 
+The idea it is built on is Taylor Wyman's: the roster-shapes framework, or Wyman Diagram, which he originated as [@taylormetrics](https://www.tiktok.com/@taylormetrics). See [Credits and inspiration](#credits-and-inspiration).
+
 ## What it is
 
 Roster Shapes is an interactive workspace for position-player roster decisions. The central concept is a roster visually represented with shapes: every player has a readable identity, role, workload, and profile glyph before an analyst builds two alternative scenarios against the current baseline. Every number traces to a source, an explicit assumption, or a versioned calculation.
@@ -24,7 +26,7 @@ It is a working prototype, not a finished product. It uses public baseball data 
 
 ## The demo: the 2026 Red Sox season, eight decisions
 
-The demo opens on the decision matching today's date — the latest pin whose event date has arrived (D-60) — and that page leads with the Jev call for the selected piece: its instructions, criteria, and recorded decisions, beside the board. The season index at `/decisions` shows Boston's record as games over .500, with today marked on the axis and eight decisions pinned to their dated event or decision milestones; the axis now runs through Opening Day 2027 with the off-season shaded. Pick a decision and the roster appears as a fitted case. Each lineup slot is a foam cutout cut to the shape it asks for, and each player is a piece in their profile shape, sized by the runs they actually produced in 2026 and split into a vs-left and a vs-right half colored against the league. Visible foam is friction, an empty cutout is a position nobody on the bench covers, and the same pieces then appear in an interaction map, a capacity bin whose lid is the hindsight best nine, and slot-by-slot bars. Those diagrams are a labeled display layer (D-43).
+The demo opens on an overview whose primary action is the decision matching today's date — the latest pin whose event date has arrived (D-60, D-63) — shown as the hero's live board. A decision page leads with its question, then the Jev call for the selected piece (its instructions, criteria, and recorded decisions) beside the board. The season index at `/decisions` shows Boston's record as games over .500, with today marked on the axis and eight decisions pinned to their dated event or decision milestones; the axis now runs through Opening Day 2027 with the off-season shaded. Pick a decision and the roster appears as a fitted case. Each lineup slot is a foam cutout cut to the shape it asks for, and each player is a piece in their profile shape, sized by the runs they actually produced in 2026 and split into a vs-left and a vs-right half colored against the league. Visible foam is friction, an empty cutout is a position nobody on the bench covers, and the same pieces then appear on the decision's Diagrams tabs: the fitted case, the engine's pool fit, an interaction map, and slot by slot bars beside a capacity bin whose lid is the hindsight best nine. Those diagrams are a labeled display layer (D-43). The comparison workspace has its own URL, `/decisions/[slug]/compare`, behind the same public-data acknowledgment (D-36, D-63). The app follows the system light or dark setting (D-62).
 
 The engine answers a different question from the diagrams. For each scenario it searches that scenario's own roster for the best nine it can field — one lineup per pitcher-hand context — and then judges that lineup with the same feasibility, coverage, and capacity rules as any other scenario (D-45). The result is a pool fit: its total, how many runs the lineup actually used leaves on the table, who gains and loses plate appearances, who ends up on the bench, which position moves it requires, and what it still cannot cover. It is bounded by the roster the comparison really has, so a candidate's fit may field an incoming player and the baseline's may not, and a member with no rate is excluded and listed rather than scored as zero.
 
@@ -43,7 +45,7 @@ Each decision compares the lineup Boston used (from MLB box scores) — or, for 
 
 ### Snapshots: the prompt and its answers
 
-Every decision has a **Snapshots** subpage showing the exact request a Jev classification would send — the frozen rubric, the observations supplied for one player, and the typed questions — beside that player's roster and the engine's best nine. Jev is asked from CI, not the browser (D-58): when a push to main changes `spikes/mlb-2026/timeline-snapshot.json` or `src/lib/storylines/*.json`, the *Classify with Jev* workflow sends each request that has no recorded answer (using the repository secret `TYPESAFE_API_KEY`), validates every response against a versioned contract, and commits `src/lib/classification/jev-results.json`. The page shows those recorded answers with their full probability distribution, the model version, token usage, timing, and an estimated cost at the published list price; it has no key field or ask button, and a request with no recorded answer shows as not recorded. To run it by hand, use the workflow's *Run workflow* button, or `TYPESAFE_API_KEY=… bun spikes/mlb-2026/jev-classify.mjs` locally.
+Every decision has a **Snapshots** page showing the exact request a Jev classification would send — the frozen rubric, the observations supplied for one player, and the typed questions — beside that player's roster and the engine's best nine. Jev is asked from CI, not the browser (D-58): when a push to main changes `spikes/mlb-2026/timeline-snapshot.json` or `src/lib/storylines/*.json`, the *Classify with Jev* workflow sends each request that has no recorded answer (using the repository secret `TYPESAFE_API_KEY`), validates every response against a versioned contract, and commits `src/lib/classification/jev-results.json`. The page shows those recorded answers with their full probability distribution, the model version, token usage, timing, and an estimated cost at the published list price; it has no key field or ask button, and a request with no recorded answer shows as not recorded. To run it by hand, use the workflow's *Run workflow* button, or `TYPESAFE_API_KEY=… bun spikes/mlb-2026/jev-classify.mjs` locally.
 
 Nothing on that page is a claim. The rubric is analyst-derived and has no evaluator agreement behind it (O-03); whether this data may leave the team environment is unresolved (O-04); no tolerable error, latency, or cost limit has been agreed, so no confidence threshold is applied anywhere (O-07); and the snapshots page shows the transparent rule-based baseline SPEC §7 asks for beside the analyst label, with its fired rules and agreement summary (D-55). A profile is a display mark: it cannot change coverage, workload, contribution, or any other number.
 
@@ -123,18 +125,20 @@ hand-derived scenario expectations before merge.
 | [Data contract](docs/DATA_CONTRACT.md) | Versioned records, validation, results, replay |
 | [Interaction contract](docs/WORKFLOWS.md) | Screens, editing, failures, keyboard behavior |
 | [Acceptance](docs/ACCEPTANCE.md) | Exact numerical cases and evaluation protocol |
-| [Decisions](docs/DECISIONS.md) | Adopted defaults (D-01–D-41) and open dependencies |
+| [Decisions](docs/DECISIONS.md) | Adopted defaults (D-01–D-61) and open dependencies |
 | [Jev confidence runbook](docs/JEV_CONFIDENCE_RUNBOOK.md) | Diagnosing flat or untrustworthy Jev scores, the probe, and safe changes |
 | [Shape taxonomy](docs/SHAPE_TAXONOMY.md) | Analyst-labeled 8-shape rubric v2 for the Shape Case diagrams |
-| [Design](DESIGN.md) | Visual system: the case metaphor, tokens, type, and diagram components |
-| [Wyman Diagram conceptual guide](docs/wyman-diagram.md) | Conceptual roster-fit metaphor and shape roles |
+| [Design](DESIGN.md) | Visual system: the Roster Shapes design system, tokens, type, and components (D-62) |
+| [Redesign diagnosis](reports/redesign/2026-11-04-diagnosis.md) | The ai-design-skills audit, what was fixed, and the before and after scores |
+| [Roster shapes: the framework](docs/wyman-diagram.md) | Taylor Wyman’s origin and published encoding, and what this repo keeps, cuts and borrows |
 
 Repository layout:
 
 ```text
 src/lib/{contracts,storylines,shapes,engine,persistence,ui,classification}/  component sources
 src/lib/app/  season index, decision case, Shape Case model and diagrams, workspace wiring
-src/routes/   / · /scenario/[slug] · /scenario/[slug]/snapshots · /player/[id]
+src/routes/   / · /decisions · /decisions/[slug]{,/detail,/snapshots,/compare} · /players/[id] · /method
+              (old /scenario/* and /player/* paths redirect; see docs/WORKFLOWS.md §0)
 tests/{contracts,storylines,engine,persistence,classification,integration,e2e,fixtures,app}/  checks
 spikes/mlb-2026/  season snapshot fetcher and storyline bundle builder
 docs/  contracts, decisions, shape rubric, research, example bundle
@@ -142,6 +146,62 @@ reports/prototype/  measured latency evidence
 ```
 
 Measured: edit-to-render p95 of **9.6 ms** against the proposed 250 ms budget on the reference setup (`reports/prototype/edit-latency.json`); the pool fit adds about 12 ms of engine work to the same path. Verified by 87 unit/integration tests and 34 end-to-end journeys.
+
+## Credits and inspiration
+
+### The idea is Taylor Wyman's
+
+Taylor Wyman — [@taylormetrics](https://www.tiktok.com/@taylormetrics) on TikTok and
+[@taylormetrics](https://x.com/taylormetrics) on X — originated the Wyman Diagram, also called
+roster shapes: a roster drawn as shapes packed into a box, where pieces that sit flush leave no
+gaps and the white space is what a better team would add. He drew the first ones by hand on
+TikTok. The format spread from there, including beyond basketball, and other analysts credit him
+by name when they build on it: databallr's roster-shapes pages say they were "inspired by the
+great @taylormetrics," and a non-basketball version was posted as a Wyman Diagram with a hat tip
+for the concept.
+
+This repository is one of those spreads: the same idea applied to a baseball lineup, with the box
+as a fitted equipment case. The component that draws it is still called the Wyman board.
+
+### His analytical method shaped this one
+
+Wyman is a Senior NBA Analyst at The BBall Index, where he also produces digital content and hosts
+the Basketball Index podcast. He worked previously at PFF and at MLB, and his public profile lists
+an era-adjusted scoring app. Three positions he argues publicly are visible in how this project
+handles its own judgments:
+
+- **Tiers over numbered ranks.** He argues tiers beat ranking players 1 through 100, and that
+  all-in-one metrics are weak at sorting the very top of a league. The eight shape labels here are
+  categories with written boundary rules, not a leaderboard, and fit is graded snug, fits or loose
+  rather than scored ([shape taxonomy](docs/SHAPE_TAXONOMY.md)).
+- **Impact is not talent.** He separates impact, the ability to affect the game while on the
+  court, from talent, the theoretical value a player has. This project draws the same line between
+  what a player actually produced in observed data and what a rate implies, and labels the two
+  apart everywhere they appear together.
+- **Understand it before you trust it.** He argues you need to understand how something works
+  before you can decide whether to trust it. That is why every number here opens its own evidence:
+  the source value, the assumption behind it, and the formula and version used.
+
+### What is his and what is ours
+
+His: the roster-shapes framework, its name, and the encoding he published — size is value over
+replacement, the outline is how easily a player fits alongside teammates, colour is role and is
+explicitly not a rating, and white space is what a perfect team would add.
+
+Ours: everything in this repository. The baseball translation, the eight-shape rubric v2, the
+sizing by observed 2026 runs, the split colouring, the engine's pool fit, and every number in the
+demo are this project's own assumptions and calculations. **This app does not implement Wyman's
+encoding** — its colour is a rating, which inverts his rule — and nothing it shows is his
+analysis. [The framework guide](docs/wyman-diagram.md) states his encoding, and records rule by
+rule what this repository keeps, cuts and borrows from it.
+
+Taylor Wyman has no involvement in this project. He has not reviewed it, endorsed it, or supplied
+data for it, and there is no affiliation with him, The BBall Index, PFF, or MLB. Any error in the
+credit above is ours.
+
+References reviewed 2026-11-03. TikTok is JavaScript-gated and x.com was not reachable from the
+build environment, so no individual post is cited and his positions above are paraphrased from
+public statements rather than quoted.
 
 ## Data and limits
 

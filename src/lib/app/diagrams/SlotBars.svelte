@@ -2,12 +2,13 @@
 	import {
 		CAP_RATE,
 		leagueSideRate,
-		savantColor,
+		splitColor,
 		sideOf,
 		type BarResult,
 		type Pool,
 		type Side
 	} from '../shape-case';
+	import { rateText } from '../split-evidence';
 
 	// Slot by slot (D-43): the lineup as a container. Each column is as wide as
 	// the occupant's actual 2026 PA and splits at his real vs-LHP share. A band
@@ -38,7 +39,7 @@
 					size,
 					h,
 					player,
-					fill: player?.split ? savantColor(sideOf(player.split, side).ops, side) : '#bbb'
+					fill: player?.split ? splitColor(sideOf(player.split, side).ops, side) : 'var(--unknown)'
 				};
 			};
 			const col = {
@@ -119,7 +120,8 @@
 					width={Math.max(col.w - 2, 0)}
 					height={b.h}
 					fill={b.fill}
-					stroke="rgba(0,0,0,.45)"
+					stroke="var(--ink)"
+					stroke-opacity="0.45"
 					stroke-width="1"
 				>
 					<title
@@ -148,7 +150,7 @@
 	<text class="sub" x={X0 + width + 10} y={TOP + 12}>dotted:</text>
 	<text class="sub" x={X0 + width + 10} y={TOP + 26}>lg avg</text>
 	<text class="sub" x={X0 + width + 10} y={TOP + 40}
-		>{leagueSideRate('L').toFixed(3).slice(1)} / {leagueSideRate('R').toFixed(3).slice(1)}</text
+		>{rateText(leagueSideRate('L'))} / {rateText(leagueSideRate('R'))}</text
 	>
 </svg>
 
@@ -159,16 +161,16 @@
 		height: auto;
 	}
 	.frame {
-		fill: var(--panel);
-		stroke: var(--ink-soft);
+		fill: var(--case-100);
+		stroke: var(--ink-muted);
 		stroke-width: 2;
 	}
 	.rule {
-		stroke: var(--rule);
+		stroke: var(--case-300);
 		stroke-width: 1;
 	}
 	.midline {
-		stroke: var(--ink-soft);
+		stroke: var(--ink-muted);
 		stroke-width: 1;
 		stroke-dasharray: 4 4;
 	}
@@ -180,25 +182,28 @@
 	}
 	text {
 		paint-order: stroke;
-		stroke: var(--panel);
+		stroke: var(--case-100);
 		stroke-width: 3px;
 		pointer-events: none;
 	}
 	.role {
-		fill: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		letter-spacing: 0.02em;
 	}
 	.nm {
 		fill: var(--ink);
-		font-family: var(--body);
-		font-size: 12px;
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		font-weight: 600;
 	}
 	.sub {
-		fill: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 10.5px;
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 </style>

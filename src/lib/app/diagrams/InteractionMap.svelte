@@ -70,10 +70,10 @@
 		['CATCHERS', 24, 600]
 	];
 	const LAYERS = [
-		{ key: 'platoon', label: 'Platoon fit (splits)', color: 'var(--snug)', style: 'dotted' },
-		{ key: 'compete', label: 'Shared position', color: 'var(--ink-soft)', style: 'solid' },
-		{ key: 'swap', label: 'Tested swap', color: 'var(--accent)', style: 'solid' },
-		{ key: 'dh', label: 'DH lane', color: 'var(--marker)', style: 'dashed' }
+		{ key: 'platoon', label: 'Platoon fit (splits)', color: 'var(--grade-snug)', style: 'dotted' },
+		{ key: 'compete', label: 'Shared position', color: 'var(--ink-muted)', style: 'solid' },
+		{ key: 'swap', label: 'Tested swap', color: 'var(--turf)', style: 'solid' },
+		{ key: 'dh', label: 'DH lane', color: 'var(--turf)', style: 'dashed' }
 	] as const;
 	let layers = $state<Record<Edge['type'], boolean>>({
 		compete: true,
@@ -182,7 +182,7 @@
 			markerHeight="7"
 			orient="auto-start-reverse"
 		>
-			<path d="M0,0 L10,5 L0,10 z" fill="var(--accent)" />
+			<path d="M0,0 L10,5 L0,10 z" fill="var(--turf)" />
 		</marker>
 		<pattern
 			id="{uid}-hatch"
@@ -191,14 +191,14 @@
 			patternUnits="userSpaceOnUse"
 			patternTransform="rotate(45)"
 		>
-			<rect width="7" height="7" fill="#d9ddd8" />
-			<line x1="0" y1="0" x2="0" y2="7" stroke="#8a938d" stroke-width="2" />
+			<rect width="7" height="7" fill="var(--case-200)" />
+			<line x1="0" y1="0" x2="0" y2="7" stroke="var(--unknown)" stroke-width="2" />
 		</pattern>
 	</defs>
 	{#each CLUSTERS as [name, x, y] (name)}
 		<text class="cluster" {x} {y}>{name}</text>
 	{/each}
-	<text class="cluster" x={HUB[0]} y={HUB[1] - 60} text-anchor="middle">NO GLOVE · DH LANE</text>
+	<text class="cluster" x={HUB[0]} y={HUB[1] - 60} text-anchor="middle">No glove · DH LANE</text>
 	<circle class="hub-ring" cx={HUB[0]} cy={HUB[1]} r="44" />
 	<text class="hub-text" x={HUB[0]} y={HUB[1] + 8} text-anchor="middle">DH</text>
 	<text class="sub" x={HUB[0]} y={HUB[1] + 64} text-anchor="middle"
@@ -262,20 +262,21 @@
 	.layers {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 	}
 	.layers button {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 		min-height: 2.75rem;
-		border: 1px solid var(--rule);
-		border-radius: 999px;
-		padding: 0.5rem 0.9rem;
-		color: var(--ink-soft);
-		background: var(--panel);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-full);
+		padding: var(--spacing-75) var(--spacing-200);
+		color: var(--ink-muted);
+		background: var(--case-100);
 		font: inherit;
-		font-size: 0.85rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		cursor: pointer;
 	}
 	.layers button[aria-pressed='true'] {
@@ -295,48 +296,50 @@
 		height: auto;
 	}
 	.cluster {
-		fill: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.08em;
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		letter-spacing: 0.02em;
 		paint-order: stroke;
-		stroke: var(--panel);
+		stroke: var(--case-100);
 		stroke-width: 5px;
 	}
 	.hub-ring {
 		fill: none;
-		stroke: var(--marker);
+		stroke: var(--turf);
 		stroke-width: 2;
 		stroke-dasharray: 3 5;
 	}
 	.hub-text {
-		fill: var(--marker);
-		font-family: var(--display);
-		font-size: 22px;
+		fill: var(--turf);
+		font-family: var(--font-sans);
+		font-size: var(--text-xl);
+		line-height: var(--text-xl--lh);
 	}
 	.e {
 		fill: none;
 	}
 	.e-compete {
-		stroke: var(--ink-soft);
+		stroke: var(--ink-muted);
 		stroke-width: 1.6;
 		opacity: 0.55;
 	}
 	.e-swap {
-		stroke: var(--accent);
+		stroke: var(--turf);
 		stroke-width: 2;
 	}
 	.e-swap.now {
 		stroke-width: 4.5;
 	}
 	.e-platoon {
-		stroke: var(--snug);
+		stroke: var(--grade-snug);
 		stroke-width: 3;
 		stroke-dasharray: 2 5;
 		stroke-linecap: round;
 	}
 	.e-dh {
-		stroke: var(--marker);
+		stroke: var(--turf);
 		stroke-width: 1.6;
 		stroke-dasharray: 5 5;
 	}
@@ -348,39 +351,42 @@
 		opacity: 0.4;
 	}
 	.e-lab {
-		font-family: var(--mono);
-		font-size: 11.5px;
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		paint-order: stroke;
-		stroke: var(--panel);
+		stroke: var(--case-100);
 		stroke-width: 6px;
 		stroke-linejoin: round;
 		font-weight: 600;
 		pointer-events: none;
 	}
 	.e-lab.compete {
-		fill: var(--ink-soft);
+		fill: var(--ink-muted);
 	}
 	.e-lab.swap {
-		fill: var(--accent);
+		fill: var(--turf);
 	}
 	.e-lab.platoon {
-		fill: var(--snug);
+		fill: var(--grade-snug);
 	}
 	.name {
 		fill: var(--ink);
-		font-family: var(--body);
-		font-size: 13.5px;
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		font-weight: 600;
 		paint-order: stroke;
-		stroke: var(--panel);
+		stroke: var(--case-100);
 		stroke-width: 4px;
 	}
 	.sub {
-		fill: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 11px;
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		paint-order: stroke;
-		stroke: var(--panel);
+		stroke: var(--case-100);
 		stroke-width: 4px;
 	}
 	.piece {
@@ -394,10 +400,12 @@
 		stroke: var(--ink);
 		stroke-width: 3;
 		stroke-dasharray: none;
+		stroke-opacity: 1;
 	}
 	.piece:focus-visible :global(.body) {
-		stroke: var(--marker);
+		stroke: var(--turf);
 		stroke-width: 3.5;
 		stroke-dasharray: none;
+		stroke-opacity: 1;
 	}
 </style>
