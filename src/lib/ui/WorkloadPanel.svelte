@@ -115,77 +115,80 @@
 
 <style>
 	.panel {
-		border: 1px solid var(--line);
-		background: var(--paper);
-		box-shadow: 0 0.9rem 2.5rem rgb(16 35 61 / 0.07);
+		border: 1px solid var(--case-300);
+		background: var(--case-100);
 	}
 
 	.workload {
-		padding: clamp(1rem, 2vw, 1.5rem);
+		padding: var(--spacing-300);
 	}
 
 	.section-heading {
 		display: flex;
 		align-items: start;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: var(--spacing-200);
 	}
 
 	.eyebrow {
-		color: var(--rust);
-		font-size: 0.68rem;
-		font-weight: 800;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
+		color: var(--grade-loose);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
+		letter-spacing: 0.02em;
 	}
 
 	h2 {
-		margin: 0.2rem 0 0;
-		font-family: var(--display);
-		font-size: clamp(1.25rem, 2vw, 1.5rem);
+		margin: var(--spacing-50) 0 0;
+		font-family: var(--font-sans);
+		font-size: var(--text-2xl);
+		line-height: var(--text-2xl--lh);
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
 
 	.state-note {
-		color: var(--muted);
-		font-size: 0.75rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.panel-intro {
 		max-width: 58rem;
-		margin: 0.8rem 0 1.25rem;
-		color: var(--muted);
-		font-size: 0.88rem;
+		margin: var(--spacing-100) 0 var(--spacing-200);
+		color: var(--ink-muted);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 	}
 
 	.table-scroll {
 		overflow-x: auto;
-		border: 1px solid var(--line);
+		border: 1px solid var(--case-300);
 	}
 
 	table {
 		width: 100%;
 		border-collapse: collapse;
-		font-size: 0.82rem;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	th,
 	td {
-		padding: 0.6rem 0.65rem;
-		border-bottom: 1px solid var(--line);
+		padding: var(--spacing-75) var(--spacing-100);
+		border-bottom: 1px solid var(--case-300);
 		text-align: left;
 		vertical-align: top;
 		white-space: nowrap;
 	}
 
 	thead th {
-		background: var(--paper-deep);
-		color: var(--muted);
-		font-size: 0.66rem;
-		font-weight: 800;
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		background: var(--case-200);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
+		letter-spacing: 0.02em;
 	}
 
 	tbody tr:last-child th,
@@ -194,50 +197,54 @@
 	}
 
 	tbody th {
-		color: var(--navy);
-		font-weight: 800;
+		color: var(--turf);
+		font-weight: 600;
 	}
 
 	tbody td:nth-child(2),
 	tbody td:nth-child(3),
 	tbody td:nth-child(4) {
-		font-family: var(--mono);
-		font-size: 0.77rem;
-		font-weight: 700;
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 	}
 
 	tbody td:nth-child(5) {
 		display: grid;
-		gap: 0.18rem;
-		font-size: 0.73rem;
+		gap: var(--spacing-25);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	tbody tr.problem td:nth-child(5) {
-		color: var(--rust);
+		color: var(--grade-loose);
 	}
 
 	small,
 	.muted {
 		display: block;
-		margin-top: 0.15rem;
-		color: var(--muted);
-		font-size: 0.69rem;
+		margin-top: var(--spacing-25);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		font-weight: 500;
 		white-space: normal;
 	}
 
 	.issue-text {
-		color: var(--rust);
-		font-weight: 700;
+		color: var(--grade-loose);
+		font-weight: 600;
 	}
 
 	.evidence-button {
 		border: 0;
 		background: transparent;
-		color: var(--rust);
+		color: var(--grade-loose);
 		font: inherit;
-		font-size: 0.75rem;
-		font-weight: 760;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		cursor: pointer;
 		text-decoration: underline;
 		text-underline-offset: 0.17em;
@@ -247,31 +254,33 @@
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		gap: 0.5rem 0.8rem;
-		margin-top: 1rem;
-		padding: 0.75rem 0.85rem;
-		border: 1px solid var(--rule);
-		border-radius: 6px;
-		background: var(--paper-deep);
-		font-size: 0.78rem;
+		gap: var(--spacing-75) var(--spacing-100);
+		margin-top: var(--spacing-200);
+		padding: var(--spacing-100) var(--spacing-100);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		background: var(--case-200);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.classification-note .eyebrow {
-		color: var(--teal);
+		color: var(--grade-snug);
 	}
 
 	.classification-note span:last-child {
-		color: var(--muted);
+		color: var(--ink-muted);
 	}
 
 	.empty-state {
 		display: grid;
-		gap: 0.25rem;
-		padding: 1.3rem;
-		border: 1px dashed var(--line-strong);
-		background: var(--paper-deep);
-		color: var(--muted);
-		font-size: 0.86rem;
+		gap: var(--spacing-50);
+		padding: var(--spacing-300);
+		border: 1px dashed var(--case-400);
+		background: var(--case-200);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.empty-state strong {
@@ -283,7 +292,7 @@
 		width: 1px;
 		height: 1px;
 		padding: 0;
-		margin: -1px;
+		margin: 0;
 		overflow: hidden;
 		clip: rect(0, 0, 0, 0);
 		white-space: nowrap;

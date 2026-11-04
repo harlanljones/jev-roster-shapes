@@ -139,27 +139,34 @@ export function lineupRuns(pool: Pool, lineup: Lineup): number | null {
 	return total;
 }
 
-// ---------- color: Savant-style diverging by split OPS vs league ----------
-const SAVANT_STOPS: readonly (readonly [number, readonly [number, number, number]])[] = [
-	[-1, [50, 90, 168]],
-	[-0.5, [140, 170, 215]],
-	[0, [220, 220, 220]],
-	[0.5, [236, 152, 130]],
-	[1, [210, 45, 73]]
-];
-export const SAVANT_GRADIENT = `linear-gradient(90deg, ${SAVANT_STOPS.map(([, c], i) => `rgb(${c.join(',')}) ${(i / 4) * 100}%`).join(', ')})`;
+// ---------- color: seven-step split axis against the league line (D-62) ----------
+// Cold blue below the league line for that pitcher hand, a neutral grey at it, warm brass above,
+// saturating at plus or minus SAVANT_SPAN (.150 OPS). Thresholds are unchanged from D-43; only the
+// colours and their binning are. Each step is a design token, so it resolves per theme.
+export const SPLIT_STEPS = [
+	{ token: 'split-cold-3', label: '.107 or more below' },
+	{ token: 'split-cold-2', label: '.064 to .107 below' },
+	{ token: 'split-cold-1', label: '.021 to .064 below' },
+	{ token: 'split-mid', label: 'Within .021 of the line' },
+	{ token: 'split-warm-1', label: '.021 to .064 above' },
+	{ token: 'split-warm-2', label: '.064 to .107 above' },
+	{ token: 'split-warm-3', label: '.107 or more above' }
+] as const;
 
-export function savantColor(ops: string, side: Side): string {
+/** Index 0..6 of the split step for an OPS against the league line for that hand. */
+export function splitStep(ops: string, side: Side): number {
 	const v = Math.max(-1, Math.min(1, (Number(ops) - LEAGUE_OPS[side]) / SAVANT_SPAN));
-	for (let i = 0; i < SAVANT_STOPS.length - 1; i++) {
-		const [a, ca] = SAVANT_STOPS[i]!;
-		const [b, cb] = SAVANT_STOPS[i + 1]!;
-		if (v <= b) {
-			const k = (v - a) / (b - a);
-			return `rgb(${ca.map((c, j) => Math.round(c + (cb[j]! - c) * k)).join(',')})`;
-		}
-	}
-	return `rgb(${SAVANT_STOPS[4]![1].join(',')})`;
+	return Math.min(SPLIT_STEPS.length - 1, Math.floor(((v + 1) / 2) * SPLIT_STEPS.length));
+}
+
+export function splitColor(ops: string, side: Side): string {
+	return `var(--${SPLIT_STEPS[splitStep(ops, side)]!.token})`;
+}
+
+/** Text drawn on a split fill: the two strongest steps take the light ink. */
+export function splitInk(ops: string, side: Side): string {
+	const step = splitStep(ops, side);
+	return step === 0 || step === SPLIT_STEPS.length - 1 ? 'var(--on-split-strong)' : 'var(--ink)';
 }
 
 export function sideOf(split: PlayerSplit, side: Side) {
@@ -214,7 +221,7 @@ export const CUTOUT_ASK: Readonly<
 	Record<Role, { primary: ShapeLabel; accept: readonly ShapeLabel[]; why: string }>
 > = {
 	C: { primary: 'Square', accept: [], why: 'steady everyday catcher' },
-	'1B': { primary: 'Square', accept: ['Rectangle'], why: 'everyday bat-first corner' },
+	'1B': { primary: 'Square', accept: ['Rectangle'], why: 'everyday bat first corner' },
 	'2B': {
 		primary: 'Square',
 		accept: ['Circle', 'Octagon', 'Star'],
@@ -230,7 +237,7 @@ export const CUTOUT_ASK: Readonly<
 	CF: {
 		primary: 'Octagon',
 		accept: ['Pentagon', 'Rectangle'],
-		why: 'up-the-middle defensive anchor'
+		why: 'up the middle defensive anchor'
 	},
 	RF: {
 		primary: 'Rectangle',
@@ -240,7 +247,7 @@ export const CUTOUT_ASK: Readonly<
 	DH: {
 		primary: 'Funky',
 		accept: ['Rectangle', 'Square', 'Star'],
-		why: 'the only glove-free cutout, where quirky bats land'
+		why: 'the only gloveless cutout, where quirky bats land'
 	}
 };
 export const GRADE_TEXT: Readonly<Record<Grade, string>> = {
@@ -358,7 +365,7 @@ export function caseView(pool: Pool, lineup: Lineup, baseLineup: Lineup): CaseVi
 	});
 	if (!hasRightyOutfielder) {
 		empty.push({
-			lead: 'No right-handed outfield bat in the tray.',
+			lead: 'No right handed outfield bat in the tray.',
 			text: 'The outfield can only be platooned from within itself.'
 		});
 	}
@@ -421,7 +428,7 @@ export function caseView(pool: Pool, lineup: Lineup, baseLineup: Lineup): CaseVi
 		if (weaker.length) {
 			friction.push({
 				lead: `${top.last} (${top.rateText}) sits in the tray`,
-				text: `but out-hits ${weaker.join(', ')} on observed R/PA, in a spot he's eligible to fill.`
+				text: `but outhits ${weaker.join(', ')} on observed R/PA, in a spot he's eligible to fill.`
 			});
 		}
 	}

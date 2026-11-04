@@ -5,7 +5,7 @@
 		BIN_H,
 		BIN_W,
 		TRAY_W,
-		savantColor,
+		splitColor,
 		sideOf,
 		type BinPiece,
 		type BinResult,
@@ -26,7 +26,8 @@
 		selected,
 		onSelect,
 		label,
-		ringed = new Set<string>()
+		ringed = new Set<string>(),
+		fit = false
 	}: {
 		pool: Pool;
 		bin: BinResult;
@@ -36,6 +37,8 @@
 		label: string;
 		/** Players to ring in red: the sources disagree on their shape (D-57). */
 		ringed?: ReadonlySet<string>;
+		/** Scale the drawing to its panel instead of scrolling sideways (the overview hero). */
+		fit?: boolean;
 	} = $props();
 
 	const uid = $props.id();
@@ -49,8 +52,9 @@
 	const H = $derived(Math.max(BIN_H, tray.height + 24));
 	const FLOOR = $derived(TOP + H);
 	const VB_W = TX + TRAY_W + X0;
-	const drawW = $derived(Math.max(panelW, MIN_DRAW_W));
-	const scrolls = $derived(panelW > 0 && panelW < MIN_DRAW_W);
+	const minW = $derived(fit ? 0 : MIN_DRAW_W);
+	const drawW = $derived(Math.max(panelW, minW));
+	const scrolls = $derived(panelW > 0 && panelW < minW);
 	/** Pixels per drawing unit, so in-piece text can hold a readable size on screen. */
 	const unit = $derived(drawW / VB_W);
 	const FS = $derived(Math.max(11, 10.5 / unit));
@@ -72,7 +76,7 @@
 		const k = side === 'L' ? pc.kL : pc.kR;
 		return {
 			d: shapePath(shapeFor(id), cx, cy, pc.r * k),
-			fill: player?.split ? savantColor(sideOf(player.split, side).ops, side) : '#bbb',
+			fill: player?.split ? splitColor(sideOf(player.split, side).ops, side) : 'var(--unknown)',
 			missing: false
 		};
 	}
@@ -199,7 +203,7 @@
 			{/each}
 		</defs>
 
-		<text class="head" x={X0} y={TOP - 14}>ON THE FIELD</text>
+		<text class="head" x={X0} y={TOP - 14}>On the field</text>
 		<text class="head-note" x={X0 + BIN_W} y={TOP - 14} text-anchor="end"
 			>lid = this pool's best</text
 		>
@@ -210,11 +214,11 @@
 				class="headroom"
 				x={X0 + BIN_W / 2}
 				y={(pileTop + FLOOR - BIN_H) / 2 + 4}
-				text-anchor="middle">HEADROOM {Math.round(bin.headroom)}%</text
+				text-anchor="middle">Headroom {Math.round(bin.headroom)}%</text
 			>
 		{/if}
 
-		<text class="head" x={TX} y={TOP - 14}>OFF THE FIELD</text>
+		<text class="head" x={TX} y={TOP - 14}>Off the field</text>
 		<path
 			class="tray"
 			d="M{TX} {FLOOR - H} V{FLOOR} H{TX + TRAY_W} V{FLOOR - H}"
@@ -243,7 +247,8 @@
 						class="body"
 						d={h.d}
 						fill={h.fill}
-						stroke={h.missing ? 'var(--unknown)' : 'rgba(0,0,0,.45)'}
+						stroke={h.missing ? 'var(--unknown)' : 'var(--ink)'}
+						stroke-opacity={h.missing ? 1 : 0.45}
 						stroke-width={h.missing ? 1.5 : 1}
 						stroke-dasharray={h.missing ? '5 4' : undefined}
 						clip-path="url(#{uid}-{key}-{side})"
@@ -257,7 +262,8 @@
 					y1={cy - pc.box.top + 4}
 					x2={cx}
 					y2={cy + pc.box.bottom - 4}
-					stroke="rgba(0,0,0,.35)"
+					stroke="var(--ink)"
+					stroke-opacity="0.35"
 					stroke-width="1"
 				/>
 				{#if labelled.includes(key)}
@@ -298,66 +304,76 @@
 		height: auto;
 	}
 	.hint {
-		margin: 0.4rem 0 0;
-		color: var(--ink-soft);
-		font-size: 0.75rem;
+		margin: var(--spacing-75) 0 0;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.chips {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem;
-		margin: 0.5rem 0 0;
+		gap: var(--spacing-75);
+		margin: var(--spacing-75) 0 0;
 		padding: 0;
 		list-style: none;
 	}
 	.chip {
 		min-height: 2.25rem;
-		border: 1px solid var(--rule);
-		border-radius: 999px;
-		padding: 0 0.7rem;
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-full);
+		padding: 0 var(--spacing-100);
 		color: var(--ink);
-		background: var(--panel);
-		font: 600 0.78rem var(--body);
+		background: var(--case-100);
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		cursor: pointer;
 	}
 	.chip span {
-		color: var(--ink-soft);
-		font: 500 0.68rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.chip[aria-pressed='true'] {
 		border-color: var(--ink);
-		outline: 2px solid var(--ink);
+		outline: 2px solid var(--focus);
 	}
 	.lid {
-		fill: var(--panel);
+		fill: var(--case-100);
 		stroke: var(--ink);
 		stroke-width: 2.5;
 	}
 	.tray {
 		fill: none;
-		stroke: var(--ink-soft);
+		stroke: var(--ink-muted);
 		stroke-width: 2;
 	}
 	.pile {
-		stroke: var(--marker);
+		stroke: var(--turf);
 		stroke-width: 1.5;
 	}
 	.head {
 		fill: var(--ink);
-		font-family: var(--display);
-		font-size: 16px;
-		letter-spacing: 0.08em;
+		font-family: var(--font-sans);
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
+		letter-spacing: 0.02em;
 	}
 	.head-note {
-		fill: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 11px;
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.headroom {
-		fill: var(--marker);
-		font-family: var(--mono);
-		font-size: 12px;
-		letter-spacing: 0.1em;
+		fill: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		letter-spacing: 0.02em;
 	}
 	.piece {
 		cursor: pointer;
@@ -371,17 +387,17 @@
 	}
 	.ring {
 		fill: none;
-		stroke: var(--accent);
+		stroke: var(--turf);
 		stroke-width: 2.5;
 		stroke-dasharray: 6 4;
 		pointer-events: none;
 	}
 	.piece:focus-visible .body {
-		stroke: var(--marker);
+		stroke: var(--turf);
 	}
 	text {
 		paint-order: stroke;
-		stroke: var(--panel);
+		stroke: var(--case-100);
 		stroke-width: 3px;
 		pointer-events: none;
 		font-size: var(--fs, 11px);
@@ -390,14 +406,22 @@
 	.head-note {
 		stroke: none;
 	}
+	/* Labels straddle two split fills, so no single ink reads on every pair: a halo in the
+	   panel colour keeps them legible over any fill, in either theme. */
+	.role,
+	.nm {
+		paint-order: stroke;
+		stroke: var(--case-100);
+		stroke-width: 3px;
+		stroke-linejoin: round;
+	}
 	.role {
-		fill: var(--ink-soft);
-		font-family: var(--mono);
-		letter-spacing: 0.08em;
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
 	}
 	.nm {
 		fill: var(--ink);
-		font-family: var(--body);
+		font-family: var(--font-sans);
 		font-weight: 600;
 	}
 </style>

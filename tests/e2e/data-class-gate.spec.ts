@@ -18,13 +18,15 @@ test('a decision card asks for acknowledgment, then opens with public labels', a
 	await page.goto('/decisions');
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Eight roster decisions');
 	await page.getByRole('link', { name: 'How do you replace Bregman?' }).dispatchEvent('click');
-	await expect(page).toHaveURL(/\/scenario\/offseason-infield$/);
+	await expect(page).toHaveURL(/\/decisions\/offseason-infield$/);
 	await expect(page.getByRole('button', { name: 'Open workspace' })).toBeVisible();
 
 	await page.getByRole('button', { name: 'Open workspace' }).dispatchEvent('click');
 	await expect(page.getByRole('button', { name: 'Open public scenario' })).toBeVisible();
 
 	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
+	// D-63: the workspace has its own URL.
+	await expect(page).toHaveURL(/\/decisions\/offseason-infield\/compare$/);
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
 		'mlbam-bos-2026-offseason-infield'
@@ -39,7 +41,7 @@ test('a decision card asks for acknowledgment, then opens with public labels', a
 });
 
 test('declining the acknowledgment keeps you on the decision page', async ({ page }) => {
-	await page.goto('/scenario/offseason-infield');
+	await page.goto('/decisions/offseason-infield');
 	await expect(page.getByRole('heading', { level: 1 })).toContainText(
 		'How do you replace Bregman?'
 	);
@@ -51,6 +53,18 @@ test('declining the acknowledgment keeps you on the decision page', async ({ pag
 		'How do you replace Bregman?'
 	);
 	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeHidden();
+});
+
+// D-63: a direct visit to the workspace URL meets the same acknowledgment before any number.
+test('the workspace URL asks for acknowledgment before opening', async ({ page }) => {
+	await page.goto('/decisions/offseason-infield/compare');
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+		'Open this scenario for local review?'
+	);
+	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toHaveCount(0);
+	await page.getByRole('button', { name: 'Open public scenario' }).dispatchEvent('click');
+	await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
+	await expect(page.locator('.data-class-banner')).toContainText('Public data');
 });
 
 test('a restricted bundle is blocked without touching the open comparison', async ({ page }) => {

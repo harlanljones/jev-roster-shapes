@@ -39,17 +39,17 @@
 						patternUnits="userSpaceOnUse"
 						patternTransform="rotate(45)"
 					>
-						<rect width="7" height="7" fill="#3b4240" />
-						<line x1="0" y1="0" x2="0" y2="7" stroke="#7c8680" stroke-width="2" />
+						<rect width="7" height="7" fill="var(--foam-deep)" />
+						<line x1="0" y1="0" x2="0" y2="7" stroke="var(--foam-edge)" stroke-width="2" />
 					</pattern>
 				</defs>
-				<rect width="220" height="220" rx="18" fill="#2c312f" />
+				<rect width="220" height="220" rx="4" fill="var(--foam)" />
 				<Piece {player} cx={110} cy={110} {r} hatch="player-hatch" />
 			</svg>
 			<img src={headshotUrl(player.id)} alt={player.name} width="96" height="96" />
 		</div>
 		<div class="profile-copy">
-			<h1 id="player-name">{player.name}</h1>
+			<h1 id="player-name" class="page-title">{player.name}</h1>
 			<p class="chip">{player.shape}</p>
 			<p class="rationale">{player.rationale}</p>
 			<dl>
@@ -75,7 +75,7 @@
 				</div>
 			</dl>
 			<p class="boundary">
-				Shape is an assumption-layer profile mark. It does not create coverage, change workload, or
+				Shape is an assumption layer profile mark. It does not create coverage, change workload, or
 				determine value. Piece size and halves are a display layer over actual 2026 production.
 			</p>
 		</div>
@@ -86,30 +86,27 @@
 	.player-page {
 		max-width: 72rem;
 		margin: 0 auto;
-		padding: 2rem clamp(1rem, 4vw, 3rem) 5rem;
+		padding: var(--spacing-400) var(--spacing-300) var(--spacing-800);
 	}
 	.back-link {
-		color: var(--marker);
+		color: var(--turf);
 		font-weight: 600;
 		text-decoration: none;
 	}
 	.profile {
 		display: grid;
 		grid-template-columns: minmax(14rem, 20rem) 1fr;
-		gap: 2.5rem;
+		gap: var(--spacing-500);
 		align-items: center;
-		margin-top: 2rem;
-		border: 1px solid var(--rule);
-		border-radius: 12px;
-		padding: 2rem;
-		background: var(--panel);
-		box-shadow:
-			0 1px 2px rgb(22 32 42 / 6%),
-			0 8px 20px rgb(22 32 42 / 6%);
+		margin-top: var(--spacing-400);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-400);
+		background: var(--case-100);
 	}
 	.profile-mark {
 		display: grid;
-		gap: 1rem;
+		gap: var(--spacing-200);
 		justify-items: center;
 	}
 	.profile-mark svg {
@@ -121,59 +118,56 @@
 		height: 6rem;
 		border-radius: 50%;
 		object-fit: cover;
-		background: var(--chip-bg);
+		background: var(--case-200);
 	}
 	h1 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: clamp(2.25rem, 6vw, 4rem);
-		font-weight: 400;
-		letter-spacing: 0.02em;
-		line-height: 1;
 	}
 	.chip {
 		display: inline-block;
-		margin: 0.75rem 0 0;
-		border-radius: 4px;
-		padding: 0.1rem 0.5rem;
-		background: var(--chip-bg);
-		font-family: var(--mono);
-		font-size: 0.75rem;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
+		margin: var(--spacing-100) 0 0;
+		border-radius: var(--radius-md);
+		padding: var(--spacing-25) var(--spacing-75);
+		background: var(--case-200);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		letter-spacing: 0.02em;
 	}
 	.rationale {
 		max-width: 38rem;
-		color: var(--ink-soft);
-		font-size: 1.05rem;
-		line-height: 1.55;
+		color: var(--ink-muted);
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
 	}
 	dl {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1.25rem 2rem;
-		margin: 1.5rem 0;
+		gap: var(--spacing-200) var(--spacing-400);
+		margin: var(--spacing-300) 0;
 	}
 	dt {
-		color: var(--ink-soft);
-		font-size: 0.75rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	dd {
-		margin: 0.15rem 0 0;
-		font-family: var(--mono);
+		margin: var(--spacing-25) 0 0;
+		font-family: var(--font-mono);
 		font-weight: 600;
 	}
 	.boundary {
 		max-width: 40rem;
-		border-top: 1px solid var(--rule);
-		padding-top: 1rem;
-		color: var(--ink-soft);
-		font-size: 0.85rem;
+		border-top: 1px solid var(--case-300);
+		padding-top: var(--spacing-200);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	@media (max-width: 650px) {
 		.profile {
 			grid-template-columns: 1fr;
-			gap: 1.5rem;
+			gap: var(--spacing-300);
 		}
 	}
 </style>

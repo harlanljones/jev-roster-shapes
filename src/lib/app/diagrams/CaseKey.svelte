@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ShapeGlyph from '$lib/ui/ShapeGlyph.svelte';
 	import { SHAPE_LABELS } from '$lib/shapes/taxonomy';
-	import { SAVANT_GRADIENT } from '../shape-case';
+	import SplitLegend from './SplitLegend.svelte';
 	import { LEAGUE_OPS } from '../split-evidence';
 
 	// How to read a piece: color, halves, area, tabs, and the shape vocabulary.
@@ -10,11 +10,7 @@
 </script>
 
 <div class="key">
-	<div class="ramp">
-		<span>vs league</span>
-		<span class="bar" style:background={SAVANT_GRADIENT}></span>
-		<span>−.150 · avg · +.150 OPS</span>
-	</div>
+	<SplitLegend compact />
 	{#if !compact}
 		<p>
 			Left half vs LHP, right half vs RHP, each colored against the league line for that hand ({lg(
@@ -34,23 +30,10 @@
 <style>
 	.key {
 		display: grid;
-		gap: 0.6rem;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
-		line-height: 1.5;
-	}
-	.ramp {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.6rem;
-		font-family: var(--mono);
-		font-size: 0.72rem;
-	}
-	.bar {
-		width: 9rem;
-		height: 0.6rem;
-		border-radius: 2px;
+		gap: var(--spacing-75);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	p {
 		margin: 0;
@@ -58,7 +41,7 @@
 	.shapes {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem 0.8rem;
+		gap: var(--spacing-75) var(--spacing-100);
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -66,6 +49,6 @@
 	.shapes li {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.3rem;
+		gap: var(--spacing-50);
 	}
 </style>

@@ -53,7 +53,7 @@
 		circleX: circles[i] ?? x(pin.date)
 	}));
 	const marker = $derived(todayMarker(today));
-	const href = (slug: string) => resolve('/scenario/[slug]', { slug });
+	const href = (slug: string) => resolve('/decisions/[slug]', { slug: slug });
 	const longDate = (iso: string) =>
 		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
 			month: 'long',
@@ -187,10 +187,10 @@
 <style>
 	.timeline {
 		display: grid;
-		gap: 0.75rem;
-		border: 1px solid var(--rule);
-		background: var(--panel);
-		padding: 1rem;
+		gap: var(--spacing-100);
+		border: 1px solid var(--case-300);
+		background: var(--case-100);
+		padding: var(--spacing-200);
 	}
 	.scroll {
 		overflow-x: auto;
@@ -205,25 +205,28 @@
 		white-space: nowrap;
 	}
 	.preseason {
-		fill: var(--chip-bg);
+		fill: var(--case-200);
 	}
 	.month {
-		stroke: var(--rule);
+		stroke: var(--case-300);
 		stroke-width: 1;
 		vector-effect: non-scaling-stroke;
 	}
 	.month-label,
 	.axis-label {
-		fill: var(--ink-soft);
-		font: 500 11px var(--mono);
+		fill: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.zero {
-		stroke: var(--rule-strong);
+		stroke: var(--case-400);
 		stroke-dasharray: 4 4;
 		vector-effect: non-scaling-stroke;
 	}
 	.event {
-		stroke: var(--ink-soft);
+		stroke: var(--ink-muted);
 		stroke-dasharray: 2 3;
 		vector-effect: non-scaling-stroke;
 	}
@@ -235,51 +238,60 @@
 		vector-effect: non-scaling-stroke;
 	}
 	.pin line {
-		stroke: var(--accent);
+		stroke: var(--turf);
 		stroke-width: 1.5;
 		vector-effect: non-scaling-stroke;
 	}
 	.pin circle {
-		fill: var(--panel);
-		stroke: var(--accent);
+		fill: var(--case-100);
+		stroke: var(--turf);
 		stroke-width: 2;
 		vector-effect: non-scaling-stroke;
 	}
 	.pin text {
-		fill: var(--accent-dark);
-		font: 600 12px var(--mono);
+		fill: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		text-anchor: middle;
 	}
 	.pin.active circle {
-		fill: var(--accent);
+		fill: var(--turf);
 	}
 	.pin.active text {
-		fill: var(--panel);
+		fill: var(--case-100);
 	}
 	.today line {
-		stroke: var(--marker);
+		stroke: var(--turf);
 		stroke-width: 1.5;
 		stroke-dasharray: 5 3;
 		vector-effect: non-scaling-stroke;
 	}
 	.today text {
-		fill: var(--marker);
-		font: 600 11px var(--mono);
+		fill: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		letter-spacing: 0.04em;
 	}
 	.today-note {
 		margin: 0;
-		color: var(--ink-soft);
-		font: 400 0.78rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 	}
 	.today-note b {
-		color: var(--marker);
+		color: var(--turf);
 		font-weight: 600;
 	}
 	.pins {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
-		gap: 0.5rem;
+		grid-template-columns: repeat(auto-fit, minmax(min(10.5rem, 100%), 1fr));
+		gap: var(--spacing-75);
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -287,39 +299,48 @@
 	.pin-link {
 		display: grid;
 		grid-template-columns: auto 1fr;
-		column-gap: 0.5rem;
+		column-gap: var(--spacing-75);
 		align-items: center;
 		min-height: 2.75rem;
-		border: 1px solid var(--rule);
-		padding: 0.35rem 0.75rem;
+		border: 1px solid var(--case-300);
+		padding: var(--spacing-50) var(--spacing-100);
 		color: var(--ink);
-		background: var(--panel);
+		background: var(--case-100);
 		text-decoration: none;
 	}
 	.pin-link .num {
 		grid-row: span 2;
-		font: 600 0.85rem var(--mono);
-		color: var(--accent-dark);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
+		color: var(--turf);
 	}
 	.pin-link .name {
 		font-weight: 600;
 	}
 	.pin-link small {
-		color: var(--ink-soft);
-		font: 400 0.75rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 	}
 	.pin-link[aria-current='page'] {
 		border-color: var(--ink);
-		color: var(--panel);
+		color: var(--case-100);
 		background: var(--ink);
 	}
 	.pin-link[aria-current='page'] small,
 	.pin-link[aria-current='page'] .num {
-		color: var(--panel);
+		color: var(--case-100);
 	}
 	.events {
 		margin: 0;
-		color: var(--ink-soft);
-		font: 400 0.75rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 	}
 </style>

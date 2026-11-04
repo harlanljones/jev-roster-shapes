@@ -733,6 +733,60 @@ desktop call-first columns, Trevor Story selection updating the call, and
 390px mobile stacking without horizontal overflow. No browser/console errors
 or first-party HTTP 4xx/5xx were recorded.
 
+### Public release: framework credit, design system and information architecture (D-61, D-62, D-63, user directives 2026-11-03 and 2026-11-04)
+
+Delivered (2026-11-04): the roster shapes framework is credited to Taylor Wyman
+([@taylormetrics](https://www.tiktok.com/@taylormetrics)) in the README lede and a new
+`## Credits and inspiration` section, `SPEC.md` sections 5.2, 6 and 14, the shape rubric, the domain
+rules, the method page, and a site footer on every route (D-61). `docs/wyman-diagram.md` now states
+his published encoding with sources, records rule by rule what this project keeps, cuts and borrows
+from his framework, and keeps the superseded four-shape gloss labelled as such. The UI is rebuilt on
+a new sibling design system, Roster Shapes (artifact
+<https://claude.ai/artifact/LSQcbG65oYb3ZdM1b43Z1B>, tokens checked in at
+`docs/design/roster-shapes-tokens.json`), with its values taken from Harlan's `ai-design-skills`
+after a reported diagnosis (`reports/redesign/2026-11-04-diagnosis.md`): Geist and Geist Mono,
+the Tailwind type and spacing scales, flat surfaces, a seven-step split axis in place of the Savant
+ramp, a light and a dark theme, the floating nav, and the full state set (D-62). The information
+architecture moves decisions under `/decisions/[slug]`, merges the four diagram subpages into one
+tabbed detail page, gives the workspace its own URL behind the D-36 acknowledgment, replaces the `/`
+redirect with an overview, adds `/method`, `/privacy`, `/terms` and a custom 404, and redirects every
+old URL; `docs/WORKFLOWS.md` sections 0 and 2 are revised in the same change (D-63). `package.json`
+gains public-release metadata.
+
+Observed:
+
+- `bun install --frozen-lockfile` — passed after the `package.json` metadata, and again after
+  Geist, Geist Mono and Phosphor were added at exact versions.
+- `bun run verify` — exit 0: `svelte-check` 0 errors / 0 warnings over 619 files; Prettier and
+  ESLint clean; Vitest 17 files / 134 tests passed (baseline before the change: 17 / 134); the
+  production build; Playwright 56 passed (baseline: 35). The 21 new journeys are the full axe rule
+  set on every route in the dark theme and on the new pages, the redirects from five old URLs, the
+  footer credit on six routes, and the workspace URL's acknowledgment.
+- Full axe rule set: 0 violations on 13 routes, in light and dark.
+- Horizontal overflow: none on 14 routes at 320px and 390px (Chromium, a Node port of the
+  MotionSites `shoot.py` QA).
+- Untouched: `src/lib/{engine,contracts,persistence,classification,shapes}`, every storyline
+  bundle, and the engine, contract, persistence, storyline, classification and fixture suites. Tests
+  that changed did so for URLs, nav names and one copy string; no numeric or behavioural assertion
+  was removed.
+- `git diff --check` — clean.
+
+Limitations: TikTok is JavaScript-gated and x.com returned HTTP 402 through this environment's
+proxy, so no post by Taylor Wyman was opened; his encoding is stated from two implementations that
+credit him and from his public profiles, his positions are paraphrased rather than quoted, and he has
+not reviewed the credit. The borrowed replacement-baseline sizing is a recorded proposal, not an
+implementation. The redesign scored 7.9 against the MotionSites review rubric after its three-round
+cap, short of the 8.0 bar; the diagnosis report names what would lift it. Tested in Chromium only, as
+D-16 sets; other browsers and real devices are untested. The latency journey measured edit-to-render
+p95 at 85.2 ms in this cloud container, inside the 250 ms budget; that is not comparable with the
+9.6 ms reference measurement on the D-16 M1 setup, which was not re-run, so
+`reports/prototype/edit-latency.json` is left as recorded. The privacy and terms pages describe what
+the code does and are not reviewed legal documents. The eight shape labels are attributed to the
+supplied project proposal on the strength of `SPEC.md`; their actual origin is for Harlan to confirm.
+
+Release: on branch `claude/trusting-brown-rpm9ms` for review; not merged or deployed. Merging to
+`main` triggers the Cloudflare Pages deploy, since `package.json` and `src/` are in the change.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

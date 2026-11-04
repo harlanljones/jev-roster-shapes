@@ -60,7 +60,7 @@
 					})}
 			>
 				<option value="overall">Overall rate</option>
-				<option value="split">Pitcher-hand split</option>
+				<option value="split">Pitcher hand split</option>
 			</select>
 		</label>
 	</div>
@@ -79,7 +79,7 @@
 		{/if}
 	</div>
 	<p class="platoon-rule">
-		<strong>Platoon rule:</strong> pitcher-hand exposure is explicit per batting slot. Starter-hand labels
+		<strong>Platoon rule:</strong> pitcher hand exposure is explicit per batting slot. Starter hand labels
 		are context only and never rewrite L/R/unknown PA buckets.
 	</p>
 
@@ -128,86 +128,89 @@
 		{/each}
 	</div>
 	<p id="horizon-help" class="help-text">
-		Full-game templates only. Outs stay integer-valued; a display of 28 outs means 9 innings + 1
-		out.
+		Full game templates only. Outs stay whole number; a display of 28 outs means 9 innings + 1 out.
 	</p>
 </section>
 
 <style>
 	.panel {
-		border: 1px solid var(--line);
-		background: var(--paper);
-		box-shadow: 0 0.9rem 2.5rem rgb(16 35 61 / 0.07);
+		border: 1px solid var(--case-300);
+		background: var(--case-100);
 	}
 
 	.assumptions {
-		padding: clamp(1rem, 2vw, 1.5rem);
+		padding: var(--spacing-300);
 	}
 
 	.section-heading {
 		display: flex;
 		align-items: start;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: var(--spacing-200);
 	}
 
 	h2 {
-		margin: 0.2rem 0 0;
-		font-family: var(--display);
-		font-size: clamp(1.25rem, 2vw, 1.5rem);
+		margin: var(--spacing-50) 0 0;
+		font-family: var(--font-sans);
+		font-size: var(--text-2xl);
+		line-height: var(--text-2xl--lh);
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
 
 	.revision {
-		padding: 0.35rem 0.55rem;
-		border: 1px solid var(--line);
-		border-radius: 999px;
-		color: var(--muted);
-		font-family: var(--mono);
-		font-size: 0.72rem;
+		padding: var(--spacing-50) var(--spacing-75);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-full);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.panel-intro,
 	.help-text {
 		max-width: 58rem;
-		margin: 0.8rem 0 0;
-		color: var(--muted);
-		font-size: 0.88rem;
+		margin: var(--spacing-100) 0 0;
+		color: var(--ink-muted);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 	}
 
 	.assumption-grid {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.8rem;
-		margin-top: 1.25rem;
+		gap: var(--spacing-100);
+		margin-top: var(--spacing-200);
 	}
 
 	label {
 		display: grid;
-		gap: 0.38rem;
+		gap: var(--spacing-75);
 		color: var(--ink);
-		font-size: 0.78rem;
-		font-weight: 750;
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 	}
 
 	input,
 	select {
 		min-height: 2.45rem;
 		box-sizing: border-box;
-		padding: 0.55rem 0.65rem;
-		border: 1px solid var(--line-strong);
-		border-radius: 0.3rem;
-		background: var(--paper-light);
+		padding: var(--spacing-75) var(--spacing-100);
+		border: 1px solid var(--case-400);
+		border-radius: var(--radius-md);
+		background: var(--case-100);
 		color: var(--ink);
 		font: inherit;
-		font-size: 0.88rem;
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 	}
 
 	input:focus-visible,
 	select:focus-visible,
 	button:focus-visible {
-		outline: 3px solid var(--rust-soft);
+		outline: 2px solid var(--focus);
 		outline-offset: 2px;
 	}
 
@@ -215,40 +218,42 @@
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: center;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 	}
 
 	small,
 	.template-context {
-		color: var(--muted);
-		font-size: 0.75rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		font-weight: 500;
 	}
 
 	.context-meta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.6rem 1rem;
+		gap: var(--spacing-75) var(--spacing-200);
 		align-items: center;
-		margin-top: 1.1rem;
-		padding-top: 0.85rem;
-		border-top: 1px solid var(--line);
-		color: var(--muted);
-		font-size: 0.78rem;
+		margin-top: var(--spacing-200);
+		padding-top: var(--spacing-100);
+		border-top: 1px solid var(--case-300);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.context-meta strong {
 		color: var(--ink);
-		font-weight: 750;
+		font-weight: 600;
 	}
 
 	.text-button {
 		padding: 0;
 		border: 0;
 		background: transparent;
-		color: var(--rust);
+		color: var(--grade-loose);
 		font: inherit;
-		font-weight: 760;
+		font-weight: 600;
 		cursor: pointer;
 		text-decoration: underline;
 		text-underline-offset: 0.17em;
@@ -256,22 +261,22 @@
 
 	.template-list {
 		display: grid;
-		gap: 0.75rem;
-		margin-top: 1.2rem;
+		gap: var(--spacing-100);
+		margin-top: var(--spacing-200);
 	}
 
 	.template-row {
 		display: grid;
 		grid-template-columns: minmax(12rem, 1fr) minmax(7rem, 0.35fr) minmax(10rem, 0.5fr);
-		gap: 0.75rem;
+		gap: var(--spacing-100);
 		align-items: end;
-		padding: 0.8rem 0;
-		border-top: 1px solid var(--line);
+		padding: var(--spacing-100) 0;
+		border-top: 1px solid var(--case-300);
 	}
 
 	.template-row > div {
 		display: grid;
-		gap: 0.18rem;
+		gap: var(--spacing-25);
 	}
 
 	@media (max-width: 700px) {

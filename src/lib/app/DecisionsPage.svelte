@@ -5,7 +5,7 @@
 	import { recordSeries, todayMarker } from './season-timeline';
 
 	// The season index (D-46): `/` is the timeline and the eight dated decisions,
-	// and nothing else. Each decision owns `/scenario/[slug]`, including the one
+	// and nothing else. Each decision owns `/decisions/[slug]`, including the one
 	// this page used to render inline, so no page has two URLs.
 	let { today }: { today?: string } = $props();
 
@@ -35,7 +35,7 @@
 				story,
 				number: index + 1,
 				record: point ? `${point.wins}–${point.losses}` : 'preseason',
-				href: resolve('/scenario/[slug]', { slug: story.slug })
+				href: resolve('/decisions/[slug]', { slug: story.slug })
 			};
 		})
 		.sort((left, right) => left.story.eventDate.localeCompare(right.story.eventDate))
@@ -53,7 +53,7 @@
 <div class="index">
 	<header class="lead">
 		<p class="eyebrow">January 14, 2026 → December 7, 2026 · eight decision milestones</p>
-		<h1>Eight roster decisions on one season timeline</h1>
+		<h1 class="page-title">Eight roster decisions on one season timeline</h1>
 		<p class="lede">
 			Boston's 2026 season as games over .500, with each decision pinned to its event or decision
 			milestone. Today is <b>{longDate(marker.date)}</b>. Pick a decision to open its case: the
@@ -100,7 +100,7 @@
 							{/each}
 						</dl>
 						<p class="meta">
-							{entry.story.rateLabel} rates · illustrative ten-game horizon · pins marked on the timeline
+							{entry.story.rateLabel} rates · illustrative ten game horizon · pins marked on the timeline
 							above
 						</p>
 					</article>
@@ -108,8 +108,8 @@
 			{/each}
 		</ol>
 		<p class="note">
-			Every number above uses observed public R/PA through the applicable as-of date. The offseason
-			milestones retain rates through the 2026 regular-season close (September 27); none are
+			Every number above uses observed public R/PA through the applicable as of date. The offseason
+			milestones retain rates through the 2026 regular season close (September 27); none are
 			projections. The engine's totals, the pool's tightest fit, and the coverage and workload
 			checks live on each decision's page, with the Jev prompt and its answers one click away under
 			Snapshots.
@@ -120,147 +120,208 @@
 <style>
 	.index {
 		display: grid;
-		gap: 2rem;
+		gap: var(--spacing-400);
 		max-width: 88rem;
 		margin: 0 auto;
-		padding: 1.5rem clamp(1rem, 4vw, 3rem) 4rem;
+		padding: var(--spacing-300) var(--spacing-300) var(--spacing-700);
 	}
 	.lead {
 		display: grid;
-		gap: 0.75rem;
+		gap: var(--spacing-100);
 	}
 	.eyebrow {
 		margin: 0;
-		color: var(--ink-soft);
-		font: 500 0.75rem var(--mono);
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	h1 {
 		max-width: 20ch;
 		margin: 0;
-		font-family: var(--display);
-		font-size: clamp(2.25rem, 5vw, 3.75rem);
-		font-weight: 400;
-		letter-spacing: 0.01em;
-		line-height: 1;
-		text-wrap: balance;
 	}
 	h2 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: clamp(1.5rem, 3vw, 2rem);
+		font-family: var(--font-sans);
+		font-size: var(--text-3xl);
+		line-height: var(--text-3xl--lh);
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
-	h3 {
-		margin: 0;
-		font-size: 1.15rem;
-		line-height: 1.3;
-	}
 	h3 a {
 		color: var(--ink);
-		text-decoration-color: var(--marker);
+		text-decoration-color: var(--turf);
 		text-underline-offset: 3px;
 	}
 	h3 a:hover {
-		color: var(--marker);
+		color: var(--turf);
 	}
 	.lede {
 		max-width: 70ch;
 		margin: 0;
-		color: var(--ink-soft);
-		font-size: 1rem;
-		line-height: 1.6;
+		color: var(--ink-muted);
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
 	}
 	.lede b {
-		color: var(--marker);
+		color: var(--turf);
 	}
 	.decisions {
 		display: grid;
-		gap: 1.25rem;
-	}
-	.cards {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-		gap: 0 1.25rem;
-		margin: 0;
-		padding: 0;
-		list-style: none;
+		gap: var(--spacing-200);
 	}
 	/* Each card spans five shared row tracks (topline, title, question, numbers,
 	   meta) so those blocks align across a row, and it sizes to its content. */
-	.card {
-		display: grid;
-		grid-row: span 5;
-		grid-template-rows: subgrid;
-		row-gap: 0.6rem;
-		margin-bottom: 1.25rem;
-		box-sizing: border-box;
-		border: 1px solid var(--rule);
-		border-radius: 12px;
-		padding: 1.1rem 1.25rem 1.25rem;
-		background: var(--panel);
-		box-shadow:
-			0 1px 2px rgb(22 32 42 / 6%),
-			0 8px 20px rgb(22 32 42 / 6%);
-	}
-	.parts {
-		display: contents;
-	}
-	.card-topline {
-		display: flex;
-		gap: 0.6rem;
-		align-items: baseline;
-	}
 	.num {
-		color: var(--accent-dark);
-		font: 600 1.1rem var(--mono);
+		color: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
+		font-weight: 600;
 	}
 	.when {
-		color: var(--ink-soft);
-		font: 400 0.75rem var(--mono);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 		letter-spacing: 0.03em;
 	}
-	.question {
-		margin: 0;
-		color: var(--ink-soft);
-		font-size: 0.9rem;
-		line-height: 1.55;
-	}
-	.numbers {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.75rem 1.5rem;
-		margin: 0.25rem 0 0;
-	}
 	dt {
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	dd {
-		margin: 0.1rem 0 0;
-		font: 600 0.95rem var(--mono);
-	}
-	.delta {
-		display: block;
-		color: var(--ink-soft);
-		font-size: 0.75rem;
+		margin: var(--spacing-25) 0 0;
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
+		font-weight: 600;
 	}
 	.meta,
 	.note {
 		margin: 0;
-		color: var(--ink-soft);
-		font: 400 0.78rem var(--mono);
-		line-height: 1.6;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 400;
 	}
 	.note {
 		max-width: 90ch;
-		border-top: 1px solid var(--rule);
-		padding-top: 1rem;
-		font-family: var(--body);
-		font-size: 0.85rem;
+		border-top: 1px solid var(--case-300);
+		padding-top: var(--spacing-200);
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+	}
+
+	/* D-62: a ruled list rather than a row of equal cards (redesign-existing-projects). */
+	.cards {
+		display: grid;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid var(--case-300);
+	}
+	.card {
+		border-bottom: 1px solid var(--case-300);
+	}
+	.parts {
+		display: grid;
+		grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) minmax(0, 17rem);
+		grid-template-areas:
+			'when title numbers'
+			'when question numbers'
+			'when meta numbers';
+		column-gap: var(--spacing-400);
+		row-gap: var(--spacing-75);
+		padding-block: var(--spacing-300);
+	}
+	.card-topline {
+		grid-area: when;
+		display: grid;
+		align-content: start;
+		gap: var(--spacing-50);
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+	}
+	.card-topline .num {
+		color: var(--turf);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
+		font-weight: 500;
+	}
+	h3 {
+		grid-area: title;
+		margin: 0;
+		font-size: var(--text-xl);
+		line-height: var(--text-xl--lh);
+	}
+	h3 a {
+		color: var(--ink);
+		text-decoration: underline;
+		text-decoration-color: var(--case-400);
+		text-underline-offset: 4px;
+	}
+	h3 a:hover {
+		text-decoration-color: currentColor;
+	}
+	.question {
+		grid-area: question;
+		max-width: var(--measure);
+		margin: 0;
+		color: var(--ink-muted);
+	}
+	.meta {
+		grid-area: meta;
+		margin: 0;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+	}
+	.numbers {
+		grid-area: numbers;
+		display: grid;
+		align-content: start;
+		gap: var(--spacing-75);
+		margin: 0;
+	}
+	.numbers div {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--spacing-200);
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
+	}
+	.numbers dt {
+		color: var(--ink-muted);
+	}
+	.numbers dd {
+		margin: 0;
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+	.delta {
+		display: block;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+	}
+	@media (max-width: 900px) {
+		.parts {
+			grid-template-columns: minmax(0, 1fr);
+			grid-template-areas: 'when' 'title' 'question' 'numbers' 'meta';
+		}
 	}
 </style>

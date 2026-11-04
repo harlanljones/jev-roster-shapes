@@ -1,24 +1,24 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import { error } from '@sveltejs/kit';
-	import type { Bundle } from '$lib/contracts';
-	import HomePage from '$lib/app/HomePage.svelte';
 	import LibraryPage from '$lib/app/LibraryPage.svelte';
+	import { acknowledgePublic } from '$lib/app/public-ack';
 	import { getStoryline } from '$lib/storylines/registry';
 
+	// D-63: the decision board. Opening the workspace records the D-36 public-data
+	// acknowledgment for this session and moves to the workspace's own URL.
 	let { params }: { params: { slug: string } } = $props();
 	const storyline = $derived.by(() => {
 		const found = getStoryline(params.slug);
-		if (!found) error(404, 'Scenario not found');
+		if (!found) error(404, 'Decision not found');
 		return found;
 	});
-	let openedBundle = $state<Bundle | null>(null);
+
+	function open(): void {
+		acknowledgePublic(storyline.bundle.bundleId);
+		void goto(resolve('/decisions/[slug]/compare', { slug: storyline.slug }));
+	}
 </script>
 
-{#if openedBundle}
-	<HomePage initialBundle={openedBundle} onBack={() => (openedBundle = null)} />
-{:else}
-	<LibraryPage
-		activeSlug={storyline.slug}
-		onOpen={(bundle: Bundle) => (openedBundle = $state.snapshot(bundle))}
-	/>
-{/if}
+<LibraryPage activeSlug={storyline.slug} onOpen={open} />

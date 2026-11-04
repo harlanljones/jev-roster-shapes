@@ -1,7 +1,8 @@
 <script lang="ts">
 	import ShapeGlyph from '$lib/ui/ShapeGlyph.svelte';
 	import { SOURCE_NAMES, sourcesDisagree, type LabelSource, type SourceLabels } from '../jev-call';
-	import { SAVANT_GRADIENT, type BinResult, type Pool, type TrayResult } from '../shape-case';
+	import type { BinResult, Pool, TrayResult } from '../shape-case';
+	import SplitLegend from './SplitLegend.svelte';
 	import CriteriaLanes from './CriteriaLanes.svelte';
 	import WymanBoard from './WymanBoard.svelte';
 
@@ -94,10 +95,10 @@
 			<CriteriaLanes {pool} {labels} {source} {thin} {selected} {onSelect} />
 		{/if}
 
-		<p class="legend">
-			<span
-				><span class="ramp" style:background={SAVANT_GRADIENT}></span> vs LHP | vs RHP OPS against league</span
-			>
+		<div class="legend">
+			<div class="legend-split">
+				<SplitLegend compact /><span>Left half vs LHP, right half vs RHP</span>
+			</div>
 			<span>Area = 2026 runs</span>
 			{#if mode === 'packed'}
 				<span>Shapes: rubric v2 (analyst)</span>
@@ -108,7 +109,7 @@
 				<span>Placed by {SOURCE_NAMES[source]}; letters show where the others put a piece</span>
 				{#if thin.size}<span>Hatched: Jev says the evidence is thin</span>{/if}
 			{/if}
-		</p>
+		</div>
 
 		{#if picked}
 			<p class="verdict" aria-label="Labels for {pickedName}">
@@ -128,44 +129,48 @@
 
 <style>
 	.roster {
-		border: 1px solid var(--rule);
-		border-radius: 8px;
-		background: var(--panel);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		background: var(--case-100);
 		overflow: hidden;
 	}
 	.head {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.6rem;
+		gap: var(--spacing-75);
 		align-items: center;
-		border-bottom: 1px solid var(--rule);
-		padding: 0.6rem 0.85rem;
+		border-bottom: 1px solid var(--case-300);
+		padding: var(--spacing-75) var(--spacing-100);
 	}
 	h2 {
-		margin: 0 0.5rem 0 0;
-		font-family: var(--display);
-		font-size: 1.35rem;
+		margin: 0 var(--spacing-75) 0 0;
+		font-family: var(--font-sans);
+		font-size: var(--text-xl);
+		line-height: var(--text-xl--lh);
 		font-weight: 400;
 	}
 	.toggle {
 		display: inline-flex;
-		gap: 3px;
-		border: 1px solid var(--rule);
-		border-radius: 6px;
-		padding: 3px;
+		gap: var(--spacing-25);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-25);
 	}
 	.toggle button {
 		min-height: 2.25rem;
 		border: 0;
-		border-radius: 4px;
-		padding: 0 0.7rem;
-		color: var(--ink-soft);
+		border-radius: var(--radius-md);
+		padding: 0 var(--spacing-100);
+		color: var(--ink-muted);
 		background: transparent;
-		font: 600 0.72rem var(--mono);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		cursor: pointer;
 	}
 	.toggle button[aria-pressed='true'] {
-		color: var(--panel);
+		color: var(--case-100);
 		background: var(--ink);
 	}
 	.toggle button:disabled {
@@ -174,64 +179,69 @@
 	}
 	.body {
 		display: grid;
-		gap: 0.75rem;
-		padding: 0.85rem;
+		gap: var(--spacing-100);
+		padding: var(--spacing-100);
 	}
 	.legend {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem 1rem;
+		gap: var(--spacing-75) var(--spacing-200);
 		margin: 0;
-		color: var(--ink-soft);
-		font-size: 0.75rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
-	.ramp {
-		display: inline-block;
-		width: 5rem;
-		height: 8px;
-		border-radius: 2px;
-		vertical-align: middle;
+	.legend-split {
+		display: grid;
+		gap: var(--spacing-75);
 	}
 	.warn {
-		color: var(--accent);
+		color: var(--turf);
 	}
 	.verdict {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.4rem;
+		gap: var(--spacing-75);
 		align-items: center;
 		margin: 0;
-		border-top: 1px solid var(--rule);
-		padding-top: 0.65rem;
-		font-size: 0.82rem;
+		border-top: 1px solid var(--case-300);
+		padding-top: var(--spacing-100);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.chip {
 		display: inline-flex;
-		gap: 0.35rem;
+		gap: var(--spacing-50);
 		align-items: center;
-		border: 1px solid var(--rule);
-		border-radius: 999px;
-		padding: 0.2rem 0.6rem 0.2rem 0.2rem;
-		font: 500 0.72rem var(--mono);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-full);
+		padding: var(--spacing-50) var(--spacing-75) var(--spacing-50) var(--spacing-50);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.chip.differs {
-		border-color: var(--accent);
+		border-color: var(--turf);
 	}
 	.mk {
 		width: 18px;
 		height: 18px;
 		border-radius: 50%;
-		color: var(--panel);
-		font: 600 0.6rem/18px var(--mono);
+		color: var(--case-100);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
 		text-align: center;
 	}
 	.mk.J {
 		background: var(--ink);
 	}
 	.mk.R {
-		background: var(--marker);
+		background: var(--turf);
 	}
 	.mk.A {
-		background: var(--fits);
+		background: var(--grade-fits);
 	}
 </style>

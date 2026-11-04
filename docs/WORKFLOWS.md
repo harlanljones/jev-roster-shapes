@@ -1,23 +1,25 @@
 # Interaction contract
 
-Status: implementation defaults for the local prototype (D-38 through D-40: library-first, eight public 2026 analyses, analyst-labeled shape rubric v1). Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
+Status: implementation defaults for the local prototype (D-38 through D-40: library-first, eight public 2026 analyses, analyst-labeled shape rubric v1). Sections 0 and 2 were revised by D-63 (2026-11-04) for the public release's information architecture; sections 3 to 11 are unchanged. Read [SPEC.md](../SPEC.md) for product scope; use the domain and data contracts for calculations and serialization. This document owns screens, transitions, and observable interaction behavior.
 
 ## 0. Page map
 
 | Route | Screen | Required content |
 | --- | --- | --- |
-| `/` | Current decision (D-60) | Redirects to the decision matching today's date; the season index lives at `/decisions` |
-| `/decisions` | Season index | Timeline with today's date marked and the record through it, plus one card per decision with its date, baseline, and both deltas |
-| `/scenario/[slug]` | Decision board | The Jev call for the selected piece as the primary component (D-60): its state, each question's instructions and criteria, and the recorded decisions; beside it the decision's one diagram (D-50): the scenario's lineup packed under the pool's best, the players left off the field, its readout, and cards to the subpages |
-| `/scenario/[slug]/case` | Case subpage | The fitted case, its findings, and its table equivalent |
-| `/scenario/[slug]/engine` | Engine subpage | The engine's pool fit per scenario with its offensive deltas |
-| `/scenario/[slug]/interactions` | Interactions subpage | The interaction map and its findings |
-| `/scenario/[slug]/slots` | Slot-by-slot subpage | This lineup and the hindsight best nine packed side by side, and the slot bars |
-| `/scenario/[slug]/snapshots` | Snapshots subpage | The Jev prompt and its outputs beside the roster and the engine's best nine |
-| `/player/[id]` | Player | One player's shape, evidence, and boundary note |
-| Workspace | Comparison | Reached from a decision's `Open workspace`, after the public-data acknowledgment |
+| `/` | Overview (D-63) | What the tool does, the current decision's board as the hero, the roster shapes framework credit, how it works, and a question-and-answer FAQ. Its primary action opens the decision matching today's date (D-60's rule: the latest pin whose event date has arrived) |
+| `/decisions` | Season index | Timeline with today's date marked and the record through it, plus one entry per decision with its date, baseline, and both deltas |
+| `/decisions/[slug]` | Decision board | Leads with the decision's position in the season and its question, then the Jev call for the selected piece as the primary component (D-60) beside the decision's one diagram (D-50): the scenario's lineup packed under the pool's best, the players left off the field, its readout, and cards to the diagrams. The season timeline follows at the end |
+| `/decisions/[slug]/detail` | Diagrams | The fitted case, the engine pool fit, the interaction map, and slot by slot as tabs chosen by `?view=case`, `engine`, `interactions` or `slots` (default `case`), each with its findings and table equivalent |
+| `/decisions/[slug]/snapshots` | Snapshots | The Jev prompt and its outputs beside the roster and the engine's best nine |
+| `/decisions/[slug]/compare` | Comparison workspace | The workspace, now addressable. A visit without the D-36 public-data acknowledgment recorded for this browser session shows the acknowledgment first |
+| `/players/[id]` | Player | One player's shape, evidence, and boundary note |
+| `/method` | How to read it | How to read a board, the framework credit, and what this project kept, cut and borrowed from it |
+| `/privacy`, `/terms` | Plain statements | What the site keeps and reaches; licence, data terms and limits |
+| (any other path) | Not found | A branded 404 with a way to the current decision and the season index |
 
-Every decision has exactly one URL, including the one the index used to render inline. Navigation lives in the shell header (`Decisions · decision`) and, inside a decision, in its `Decision diagrams` nav (Board, Case, Engine fit, Interactions, Slot by slot, Snapshots); both mark the current page. The board and its diagram subpages share the scenario pick through `?scenario=<id>`, falling back to the baseline when it is missing or unknown. Timelines take an optional `today` so the marker is testable without freezing a build, and a date outside the season window is stated rather than clamped silently.
+The old paths redirect client side from their own prerendered routes: `/scenario/[slug]` and `/scenario/[slug]/snapshots` to their new paths with any `?scenario=` kept, `/scenario/[slug]/{case,engine,interactions,slots}` to `/decisions/[slug]/detail?view=<key>`, and `/player/[id]` to `/players/[id]`.
+
+Every decision has exactly one URL. Navigation lives in the floating shell nav (`Decisions · decision · How to read it`, with the wordmark returning to the overview, collapsing to a full-height menu at phone width) and, inside a decision, in its `This decision` nav (Board, Diagrams, Snapshots, Workspace) with a `Diagram` row of tabs on the detail page; each marks the current page, and the decision board names the previous and next decisions. The board and its diagram tabs share the scenario pick through `?scenario=<id>`, falling back to the baseline when it is missing or unknown. Every page ends with the site footer, the document's one `contentinfo` landmark, carrying the framework credit (D-61) and the privacy, terms and source links. Timelines take an optional `today` so the marker is testable without freezing a build, and a date outside the season window is stated rather than clamped silently.
 
 ## 1. First complete journey
 
@@ -33,8 +35,9 @@ Use one comparison workspace with these reachable views. They may be panels or r
 
 | View | Required content | Primary action |
 | --- | --- | --- |
-| Season index | Season timeline with today marked, and one dated card per decision with its baseline and deltas | Open a decision |
-| Decision | The Jev call for the selected piece (instructions, criteria, recorded decisions) as the primary component, beside the board (lineup pieces under the pool's best, players off the field, readout, findings) with player detail; the case, engine pool fit, interaction map, and slot bars on its subpages | Pick a scenario; open the workspace; open a subpage |
+| Overview | The current decision's board, the framework credit, how it works, and the FAQ | Open the current decision |
+| Season index | Season timeline with today marked, and one dated entry per decision with its baseline and deltas | Open a decision |
+| Decision | The Jev call for the selected piece (instructions, criteria, recorded decisions) as the primary component, beside the board (lineup pieces under the pool's best, players off the field, readout, findings) with player detail; the case, engine pool fit, interaction map, and slot bars on its Diagrams tabs | Pick a scenario; open the workspace; open a diagram |
 | Assumptions | Horizon, templates, PA budgets, exposure assumptions, limits, provenance | Apply assumptions |
 | Allocation | Baseline/A/B selector, membership, template slots, workloads, diagnostics | Commit allocation edit |
 | Compare | Baseline/A/B columns, coverage, PA transfers, supported metrics, checks | Inspect a result |

@@ -44,10 +44,10 @@
 		DH: [892, 500]
 	};
 	const GRADE_COLOR: Record<Grade, string> = {
-		snug: '#7fd39f',
-		fits: '#f0c56b',
-		loose: '#ff8a7a',
-		unknown: '#b9c0c8'
+		snug: 'var(--grade-snug-on-foam)',
+		fits: 'var(--grade-fits-on-foam)',
+		loose: 'var(--grade-loose-on-foam)',
+		unknown: 'var(--unknown-on-foam)'
 	};
 
 	const sockets = $derived(
@@ -91,30 +91,31 @@
 			patternUnits="userSpaceOnUse"
 			patternTransform="rotate(45)"
 		>
-			<rect width="7" height="7" fill="#3b4240" />
-			<line x1="0" y1="0" x2="0" y2="7" stroke="#7c8680" stroke-width="2" />
+			<rect width="7" height="7" fill="var(--foam-deep)" />
+			<line x1="0" y1="0" x2="0" y2="7" stroke="var(--foam-edge)" stroke-width="2" />
 		</pattern>
 		<pattern id="{uid}-foam" width="6" height="6" patternUnits="userSpaceOnUse">
-			<rect width="6" height="6" fill="#2c312f" />
-			<circle cx="1.5" cy="1.5" r="0.7" fill="#343a37" />
-			<circle cx="4.5" cy="4.2" r="0.6" fill="#262b29" />
+			<rect width="6" height="6" fill="var(--foam)" />
+			<circle cx="1.5" cy="1.5" r="0.7" fill="var(--foam-edge)" fill-opacity="0.18" />
+			<circle cx="4.5" cy="4.2" r="0.6" fill="var(--foam-deep)" />
 		</pattern>
 	</defs>
 
-	<rect x="430" y="2" width="140" height="22" rx="8" fill="#1e2322" />
-	<rect x="6" y="16" width="988" height="958" rx="26" fill="#191d1c" />
-	<rect x="160" y="10" width="40" height="16" rx="3" fill="#4b5450" />
-	<rect x="800" y="10" width="40" height="16" rx="3" fill="#4b5450" />
+	<rect x="430" y="2" width="140" height="22" rx="8" fill="var(--foam-deep)" />
+	<rect x="6" y="16" width="988" height="958" rx="26" fill="var(--foam)" />
+	<rect x="160" y="10" width="40" height="16" rx="3" fill="var(--foam-edge)" fill-opacity="0.45" />
+	<rect x="800" y="10" width="40" height="16" rx="3" fill="var(--foam-edge)" fill-opacity="0.45" />
 	<rect x="20" y="30" width="960" height="616" rx="16" fill="url(#{uid}-foam)" />
 	<rect x="20" y="662" width="960" height="300" rx="16" fill="url(#{uid}-foam)" />
 	<text class="stencil" x="40" y="70" font-size="18">BOS 26 · POSITION PLAYERS</text>
-	<text class="stencil" x="40" y="700" font-size="16">BENCH TRAY</text>
+	<text class="stencil" x="40" y="700" font-size="16">Bench tray</text>
 	<text class="note" x="960" y="700" text-anchor="end">sized by actual 2026 runs, translucent</text>
 
 	<polygon
 		points="500,470 690,340 500,215 310,340"
 		fill="none"
-		stroke="#434b47"
+		stroke="var(--foam-edge)"
+		stroke-opacity="0.5"
 		stroke-width="2"
 		stroke-dasharray="2 6"
 	/>
@@ -123,19 +124,20 @@
 		y1="330"
 		x2="818"
 		y2="640"
-		stroke="#434b47"
+		stroke="var(--foam-edge)"
+		stroke-opacity="0.5"
 		stroke-width="1.5"
 		stroke-dasharray="2 6"
 	/>
-	<text class="note" x="892" y="400" text-anchor="middle">NO GLOVE</text>
+	<text class="note" x="892" y="400" text-anchor="middle">No glove</text>
 
 	{#each sockets as s (s.role)}
 		{@const ask = CUTOUT_ASK[s.role]}
 		{@const star = ask.primary === 'Star'}
 		<path
 			d={shapePath(ask.primary, s.x, s.y, 52)}
-			fill="#161a19"
-			stroke="#56605a"
+			fill="var(--foam-deep)"
+			stroke="var(--foam-edge)"
 			stroke-width="1.5"
 		/>
 		<text class="sock-label" x={s.x} y={s.y - (star ? 80 : 62)} text-anchor="middle">{s.role}</text>
@@ -161,7 +163,7 @@
 					<path
 						d={shapePath(p.shape === 'Unclassified' ? 'Circle' : p.shape, s.x, s.y, s.r + 7)}
 						fill="none"
-						stroke="#f0c56b"
+						stroke="var(--on-foam)"
 						stroke-width="2"
 						stroke-dasharray="6 4"
 					/>
@@ -196,8 +198,8 @@
 		{@const p = b.player}
 		<path
 			d={shapePath(p.shape === 'Unclassified' ? 'Circle' : p.shape, b.cx, b.cy, b.r + 6)}
-			fill="#161a19"
-			stroke="#56605a"
+			fill="var(--foam-deep)"
+			stroke="var(--foam-edge)"
 		/>
 		<g
 			class="piece"
@@ -216,7 +218,7 @@
 				<path
 					d={shapePath(p.shape === 'Unclassified' ? 'Circle' : p.shape, b.cx, b.cy, b.r + 6)}
 					fill="none"
-					stroke="#f0c56b"
+					stroke="var(--on-foam)"
 					stroke-width="2"
 					stroke-dasharray="6 4"
 				/>
@@ -240,7 +242,7 @@
 		<path
 			d={shapePath(CUTOUT_ASK[gap.role].primary, gap.cx, gap.cy, 22)}
 			fill="none"
-			stroke="#c8cfca"
+			stroke="var(--unknown-on-foam)"
 			stroke-width="1.5"
 			stroke-dasharray="4 5"
 		/>
@@ -258,52 +260,61 @@
 		height: auto;
 	}
 	.stencil {
-		fill: #a9b1ab;
-		font-family: var(--display);
-		letter-spacing: 0.08em;
+		fill: var(--on-foam);
+		fill-opacity: 0.78;
+		font-family: var(--font-sans);
+		letter-spacing: 0.02em;
 	}
 	.note {
-		fill: #a9b1ab;
-		font-family: var(--mono);
-		font-size: 10.5px;
+		fill: var(--on-foam);
+		fill-opacity: 0.78;
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 		letter-spacing: 0.04em;
 	}
 	.sock-label {
-		fill: #eef0ea;
-		font-family: var(--mono);
-		font-size: 13px;
-		letter-spacing: 0.06em;
+		fill: var(--on-foam);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		letter-spacing: 0.02em;
 	}
 	.sock-name,
 	.sock-fit {
 		paint-order: stroke;
-		stroke: #191d1c;
+		stroke: var(--foam);
 		stroke-width: 4px;
 		stroke-linejoin: round;
 		pointer-events: none;
 	}
 	.sock-name {
-		fill: #eef0ea;
-		font-family: var(--body);
-		font-size: 14px;
+		fill: var(--on-foam);
+		font-family: var(--font-sans);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 		font-weight: 600;
 	}
 	.sock-fit {
-		font-family: var(--mono);
-		font-size: 11px;
-		letter-spacing: 0.05em;
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		letter-spacing: 0.02em;
 	}
 	.tray-name {
-		fill: #eef0ea;
-		font-family: var(--body);
-		font-size: 12.5px;
+		fill: var(--on-foam);
+		font-family: var(--font-sans);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.bats {
-		fill: #161a19;
-		font-family: var(--mono);
-		font-size: 14px;
+		fill: var(--foam-deep);
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 		paint-order: stroke;
-		stroke: rgb(255 255 255 / 85%);
+		stroke: var(--on-foam);
+		stroke-opacity: 0.85;
 		stroke-width: 3px;
 		pointer-events: none;
 	}
@@ -313,11 +324,11 @@
 	}
 	.piece:focus-visible :global(.body),
 	.piece.sel :global(.body) {
-		stroke: #fff;
+		stroke: var(--on-foam);
 		stroke-width: 3;
 		stroke-dasharray: none;
 	}
 	.piece:focus-visible :global(.body) {
-		stroke: #f0c56b;
+		stroke: var(--on-foam);
 	}
 </style>

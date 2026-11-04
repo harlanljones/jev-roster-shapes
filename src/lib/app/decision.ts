@@ -1,6 +1,6 @@
 import type { Bundle, Scenario } from '$lib/contracts';
 
-// D-50: every decision centers on one diagram, the board at /scenario/[slug].
+// D-50: every decision centers on one diagram, the board at /decisions/[slug] (D-63).
 // The supplementary diagrams live on subpages that read the same scenario
 // pick from the `?scenario=` query, so switching pages keeps the comparison.
 export const DIAGRAMS = [

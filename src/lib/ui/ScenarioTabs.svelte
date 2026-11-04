@@ -58,64 +58,75 @@
 <style>
 	.tabs-wrap {
 		display: grid;
-		gap: 0.7rem;
+		gap: var(--spacing-100);
 	}
 
 	.tabs-heading {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		gap: 1rem;
+		gap: var(--spacing-200);
 	}
 
 	.eyebrow {
-		color: var(--muted);
-		font-size: 0.68rem;
-		font-weight: 760;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 600;
+		letter-spacing: 0.02em;
 	}
 
 	.tabs-note {
-		color: var(--muted);
-		font-size: 0.75rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 
 	.scenario-tabs {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 	}
 
 	.scenario-tab {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 		min-height: 3.2rem;
-		padding: 0.7rem 0.8rem;
-		border: 1px solid var(--line);
-		border-radius: 0.35rem;
-		background: var(--paper-deep);
+		padding: var(--spacing-100) var(--spacing-100);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		background: var(--case-200);
 		color: var(--ink);
 		font: inherit;
-		font-weight: 720;
+		font-weight: 600;
 		text-align: left;
 		cursor: pointer;
 	}
 
-	.scenario-tab:hover,
+	/* Hover shifts the ground; only the active tab takes the accent fill. */
+	.scenario-tab:hover {
+		border-color: var(--turf);
+		background: var(--turf-soft);
+	}
+
 	.scenario-tab.active {
-		border-color: var(--navy);
-		background: var(--navy);
-		color: var(--paper);
+		border-color: var(--turf);
+		background: var(--turf);
+		color: var(--on-turf);
 	}
 
 	.tab-state {
-		font-family: var(--mono);
-		font-size: 0.68rem;
-		font-weight: 560;
-		opacity: 0.72;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+	}
+
+	.active > .tab-state {
+		color: var(--on-turf);
 	}
 
 	@media (max-width: 560px) {

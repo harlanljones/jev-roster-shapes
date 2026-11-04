@@ -41,59 +41,60 @@
 <style>
 	.findings {
 		display: grid;
-		gap: 1.5rem;
+		gap: var(--spacing-300);
 	}
 	.findings.columns {
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-		gap: 2rem;
+		grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+		gap: var(--spacing-400);
 	}
 	.find {
-		border-top: 3px solid var(--rule);
-		padding-top: 0.75rem;
-		font-size: 0.9rem;
-		line-height: 1.5;
+		border-top: 1px solid var(--case-300);
+		padding-top: var(--spacing-100);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 	}
 	.find.empty {
 		border-top-color: var(--unknown);
 	}
 	.find.nice {
-		border-top-color: var(--snug);
+		border-top-color: var(--grade-snug);
 	}
 	.find.friction {
-		border-top-color: var(--fits);
+		border-top-color: var(--grade-fits);
 	}
 	h3 {
-		margin: 0 0 0.6rem;
-		font-size: 0.95rem;
+		margin: 0 0 var(--spacing-75);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 		font-weight: 600;
 	}
 	ul {
 		display: grid;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 		margin: 0;
-		padding-left: 1.1rem;
+		padding-left: var(--spacing-200);
 	}
 	b {
 		font-weight: 600;
 	}
 	p {
 		margin: 0;
-		color: var(--ink-soft);
+		color: var(--ink-muted);
 	}
 	.chip {
 		display: inline-block;
-		border-radius: 4px;
-		padding: 0 0.4rem;
-		background: var(--chip-bg);
-		font-family: var(--mono);
-		font-size: 0.7rem;
-		letter-spacing: 0.04em;
-		text-transform: uppercase;
+		border-radius: var(--radius-md);
+		padding: 0 var(--spacing-75);
+		background: var(--case-200);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		letter-spacing: 0.02em;
 	}
 	.chip.fits {
-		color: var(--fits);
+		color: var(--grade-fits);
 	}
 	.chip.loose {
-		color: var(--loose);
+		color: var(--grade-loose);
 	}
 </style>

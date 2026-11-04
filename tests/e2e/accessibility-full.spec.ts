@@ -23,30 +23,41 @@ test('the workspace passes the full axe rule set', async ({ page }) => {
 	expect(audit.violations).toEqual([]);
 });
 
+// D-63: the page map. Every route is audited in both themes (D-62 adds dark mode).
 const PAGES = [
+	['the overview', '/'],
 	['the season index', '/decisions'],
-	['the Wild Card decision `/` opens on', '/'],
-	['a decision board', '/scenario/offseason-infield'],
-	['the fitted case subpage', '/scenario/offseason-infield/case'],
-	['the engine pool fit subpage', '/scenario/offseason-infield/engine'],
-	['the interactions subpage', '/scenario/offseason-infield/interactions'],
-	['the slot by slot subpage', '/scenario/offseason-infield/slots'],
-	['the snapshots subpage', '/scenario/offseason-infield/snapshots']
+	['a decision board', '/decisions/offseason-infield'],
+	['the fitted case tab', '/decisions/offseason-infield/detail?view=case'],
+	['the engine pool fit tab', '/decisions/offseason-infield/detail?view=engine'],
+	['the interactions tab', '/decisions/offseason-infield/detail?view=interactions'],
+	['the slot by slot tab', '/decisions/offseason-infield/detail?view=slots'],
+	['the snapshots page', '/decisions/offseason-infield/snapshots'],
+	['the workspace gate', '/decisions/offseason-infield/compare'],
+	['a player page', '/players/668939'],
+	['the method page', '/method'],
+	['the privacy page', '/privacy'],
+	['the terms page', '/terms']
 ] as const;
 
-for (const [name, path] of PAGES) {
-	test(`${name} passes the full axe rule set`, async ({ page }) => {
-		await page.goto(path);
-		await page.addScriptTag({ path: axeCorePath });
-		const audit = await page.evaluate(() =>
-			(
-				window as unknown as {
-					axe: {
-						run: (d: Document) => Promise<{ violations: { id: string; nodes: unknown[] }[] }>;
-					};
-				}
-			).axe.run(document)
-		);
-		expect(audit.violations.map(({ id }) => id)).toEqual([]);
+for (const colorScheme of ['light', 'dark'] as const) {
+	test.describe(`${colorScheme} theme`, () => {
+		test.use({ colorScheme });
+		for (const [name, path] of PAGES) {
+			test(`${name} passes the full axe rule set`, async ({ page }) => {
+				await page.goto(path);
+				await page.addScriptTag({ path: axeCorePath });
+				const audit = await page.evaluate(() =>
+					(
+						window as unknown as {
+							axe: {
+								run: (d: Document) => Promise<{ violations: { id: string; nodes: unknown[] }[] }>;
+							};
+						}
+					).axe.run(document)
+				);
+				expect(audit.violations.map(({ id }) => id)).toEqual([]);
+			});
+		}
 	});
 }

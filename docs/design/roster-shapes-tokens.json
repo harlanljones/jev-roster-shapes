@@ -1,0 +1,553 @@
+{
+	"name": "Roster Shapes",
+	"version": 1,
+	"color": {
+		"themes": [
+			{
+				"id": "light",
+				"name": "Light"
+			},
+			{
+				"id": "dark",
+				"name": "Dark"
+			}
+		],
+		"tokens": [
+			{
+				"name": "case-000",
+				"value": {
+					"light": "#eef0ef",
+					"dark": "#181818"
+				},
+				"usage": "Page ground. Dark value is from the approved dark list."
+			},
+			{
+				"name": "case-100",
+				"value": {
+					"light": "#ffffff",
+					"dark": "#1f1f1f"
+				},
+				"usage": "Raised surface: cards, panels, table bodies, chart plots. Default chart surface."
+			},
+			{
+				"name": "case-200",
+				"value": {
+					"light": "#e2e6e4",
+					"dark": "#272727"
+				},
+				"usage": "Sunken surface: table header rows, zebra stripes, slider tracks, segmented-control ground."
+			},
+			{
+				"name": "case-300",
+				"value": {
+					"light": "#ccd2cf",
+					"dark": "#3a3a3a"
+				},
+				"usage": "Hairline rules and panel borders. Decorative only, never the only edge of a control."
+			},
+			{
+				"name": "case-400",
+				"value": {
+					"light": "#74807a",
+					"dark": "#7a7a7a"
+				},
+				"usage": "Control borders: inputs, secondary buttons, segmented control. Holds 3:1 on case-000 and case-100."
+			},
+			{
+				"name": "ink",
+				"value": {
+					"light": "#121917",
+					"dark": "#ededed"
+				},
+				"usage": "Primary text: headings, body copy, table values. On case-000, case-100, case-200."
+			},
+			{
+				"name": "ink-muted",
+				"value": {
+					"light": "#4a564f",
+					"dark": "#a3a3a3"
+				},
+				"usage": "Secondary text: captions, axis labels, legends, source lines. On case-000, case-100, case-200."
+			},
+			{
+				"name": "foam",
+				"value": {
+					"light": "#262c28",
+					"dark": "#313131"
+				},
+				"usage": "The case interior. The dark field a board is cut into, and the band behind a featured diagram. Text on it is on-foam."
+			},
+			{
+				"name": "on-foam",
+				"value": {
+					"light": "#eef0ef",
+					"dark": "#ededed"
+				},
+				"usage": "Text and marks on foam."
+			},
+			{
+				"name": "foam-edge",
+				"value": {
+					"light": "#8e9b93",
+					"dark": "#9e9e9e"
+				},
+				"usage": "The lip of a cutout against foam: a 1px inner edge so an empty cutout reads as a cut hole. Holds 3:1 on foam in both themes, and an empty cutout always carries its position label as well, so the information never rests on the line alone."
+			},
+			{
+				"name": "turf",
+				"value": {
+					"light": "#1d6b45",
+					"dark": "#5cc48c"
+				},
+				"usage": "The one accent: primary action, links, the highlighted series. Readable as text on case-000 and case-100 in both themes. One turf thing per view."
+			},
+			{
+				"name": "on-turf",
+				"value": {
+					"light": "#ffffff",
+					"dark": "#0b1a12"
+				},
+				"usage": "Text on a turf fill. Dark theme flips to near-black because turf lightens."
+			},
+			{
+				"name": "turf-soft",
+				"value": {
+					"light": "#d9ece2",
+					"dark": "#272727"
+				},
+				"usage": "Turf tint: hover ground for the primary action, selected row, info note. Text on it is ink."
+			},
+			{
+				"name": "focus",
+				"value": {
+					"light": "#1a5fb4",
+					"dark": "#8cc2f0"
+				},
+				"usage": "2px solid focus ring, offset 2px, on page surfaces. Clears 3:1 on case-000, case-100 and case-200. Never a data value."
+			},
+			{
+				"name": "focus-inverse",
+				"value": {
+					"light": "{on-foam}",
+					"dark": "{on-foam}"
+				},
+				"usage": "The focus ring for a control sitting on foam, where focus itself is too dark to see."
+			},
+			{
+				"name": "split-cold-3",
+				"value": {
+					"light": "#1b4f7d",
+					"dark": "#7ab6e6"
+				},
+				"usage": "Diverging cold pole: furthest below the league line for that pitcher hand."
+			},
+			{
+				"name": "split-cold-2",
+				"value": {
+					"light": "#4e86b5",
+					"dark": "#4581b2"
+				},
+				"usage": "Diverging cold, middle step."
+			},
+			{
+				"name": "split-cold-1",
+				"value": {
+					"light": "#b6d0e3",
+					"dark": "#26455e"
+				},
+				"usage": "Diverging cold, mildest step."
+			},
+			{
+				"name": "split-mid",
+				"value": {
+					"light": "#e4e6e5",
+					"dark": "#3a3a3a"
+				},
+				"usage": "Diverging midpoint: at the league line. A neutral grey, never a hue."
+			},
+			{
+				"name": "split-warm-1",
+				"value": {
+					"light": "#f0d79a",
+					"dark": "#5f4a16"
+				},
+				"usage": "Diverging warm, mildest step."
+			},
+			{
+				"name": "split-warm-2",
+				"value": {
+					"light": "#cfa03c",
+					"dark": "#c2962f"
+				},
+				"usage": "Diverging warm, middle step."
+			},
+			{
+				"name": "split-warm-3",
+				"value": {
+					"light": "#8a640f",
+					"dark": "#efc96a"
+				},
+				"usage": "Diverging warm pole: furthest above the league line."
+			},
+			{
+				"name": "on-split-strong",
+				"value": {
+					"light": "#ffffff",
+					"dark": "#181818"
+				},
+				"usage": "Text on a split-cold-3 or split-warm-3 fill. Text on the milder steps and on split-mid is plain ink."
+			},
+			{
+				"name": "grade-snug",
+				"value": {
+					"light": "#1a5c3c",
+					"dark": "#6cc795"
+				},
+				"usage": "Fit grade: the piece matches the cutout's primary ask. Always paired with a filled glyph and the word, never colour alone."
+			},
+			{
+				"name": "grade-fits",
+				"value": {
+					"light": "#835f0e",
+					"dark": "#e0b64e"
+				},
+				"usage": "Fit grade: an accepted shape. Always paired with a half glyph and the word."
+			},
+			{
+				"name": "grade-loose",
+				"value": {
+					"light": "#a8432a",
+					"dark": "#e89073"
+				},
+				"usage": "Fit grade: any other shape. Always paired with an open glyph and the word."
+			},
+			{
+				"name": "unknown",
+				"value": {
+					"light": "#5b6861",
+					"dark": "#8f8f8f"
+				},
+				"usage": "No grade and no value: Unclassified pieces, suppressed totals, missing rates. Never shown as zero."
+			},
+			{
+				"name": "viz-1",
+				"value": {
+					"light": "#1b5f91",
+					"dark": "#4f9fd4"
+				},
+				"usage": "Categorical slot 1. Validated order: never cycle, never skip. Fixed per entity, not per rank."
+			},
+			{
+				"name": "viz-2",
+				"value": {
+					"light": "#b0631b",
+					"dark": "#dd9348"
+				},
+				"usage": "Categorical slot 2."
+			},
+			{
+				"name": "viz-3",
+				"value": {
+					"light": "#1a7a60",
+					"dark": "#38ab87"
+				},
+				"usage": "Categorical slot 3. Slots 1 to 3 pass all-pairs: the cap for scatter and small multiples."
+			},
+			{
+				"name": "viz-4",
+				"value": {
+					"light": "#7d5aa8",
+					"dark": "#a98bd4"
+				},
+				"usage": "Categorical slot 4."
+			},
+			{
+				"name": "viz-5",
+				"value": {
+					"light": "#9a4466",
+					"dark": "#cf7d9c"
+				},
+				"usage": "Categorical slot 5. A sixth series folds into Other in case-400."
+			},
+			{
+				"name": "viz-grid",
+				"value": {
+					"light": "#dfe4e2",
+					"dark": "#2c2c2c"
+				},
+				"usage": "Gridlines and ticks. Recessive: 1px, horizontal only."
+			},
+			{
+				"name": "viz-baseline",
+				"value": {
+					"light": "#79837d",
+					"dark": "#7a7a7a"
+				},
+				"usage": "Zero line, the league line, and the lid of a capacity bin. Holds 3:1 on case-100 in both themes, because the lid and the league line carry meaning."
+			},
+			{
+				"name": "hero-from",
+				"value": {
+					"light": "#000000",
+					"dark": "#ffffff"
+				},
+				"usage": "Start of the page-title text gradient, left to right. Text only; the one gradient this system allows."
+			},
+			{
+				"name": "hero-to",
+				"value": {
+					"light": "#666666",
+					"dark": "#9b9b9b"
+				},
+				"usage": "End of the page-title text gradient. Both ends hold 4.5:1 on case-000."
+			},
+			{
+				"name": "foam-deep",
+				"value": {
+					"light": "#171b19",
+					"dark": "#1f1f1f"
+				},
+				"usage": "Cutout interiors and the case shell recess: one step deeper than foam. Dark value is from the approved dark list."
+			},
+			{
+				"name": "grade-snug-on-foam",
+				"value": {
+					"light": "#6cc795",
+					"dark": "#6cc795"
+				},
+				"usage": "Snug grade drawn on foam, where the page grade colours are too dark to see. Always with the filled glyph."
+			},
+			{
+				"name": "grade-fits-on-foam",
+				"value": {
+					"light": "#e0b64e",
+					"dark": "#e0b64e"
+				},
+				"usage": "Fits grade drawn on foam. Always with the half glyph."
+			},
+			{
+				"name": "grade-loose-on-foam",
+				"value": {
+					"light": "#ef9a80",
+					"dark": "#ef9a80"
+				},
+				"usage": "Loose grade drawn on foam. Always with the open glyph."
+			},
+			{
+				"name": "unknown-on-foam",
+				"value": {
+					"light": "#a8b0ab",
+					"dark": "#a3a3a3"
+				},
+				"usage": "No grade or no value, drawn on foam."
+			}
+		]
+	},
+	"type": {
+		"fonts": [],
+		"families": {
+			"sans": "\"Geist\", system-ui, -apple-system, sans-serif",
+			"mono": "\"Geist Mono\", ui-monospace, \"SF Mono\", Menlo, monospace"
+		},
+		"groups": [
+			{
+				"name": "Display",
+				"family": "sans",
+				"styles": [
+					{
+						"name": "display",
+						"fontSize": "48px",
+						"lineHeight": 1,
+						"fontWeight": 600,
+						"letterSpacing": "-0.03em",
+						"sample": "Eight decisions, one case",
+						"usage": "Page title (text-5xl). One per page; text-4xl at phone width. Carries the hero text gradient."
+					},
+					{
+						"name": "headline",
+						"fontSize": "30px",
+						"lineHeight": "36px",
+						"fontWeight": 600,
+						"letterSpacing": "-0.02em",
+						"sample": "What the lineup leaves off",
+						"usage": "Section heads (text-3xl)."
+					},
+					{
+						"name": "title",
+						"fontSize": "20px",
+						"lineHeight": "28px",
+						"fontWeight": 600,
+						"letterSpacing": "-0.01em",
+						"sample": "Winter infield",
+						"usage": "Card and diagram titles, player names (text-xl)."
+					}
+				]
+			},
+			{
+				"name": "Text",
+				"family": "sans",
+				"styles": [
+					{
+						"name": "lead",
+						"fontSize": "18px",
+						"lineHeight": "28px",
+						"fontWeight": 400,
+						"sample": "Every number traces to a source, an assumption, or a versioned calculation.",
+						"usage": "Standfirst under a page title (text-lg). ink-muted."
+					},
+					{
+						"name": "body",
+						"fontSize": "16px",
+						"lineHeight": "24px",
+						"fontWeight": 400,
+						"sample": "Visible foam is friction; an empty cutout is a position nobody covers.",
+						"usage": "Body copy (text-base). Measure about 65ch. Main buttons, semibold."
+					},
+					{
+						"name": "body-sm",
+						"fontSize": "14px",
+						"lineHeight": "20px",
+						"fontWeight": 400,
+						"sample": "Split run estimates are a judgment layer and never change an engine number.",
+						"usage": "Card body, findings, source lines (text-sm). Header buttons, semibold."
+					}
+				]
+			},
+			{
+				"name": "Data",
+				"family": "mono",
+				"styles": [
+					{
+						"name": "stat-xl",
+						"fontSize": "36px",
+						"lineHeight": "40px",
+						"fontWeight": 500,
+						"letterSpacing": "-0.025em",
+						"sample": "+14.2",
+						"usage": "The one number a view answers with (text-4xl). Tabular figures."
+					},
+					{
+						"name": "stat",
+						"fontSize": "20px",
+						"lineHeight": "28px",
+						"fontWeight": 500,
+						"sample": ".127",
+						"usage": "Readout values, slot totals (text-xl)."
+					},
+					{
+						"name": "data",
+						"fontSize": "14px",
+						"lineHeight": "20px",
+						"fontWeight": 400,
+						"sample": "582  .697  .718",
+						"usage": "Table cells, tooltip values, inputs (text-sm)."
+					},
+					{
+						"name": "label",
+						"fontSize": "12px",
+						"lineHeight": "16px",
+						"fontWeight": 500,
+						"letterSpacing": "0.06em",
+						"sample": "Public data · observed",
+						"usage": "Eyebrows, tags, column headers, axis ticks, sources (text-xs). Sentence case, not all caps."
+					}
+				]
+			}
+		]
+	},
+	"spacing": {
+		"tokens": [
+			{
+				"name": "spacing-25",
+				"value": "2px",
+				"usage": "Hairline offsets only."
+			},
+			{
+				"name": "spacing-50",
+				"value": "4px",
+				"usage": "Glyph to text, tag padding block, gap between packed pieces."
+			},
+			{
+				"name": "spacing-75",
+				"value": "8px",
+				"usage": "Inline gaps, legend item gap, button padding block."
+			},
+			{
+				"name": "spacing-100",
+				"value": "12px",
+				"usage": "Table cell and control padding, button padding inline."
+			},
+			{
+				"name": "spacing-200",
+				"value": "16px",
+				"usage": "Panel padding at phone width; page side gutter; stack gap."
+			},
+			{
+				"name": "spacing-300",
+				"value": "24px",
+				"usage": "Panel padding; gap between a diagram and its readout."
+			},
+			{
+				"name": "spacing-400",
+				"value": "32px",
+				"usage": "Gap between modules. The cutout pitch on a case."
+			},
+			{
+				"name": "spacing-500",
+				"value": "40px",
+				"usage": "Hairline offsets only."
+			},
+			{
+				"name": "spacing-600",
+				"value": "48px",
+				"usage": "Section spacing."
+			},
+			{
+				"name": "spacing-700",
+				"value": "64px",
+				"usage": "Large section spacing."
+			},
+			{
+				"name": "spacing-800",
+				"value": "80px",
+				"usage": "Page top on the overview."
+			},
+			{
+				"name": "spacing-900",
+				"value": "96px",
+				"usage": "Overview section rhythm."
+			}
+		]
+	},
+	"radius": {
+		"tokens": [
+			{
+				"name": "radius-sm",
+				"value": "2px",
+				"usage": "Tags, inputs, table highlight cells, cutouts. The house corner is nearly square."
+			},
+			{
+				"name": "radius-md",
+				"value": "4px",
+				"usage": "Panels, buttons, chart frames, tooltips, bar data ends. Nested shapes under a 32px gap: inner = outer minus gap, only when above 2px, so contents of a 4px panel stay square."
+			},
+			{
+				"name": "radius-full",
+				"value": "9999px",
+				"usage": "Slider thumbs, toggle tracks, the floating nav."
+			}
+		]
+	},
+	"shadow": {
+		"tokens": [
+			{
+				"name": "shadow-pop",
+				"value": {
+					"light": "0 6px 20px rgba(18,25,23,0.14)",
+					"dark": "0 6px 20px rgba(0,0,0,0.5)"
+				},
+				"usage": "Tooltips, popovers and the floating nav only, tinted toward the ground. Panels sit on hairlines."
+			}
+		]
+	}
+}

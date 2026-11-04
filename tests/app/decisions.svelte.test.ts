@@ -27,10 +27,10 @@ describe('DecisionsPage', () => {
 		const links = page.getByRole('link');
 		await expect
 			.element(links.filter({ hasText: 'How do you replace Bregman?' }))
-			.toHaveAttribute('href', '/scenario/offseason-infield');
+			.toHaveAttribute('href', '/decisions/offseason-infield');
 		await expect
 			.element(links.filter({ hasText: 'Who plays first against the Yankees?' }))
-			.toHaveAttribute('href', '/scenario/wild-card-roster');
+			.toHaveAttribute('href', '/decisions/wild-card-roster');
 		// Eight timeline pins plus eight decision cards, and nothing else links out.
 		expect(
 			page.getByRole('navigation', { name: 'Season timeline' }).getByRole('link').elements()

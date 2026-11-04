@@ -71,7 +71,7 @@ describe('SnapshotsPage', () => {
 		await expect
 			.element(page.getByText(/Recorded interpretations \(D-55\): a Square "full workload"/))
 			.toBeVisible();
-		await expect.element(page.getByText(/no held-out split at this sample size/)).toBeVisible();
+		await expect.element(page.getByText(/no held out split at this sample size/)).toBeVisible();
 	});
 });
 

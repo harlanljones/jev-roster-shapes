@@ -1,0 +1,206 @@
+/* Roster Shapes design system (D-62), generated from the design-system artifact's tokens.json
+   (https://claude.ai/artifact/LSQcbG65oYb3ZdM1b43Z1B, version 4; a copy is checked in at
+   docs/design/roster-shapes-tokens.json). Concrete values follow
+   ai-design-skills (landing-page-design Part B, redesign-existing-projects Design Values).
+   Edit the artifact, then regenerate; do not hand-edit values here. */
+
+:root {
+	color-scheme: light;
+	--case-000: #eef0ef;
+	--case-100: #ffffff;
+	--case-200: #e2e6e4;
+	--case-300: #ccd2cf;
+	--case-400: #74807a;
+	--ink: #121917;
+	--ink-muted: #4a564f;
+	--foam: #262c28;
+	--on-foam: #eef0ef;
+	--foam-edge: #8e9b93;
+	--turf: #1d6b45;
+	--on-turf: #ffffff;
+	--turf-soft: #d9ece2;
+	--focus: #1a5fb4;
+	--focus-inverse: var(--on-foam);
+	--split-cold-3: #1b4f7d;
+	--split-cold-2: #4e86b5;
+	--split-cold-1: #b6d0e3;
+	--split-mid: #e4e6e5;
+	--split-warm-1: #f0d79a;
+	--split-warm-2: #cfa03c;
+	--split-warm-3: #8a640f;
+	--on-split-strong: #ffffff;
+	--grade-snug: #1a5c3c;
+	--grade-fits: #835f0e;
+	--grade-loose: #a8432a;
+	--unknown: #5b6861;
+	--viz-1: #1b5f91;
+	--viz-2: #b0631b;
+	--viz-3: #1a7a60;
+	--viz-4: #7d5aa8;
+	--viz-5: #9a4466;
+	--viz-grid: #dfe4e2;
+	--viz-baseline: #79837d;
+	--hero-from: #000000;
+	--hero-to: #666666;
+	--foam-deep: #171b19;
+	--grade-snug-on-foam: #6cc795;
+	--grade-fits-on-foam: #e0b64e;
+	--grade-loose-on-foam: #ef9a80;
+	--unknown-on-foam: #a8b0ab;
+	--shadow-pop: 0 6px 20px rgba(18, 25, 23, 0.14);
+
+	--font-sans: 'Geist Sans', 'Geist', system-ui, -apple-system, sans-serif;
+	--font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+	/* Tailwind type scale: every size takes its own paired line height. */
+	--text-xs: 0.75rem;
+	--text-xs--lh: 16px;
+	--text-sm: 0.875rem;
+	--text-sm--lh: 20px;
+	--text-base: 1rem;
+	--text-base--lh: 24px;
+	--text-lg: 1.125rem;
+	--text-lg--lh: 28px;
+	--text-xl: 1.25rem;
+	--text-xl--lh: 28px;
+	--text-2xl: 1.5rem;
+	--text-2xl--lh: 32px;
+	--text-3xl: 1.875rem;
+	--text-3xl--lh: 36px;
+	--text-4xl: 2.25rem;
+	--text-4xl--lh: 40px;
+	--text-5xl: 3rem;
+	--text-5xl--lh: 1;
+	--text-6xl: 3.75rem;
+	--text-6xl--lh: 1;
+	--text-7xl: 4.5rem;
+	--text-7xl--lh: 1;
+	--text-8xl: 6rem;
+	--text-8xl--lh: 1;
+
+	/* Spacing: only these values. */
+	--spacing-0: 0px;
+	--spacing-25: 2px;
+	--spacing-50: 4px;
+	--spacing-75: 8px;
+	--spacing-100: 12px;
+	--spacing-200: 16px;
+	--spacing-300: 24px;
+	--spacing-400: 32px;
+	--spacing-500: 40px;
+	--spacing-600: 48px;
+	--spacing-700: 64px;
+	--spacing-800: 80px;
+	--spacing-900: 96px;
+
+	/* Tailwind radii in use. */
+	--radius-sm: 2px;
+	--radius-md: 4px;
+	--radius-full: 9999px;
+
+	/* Motion: one curve; 500ms for movement, 300ms for colour and opacity. */
+	--ease: cubic-bezier(0.22, 1, 0.36, 1);
+	--dur-move: 500ms;
+	--dur-fade: 300ms;
+	--dur-reveal: 700ms;
+
+	--measure: 65ch;
+	--hero-max: 680px;
+	--page-max: 1200px;
+	--z-nav: 20;
+	--z-menu: 30;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		color-scheme: dark;
+		--case-000: #181818;
+		--case-100: #1f1f1f;
+		--case-200: #272727;
+		--case-300: #3a3a3a;
+		--case-400: #7a7a7a;
+		--ink: #ededed;
+		--ink-muted: #a3a3a3;
+		--foam: #313131;
+		--on-foam: #ededed;
+		--foam-edge: #9e9e9e;
+		--turf: #5cc48c;
+		--on-turf: #0b1a12;
+		--turf-soft: #272727;
+		--focus: #8cc2f0;
+		--focus-inverse: var(--on-foam);
+		--split-cold-3: #7ab6e6;
+		--split-cold-2: #4581b2;
+		--split-cold-1: #26455e;
+		--split-mid: #3a3a3a;
+		--split-warm-1: #5f4a16;
+		--split-warm-2: #c2962f;
+		--split-warm-3: #efc96a;
+		--on-split-strong: #181818;
+		--grade-snug: #6cc795;
+		--grade-fits: #e0b64e;
+		--grade-loose: #e89073;
+		--unknown: #8f8f8f;
+		--viz-1: #4f9fd4;
+		--viz-2: #dd9348;
+		--viz-3: #38ab87;
+		--viz-4: #a98bd4;
+		--viz-5: #cf7d9c;
+		--viz-grid: #2c2c2c;
+		--viz-baseline: #7a7a7a;
+		--hero-from: #ffffff;
+		--hero-to: #9b9b9b;
+		--foam-deep: #1f1f1f;
+		--grade-snug-on-foam: #6cc795;
+		--grade-fits-on-foam: #e0b64e;
+		--grade-loose-on-foam: #ef9a80;
+		--unknown-on-foam: #a3a3a3;
+		--shadow-pop: 0 6px 20px rgba(0, 0, 0, 0.5);
+	}
+}
+
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--case-000: #181818;
+	--case-100: #1f1f1f;
+	--case-200: #272727;
+	--case-300: #3a3a3a;
+	--case-400: #7a7a7a;
+	--ink: #ededed;
+	--ink-muted: #a3a3a3;
+	--foam: #313131;
+	--on-foam: #ededed;
+	--foam-edge: #9e9e9e;
+	--turf: #5cc48c;
+	--on-turf: #0b1a12;
+	--turf-soft: #272727;
+	--focus: #8cc2f0;
+	--focus-inverse: var(--on-foam);
+	--split-cold-3: #7ab6e6;
+	--split-cold-2: #4581b2;
+	--split-cold-1: #26455e;
+	--split-mid: #3a3a3a;
+	--split-warm-1: #5f4a16;
+	--split-warm-2: #c2962f;
+	--split-warm-3: #efc96a;
+	--on-split-strong: #181818;
+	--grade-snug: #6cc795;
+	--grade-fits: #e0b64e;
+	--grade-loose: #e89073;
+	--unknown: #8f8f8f;
+	--viz-1: #4f9fd4;
+	--viz-2: #dd9348;
+	--viz-3: #38ab87;
+	--viz-4: #a98bd4;
+	--viz-5: #cf7d9c;
+	--viz-grid: #2c2c2c;
+	--viz-baseline: #7a7a7a;
+	--hero-from: #ffffff;
+	--hero-to: #9b9b9b;
+	--foam-deep: #1f1f1f;
+	--grade-snug-on-foam: #6cc795;
+	--grade-fits-on-foam: #e0b64e;
+	--grade-loose-on-foam: #ef9a80;
+	--unknown-on-foam: #a3a3a3;
+	--shadow-pop: 0 6px 20px rgba(0, 0, 0, 0.5);
+}

@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { detailQuery } from './routes';
 	import { page } from '$app/state';
 	import type { Bundle } from '$lib/contracts';
 	import { DEFAULT_JEV_MODEL, buildProfileRequest } from '$lib/classification';
 	import { calculateComparison, calculatePoolFit, poolFitFor } from '$lib/engine';
 	import { storylineRegistry } from '$lib/storylines/registry';
+	import Icon from '$lib/ui/Icon.svelte';
+	import { reveal } from './reveal';
 	import DecisionNav from './DecisionNav.svelte';
 	import { baselineFor, evidenceFor, provenanceNote } from './classification-evidence';
 	import ScenarioPicker from './ScenarioPicker.svelte';
@@ -48,6 +51,15 @@
 	const story = $derived(
 		storylineRegistry.find((storyline) => storyline.slug === activeSlug) ?? storylineRegistry[0]!
 	);
+	const position = $derived(storylineRegistry.findIndex((s) => s.slug === story.slug));
+	const prev = $derived(position > 0 ? storylineRegistry[position - 1] : undefined);
+	const next = $derived(storylineRegistry[position + 1]);
+	const eventDay = (iso: string) =>
+		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
+			month: 'long',
+			day: 'numeric',
+			timeZone: 'UTC'
+		});
 	const bundle = $derived(story.bundle);
 	const scenario = $derived(pickScenario(bundle, page.url.searchParams.get('scenario')));
 	const isBaseline = $derived(scenario.id === bundle.comparison.baseline.id);
@@ -104,7 +116,6 @@
 		v == null
 			? 'Δ unavailable'
 			: `Δ ${Number(v) >= 0 ? '+' : '−'}${Math.abs(Number(v)).toFixed(3)}`;
-	const query = $derived(isBaseline ? '' : `?scenario=${encodeURIComponent(scenario.id)}`);
 	const cardStat = $derived<Record<string, string>>({
 		case: `${view.findings.nice.length} nice fits · ${view.findings.friction.length} friction · ${view.gaps.length} empty cutouts`,
 		engine: `Left on the table ${engineDelta(engineFit?.deltaVsReference?.runs ?? null)} runs`,
@@ -126,11 +137,20 @@
 </svelte:head>
 
 <div class="library">
-	<SeasonTimeline activeSlug={story.slug} />
-
 	<section class="lead" aria-labelledby="story-title">
 		<div class="lead-main">
-			<h1 id="story-title">{story.title}</h1>
+			<nav class="sequence" aria-label="Decisions in order">
+				<span class="sequence-at"
+					>Decision {position + 1} of {storylineRegistry.length} · {eventDay(story.eventDate)}</span
+				>
+				{#if prev}<a href={resolve('/decisions/[slug]', { slug: prev.slug })}
+						><Icon name="arrow-left" size={16} />{prev.short}</a
+					>{/if}
+				{#if next}<a href={resolve('/decisions/[slug]', { slug: next.slug })}
+						>{next.short}<Icon name="arrow-right" size={16} /></a
+					>{/if}
+			</nav>
+			<h1 id="story-title" class="page-title">{story.title}</h1>
 			<p class="lede">{story.lede}</p>
 			<DecisionNav slug={story.slug} current="board" scenarioId={isBaseline ? null : scenario.id} />
 			<ScenarioPicker {bundle} {pool} current={scenario} />
@@ -150,7 +170,7 @@
 				{/if}
 				<p class="call-note">
 					Answers are recorded by CI when new snapshots reach main; <a
-						href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}>Snapshots</a
+						href={resolve('/decisions/[slug]/snapshots', { slug: story.slug })}>Snapshots</a
 					> shows every answer and the request behind it.
 				</p>
 			</section>
@@ -200,7 +220,7 @@
 				{#if pendingOpen}
 					<div class="ack-box" role="group" aria-label="Public data acknowledgment">
 						<p>
-							This scenario uses observed public values, not team-approved projections. Open it for
+							This scenario uses observed public values, not team approved projections. Open it for
 							local review?
 						</p>
 						<div class="ack-actions">
@@ -221,7 +241,7 @@
 		<h2 id="board-reads">What the board shows</h2>
 		<p class="data-class-banner">
 			<strong>Public data</strong> · engine rates are observed R/PA ({story.rateLabel}), what was
-			known on the decision date, not team-approved projections. The board sizes pieces by what the
+			known on the decision date, not team approved projections. The board sizes pieces by what the
 			2026 season produced through {SPLIT_SOURCE.asOf}.
 			{story.eventBasis}
 		</p>
@@ -241,10 +261,10 @@
 				<li>
 					<a
 						class="card"
-						href="{resolve('/scenario/[slug]/[diagram=diagram]', {
-							slug: story.slug,
-							diagram: d.key
-						})}{query}"
+						href="{resolve('/decisions/[slug]/detail', { slug: story.slug })}{detailQuery(
+							d.key,
+							isBaseline ? null : scenario.id
+						)}"
 					>
 						<span class="card-title">{d.title}</span>
 						<span class="card-blurb">{d.blurb}</span>
@@ -253,7 +273,7 @@
 				</li>
 			{/each}
 			<li>
-				<a class="card" href={resolve('/scenario/[slug]/snapshots', { slug: story.slug })}>
+				<a class="card" href={resolve('/decisions/[slug]/snapshots', { slug: story.slug })}>
 					<span class="card-title">Snapshots</span>
 					<span class="card-blurb">The Jev prompt and its answers beside the roster.</span>
 					<span class="card-stat">Advisory only; never moves a number</span>
@@ -262,15 +282,20 @@
 		</ul>
 	</section>
 
+	<section class="block" aria-labelledby="season-heading" use:reveal>
+		<h2 id="season-heading">Where this decision sits in the season</h2>
+		<SeasonTimeline activeSlug={story.slug} />
+	</section>
+
 	<footer class="sources">
-		Players, eligibility and observed R/PA come from the eight checked-in season-timeline bundles ({story.sourceLabel}).
+		Players, eligibility and observed R/PA come from the eight checked in season timeline bundles ({story.sourceLabel}).
 		Splits and PA come from {SPLIT_SOURCE.label}, fetched {SPLIT_SOURCE.fetchedAt}. Shapes follow
 		rubric v2, where a Star is a tough fit rather than a star player. The board is a hindsight
 		display layer over actual 2026 production; the engine's pool fit uses the bundle's dated metric
 		only, which is why the two can disagree. Split run estimates are a judgment layer and never
 		change an engine number.
 		{#if (story.bundle.comparison.baseline.projectedStarters ?? []).length > 0}
-			This decision's lineups are the projected 2027 roster from early-October reporting (D-56), and
+			This decision's lineups are the projected 2027 roster from early October reporting (D-56), and
 			its starters are locked into every searched best nine.
 		{/if}
 	</footer>
@@ -279,104 +304,107 @@
 <style>
 	.library {
 		display: grid;
-		gap: 3rem;
+		gap: var(--spacing-600);
 		max-width: 88rem;
 		margin: 0 auto;
-		padding: 1.5rem clamp(1rem, 4vw, 3rem) 4rem;
+		padding: var(--spacing-300) var(--spacing-300) var(--spacing-700);
 	}
 	.lead {
 		display: grid;
-		gap: 1.25rem;
+		gap: var(--spacing-200);
 	}
 	.lead-main,
 	.pair-col {
 		display: grid;
-		gap: 1.25rem;
+		gap: var(--spacing-200);
 		align-content: start;
 		min-width: 0;
 	}
 	.pair {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		gap: 1.5rem;
+		gap: var(--spacing-300);
 		align-items: start;
 	}
 	.call-note {
 		margin: 0;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.call-note a {
-		color: var(--marker);
+		color: var(--turf);
 	}
 	h1 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: clamp(2.25rem, 5vw, 3.75rem);
-		font-weight: 400;
-		letter-spacing: 0.01em;
-		line-height: 1;
-		text-wrap: balance;
 	}
 	h2 {
 		margin: 0;
-		font-family: var(--display);
-		font-size: clamp(1.5rem, 3vw, 2rem);
+		font-family: var(--font-sans);
+		font-size: var(--text-3xl);
+		line-height: var(--text-3xl--lh);
 		font-weight: 400;
 		letter-spacing: 0.04em;
 	}
 	.lede {
 		max-width: 66ch;
 		margin: 0;
-		color: var(--ink-soft);
-		font-size: 1rem;
-		line-height: 1.55;
+		color: var(--ink-muted);
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
 	}
 	.data-class-banner {
 		max-width: 80ch;
 		margin: 0;
-		border: 1px solid var(--marker);
-		border-radius: 8px;
-		padding: 0.55rem 0.8rem;
-		color: var(--ink-soft);
-		background: var(--panel);
-		font-size: 0.82rem;
+		border: 1px solid var(--turf);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-100);
+		color: var(--ink-muted);
+		background: var(--case-100);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.data-class-banner strong {
 		color: var(--ink);
 	}
 	.readout {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-		gap: 0.75rem;
+		grid-template-columns: repeat(auto-fit, minmax(min(10rem, 100%), 1fr));
+		gap: var(--spacing-100);
 		margin: 0;
 	}
 	.readout div {
-		border: 1px solid var(--rule);
-		border-radius: 8px;
-		padding: 0.6rem 0.8rem;
-		background: var(--panel);
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-100);
+		background: var(--case-100);
 	}
 	.readout dt {
-		color: var(--ink-soft);
-		font: 500 0.7rem var(--mono);
-		letter-spacing: 0.06em;
-		text-transform: uppercase;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
+		letter-spacing: 0.02em;
 	}
 	.readout dd {
-		margin: 0.2rem 0 0;
-		font: 600 clamp(0.85rem, 4.2vw, 1.05rem) var(--mono);
+		margin: var(--spacing-50) 0 0;
+		font-family: var(--font-mono);
+		font-size: var(--text-base);
+		line-height: var(--text-base--lh);
+		font-weight: 600;
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
 	}
 	.stamp {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.3rem 1.25rem;
+		gap: var(--spacing-50) var(--spacing-200);
 		margin: 0;
-		color: var(--ink-soft);
-		font-family: var(--mono);
-		font-size: 0.78rem;
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.stamp b {
 		color: var(--ink);
@@ -386,29 +414,31 @@
 	.secondary-button {
 		min-height: 2.75rem;
 		border: 1px solid var(--ink);
-		border-radius: 8px;
-		padding: 0.6rem 1rem;
+		border-radius: var(--radius-md);
+		padding: var(--spacing-75) var(--spacing-200);
 		font: inherit;
-		font-size: 0.9rem;
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 		font-weight: 600;
 		cursor: pointer;
 	}
 	.primary-button {
-		color: var(--panel);
+		color: var(--case-100);
 		background: var(--ink);
 	}
 	.secondary-button {
 		color: var(--ink);
-		background: var(--panel);
+		background: var(--case-100);
 	}
 	.ack-box {
 		display: grid;
-		gap: 0.6rem;
-		border: 1px solid var(--marker);
-		border-radius: 8px;
-		padding: 0.85rem;
-		background: var(--panel);
-		font-size: 0.85rem;
+		gap: var(--spacing-75);
+		border: 1px solid var(--turf);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-100);
+		background: var(--case-100);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.ack-box p {
 		margin: 0;
@@ -416,61 +446,99 @@
 	.ack-actions {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: var(--spacing-75);
 	}
 	.block {
 		display: grid;
-		gap: 1.25rem;
+		gap: var(--spacing-200);
 	}
 	.cards {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-		gap: 1rem;
+		grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+		gap: var(--spacing-200);
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
 	.card {
 		display: grid;
-		gap: 0.4rem;
+		gap: var(--spacing-75);
 		height: 100%;
 		box-sizing: border-box;
-		border: 1px solid var(--rule);
-		border-radius: 12px;
-		padding: 1rem 1.1rem;
+		border: 1px solid var(--case-300);
+		border-radius: var(--radius-md);
+		padding: var(--spacing-200) var(--spacing-200);
 		color: var(--ink);
-		background: var(--panel);
+		background: var(--case-100);
 		text-decoration: none;
 	}
 	.card:hover {
-		border-color: var(--ink-soft);
+		border-color: var(--ink-muted);
 	}
 	.card-title {
-		font-family: var(--display);
-		font-size: 1.2rem;
+		font-family: var(--font-sans);
+		font-size: var(--text-lg);
+		line-height: var(--text-lg--lh);
 		letter-spacing: 0.04em;
 	}
 	.card-blurb {
-		color: var(--ink-soft);
-		font-size: 0.85rem;
-		line-height: 1.5;
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	.card-stat {
 		align-self: end;
-		color: var(--marker);
-		font: 500 0.75rem var(--mono);
+		color: var(--turf);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+		font-weight: 500;
 	}
 	.sources {
 		max-width: 90ch;
-		border-top: 1px solid var(--rule);
-		padding-top: 1rem;
-		color: var(--ink-soft);
-		font-size: 0.8rem;
-		line-height: 1.6;
+		border-top: 1px solid var(--case-300);
+		padding-top: var(--spacing-200);
+		color: var(--ink-muted);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
 	}
 	@media (max-width: 1100px) {
 		.pair {
 			grid-template-columns: 1fr;
 		}
+	}
+	.sequence {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacing-75) var(--spacing-300);
+		margin-bottom: var(--spacing-200);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
+	}
+	.sequence-at {
+		color: var(--ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		line-height: var(--text-xs--lh);
+	}
+	@media (max-width: 520px) {
+		.sequence-at {
+			flex-basis: 100%;
+		}
+	}
+	.sequence a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-50);
+		min-height: 44px;
+		color: var(--ink);
+		font-weight: 500;
+		text-decoration: underline;
+		text-decoration-color: var(--case-400);
+		text-underline-offset: 4px;
+	}
+	.sequence a:hover {
+		text-decoration-color: currentColor;
 	}
 </style>
