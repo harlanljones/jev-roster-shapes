@@ -315,21 +315,14 @@ test('links styled as buttons are as tall as buttons', async ({ page }) => {
 test('line boxes grow with the reader text size', async ({ page }) => {
 	await page.goto('/decisions');
 	await page.addStyleTag({ content: 'html { font-size: 200% !important; }' });
-	const [size, lead] = await page
-		.locator('h1.page-title')
-		.evaluate((el) => [
-			parseFloat(getComputedStyle(el).fontSize),
-			parseFloat(getComputedStyle(el).lineHeight)
-		]);
-	expect(lead).toBeGreaterThanOrEqual(size);
-	const body = await page
-		.locator('.lede')
-		.first()
-		.evaluate((el) => [
-			parseFloat(getComputedStyle(el).fontSize),
-			parseFloat(getComputedStyle(el).lineHeight)
-		]);
-	expect(body[1]).toBeGreaterThan(body[0]);
+	const metrics = (el: Element): [number, number] => [
+		parseFloat(getComputedStyle(el).fontSize),
+		parseFloat(getComputedStyle(el).lineHeight)
+	];
+	const [titleSize, titleLead] = await page.locator('h1.page-title').evaluate(metrics);
+	expect(titleLead).toBeGreaterThanOrEqual(titleSize);
+	const [bodySize, bodyLead] = await page.locator('.lede').first().evaluate(metrics);
+	expect(bodyLead).toBeGreaterThan(bodySize);
 });
 
 test('every split legend says the colour is a rating', async ({ page }) => {
