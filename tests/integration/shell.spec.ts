@@ -340,4 +340,8 @@ test('the overview board keeps its headings readable at phone width', async ({ p
 	await expect(caption).toContainText("On the field (lid = this pool's best)");
 	await expect(caption).toContainText('Off the field');
 	await expect(page.locator('svg.board text.head')).toHaveCount(0);
+	// With the headings in the caption, the drawing starts just under it: no empty band.
+	const captionBottom = (await caption.boundingBox())!;
+	const lid = (await page.locator('svg.board rect.lid').boundingBox())!;
+	expect(lid.y - (captionBottom.y + captionBottom.height)).toBeLessThan(24);
 });
