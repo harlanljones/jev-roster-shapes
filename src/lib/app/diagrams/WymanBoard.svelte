@@ -63,6 +63,9 @@
 	/** Drawn this small, the 12px notes inside the SVG would fall under 9px on screen, so the
 	 * headings, the lid note and the headroom figure move into an HTML caption above it. */
 	const compact = $derived(unit < 0.75);
+	/** The band above TOP holds the in-drawing headings; with those in the caption, the drawing
+	 * starts just above the lid and tray instead of leaving the band empty. */
+	const Y0 = $derived(compact ? TOP - 6 : 0);
 
 	function shapeFor(id: string | null): ShapeLabel {
 		const shape = id ? (pool.get(id)?.shape ?? 'Circle') : 'Circle';
@@ -173,126 +176,136 @@
 	}
 </script>
 
-{#if compact}
-	<p class="board-caption">
-		<span>On the field (lid = this pool's best)</span>
-		{#if pileTop - (FLOOR - BIN_H) > 22}<span class="caption-headroom"
-				>Headroom {Math.round(bin.headroom)}%</span
-			>{/if}
-		<span>Off the field{offField.length ? '' : ': nobody left off'}</span>
-	</p>
-{/if}
-<div class="panel" class:scrolls bind:clientWidth={panelW}>
-	<svg
-		class="board"
-		viewBox="0 0 {VB_W} {TOP + H + 12}"
-		style:width="{drawW}px"
-		style:--fs="{FS}px"
-		role="group"
-		aria-label={label}
-	>
-		<defs>
-			<pattern
-				id="{uid}-hatch"
-				width="8"
-				height="8"
-				patternUnits="userSpaceOnUse"
-				patternTransform="rotate(45)"
-			>
-				<line
-					x1="0"
-					y1="0"
-					x2="0"
-					y2="8"
-					stroke="var(--unknown)"
-					stroke-width="1.5"
-					opacity="0.5"
-				/>
-			</pattern>
-			{#each [...onField, ...offField] as { key, cx } (key)}
-				<clipPath id="{uid}-{key}-L" clipPathUnits="userSpaceOnUse">
-					<rect x={cx - 4000} y="-4000" width="4000" height="8000" />
-				</clipPath>
-				<clipPath id="{uid}-{key}-R" clipPathUnits="userSpaceOnUse">
-					<rect x={cx} y="-4000" width="4000" height="8000" />
-				</clipPath>
-			{/each}
-		</defs>
+<!-- The caption and the drawing stay one unit, so a parent grid gap never opens between them. -->
+<div class="board-unit">
+	{#if compact}
+		<p class="board-caption">
+			<span>On the field (lid = this pool's best)</span>
+			{#if pileTop - (FLOOR - BIN_H) > 22}<span class="caption-headroom"
+					>Headroom {Math.round(bin.headroom)}%</span
+				>{/if}
+			<span>Off the field{offField.length ? '' : ': nobody left off'}</span>
+		</p>
+	{/if}
+	<div class="panel" class:scrolls bind:clientWidth={panelW}>
+		<svg
+			class="board"
+			viewBox="0 {Y0} {VB_W} {TOP + H + 12 - Y0}"
+			style:width="{drawW}px"
+			style:--fs="{FS}px"
+			role="group"
+			aria-label={label}
+		>
+			<defs>
+				<pattern
+					id="{uid}-hatch"
+					width="8"
+					height="8"
+					patternUnits="userSpaceOnUse"
+					patternTransform="rotate(45)"
+				>
+					<line
+						x1="0"
+						y1="0"
+						x2="0"
+						y2="8"
+						stroke="var(--unknown)"
+						stroke-width="1.5"
+						opacity="0.5"
+					/>
+				</pattern>
+				{#each [...onField, ...offField] as { key, cx } (key)}
+					<clipPath id="{uid}-{key}-L" clipPathUnits="userSpaceOnUse">
+						<rect x={cx - 4000} y="-4000" width="4000" height="8000" />
+					</clipPath>
+					<clipPath id="{uid}-{key}-R" clipPathUnits="userSpaceOnUse">
+						<rect x={cx} y="-4000" width="4000" height="8000" />
+					</clipPath>
+				{/each}
+			</defs>
 
-		{#if !compact}
-			<text class="head" x={X0} y={TOP - 14}>On the field</text>
-			<text class="head-note" x={X0 + BIN_W} y={TOP - 14} text-anchor="end"
-				>lid = this pool's best</text
-			>
-		{/if}
-		<rect class="lid" x={X0} y={FLOOR - BIN_H} width={BIN_W} height={BIN_H} />
-		{#if pileTop - (FLOOR - BIN_H) > 22}
-			<line class="pile" x1={X0} x2={X0 + BIN_W} y1={pileTop} y2={pileTop} stroke-dasharray="6 5" />
 			{#if !compact}
-				<text
-					class="headroom"
-					x={X0 + BIN_W / 2}
-					y={(pileTop + FLOOR - BIN_H) / 2 + 4}
-					text-anchor="middle">Headroom {Math.round(bin.headroom)}%</text
+				<text class="head" x={X0} y={TOP - 14}>On the field</text>
+				<text class="head-note" x={X0 + BIN_W} y={TOP - 14} text-anchor="end"
+					>lid = this pool's best</text
 				>
 			{/if}
-		{/if}
-
-		{#if !compact}<text class="head" x={TX} y={TOP - 14}>Off the field</text>{/if}
-		<path
-			class="tray"
-			d="M{TX} {FLOOR - H} V{FLOOR} H{TX + TRAY_W} V{FLOOR - H}"
-			stroke-dasharray="3 5"
-		/>
-		{#if !offField.length && !compact}
-			<text class="head-note" x={TX + TRAY_W / 2} y={FLOOR - 20} text-anchor="middle"
-				>nobody left off</text
-			>
-		{/if}
-
-		{#each [...onField, ...offField] as piece (piece.key)}
-			{@const { key, id, pc, cx, cy, L, R } = piece}
-			<g
-				class="piece"
-				class:sel={id != null && selected === id}
-				role="button"
-				tabindex="0"
-				aria-label={piece.aria}
-				aria-pressed={id != null && selected === id}
-				onclick={() => id && onSelect(id)}
-				onkeydown={(e) => keySelect(e, id)}
-			>
-				{#each [['L', L], ['R', R]] as const as [side, h] (side)}
-					<path
-						class="body"
-						d={h.d}
-						fill={h.fill}
-						stroke={h.missing ? 'var(--unknown)' : 'var(--ink)'}
-						stroke-opacity={h.missing ? 1 : 0.45}
-						stroke-width={h.missing ? 1.5 : 1}
-						stroke-dasharray={h.missing ? '5 4' : undefined}
-						clip-path="url(#{uid}-{key}-{side})"
-					/>
-				{/each}
-				{#if id != null && ringed.has(id)}
-					<path class="ring" d={shapePath(shapeFor(id), cx, cy, pc.r)} />
-				{/if}
+			<rect class="lid" x={X0} y={FLOOR - BIN_H} width={BIN_W} height={BIN_H} />
+			{#if pileTop - (FLOOR - BIN_H) > 22}
 				<line
-					x1={cx}
-					y1={cy - pc.box.top + 4}
-					x2={cx}
-					y2={cy + pc.box.bottom - 4}
-					stroke="var(--ink)"
-					stroke-opacity="0.35"
-					stroke-width="1"
+					class="pile"
+					x1={X0}
+					x2={X0 + BIN_W}
+					y1={pileTop}
+					y2={pileTop}
+					stroke-dasharray="6 5"
 				/>
-				{#if labelled.includes(key)}
-					<text class="role" x={cx} y={cy - 4} text-anchor="middle">{piece.tag}</text>
-					<text class="nm" x={cx} y={cy + FS} text-anchor="middle">{piece.name}</text>
+				{#if !compact}
+					<text
+						class="headroom"
+						x={X0 + BIN_W / 2}
+						y={(pileTop + FLOOR - BIN_H) / 2 + 4}
+						text-anchor="middle">Headroom {Math.round(bin.headroom)}%</text
+					>
 				{/if}
-			</g>
-		{/each}
-	</svg>
+			{/if}
+
+			{#if !compact}<text class="head" x={TX} y={TOP - 14}>Off the field</text>{/if}
+			<path
+				class="tray"
+				d="M{TX} {FLOOR - H} V{FLOOR} H{TX + TRAY_W} V{FLOOR - H}"
+				stroke-dasharray="3 5"
+			/>
+			{#if !offField.length && !compact}
+				<text class="head-note" x={TX + TRAY_W / 2} y={FLOOR - 20} text-anchor="middle"
+					>nobody left off</text
+				>
+			{/if}
+
+			{#each [...onField, ...offField] as piece (piece.key)}
+				{@const { key, id, pc, cx, cy, L, R } = piece}
+				<g
+					class="piece"
+					class:sel={id != null && selected === id}
+					role="button"
+					tabindex="0"
+					aria-label={piece.aria}
+					aria-pressed={id != null && selected === id}
+					onclick={() => id && onSelect(id)}
+					onkeydown={(e) => keySelect(e, id)}
+				>
+					{#each [['L', L], ['R', R]] as const as [side, h] (side)}
+						<path
+							class="body"
+							d={h.d}
+							fill={h.fill}
+							stroke={h.missing ? 'var(--unknown)' : 'var(--ink)'}
+							stroke-opacity={h.missing ? 1 : 0.45}
+							stroke-width={h.missing ? 1.5 : 1}
+							stroke-dasharray={h.missing ? '5 4' : undefined}
+							clip-path="url(#{uid}-{key}-{side})"
+						/>
+					{/each}
+					{#if id != null && ringed.has(id)}
+						<path class="ring" d={shapePath(shapeFor(id), cx, cy, pc.r)} />
+					{/if}
+					<line
+						x1={cx}
+						y1={cy - pc.box.top + 4}
+						x2={cx}
+						y2={cy + pc.box.bottom - 4}
+						stroke="var(--ink)"
+						stroke-opacity="0.35"
+						stroke-width="1"
+					/>
+					{#if labelled.includes(key)}
+						<text class="role" x={cx} y={cy - 4} text-anchor="middle">{piece.tag}</text>
+						<text class="nm" x={cx} y={cy + FS} text-anchor="middle">{piece.name}</text>
+					{/if}
+				</g>
+			{/each}
+		</svg>
+	</div>
 </div>
 {#if scrolls}
 	<p class="hint">Scroll the board sideways. Tap a piece to read its tag.</p>
@@ -314,12 +327,17 @@
 {/if}
 
 <style>
+	.board-unit {
+		display: grid;
+		gap: var(--spacing-75);
+		min-width: 0;
+	}
 	.board-caption {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
 		gap: var(--spacing-50) var(--spacing-200);
-		margin: 0 0 var(--spacing-75);
+		margin: 0;
 		color: var(--ink);
 		font-size: var(--text-sm);
 		line-height: var(--text-sm--lh);

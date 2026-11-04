@@ -882,6 +882,29 @@ Not changed, with reasons:
 - **Old-URL redirect stubs.** They stay instead of a host `_redirects` file, because the local preview and the end-to-end suite cannot exercise host redirects, and the stubs are tested.
 - **Footer credit test.** It still loads each route, because it asserts one `contentinfo` per page.
 
+### Public release deployed, and the overview board gap (D-61 to D-64, 2026-11-04)
+
+Release: PR #20 merged to `main` at 18:51 UTC (merge commit `56482b9`). Deploy run 111 published it to <https://jev-roster-shapes.pages.dev>.
+
+Observed, live smoke check (2026-11-04, Chromium):
+- **Pages.** 11 routes at 1280px in light and 390px in dark: `/`, `/decisions`, `/decisions/winter-infield` with its case and interactions views, snapshots and compare gate, `/players/668939`, `/method`, `/privacy` and `/terms`. Each returned 200 with its expected heading and the Taylor Wyman credit link, with no horizontal overflow and no console errors.
+- **Redirects.** `/scenario/offseason-infield?scenario=cand-a` lands on `/decisions/offseason-infield?scenario=cand-a`, `/scenario/offseason-infield/engine` on `/decisions/offseason-infield/detail?view=engine`, and `/player/668939` on `/players/668939`.
+- **404s.** `/nope`, `/decisions/nope`, `/decisions/nope/x` and `/players/123` return status 404 with the branded "This cutout is empty" page.
+- **Link previews.** The served `/` carries `og:image` (`/og.png`, 200 `image/png`) and `twitter:card` `summary_large_image`.
+
+Fixed after release: the overview board left an empty band between its caption and the drawing.
+- **The space reserved in the drawing.** The SVG still kept room for the headings that the D-64 work moved into the caption. When the caption is shown, the drawing now starts just above the lid and tray.
+- **Gaps outside the drawing.** The caption and the drawing sat as separate items in the hero figure's grid, so its 16px gap plus the caption's 8px margin opened between them. They now sit in one unit with an 8px gap.
+- **Measured** from the caption to the first mark of the drawing:
+
+  | Width | Before | After |
+  | --- | --- | --- |
+  | 1280px | 50px | 12px |
+  | 390px | 40px | 10px |
+  | 320px | 36px | 10px |
+
+- **Checks.** `bun run check` reports 0 errors and 0 warnings, and `bun run lint` is clean. `bun run test` passes 18 files and 136 tests. `bun run test:e2e` passes 71, including a new assertion that the caption-to-lid gap at 320px stays under 24px. That assertion failed at 25px with only the SVG change, which led to the grid fix. `reports/prototype/edit-latency.json` was restored after the end-to-end run.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.
