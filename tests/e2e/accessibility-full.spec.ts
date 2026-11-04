@@ -28,6 +28,8 @@ const PAGES = [
 	['the overview', '/'],
 	['the season index', '/decisions'],
 	['a decision board', '/decisions/offseason-infield'],
+	['a late-season decision board', '/decisions/winter-infield'],
+	['the last decision board', '/decisions/winter-duran'],
 	['the fitted case tab', '/decisions/offseason-infield/detail?view=case'],
 	['the engine pool fit tab', '/decisions/offseason-infield/detail?view=engine'],
 	['the interactions tab', '/decisions/offseason-infield/detail?view=interactions'],
@@ -37,7 +39,8 @@ const PAGES = [
 	['a player page', '/players/668939'],
 	['the method page', '/method'],
 	['the privacy page', '/privacy'],
-	['the terms page', '/terms']
+	['the terms page', '/terms'],
+	['the not-found page', '/decisions/nope']
 ] as const;
 
 for (const colorScheme of ['light', 'dark'] as const) {
@@ -46,6 +49,14 @@ for (const colorScheme of ['light', 'dark'] as const) {
 		for (const [name, path] of PAGES) {
 			test(`${name} passes the full axe rule set`, async ({ page }) => {
 				await page.goto(path);
+				// Sections below the first screen wait at opacity 0 to rise in on scroll, and axe
+				// skips what it cannot see; show them all so their contrast is audited too.
+				await page.evaluate(() => {
+					for (const node of document.querySelectorAll<HTMLElement>('[data-reveal]')) {
+						node.dataset.reveal = 'shown';
+					}
+				});
+				await page.waitForTimeout(600);
 				await page.addScriptTag({ path: axeCorePath });
 				const audit = await page.evaluate(() =>
 					(

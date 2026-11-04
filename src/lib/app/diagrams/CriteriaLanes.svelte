@@ -256,6 +256,7 @@
 	.piece.sel .outline {
 		stroke: var(--ink);
 		stroke-width: 2.5;
+		stroke-opacity: 1;
 	}
 	.nm {
 		font-size: var(--text-xs);

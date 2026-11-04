@@ -23,7 +23,14 @@
 	const here = $derived({
 		overview: route === '/',
 		decisions: route === '/decisions',
-		decision: route.startsWith('/decisions/[slug]'),
+		// The decision link points at the board: it is the page only there, and marks the
+		// current section (aria-current="true") on the board's subpages.
+		decision:
+			route === '/decisions/[slug]'
+				? ('page' as const)
+				: route.startsWith('/decisions/[slug]/')
+					? ('true' as const)
+					: undefined,
 		method: route === '/method'
 	});
 
@@ -68,9 +75,8 @@
 				>Decisions</a
 			>
 			{#if story}
-				<a
-					href={resolve('/decisions/[slug]', { slug: story.slug })}
-					aria-current={here.decision ? 'page' : undefined}>{story.short}</a
+				<a href={resolve('/decisions/[slug]', { slug: story.slug })} aria-current={here.decision}
+					>{story.short}</a
 				>
 			{/if}
 			<a href={resolve('/method')} aria-current={here.method ? 'page' : undefined}>How to read it</a
@@ -102,11 +108,12 @@
 	</nav>
 </header>
 
-<main id="main" tabindex="-1">
+<!-- The open phone menu covers the page, so what it covers leaves the focus order. -->
+<main id="main" tabindex="-1" inert={menuOpen}>
 	{@render children()}
 </main>
 
-<footer class="site-footer">
+<footer class="site-footer" inert={menuOpen}>
 	<div class="footer-inner">
 		<p class="credit">
 			Roster Shapes adapts the roster shapes framework created by Taylor Wyman (<a
@@ -199,9 +206,13 @@
 		color: var(--ink);
 		background: var(--case-200);
 	}
-	.links a[aria-current='page'] {
+	/* Current differs from hover: the turf underline marks where you are. */
+	.links a[aria-current] {
 		color: var(--ink);
-		background: var(--case-200);
+		text-decoration: underline;
+		text-decoration-color: var(--turf);
+		text-decoration-thickness: 2px;
+		text-underline-offset: 6px;
 	}
 
 	/* The menu toggle morphs between two lines and a cross on the base curve. */

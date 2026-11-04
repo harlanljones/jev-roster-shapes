@@ -2,7 +2,12 @@
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import Icon from '$lib/ui/Icon.svelte';
-	import { currentSlug, getStoryline, storylineRegistry } from '$lib/storylines/registry';
+	import {
+		currentSlug,
+		getStoryline,
+		storylineRegistry,
+		storylinesByDate
+	} from '$lib/storylines/registry';
 	import WymanBoard from './diagrams/WymanBoard.svelte';
 	import { reveal } from './reveal';
 	import { todayIso } from './season-timeline';
@@ -30,8 +35,8 @@
 			day: 'numeric',
 			timeZone: 'UTC'
 		});
-	const first = storylineRegistry[0]!;
-	const last = storylineRegistry[storylineRegistry.length - 1]!;
+	const first = storylinesByDate[0]!;
+	const last = storylinesByDate[storylinesByDate.length - 1]!;
 
 	const steps = [
 		{

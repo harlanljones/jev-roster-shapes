@@ -5,7 +5,7 @@
 
 	// D-63: a decision has four places: its board, the tabbed diagrams behind it, the Jev
 	// snapshots, and the comparison workspace. The scenario pick rides along on the board and
-	// the diagrams so both show the same one.
+	// the diagrams and the workspace so they all show the same one.
 	let {
 		slug,
 		current,
@@ -42,7 +42,7 @@
 		</li>
 		<li>
 			<a
-				href={resolve('/decisions/[slug]/compare', { slug: slug })}
+				href="{resolve('/decisions/[slug]/compare', { slug: slug })}{scenarioQuery(scenarioId)}"
 				aria-current={current === 'compare' ? 'page' : undefined}>Workspace</a
 			>
 		</li>
@@ -92,6 +92,7 @@
 		border-color: var(--case-300);
 		color: var(--ink);
 		background: var(--case-100);
+		box-shadow: inset 0 -2px 0 var(--turf);
 	}
 	@media (max-width: 520px) {
 		.segments {

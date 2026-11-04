@@ -787,6 +787,41 @@ supplied project proposal on the strength of `SPEC.md`; their actual origin is f
 Release: on branch `claude/trusting-brown-rpm9ms` for review; not merged or deployed. Merging to
 `main` triggers the Cloudflare Pages deploy, since `package.json` and `src/` are in the change.
 
+### Review fixes on the public release (D-64, `/code-review max` on PR #20, 2026-11-04)
+
+Delivered (2026-11-04): fixes for the 15 findings of the maximum-effort review.
+- Unknown decision and player URLs now reach the branded 404 at any depth. The build emits `404.html` with root-absolute assets, and lookups throw from `load` (D-64).
+- The site-wide og, twitter and theme-color tags moved into `src/app.html`, so crawlers that do not run script see them.
+- The phone menu makes the page behind it inert.
+- Piece focus and selection strokes draw at full opacity, and case focus is now a dotted ring distinct from selection.
+- The shell's link to the board is `aria-current="true"` on its subpages, with a current treatment distinct from hover.
+- The overview's date range and the board's "Decision N of 8" and previous/next links follow event dates (`storylinesByDate`).
+- The legend copy names line styles instead of retired colours.
+- The player page links back to the current decision.
+- The D-36 acknowledgment survives blocked session storage for the page load.
+- `?scenario=` rides through the workspace and back.
+- Revealed sections and page titles print.
+- A blank or malformed split OPS draws neutral instead of throwing.
+
+Observed:
+
+- `bun run check`: 0 errors and 0 warnings over 622 files.
+- `bun run lint`: Prettier and ESLint clean.
+- `bun run test`: Vitest 18 files and 137 tests passed (before: 17 and 134). The new tests cover date order, the malformed split OPS, and the acknowledgment with throwing storage.
+- `bun run test:e2e`: Playwright 67 passed (before: 56). The new journeys are:
+  - the 404 page at `/decisions/nope`, `/decisions/nope/snapshots` and `/players/123`
+  - social tags in the served HTML of `/`, `/decisions` and `/method`
+  - date-ordered sequence links and the overview's Jan 14 to Dec 7 range
+  - the `?scenario=` round trip through the workspace
+  - phone-menu focus
+  - `aria-current` on a subpage
+  - the full axe rule set, in both themes, on two more boards and on the 404 page, with revealed sections shown before the audit
+- The build writes `build/404.html` with `/_app/...` asset URLs and no `200.html`.
+- `reports/prototype/edit-latency.json` was restored after the end-to-end run, as before.
+- `git diff --check`: clean.
+
+Limitations: the Cloudflare Pages behaviour for the new `404.html` is confirmed only once the branch preview redeploys. The review's lower-ranked candidates were not verified because a container restart stopped those verifiers, and they are not fixed here. They include the px line heights under text scaling, the fit-mode board labels at phone width, the missing-data piece contrast on foam, synthesized mono semibold, and the cleanup items.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.

@@ -229,9 +229,9 @@
 			<div class="main">
 				<h2 id="map-title">The same pieces off the field</h2>
 				<p class="lede">
-					Gray lines share a position, red arrows are the swaps this storyline tests (thick in this
-					scenario) with the change in actual 2026 runs, green dots pair players whose real splits
-					complement, and blue dashes lead into the DH lane.
+					Solid gray lines share a position, solid green arrows are the swaps this storyline tests
+					(thick in this scenario) with the change in actual 2026 runs, dotted lines pair players
+					whose real splits complement, and dashed lines lead into the DH lane.
 				</p>
 				<InteractionMap
 					{pool}

@@ -322,13 +322,19 @@
 		cursor: pointer;
 		outline: none;
 	}
-	.piece:focus-visible :global(.body),
+	/* Selection is a solid ring; focus is a heavier dotted ring, so the two read apart
+	   without colour, and focusing the selected piece still changes what is drawn. */
 	.piece.sel :global(.body) {
 		stroke: var(--on-foam);
 		stroke-width: 3;
 		stroke-dasharray: none;
+		stroke-opacity: 1;
 	}
 	.piece:focus-visible :global(.body) {
-		stroke: var(--on-foam);
+		stroke: var(--focus-inverse);
+		stroke-width: 4;
+		stroke-dasharray: 2 3;
+		stroke-linecap: round;
+		stroke-opacity: 1;
 	}
 </style>

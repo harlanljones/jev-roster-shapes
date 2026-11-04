@@ -35,7 +35,7 @@
 		selected: string | null;
 		onSelect: (playerId: string) => void;
 		label: string;
-		/** Players to ring in red: the sources disagree on their shape (D-57). */
+		/** Players to ring: the sources disagree on their shape (D-57). */
 		ringed?: ReadonlySet<string>;
 		/** Scale the drawing to its panel instead of scrolling sideways (the overview hero). */
 		fit?: boolean;
@@ -379,11 +379,14 @@
 		cursor: pointer;
 		outline: none;
 	}
+	/* The body's resting outline is translucent through a stroke-opacity attribute; the focus
+	   ring and the selection must draw at full strength (3:1 against the lid). */
 	.piece:focus-visible .body,
 	.piece.sel .body {
 		stroke: var(--ink);
 		stroke-width: 3;
 		stroke-dasharray: none;
+		stroke-opacity: 1;
 	}
 	.ring {
 		fill: none;

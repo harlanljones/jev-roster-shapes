@@ -12,7 +12,10 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			// Static single-page app (DECISIONS D-13): unmatched paths fall back to the client shell.
-			adapter: adapter({ fallback: '200.html' })
+			// Cloudflare Pages serves 404.html for any unknown path (D-63), and root-absolute asset
+			// URLs let that shell boot at any depth, so +error.svelte can answer.
+			adapter: adapter({ fallback: '404.html' }),
+			paths: { relative: false }
 		})
 	],
 	test: {

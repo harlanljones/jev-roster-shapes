@@ -5,7 +5,7 @@
 	import type { Bundle } from '$lib/contracts';
 	import { DEFAULT_JEV_MODEL, buildProfileRequest } from '$lib/classification';
 	import { calculateComparison, calculatePoolFit, poolFitFor } from '$lib/engine';
-	import { storylineRegistry } from '$lib/storylines/registry';
+	import { storylineRegistry, storylinesByDate } from '$lib/storylines/registry';
 	import Icon from '$lib/ui/Icon.svelte';
 	import { reveal } from './reveal';
 	import DecisionNav from './DecisionNav.svelte';
@@ -51,9 +51,9 @@
 	const story = $derived(
 		storylineRegistry.find((storyline) => storyline.slug === activeSlug) ?? storylineRegistry[0]!
 	);
-	const position = $derived(storylineRegistry.findIndex((s) => s.slug === story.slug));
-	const prev = $derived(position > 0 ? storylineRegistry[position - 1] : undefined);
-	const next = $derived(storylineRegistry[position + 1]);
+	const position = $derived(storylinesByDate.findIndex((s) => s.slug === story.slug));
+	const prev = $derived(position > 0 ? storylinesByDate[position - 1] : undefined);
+	const next = $derived(storylinesByDate[position + 1]);
 	const eventDay = (iso: string) =>
 		new Date(`${iso}T00:00:00Z`).toLocaleString('en-US', {
 			month: 'long',
@@ -119,7 +119,7 @@
 	const cardStat = $derived<Record<string, string>>({
 		case: `${view.findings.nice.length} nice fits · ${view.findings.friction.length} friction · ${view.gaps.length} empty cutouts`,
 		engine: `Left on the table ${engineDelta(engineFit?.deltaVsReference?.runs ?? null)} runs`,
-		interactions: 'Gray: shared position · red: tested swap · green: complement',
+		interactions: 'Gray: shared position · arrow: tested swap · dotted: complement',
 		slots: `Hindsight best nine: ${runs(best.runs)}`
 	});
 

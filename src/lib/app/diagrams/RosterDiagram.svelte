@@ -103,7 +103,7 @@
 			{#if mode === 'packed'}
 				<span>Shapes: rubric v2 (analyst)</span>
 				{#if ringOn}<span class="warn"
-						>Red ring: Jev, the rule baseline, and the analyst disagree ({disagreeing.size})</span
+						>Dashed ring: Jev, the rule baseline, and the analyst disagree ({disagreeing.size})</span
 					>{/if}
 			{:else}
 				<span>Placed by {SOURCE_NAMES[source]}; letters show where the others put a piece</span>

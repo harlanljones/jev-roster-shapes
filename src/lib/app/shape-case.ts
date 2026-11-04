@@ -155,7 +155,11 @@ export const SPLIT_STEPS = [
 
 /** Index 0..6 of the split step for an OPS against the league line for that hand. */
 export function splitStep(ops: string, side: Side): number {
-	const v = Math.max(-1, Math.min(1, (Number(ops) - LEAGUE_OPS[side]) / SAVANT_SPAN));
+	// A blank or malformed OPS (a refresh placeholder such as '.---') draws neutral rather than
+	// throwing or reading as zero.
+	const value = ops.trim() === '' ? Number.NaN : Number(ops);
+	if (!Number.isFinite(value)) return SPLIT_STEPS.findIndex((step) => step.token === 'split-mid');
+	const v = Math.max(-1, Math.min(1, (value - LEAGUE_OPS[side]) / SAVANT_SPAN));
 	return Math.min(SPLIT_STEPS.length - 1, Math.floor(((v + 1) / 2) * SPLIT_STEPS.length));
 }
 

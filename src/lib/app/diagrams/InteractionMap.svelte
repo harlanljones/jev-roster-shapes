@@ -400,10 +400,12 @@
 		stroke: var(--ink);
 		stroke-width: 3;
 		stroke-dasharray: none;
+		stroke-opacity: 1;
 	}
 	.piece:focus-visible :global(.body) {
 		stroke: var(--turf);
 		stroke-width: 3.5;
 		stroke-dasharray: none;
+		stroke-opacity: 1;
 	}
 </style>

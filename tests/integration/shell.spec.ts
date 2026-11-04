@@ -201,6 +201,13 @@ test('the shell nav names the sections and marks the current one', async ({ page
 		'aria-current',
 		'page'
 	);
+
+	// On a subpage the board link marks the section, not the page (DecisionNav owns 'page').
+	await page.goto('/decisions/deadline/snapshots');
+	await expect(nav.getByRole('link', { name: 'Deadline', exact: true })).toHaveAttribute(
+		'aria-current',
+		'true'
+	);
 });
 
 // D-63: every old URL keeps working, carrying the scenario pick where it had one.
@@ -239,5 +246,57 @@ test('every page carries the Taylor Wyman credit in the site footer', async ({ p
 			'https://www.tiktok.com/@taylormetrics'
 		);
 		await expect(footer.getByRole('link', { name: 'Privacy' })).toHaveAttribute('href', '/privacy');
+	}
+});
+
+// Review fixes on the D-63 release (2026-11-04).
+test('unknown decision and player URLs show the branded 404 page', async ({ page }) => {
+	for (const path of ['/decisions/nope', '/decisions/nope/snapshots', '/players/123']) {
+		await page.goto(path);
+		await expect(page.getByRole('heading', { name: 'This cutout is empty' })).toBeVisible();
+	}
+});
+
+test('every prerendered page carries the social tags without running script', async ({
+	request
+}) => {
+	for (const path of ['/', '/decisions', '/method']) {
+		const html = await (await request.get(path)).text();
+		expect(html).toContain('property="og:image"');
+		expect(html).toContain('name="twitter:card"');
+	}
+});
+
+test('the board numbers decisions and steps through them in date order', async ({ page }) => {
+	await page.goto('/decisions/winter-duran');
+	const sequence = page.getByRole('navigation', { name: 'Decisions in order' });
+	await expect(sequence).toContainText('Decision 8 of 8 · December 7');
+	await expect(sequence.getByRole('link')).toHaveCount(1);
+	await expect(sequence.getByRole('link')).toHaveAttribute('href', '/decisions/winter-bat');
+
+	await page.goto('/');
+	await expect(page.getByText('Jan 14 to Dec 7, 2026')).toBeVisible();
+});
+
+test('the scenario pick survives a trip into the workspace and back', async ({ page }) => {
+	await page.goto('/decisions/offseason-infield?scenario=cand-a');
+	await page.getByRole('button', { name: 'Open workspace' }).click();
+	await page.getByRole('button', { name: 'Open public scenario' }).click();
+	await expect(page).toHaveURL(/\/decisions\/offseason-infield\/compare\?scenario=cand-a$/);
+	await page.getByRole('button', { name: '← Storylines' }).click();
+	await expect(page).toHaveURL(/\/decisions\/offseason-infield\?scenario=cand-a$/);
+});
+
+test('the open phone menu keeps keyboard focus inside it', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+	await page.getByRole('button', { name: 'Open menu' }).click();
+	for (let i = 0; i < 6; i += 1) {
+		await page.keyboard.press('Tab');
+		// The page behind the overlay is inert, so focus never lands under it.
+		const underOverlay = await page.evaluate(
+			() => !!document.activeElement?.closest('main, footer')
+		);
+		expect(underOverlay).toBe(false);
 	}
 });

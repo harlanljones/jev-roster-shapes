@@ -1,23 +1,14 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { error } from '@sveltejs/kit';
 	import Piece from '$lib/app/diagrams/Piece.svelte';
 	import { headshotUrl } from '$lib/app/headshot';
-	import { buildPool, caseRadius, splitText } from '$lib/app/shape-case';
-	import { storylineRegistry } from '$lib/storylines/registry';
+	import { caseRadius, splitText } from '$lib/app/shape-case';
+	import { todayIso } from '$lib/app/season-timeline';
+	import { currentSlug } from '$lib/storylines/registry';
+	import type { PageProps } from './$types';
 
-	let { params }: { params: { id: string } } = $props();
-	const playerId = $derived(`mlbam-${params.id}`);
-	const source = $derived(
-		storylineRegistry.find(({ bundle }) =>
-			bundle.dataset.players.some((player) => player.id === playerId)
-		)
-	);
-	const player = $derived.by(() => {
-		const found = source ? buildPool(source.bundle).get(playerId) : undefined;
-		if (!found) error(404, 'Player not found');
-		return found;
-	});
+	let { data }: PageProps = $props();
+	const player = $derived(data.player);
 	const r = $derived(Math.min(caseRadius(player), 70));
 </script>
 
@@ -27,7 +18,9 @@
 </svelte:head>
 
 <div class="player-page">
-	<a class="back-link" href={resolve('/')}>← Back to the case</a>
+	<a class="back-link" href={resolve('/decisions/[slug]', { slug: currentSlug(todayIso()) })}
+		>← Back to the current decision</a
+	>
 	<section class="profile" aria-labelledby="player-name">
 		<div class="profile-mark">
 			<svg viewBox="0 0 220 220" role="img" aria-label="{player.name} as a {player.shape} piece">

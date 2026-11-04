@@ -1,10 +1,15 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { Storyline } from '$lib/storylines/registry';
+	import { scenarioQuery } from './routes';
 
 	// D-36 and D-63: the public-data acknowledgment, shown when the workspace URL is visited
 	// directly without one recorded for this session.
-	let { story, onAccept }: { story: Storyline; onAccept: () => void } = $props();
+	let {
+		story,
+		scenarioId = null,
+		onAccept
+	}: { story: Storyline; scenarioId?: string | null; onAccept: () => void } = $props();
 </script>
 
 <svelte:head>
@@ -21,7 +26,9 @@
 		<button class="button button-primary" type="button" onclick={onAccept}
 			>Open public scenario</button
 		>
-		<a class="button button-secondary" href={resolve('/decisions/[slug]', { slug: story.slug })}
+		<a
+			class="button button-secondary"
+			href="{resolve('/decisions/[slug]', { slug: story.slug })}{scenarioQuery(scenarioId)}"
 			>Back to the board</a
 		>
 	</div>

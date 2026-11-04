@@ -17,7 +17,7 @@
 				LEAGUE_OPS.L
 			)} vs LHP, {lg(LEAGUE_OPS.R)} vs RHP) and scaled by that split against the player's own. A dashed
 			half is under 100 PA. Area is runs: actual 2026 PA × observed R/PA. Side tabs are positions played;
-			no tabs means no glove. A dashed gold ring marks a move from the storyline's baseline.
+			no tabs means no glove. A dashed ring around a piece marks a move from the storyline's baseline.
 		</p>
 	{/if}
 	<ul class="shapes" aria-label="Shape vocabulary">

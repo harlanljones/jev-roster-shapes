@@ -321,6 +321,12 @@ export function currentSlug(today: string): string {
 	return storylineRegistry.reduce((a, b) => (b.eventDate < a.eventDate ? b : a)).slug;
 }
 
+/** The decisions in event-date order. Registry order is not date order (see the registry
+ * tests), so anything that numbers decisions or walks them in sequence reads this list. */
+export const storylinesByDate: readonly Storyline[] = [...storylineRegistry].sort((a, b) =>
+	a.eventDate.localeCompare(b.eventDate)
+);
+
 export function getStoryline(slug: string): Storyline | undefined {
 	return storylineRegistry.find((storyline) => storyline.slug === slug);
 }

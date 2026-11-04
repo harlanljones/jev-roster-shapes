@@ -9,6 +9,8 @@ import {
 	lineupRuns,
 	locksOf,
 	scenarioLineup,
+	splitColor,
+	splitStep,
 	tightestBin,
 	tightestFit
 } from '../../src/lib/app/shape-case';
@@ -118,5 +120,14 @@ describe('Shape Case model (display layer, D-43)', () => {
 			}
 		]);
 		expect(edges.some((e) => e.type === 'swap')).toBe(true);
+	});
+});
+
+describe('split colour', () => {
+	it('draws a malformed split OPS as the neutral step instead of throwing', () => {
+		// A refresh can write a placeholder such as '.---' for a hand with no at-bats.
+		expect(splitColor('.---', 'L')).toBe('var(--split-mid)');
+		expect(splitStep('', 'R')).toBe(3);
+		expect(splitColor('1.200', 'R')).toBe('var(--split-warm-3)');
 	});
 });
