@@ -99,7 +99,10 @@ carries a 3px halo in the panel colour, since it straddles two fills.
 - Every diagram has a text equivalent: labelled piece buttons, `role="img"` labels with the stats,
   per-piece titles, and the case table.
 - The page never scrolls sideways at 320px or wider; wide tables and diagrams scroll inside their
-  own container, and auto-fit grids use `minmax(min(Xrem, 100%), 1fr)`.
+  own container, and auto-fit grids use `minmax(min(Xrem, 100%), 1fr)`. A single-column grid
+  that holds a scroll container uses `grid-template-columns: minmax(0, 1fr)`, and the scroll
+  container is positioned, so visually hidden captions and labels are clipped with the table
+  instead of escaping to the page.
 - Engine numbers and display-layer numbers are always labelled apart: "Pinned 10-game engine
   total" versus "actual 2026 (display layer)".
 - Every route passes the full axe rule set in both themes (`tests/e2e/accessibility-full.spec.ts`).

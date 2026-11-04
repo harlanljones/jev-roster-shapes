@@ -345,3 +345,50 @@ test('the overview board keeps its headings readable at phone width', async ({ p
 	const lid = (await page.locator('svg.board rect.lid').boundingBox())!;
 	expect(lid.y - (captionBottom.y + captionBottom.height)).toBeLessThan(24);
 });
+
+// DESIGN.md: the page never scrolls sideways at 320px or wider; wide tables scroll inside their
+// own container. The acknowledged workspace measured 674px at 390px before this check existed:
+// the allocation ledger's template cards took the table's no-wrap width, and the visually hidden
+// labels in that table escaped the scroll container at their column offset.
+for (const width of [320, 390]) {
+	test(`the acknowledged workspace does not scroll sideways at ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 844 });
+		await page.goto('/decisions/offseason-infield/compare');
+		await page.getByRole('button', { name: 'Open public scenario' }).click();
+		await expect(page.getByRole('tablist', { name: 'Comparison scenarios' })).toBeVisible();
+		await expect(page.getByLabel(/assigned player/).first()).toBeAttached();
+
+		const layout = await page.evaluate(() => {
+			const limit = document.documentElement.clientWidth;
+			const scrolls = (el: Element): boolean => {
+				for (let node = el.parentElement; node; node = node.parentElement) {
+					const overflow = getComputedStyle(node).overflowX;
+					if (overflow === 'auto' || overflow === 'scroll') return true;
+				}
+				return false;
+			};
+			const describe = (el: Element): string =>
+				`${el.tagName.toLowerCase()}${[...el.classList].map((name) => `.${name}`).join('')}`;
+			// Diagnostic only: boxes past the viewport with no scrolling ancestor. Text that overflows
+			// a box, or an absolutely positioned element, can widen the page without appearing here,
+			// so the assertion itself is on the document's scroll width.
+			const offenders = [...document.querySelectorAll('body *')]
+				.filter((el) => el instanceof HTMLElement && el.getClientRects().length > 0)
+				.filter((el) => el.getBoundingClientRect().right > limit + 0.5 && !scrolls(el))
+				.map(describe)
+				.slice(0, 12);
+			const scrollers = [...document.querySelectorAll('.table-scroll')].map(
+				(el) => el.scrollWidth > el.clientWidth
+			);
+			return { scrollWidth: document.documentElement.scrollWidth, limit, offenders, scrollers };
+		});
+
+		expect(layout.scrollWidth, `past the viewport: ${layout.offenders.join(', ')}`).toBe(
+			layout.limit
+		);
+		expect(layout.scrollWidth).toBeLessThanOrEqual(width);
+		// The wide tables are contained, not clipped: each scrolls inside its own container.
+		expect(layout.scrollers.length).toBeGreaterThan(0);
+		expect(layout.scrollers.every(Boolean)).toBe(true);
+	});
+}
