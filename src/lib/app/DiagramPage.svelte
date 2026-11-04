@@ -391,11 +391,9 @@
 	}
 	h2 {
 		margin: 0;
-		font-family: var(--font-sans);
-		font-size: var(--text-3xl);
-		line-height: var(--text-3xl--lh);
-		font-weight: 400;
-		letter-spacing: 0.04em;
+		font-size: var(--text-xl);
+		line-height: var(--text-xl--lh);
+		font-weight: 600;
 	}
 	h3 {
 		margin: 0;

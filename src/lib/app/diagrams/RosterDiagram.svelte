@@ -214,7 +214,7 @@
 		gap: var(--spacing-50);
 		align-items: center;
 		border: 1px solid var(--case-300);
-		border-radius: var(--radius-full);
+		border-radius: var(--radius-sm);
 		padding: var(--spacing-50) var(--spacing-75) var(--spacing-50) var(--spacing-50);
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
@@ -227,7 +227,7 @@
 	.mk {
 		width: 18px;
 		height: 18px;
-		border-radius: 50%;
+		border-radius: var(--radius-sm);
 		color: var(--case-100);
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);

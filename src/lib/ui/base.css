@@ -1,5 +1,5 @@
-/* Roster Shapes base layer (D-62). Rules follow ai-design-skills' landing-page-design Part B
-   and redesign-existing-projects; tokens come from ./tokens.css. */
+/* Roster Shapes base layer (D-62, plainened by D-65: no gradients, no motion, no reveals);
+   tokens come from ./tokens.css. */
 
 /* Sizes include padding and border everywhere, so a link styled as a button is the same 44px as
    a button (the UA gives buttons border-box and links content-box). */
@@ -46,43 +46,28 @@ figcaption {
 	text-wrap: pretty;
 }
 
-/* Page titles: text-5xl, text-4xl at phone width, with the one text gradient the system allows. */
+/* Page titles: text-4xl, text-3xl at phone width, plain ink. */
 .page-title {
 	max-width: var(--hero-max);
 	margin: 0;
-	font-size: var(--text-5xl);
-	line-height: var(--text-5xl--lh);
-	letter-spacing: -0.03em;
+	font-size: var(--text-4xl);
+	line-height: var(--text-4xl--lh);
+	letter-spacing: -0.01em;
 	font-weight: 600;
 	color: var(--ink);
-	background: linear-gradient(90deg, var(--hero-from), var(--hero-to));
-	/* At line-height 1 descenders hang below the line box, which bounds the clipped gradient;
-	   extend the box under them without moving what follows. */
-	padding-bottom: 0.12em;
-	margin-bottom: -0.12em;
-	-webkit-background-clip: text;
-	background-clip: text;
-	-webkit-text-fill-color: transparent;
 }
 @media (max-width: 640px) {
 	.page-title {
-		font-size: var(--text-4xl);
-		line-height: var(--text-4xl--lh);
-	}
-}
-/* Forced colours drop background-clip text: keep the title readable as plain text. */
-@media (forced-colors: active), print {
-	.page-title {
-		background: none;
-		-webkit-text-fill-color: currentColor;
+		font-size: var(--text-3xl);
+		line-height: var(--text-3xl--lh);
 	}
 }
 
 .page-lead {
 	max-width: var(--hero-max);
 	color: var(--ink-muted);
-	font-size: var(--text-lg);
-	line-height: var(--text-lg--lh);
+	font-size: var(--text-base);
+	line-height: var(--text-base--lh);
 }
 
 /* Numbers align. */
@@ -147,52 +132,8 @@ a {
 	cursor: not-allowed;
 }
 
-/* Every control gets press feedback; movement and colour on the one curve. */
 :where(button, .button, [role='tab'], summary, select) {
 	-webkit-tap-highlight-color: transparent;
-}
-@media (prefers-reduced-motion: no-preference) {
-	:where(button, .button, [role='tab'], summary, a) {
-		transition:
-			background-color var(--dur-fade) var(--ease),
-			border-color var(--dur-fade) var(--ease),
-			color var(--dur-fade) var(--ease),
-			opacity var(--dur-fade) var(--ease),
-			transform var(--dur-fade) var(--ease);
-	}
-	:where(button, .button, [role='tab']):not(:disabled):active {
-		transform: scale(0.98);
-	}
-}
-
-/* Scroll reveals (section containers only, never a number, piece or bar). Elements start
-   visible; the reveal action marks them pending only once script is running and only when
-   they are below the first screen, so a script failure or a screenshot leaves them in place. */
-[data-reveal='pending'] {
-	opacity: 0;
-	transform: translateY(32px);
-}
-[data-reveal='shown'] {
-	opacity: 1;
-	transform: none;
-	transition:
-		opacity var(--dur-reveal) var(--ease),
-		transform var(--dur-reveal) var(--ease);
-}
-/* A print, or anything else that does not scroll, shows every section. */
-@media print {
-	[data-reveal] {
-		opacity: 1;
-		transform: none;
-	}
-}
-@media (prefers-reduced-motion: reduce) {
-	[data-reveal='pending'] {
-		transform: none;
-	}
-	[data-reveal='shown'] {
-		transition: opacity var(--dur-fade) var(--ease);
-	}
 }
 
 /* The one screen-reader-only class; table captions and labels use it too. */

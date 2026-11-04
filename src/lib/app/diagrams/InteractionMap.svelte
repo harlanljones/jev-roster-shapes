@@ -270,7 +270,7 @@
 		gap: var(--spacing-75);
 		min-height: 2.75rem;
 		border: 1px solid var(--case-300);
-		border-radius: var(--radius-full);
+		border-radius: var(--radius-sm);
 		padding: var(--spacing-75) var(--spacing-200);
 		color: var(--ink-muted);
 		background: var(--case-100);

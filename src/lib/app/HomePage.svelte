@@ -895,7 +895,7 @@
 	}
 	.storage-pill {
 		border: 1px solid var(--case-300);
-		border-radius: var(--radius-full);
+		border-radius: var(--radius-sm);
 		padding: var(--spacing-75) var(--spacing-100);
 		background: var(--case-100);
 		text-transform: capitalize;
@@ -933,11 +933,9 @@
 	}
 	.section-heading h2 {
 		margin: 0;
-		font-family: var(--font-sans);
-		font-size: var(--text-3xl);
-		line-height: var(--text-3xl--lh);
-		font-weight: 400;
-		letter-spacing: 0.04em;
+		font-size: var(--text-xl);
+		line-height: var(--text-xl--lh);
+		font-weight: 600;
 	}
 	.section-intro {
 		max-width: 72ch;
@@ -961,8 +959,7 @@
 		background: var(--case-100);
 	}
 	.summary-card.active-card {
-		border-color: var(--ink);
-		box-shadow: inset 0 0 0 1px var(--ink);
+		border: 2px solid var(--ink);
 	}
 	.best-card {
 		border: 2px dashed var(--turf);

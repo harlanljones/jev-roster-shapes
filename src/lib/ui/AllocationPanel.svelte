@@ -493,11 +493,9 @@
 
 	h2 {
 		margin: var(--spacing-50) 0 0;
-		font-family: var(--font-sans);
-		font-size: var(--text-2xl);
-		line-height: var(--text-2xl--lh);
-		font-weight: 400;
-		letter-spacing: 0.04em;
+		font-size: var(--text-lg);
+		line-height: var(--text-lg--lh);
+		font-weight: 600;
 	}
 
 	.allocation-status {

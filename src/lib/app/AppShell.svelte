@@ -17,7 +17,8 @@
 	let { children }: { children: Snippet } = $props();
 
 	// D-63: the shell names where you are — the overview, the season index, the open decision,
-	// and how to read a board. The decision's own places live in its DecisionNav.
+	// and how to read a board. The decision's own places live in its DecisionNav. D-65: it is a
+	// plain top bar, with the phone menu a plain list under it.
 	// The open decision comes from the decision routes' own load (decisions/[slug]/+layout.ts), so
 	// the shell itself never pulls in the storyline registry; /privacy, /terms and the like
 	// load without it.
@@ -47,14 +48,6 @@
 	}
 
 	afterNavigate(() => closeMenu());
-
-	$effect(() => {
-		// The open menu owns the screen: lock page scroll behind it.
-		document.documentElement.style.overflow = menuOpen ? 'hidden' : '';
-		return () => {
-			document.documentElement.style.overflow = '';
-		};
-	});
 </script>
 
 <svelte:window
@@ -68,7 +61,7 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="shell" class:menu-open={menuOpen}>
+<header class="shell">
 	<div class="bar">
 		<a class="wordmark" href={resolve('/')} aria-current={here.overview ? 'page' : undefined}
 			>Roster Shapes</a
@@ -99,19 +92,19 @@
 	</div>
 	<nav id="site-menu" class="menu" aria-label="Menu" hidden={!menuOpen}>
 		<ul>
-			<li style="--i: 0"><a href={resolve('/')}>Overview</a></li>
-			<li style="--i: 1"><a href={resolve('/decisions')}>Decisions</a></li>
+			<li><a href={resolve('/')}>Overview</a></li>
+			<li><a href={resolve('/decisions')}>Decisions</a></li>
 			{#if story}
-				<li style="--i: 2">
+				<li>
 					<a href={resolve('/decisions/[slug]', { slug: story.slug })}>{story.short}</a>
 				</li>
 			{/if}
-			<li style="--i: 3"><a href={resolve('/method')}>How to read it</a></li>
+			<li><a href={resolve('/method')}>How to read it</a></li>
 		</ul>
 	</nav>
 </header>
 
-<!-- The open phone menu covers the page, so what it covers leaves the focus order. -->
+<!-- While the phone menu is open it is the only thing to use, so the page leaves the focus order. -->
 <main id="main" tabindex="-1" inert={menuOpen}>
 	{@render children()}
 </main>
@@ -154,50 +147,35 @@
 		top: var(--spacing-200);
 	}
 
-	/* A compact bar that floats off the top edge, centred and sized to its content, on a
-	   translucent surface over a background blur (landing-page-design B7). */
+	/* A plain top bar across the page (D-65): a hairline under it, no float, blur or shadow. */
 	.shell {
-		position: sticky;
-		top: var(--spacing-200);
-		z-index: var(--z-nav);
-		display: flex;
-		justify-content: center;
-		margin: var(--spacing-200) var(--spacing-200) 0;
-		pointer-events: none;
+		border-bottom: 1px solid var(--case-300);
+		background: var(--case-000);
 	}
 	.bar {
 		display: flex;
 		align-items: center;
 		gap: var(--spacing-300);
-		max-width: 100%;
-		padding: var(--spacing-50) var(--spacing-50) var(--spacing-50) var(--spacing-300);
-		border: 1px solid var(--case-300);
-		border-radius: var(--radius-full);
-		background: color-mix(in srgb, var(--case-100) 78%, transparent);
-		-webkit-backdrop-filter: blur(16px) saturate(140%);
-		backdrop-filter: blur(16px) saturate(140%);
-		box-shadow: var(--shadow-pop);
-		pointer-events: auto;
+		max-width: var(--page-max);
+		margin: 0 auto;
+		padding: var(--spacing-100) var(--spacing-300);
 	}
 	.wordmark {
 		color: var(--ink);
 		font-size: var(--text-base);
 		line-height: var(--text-base--lh);
 		font-weight: 600;
-		letter-spacing: -0.01em;
 		text-decoration: none;
 		white-space: nowrap;
 	}
 	.links {
 		display: flex;
-		gap: var(--spacing-50);
+		gap: var(--spacing-200);
 	}
 	.links a {
 		display: inline-flex;
 		align-items: center;
-		min-height: 40px;
-		padding: 0 var(--spacing-200);
-		border-radius: var(--radius-full);
+		min-height: 44px;
 		color: var(--ink-muted);
 		font-size: var(--text-sm);
 		line-height: var(--text-sm--lh);
@@ -207,7 +185,8 @@
 	}
 	.links a:hover {
 		color: var(--ink);
-		background: var(--case-200);
+		text-decoration: underline;
+		text-underline-offset: 6px;
 	}
 	/* Current differs from hover: the turf underline marks where you are. */
 	.links a[aria-current] {
@@ -218,16 +197,16 @@
 		text-underline-offset: 6px;
 	}
 
-	/* The menu toggle morphs between two lines and a cross on the base curve. */
 	.toggle {
 		display: none;
 		width: 44px;
 		height: 44px;
+		margin-left: auto;
 		padding: 0;
-		border: 0;
-		border-radius: var(--radius-full);
+		border: 1px solid var(--case-400);
+		border-radius: var(--radius-sm);
 		color: var(--ink);
-		background: transparent;
+		background: var(--case-100);
 		cursor: pointer;
 	}
 	.toggle-lines {
@@ -242,9 +221,7 @@
 		left: 0;
 		width: 100%;
 		height: 2px;
-		border-radius: var(--radius-sm);
 		background: currentColor;
-		transition: transform var(--dur-move) var(--ease);
 	}
 	.toggle-lines span:first-child {
 		top: 0;
@@ -252,72 +229,28 @@
 	.toggle-lines span:last-child {
 		bottom: 0;
 	}
-	.menu-open .toggle-lines span:first-child {
-		transform: translateY(5px) rotate(45deg);
-	}
-	.menu-open .toggle-lines span:last-child {
-		transform: translateY(-5px) rotate(-45deg);
-	}
 
-	/* Phone menu: a full-height panel, links arriving in reading order 60ms apart. */
+	/* Phone menu: a plain list under the bar. */
 	.menu {
-		position: fixed;
-		inset: 0;
-		z-index: -1;
-		padding: calc(var(--spacing-900) + var(--spacing-300)) var(--spacing-300) var(--spacing-600);
-		background: color-mix(in srgb, var(--case-000) 94%, transparent);
-		-webkit-backdrop-filter: blur(24px);
-		backdrop-filter: blur(24px);
-		pointer-events: auto;
+		border-top: 1px solid var(--case-300);
+		border-bottom: 1px solid var(--case-300);
+		padding: var(--spacing-200) var(--spacing-300);
 	}
 	.menu ul {
 		display: grid;
-		gap: var(--spacing-100);
+		gap: var(--spacing-50);
 		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
 	.menu a {
 		display: block;
-		padding: var(--spacing-100) 0;
+		padding: var(--spacing-75) 0;
 		color: var(--ink);
-		font-size: var(--text-3xl);
-		line-height: var(--text-3xl--lh);
+		font-size: var(--text-lg);
+		line-height: var(--text-lg--lh);
 		font-weight: 600;
-		letter-spacing: -0.02em;
 		text-decoration: none;
-	}
-	@media (prefers-reduced-motion: no-preference) {
-		.menu:not([hidden]) li {
-			animation: menu-in var(--dur-move) var(--ease) both;
-			animation-delay: min(calc(var(--i) * 60ms), 340ms);
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		.toggle-lines span {
-			transition: none;
-		}
-		.menu:not([hidden]) li {
-			animation: menu-fade var(--dur-fade) var(--ease) both;
-		}
-	}
-	@keyframes menu-in {
-		from {
-			opacity: 0;
-			transform: translateY(24px);
-		}
-		to {
-			opacity: 1;
-			transform: none;
-		}
-	}
-	@keyframes menu-fade {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 1;
-		}
 	}
 
 	@media (max-width: 720px) {
@@ -326,9 +259,6 @@
 		}
 		.toggle {
 			display: block;
-		}
-		.bar {
-			gap: var(--spacing-200);
 		}
 	}
 

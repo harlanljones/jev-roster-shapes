@@ -92,7 +92,7 @@
 		border-color: var(--case-300);
 		color: var(--ink);
 		background: var(--case-100);
-		box-shadow: inset 0 -2px 0 var(--turf);
+		border-bottom: 2px solid var(--turf);
 	}
 	@media (max-width: 520px) {
 		.segments {

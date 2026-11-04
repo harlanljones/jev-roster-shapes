@@ -103,7 +103,7 @@
 
 	{#if scenario.classification}
 		<div class="classification-note" aria-label="Optional profile classification">
-			<span class="eyebrow">Optional profile label</span>
+			<span class="label">Optional profile label</span>
 			<strong>{scenario.classification.label ?? 'Unclassified'}</strong>
 			<span
 				>{scenario.classification.detail ??
@@ -130,21 +130,18 @@
 		gap: var(--spacing-200);
 	}
 
-	.eyebrow {
-		color: var(--grade-loose);
-		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
+	.label {
+		color: var(--ink);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 		font-weight: 600;
-		letter-spacing: 0.02em;
 	}
 
 	h2 {
 		margin: var(--spacing-50) 0 0;
-		font-family: var(--font-sans);
-		font-size: var(--text-2xl);
-		line-height: var(--text-2xl--lh);
-		font-weight: 400;
-		letter-spacing: 0.04em;
+		font-size: var(--text-lg);
+		line-height: var(--text-lg--lh);
+		font-weight: 600;
 	}
 
 	.state-note {
@@ -264,8 +261,8 @@
 		line-height: var(--text-xs--lh);
 	}
 
-	.classification-note .eyebrow {
-		color: var(--grade-snug);
+	.classification-note .label {
+		color: var(--ink);
 	}
 
 	.classification-note span:last-child {

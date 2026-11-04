@@ -7,7 +7,6 @@
 	import { calculateComparison, calculatePoolFit, poolFitFor } from '$lib/engine';
 	import { storylineRegistry, storylinesByDate } from '$lib/storylines/registry';
 	import Icon from '$lib/ui/Icon.svelte';
-	import { reveal } from './reveal';
 	import DecisionNav from './DecisionNav.svelte';
 	import { baselineFor, evidenceFor, provenanceNote } from './classification-evidence';
 	import ScenarioPicker from './ScenarioPicker.svelte';
@@ -233,33 +232,28 @@
 
 	<section class="block" aria-labelledby="more-heading">
 		<h2 id="more-heading">Behind the board</h2>
-		<ul class="cards">
+		<ul class="more">
 			{#each DIAGRAMS as d (d.key)}
 				<li>
 					<a
-						class="card"
 						href="{resolve('/decisions/[slug]/detail', { slug: story.slug })}{detailQuery(
 							d.key,
 							isBaseline ? null : scenario.id
-						)}"
+						)}">{d.title}</a
 					>
-						<span class="card-title">{d.title}</span>
-						<span class="card-blurb">{d.blurb}</span>
-						<span class="card-stat">{cardStat[d.key]}</span>
-					</a>
+					<span class="more-blurb">{d.blurb}</span>
+					<span class="more-stat">{cardStat[d.key]}</span>
 				</li>
 			{/each}
 			<li>
-				<a class="card" href={resolve('/decisions/[slug]/snapshots', { slug: story.slug })}>
-					<span class="card-title">Snapshots</span>
-					<span class="card-blurb">The Jev prompt and its answers beside the roster.</span>
-					<span class="card-stat">Advisory only; never moves a number</span>
-				</a>
+				<a href={resolve('/decisions/[slug]/snapshots', { slug: story.slug })}>Snapshots</a>
+				<span class="more-blurb">The Jev prompt and its answers beside the roster.</span>
+				<span class="more-stat">Advisory only; never moves a number</span>
 			</li>
 		</ul>
 	</section>
 
-	<section class="block" aria-labelledby="season-heading" use:reveal>
+	<section class="block" aria-labelledby="season-heading">
 		<h2 id="season-heading">Where this decision sits in the season</h2>
 		<SeasonTimeline activeSlug={story.slug} />
 	</section>
@@ -317,11 +311,9 @@
 	}
 	h2 {
 		margin: 0;
-		font-family: var(--font-sans);
-		font-size: var(--text-3xl);
-		line-height: var(--text-3xl--lh);
-		font-weight: 400;
-		letter-spacing: 0.04em;
+		font-size: var(--text-xl);
+		line-height: var(--text-xl--lh);
+		font-weight: 600;
 	}
 	.lede {
 		max-width: 66ch;
@@ -394,47 +386,48 @@
 		display: grid;
 		gap: var(--spacing-200);
 	}
-	.cards {
+	.more {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
-		gap: var(--spacing-200);
 		margin: 0;
 		padding: 0;
 		list-style: none;
+		border-top: 1px solid var(--case-300);
 	}
-	.card {
+	.more li {
 		display: grid;
-		gap: var(--spacing-75);
-		height: 100%;
-		box-sizing: border-box;
-		border: 1px solid var(--case-300);
-		border-radius: var(--radius-md);
-		padding: var(--spacing-200) var(--spacing-200);
+		grid-template-columns: minmax(10rem, 1fr) minmax(0, 2fr) auto;
+		gap: var(--spacing-75) var(--spacing-300);
+		align-items: baseline;
+		padding: var(--spacing-100) 0;
+		border-bottom: 1px solid var(--case-300);
+	}
+	.more a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
 		color: var(--ink);
-		background: var(--case-100);
-		text-decoration: none;
+		font-weight: 600;
 	}
-	.card:hover {
-		border-color: var(--ink-muted);
-	}
-	.card-title {
-		font-family: var(--font-sans);
-		font-size: var(--text-lg);
-		line-height: var(--text-lg--lh);
-		letter-spacing: 0.04em;
-	}
-	.card-blurb {
+	.more-blurb {
 		color: var(--ink-muted);
-		font-size: var(--text-xs);
-		line-height: var(--text-xs--lh);
+		font-size: var(--text-sm);
+		line-height: var(--text-sm--lh);
 	}
-	.card-stat {
-		align-self: end;
-		color: var(--turf);
+	.more-stat {
+		color: var(--ink-muted);
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
 		line-height: var(--text-xs--lh);
-		font-weight: 500;
+		white-space: nowrap;
+	}
+	@media (max-width: 720px) {
+		.more li {
+			grid-template-columns: minmax(0, 1fr);
+			gap: var(--spacing-25);
+		}
+		.more-stat {
+			white-space: normal;
+		}
 	}
 	.sources {
 		max-width: 90ch;

@@ -160,17 +160,15 @@
 
 	h2 {
 		margin: var(--spacing-50) 0 0;
-		font-family: var(--font-sans);
-		font-size: var(--text-2xl);
-		line-height: var(--text-2xl--lh);
-		font-weight: 400;
-		letter-spacing: 0.04em;
+		font-size: var(--text-lg);
+		line-height: var(--text-lg--lh);
+		font-weight: 600;
 	}
 
 	.ready-state {
 		padding: var(--spacing-75) var(--spacing-75);
 		border: 1px solid var(--grade-loose);
-		border-radius: var(--radius-full);
+		border-radius: var(--radius-sm);
 		color: var(--grade-loose);
 		font-size: var(--text-xs);
 		line-height: var(--text-xs--lh);
@@ -243,7 +241,7 @@
 		height: 1.35rem;
 		place-items: center;
 		border: 1px solid var(--grade-loose);
-		border-radius: 50%;
+		border-radius: var(--radius-sm);
 		color: var(--grade-loose);
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
