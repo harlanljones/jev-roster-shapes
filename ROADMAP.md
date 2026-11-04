@@ -820,7 +820,9 @@ Observed:
 - `reports/prototype/edit-latency.json` was restored after the end-to-end run, as before.
 - `git diff --check`: clean.
 
-Limitations: the Cloudflare Pages behaviour for the new `404.html` is confirmed only once the branch preview redeploys. The review's lower-ranked candidates were not verified because a container restart stopped those verifiers, and they are not fixed here. They include the px line heights under text scaling, the fit-mode board labels at phone width, the missing-data piece contrast on foam, synthesized mono semibold, and the cleanup items.
+- Cloudflare Pages preview <https://d46fb411.jev-roster-shapes.pages.dev> (deploy run 105, commit `95c80d1`). `/nope`, `/decisions/nope`, `/players/123`, `/decisions/nope/x` and `/decisions/offseason-infield/nope` all return status 404 and render "This cutout is empty". `/decisions/offseason-infield` returns 200. The served `/` contains the `og:image` tags. Before this change, the earlier preview left every multi-segment unknown path blank.
+
+Limitations: the review's lower-ranked candidates were not verified because a container restart stopped those verifiers, and they are not fixed here. They include the px line heights under text scaling, the fit-mode board labels at phone width, the missing-data piece contrast on foam, synthesized mono semibold, and the cleanup items.
 
 ## Measures and review cadence
 
