@@ -189,15 +189,22 @@
 
 	.coverage-groups {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--spacing-200);
 	}
 
 	.coverage-group {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--spacing-75);
 	}
 
+	/* Wide tables scroll inside their own container, never the page. The container is positioned
+	   so the visually hidden captions and labels inside it are clipped with the table instead of
+	   escaping to the page at their column offset. */
 	.table-scroll {
+		position: relative;
+		min-width: 0;
 		overflow-x: auto;
 		border: 1px solid var(--case-300);
 	}
