@@ -90,6 +90,66 @@ function canonical(value) {
 }
 
 /**
+ * @param {Record<string, unknown>} object
+ * @param {(value: unknown) => unknown} fn
+ * @returns {Record<string, unknown>}
+ */
+function mapValues(object, fn) {
+	return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, fn(value)]));
+}
+
+/**
+ * @param {unknown} value
+ * @returns {value is Record<string, unknown>}
+ */
+function isObject(value) {
+	return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+/**
+ * One player's stat rows in a fixed order. The MLB Stats API returns a traded
+ * player's per-team and combined rows in an order that can change between
+ * fetches; the build reads these rows by team and code (sums, maps, and
+ * `team === null` lookups), never by position, so their order carries no
+ * meaning.
+ *
+ * @param {unknown} rows
+ * @returns {unknown}
+ */
+function sortedRows(rows) {
+	if (!Array.isArray(rows)) return rows;
+	return rows
+		.map((row) => [JSON.stringify(canonical(row)), row])
+		.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+		.map(([, row]) => row);
+}
+
+/**
+ * Row-order-stable form of the snapshot's per-player stat rows (D-67): the
+ * `splits` rows, and the `hitting` and `fielding` rows under each window, are
+ * sorted by their canonical content. Every other section, including `games`
+ * (chronological) and the dated rosters, keeps its order. The fetcher writes
+ * this form, and `shouldWrite` compares it, so an API reordering of
+ * otherwise identical rows is not a material change.
+ *
+ * @template {Record<string, unknown>} T
+ * @param {T} content
+ * @returns {T}
+ */
+export function sortStatRows(content) {
+	const out = /** @type {Record<string, unknown>} */ ({ ...content });
+	if (isObject(content.splits)) out.splits = mapValues(content.splits, sortedRows);
+	for (const section of ['hitting', 'fielding']) {
+		const byPlayer = content[section];
+		if (!isObject(byPlayer)) continue;
+		out[section] = mapValues(byPlayer, (windows) =>
+			isObject(windows) ? mapValues(windows, sortedRows) : windows
+		);
+	}
+	return /** @type {T} */ (out);
+}
+
+/**
  * @param {Record<string, unknown>} snapshot
  * @returns {Record<string, unknown>}
  */
@@ -106,7 +166,8 @@ function withoutMeta(snapshot) {
  * hitting/fielding rows, or splits — differs from the checked-in file. A
  * metadata-only refetch (fresh fetchedAt/asOf over identical content) writes
  * nothing, so the bundles, their pinned digests, and season.json stay
- * byte-identical and the daily workflow produces no pull request.
+ * byte-identical and the daily workflow produces no pull request. Neither key
+ * order nor the order of a player's stat rows counts (D-67).
  *
  * @param {Record<string, unknown> | null} existing - Parsed checked-in snapshot, or null when none exists.
  * @param {Record<string, unknown>} incoming - The freshly computed content (no asOf/fetchedAt).
@@ -114,5 +175,8 @@ function withoutMeta(snapshot) {
  */
 export function shouldWrite(existing, incoming) {
 	if (!existing) return true;
-	return JSON.stringify(canonical(withoutMeta(existing))) !== JSON.stringify(canonical(incoming));
+	return (
+		JSON.stringify(canonical(sortStatRows(withoutMeta(existing)))) !==
+		JSON.stringify(canonical(sortStatRows(incoming)))
+	);
 }

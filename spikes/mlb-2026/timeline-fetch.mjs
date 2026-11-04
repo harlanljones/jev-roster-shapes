@@ -8,7 +8,7 @@
 import { writeFileSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { rosterPlan, shouldWrite, windowPlan } from './lib/timeline-plan.mjs';
+import { rosterPlan, shouldWrite, sortStatRows, windowPlan } from './lib/timeline-plan.mjs';
 
 const TEAM = 111;
 const SEASON = 2026;
@@ -189,7 +189,9 @@ await pool([...hitterIds], 4, async (id) => {
 const sortKeys = (object) =>
 	Object.fromEntries(Object.entries(object).sort(([a], [b]) => Number(a) - Number(b)));
 // Consumed content only; asOf/fetchedAt are attached below, on a write.
-const content = {
+// Stat rows are written in a fixed order so an API reordering never shows up
+// as a diff (D-67).
+const content = sortStatRows({
 	source: 'MLB Stats API (statsapi.mlb.com), free public endpoints; MLBAM copyright applies',
 	team: TEAM,
 	season: SEASON,
@@ -200,7 +202,7 @@ const content = {
 	hitting: sortKeys(hitting),
 	fielding: sortKeys(fielding),
 	splits: sortKeys(splits)
-};
+});
 const out = join(dirname(fileURLToPath(import.meta.url)), 'timeline-snapshot.json');
 let existing = null;
 try {
