@@ -144,7 +144,7 @@ Every tile carries a name and readable workload value. Color represents a consis
 
 Shape is a compact summary of a player's profile. It never determines tile area, creates coverage, or directly changes projected value. A context change may alter a player's allocation or fit assessment without changing their underlying profile label.
 
-The eight labels inherited from the project proposal—Square, Rectangle, Circle, Pentagon, Octagon, Diamond, Star, and Funky—are taxonomy candidates. They are not the shape set Taylor Wyman published (see [docs/wyman-diagram.md](docs/wyman-diagram.md)), which this application does not implement. The pilot does not assume that eight exclusive categories are useful or exhaustive.
+The eight labels—Square, Rectangle, Circle, Pentagon, Octagon, Diamond, Star, and Funky—come from the supplied project proposal; their definitions, boundaries and rubric versions were then iterated in this repository's recorded decisions (D-39 rubric v1, D-43 rubric v2) and its git history (confirmed by Harlan, 2026-11-04). They are taxonomy candidates. They are not the shape set Taylor Wyman published (see [docs/wyman-diagram.md](docs/wyman-diagram.md)), which this application does not implement. The pilot does not assume that eight exclusive categories are useful or exhaustive.
 
 Before enabling shape classification, evaluators must document each category's plain-language definition, positive examples, counterexamples, required inputs, and boundary cases. Test whether different evaluators apply those definitions consistently. Permit an unclassified or mixed-profile display state. If the taxonomy adds confusion or cannot be labeled reliably, ship readable skill tags and profile bars while revising it.
 

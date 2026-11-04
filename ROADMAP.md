@@ -781,8 +781,9 @@ D-16 sets; other browsers and real devices are untested. The latency journey mea
 p95 at 85.2 ms in this cloud container, inside the 250 ms budget; that is not comparable with the
 9.6 ms reference measurement on the D-16 M1 setup, which was not re-run, so
 `reports/prototype/edit-latency.json` is left as recorded. The privacy and terms pages describe what
-the code does and are not reviewed legal documents. The eight shape labels are attributed to the
-supplied project proposal on the strength of `SPEC.md`; their actual origin is for Harlan to confirm.
+the code does and are not reviewed legal documents. Harlan confirmed (2026-11-04) that the eight shape
+labels came from the supplied project proposal or from iterations recorded in the decision log and
+git history (D-39, D-43); `SPEC.md` §6 and `docs/SHAPE_TAXONOMY.md` say so.
 
 Release: on branch `claude/trusting-brown-rpm9ms` for review; not merged or deployed. Merging to
 `main` triggers the Cloudflare Pages deploy, since `package.json` and `src/` are in the change.
