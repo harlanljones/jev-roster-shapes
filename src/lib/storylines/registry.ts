@@ -64,14 +64,14 @@ const PROJECTION_LABEL =
 	'MLB Stats API snapshot + projected 2027 roster from early October reporting (D-56)';
 
 export const PINNED_STORYLINE_DIGESTS = {
-	'offseason-infield': '74e18f82c56de781204f0c6db7edd922c71e413725d44321d64d24040bbfe07a',
-	'opening-day-outfield': '46d5da5f741e4823b61c95b73a2468804a393b775a250454a336b6a80b032436',
-	'july-run': 'aa6a80ac05944f65cd66fa600a13dfd6fa0138dfb27b6fd7165cb21cd82de4b5',
-	deadline: '630cd397d2cce063589ea39cf72a961a0452d49ee558c57aeaff827319020efa',
-	'wild-card-roster': '1259941764c7001fe7b504f5e3f8ac809ab677f8b1ebe52452f8ab44d57326cf',
-	'winter-infield': '27adcbdc311e4d40c5526d9c32559129c1c359a8a72fe9996d8aac84a734f2ce',
-	'winter-duran': 'de8e2dec6fed9065f2f41ff7d5fca21d0b4a601cd2984a7214bfba96b4952174',
-	'winter-bat': 'b21b2d7650b8e40b37462f70607fa2129b8e10c708c829dd7bf9831e74d64396'
+	'offseason-infield': 'f3fbe29c2bb9c5406f19ef501626a5d6e605ae51fa58d1e8581393f5246d4dcc',
+	'opening-day-outfield': 'f1c6ef1a8e32a6d32aeacfeb26090dad78efafdb6f4aa33f5289a89b0a6b9d1b',
+	'july-run': '74a2fae6f149774a4e75d841d6050e1cd358b3e7e682952d20904a503189a8f5',
+	deadline: 'f66ff6c508e6b2a559843df9c437a5ea04832cfb889167d3a4c095aad27ad133',
+	'wild-card-roster': '2c4c5db3cef54ea2948daeb85be3dff81710cf520f74923943a518e1f69555f9',
+	'winter-infield': '5ba7315ad2d18cc28a304836888638a999667b031ffbb41191d13f4c639318fc',
+	'winter-duran': '87f0051497c8904d3306a55484ab65379685bcbdd11b0c5169e8947bbb759062',
+	'winter-bat': '930aefb1f218b25fcc4ed4886e1b9723e3532f8863cd558782d241326229c561'
 } as const;
 
 export const storylineRegistry: readonly Storyline[] = [

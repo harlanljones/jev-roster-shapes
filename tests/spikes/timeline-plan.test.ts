@@ -5,6 +5,7 @@ import {
 	rosterPlan,
 	seasonAsOf,
 	shouldWrite,
+	sortStatRows,
 	windowPlan
 } from '../../spikes/mlb-2026/lib/timeline-plan.mjs';
 
@@ -118,5 +119,72 @@ describe('timeline-plan shouldWrite (D-54)', () => {
 
 	it('writes when no snapshot is checked in yet', () => {
 		expect(shouldWrite(null, content)).toBe(true);
+	});
+	// A traded player's per-team and combined rows, as the API returned them
+	// on two different days (D-67, refresh PR #19).
+	const tradedRows = [
+		{ code: 'vl', team: 110, pa: 4, ops: '.833' },
+		{ code: 'vl', team: 116, pa: 21, ops: '.807' },
+		{ code: 'vl', team: 111, pa: 1, ops: '.000' },
+		{ code: 'vr', team: 111, pa: 8, ops: '1.458' },
+		{ code: 'vr', team: 116, pa: 89, ops: '.507' }
+	];
+	const traded = {
+		...content,
+		hitting: {
+			665742: {
+				'through-2026-09-27': [
+					{ team: 116, pa: 300, runs: 40 },
+					{ team: null, pa: 310, runs: 41 },
+					{ team: 111, pa: 10, runs: 1 }
+				]
+			}
+		},
+		fielding: {
+			665742: {
+				'season-2025': [
+					{ team: 116, pos: '2B', games: 50, gamesStarted: 45 },
+					{ team: 116, pos: 'SS', games: 20, gamesStarted: 18 }
+				]
+			}
+		},
+		splits: { 665742: tradedRows }
+	};
+	const reversed = (rows: unknown[]) => [...rows].reverse();
+	const reshuffled = {
+		...traded,
+		hitting: {
+			665742: { 'through-2026-09-27': reversed(traded.hitting[665742]['through-2026-09-27']) }
+		},
+		fielding: { 665742: { 'season-2025': reversed(traded.fielding[665742]['season-2025']) } },
+		splits: { 665742: [tradedRows[2], tradedRows[4], tradedRows[0], tradedRows[3], tradedRows[1]] }
+	};
+	const tradedExisting = { asOf: '2026-10-06', fetchedAt: '2026-10-06T03:24:21Z', ...traded };
+
+	it("skips a refetch that only reorders a player's stat rows (D-67)", () => {
+		expect(shouldWrite(tradedExisting, reshuffled)).toBe(false);
+	});
+
+	it('still writes when a reordered stat row also changes value', () => {
+		const changed = {
+			...reshuffled,
+			splits: { 665742: [{ ...tradedRows[2], pa: 2 }, ...reshuffled.splits[665742].slice(1)] }
+		};
+		expect(shouldWrite(tradedExisting, changed)).toBe(true);
+	});
+
+	it('keeps game order significant', () => {
+		const games = [
+			{ date: '2026-03-26', win: true, runs: 5, oppRuns: 3 },
+			{ date: '2026-03-27', win: false, runs: 1, oppRuns: 2 }
+		];
+		const withGames = { asOf: '2026-10-06', fetchedAt: 'x', ...content, games };
+		expect(shouldWrite(withGames, { ...content, games: reversed(games) })).toBe(true);
+	});
+
+	it('writes stat rows in one fixed order regardless of fetch order', () => {
+		expect(sortStatRows(reshuffled)).toEqual(sortStatRows(traded));
+		expect(JSON.stringify(sortStatRows(reshuffled))).toBe(JSON.stringify(sortStatRows(traded)));
+		expect(sortStatRows(traded).games).toBe(traded.games);
 	});
 });

@@ -905,6 +905,16 @@ Fixed after release: the overview board left an empty band between its caption a
 
 - **Checks.** `bun run check` reports 0 errors and 0 warnings, and `bun run lint` is clean. `bun run test` passes 18 files and 136 tests. `bun run test:e2e` passes 71, including a new assertion that the caption-to-lid gap at 320px stays under 24px. That assertion failed at 25px with only the SVG change, which led to the grid fix. `reports/prototype/edit-latency.json` was restored after the end-to-end run.
 
+### Refresh ignores stat-row order (D-67, 2026-11-04)
+
+Refresh PR #19 changed no number the site shows: its snapshot diff was a traded player's rows returned in a new order, plus Isiah Kiner-Falefa's listed primary position, and its bundle diffs were timestamps and re-pinned digests. `sortStatRows` now fixes the order of each player's `splits`, `hitting` and `fielding` rows, the fetcher writes that order, and `shouldWrite` compares it.
+
+- **Tests.** `tests/spikes/timeline-plan.test.ts` adds four cases: a reorder-only refetch writes nothing, a reordered row that also changes value still writes, game order stays significant, and the written row order is the same whatever order the API returned. The reorder case fails on the previous `shouldWrite`.
+- **Real data.** `shouldWrite(main snapshot, PR #19 content)` is still `true`, because of the one position change. With that field reverted it is `false`.
+- **Baseline carried here.** Changing the fetcher triggered the *Fetch season-timeline snapshot* workflow, which committed a refetched snapshot to this branch: stat rows in the fixed order, the one position change, `asOf` 2026-11-04. An order-normalized comparison against `main` shows no other difference (people 152, hitting, fielding and splits 29 each). The bundles were rebuilt from it offline (`timeline-build.mjs`, prettier, `sync-registry.mjs`): `createdAt`, `note` and `fetchedAt` timestamps and the eight re-pinned digests change, no number does. With this merged, the next daily refresh finds no material change, so refresh PR #19 has nothing left to carry.
+- **Bundles unchanged.** Rebuilding from a copy of `main`'s snapshot with its stat rows sorted (`timeline-build.mjs`, prettier, `sync-registry.mjs`) leaves all eight bundles, `season.json` and the `registry.ts` digests byte-identical.
+- **Checks run.** `bun run check` 0 errors and 0 warnings, `bun run lint` clean, `bun run test` 14 files and 131 tests passed (127 on `main` in the same environment; the four browser files did not run here), `bun run build` exit 0. `bun run test:e2e` was not run: this environment cannot download the Playwright browser.
+
 ## Measures and review cadence
 
 Targets inherited from `SPEC.md` remain **proposed**. No current numerical baseline or named owner is available. `docs/ACCEPTANCE.md` defines concrete correctness cases; `RS-07` records the reference setup and measurements; `RS-08` establishes the human-study baselines and freezes its protocol.
